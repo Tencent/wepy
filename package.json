@@ -1,0 +1,29 @@
+{
+  "name": "wepy",
+  "version": "1.0.2",
+  "description": "",
+  "main": "lib/wepy.js",
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
+    "watch-compile": "npm run build -- --watch",
+    "watch": "npm run watch-compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gcaufy/wepy.git"
+  },
+  "author": "Gcaufy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gcaufy/wepy/issues"
+  },
+  "homepage": "https://github.com/Gcaufy/wepy#readme",
+  "devDependencies": {
+    "babel": "^6.5.2",
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-1": "^6.16.0"
+  }
+}
