@@ -93,6 +93,10 @@ export default class {
     $invoke (com, method, ...args) {
         com = this.$getComponent(com);
 
+        if (!com) {
+            throw 'Invalid path: ' + com;
+        }
+
         let fn = this.$wxpage[com.prefix + method] || com[method];
 
         if (typeof(fn) === 'function') {

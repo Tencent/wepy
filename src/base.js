@@ -7,12 +7,13 @@ let comCount = 0;
 
 
 let $getPrefix = (prefix) => {
-    if (!prefix)
+    return prefix;
+    /*if (!prefix)
         return '';
     if (prefixList[prefix])
         return prefixList[prefix];
     prefixList[prefix] = `${PREFIX}${(comCount++)}${JOIN}`;
-    return prefixList[prefix];
+    return prefixList[prefix];*/
 }
 
 
@@ -22,7 +23,7 @@ let $bindEvt = (config, com, prefix) => {
         let cClass = com.components[name];
         let child = new cClass();
         child.name = name.toLowerCase();
-        let comPrefix = child.isComponent ? (prefix + '$' + child.name + '$') : '';
+        let comPrefix = prefix ? (prefix + child.name + '$') : ('$' + child.name + '$');
 
         //prefixList[comPrefix] = comCount++;
         $getPrefix(comPrefix);
