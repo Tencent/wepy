@@ -1,13 +1,32 @@
 
+const PREFIX = '$';
+const JOIN = '$';
+
+let prefixList = {};
+let comCount = 0;
+
+
+let $getPrefix = (prefix) => {
+    if (!prefix)
+        return '';
+    if (prefixList[prefix])
+        return prefixList[prefix];
+    prefixList[prefix] = `${PREFIX}${(comCount++)}${JOIN}`;
+    return prefixList[prefix];
+}
 
 
 let $bindEvt = (config, com, prefix) => {
-    com.prefix = prefix;
+    com.prefix = $getPrefix(prefix);
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
         child.name = name.toLowerCase();
-        let comPrefix = child.isComponent ? (prefix + 'c_' + child.name + '_') : '';
+        let comPrefix = child.isComponent ? (prefix + '$' + child.name + '$') : '';
+
+        //prefixList[comPrefix] = comCount++;
+        $getPrefix(comPrefix);
+        
         com.$com[name] = child;
 
         $bindEvt(config, child, comPrefix);
@@ -21,7 +40,7 @@ let $bindEvt = (config, com, prefix) => {
         }
     });
     Object.getOwnPropertyNames(com.methods || []).forEach((method, i) => {
-        config[prefix + method] = function () {
+        config[com.prefix + method] = function () {
             com.methods[method].apply(com, arguments);
             com.$apply();
         }

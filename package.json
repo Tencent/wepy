@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Gcaufy/wepy.git"
+    "url": "git@github.com:wepyjs/wepy.git"
   },
   "author": "Gcaufy",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Gcaufy/wepy/issues"
+    "url": "https://github.com/wepyjs/wepy/issues"
   },
-  "homepage": "https://github.com/Gcaufy/wepy#readme",
+  "homepage": "https://github.com/wepyjs/wepy#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.18.0",
