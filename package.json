@@ -4,7 +4,6 @@
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
-    "prepublish": "npm run build",
     "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run build -- --watch",
     "watch": "npm run watch-compile",
