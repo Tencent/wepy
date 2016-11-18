@@ -21,6 +21,7 @@ export default class {
                     get () {
                         return (obj) => {
                             obj = obj || {};
+                            obj = (typeof(obj) === 'string') ? {url: obj} : obj;
                             return new Promise((resolve, reject) => {
                                 obj.success = resolve;
                                 obj.fail = (res) => {
