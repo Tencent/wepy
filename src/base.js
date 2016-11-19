@@ -51,71 +51,6 @@ let $bindEvt = (config, com, prefix) => {
 
 
 
-let RequestMQ = {
-    map: {},
-    mq: [],
-    running: [],
-    MAX_REQUEST: 5,
-    push (param) {
-        param.t = +new Date();
-        while ((this.mq.indexOf(param.t) > 0 || this.running.indexOf(param.t) > 0)) {
-            param.t = Math.random() * 10 >> 0;
-        }
-        this.map[param.t] = param;
-    },
-    quque () {
-        setTimeout(() => {
-            if (this.running < this.MAX_REQUEST) {
-                this.next();
-            } else {
-                this.quque();
-            }
-        });
-    },
-    next () {
-        let me = this;
-        
-        while(this.mq.length && this.running.length < this.MAX_REQUEST) {
-            this.running.push(this.mq.shift());
-        }
-        if (this.running.length === 0)
-            return null;
-        //wx[key + '_bak'](this.map[this.running[0]]);
-
-        let obj = this.map[this.running[0]];
-
-        return new Promise((resolve, reject) => {
-            obj.success = resolve;
-            obj.fail = (res) => {
-                if (res && res.errMsg) {
-                    reject(new Error(res.errMsg));
-                } else {
-                    reject(res);
-                }
-            };
-            obj.complete = () => {
-                me.running.splice(me.running.indexOf(obj.t), 1);
-                delete me.mq[obj.t];
-                me.quque();
-            }
-
-            wx['request_bak'](this.map[this.running[0]]);
-            
-        });
-    },
-    request (obj) {
-        let me = this;
-        
-        obj = obj || {};
-        obj = (typeof(obj) === 'string') ? {url: obj} : obj;
-        
-        
-        this.push(obj);
-
-        return this.next();
-    }
-};
-
 export default {
     init () {
         let noPromiseMethods = {
@@ -155,26 +90,6 @@ export default {
             }
         });
 
-        wx['request_bak'] = wx['request'];
-        Object.defineProperty(wx, 'request', {
-            get () {
-                return (obj) => {
-                    return RequestMQ.request(obj);
-                    obj = obj || {};
-                    return new Promise((resolve, reject) => {
-                        obj.success = resolve;
-                        obj.fail = (res) => {
-                            if (res && res.errMsg) {
-                                reject(new Error(res.errMsg));
-                            } else {
-                                reject(res);
-                            }
-                        }
-                        wx[key + '_bak'](obj);
-                    });
-                };
-            }
-        });
     },
     $createApp (appClass) {
         let config = {};
