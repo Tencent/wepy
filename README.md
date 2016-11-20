@@ -7,31 +7,35 @@
 #### 安装wepy
 以下安装都通过`npm`安装
 
-1. 安装 wepy 命令行工具
+安装 wepy 命令行工具。
+ 
 ```bash
 npm install wepy-cli -g
 ```
-2. 在开发目录生成开发DEMO
+
+在开发目录生成开发DEMO。
+ 
 ```bash
 wepy new myproject
 ```
-3. 开发实时编译
+开发实时编译。
+ 
 ```bash
 wepy build --watch
 ```
 #### 项目目录结构
 ```
-     dist
-　　　node_modules
-　　　src
-　　　    components
-    　　　    com_a.wpy
-    　　　    com_b.wpy
-　　　    pages
-    　　　    index.wpy
-    　　　    page2.wpy
-     app.wpy
-　　　package.json
+    dist
+    node_modules
+    src
+        components
+            com_a.wpy
+            com_b.wpy
+        pages
+            index.wpy
+            page2.wpy
+        app.wpy
+    package.json
 ```
 
 #### 开发使用说明
@@ -167,7 +171,8 @@ project
             log.wpy
         app.wpy
 ```
-5. 默认使用babel编译，支持ES6/7的一些新特性。
+
+### 5. 默认使用babel编译，支持ES6/7的一些新特性。
 
 用户可以通过修改`.wepyrc`配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
 
@@ -190,7 +195,7 @@ export default class Index extends wepy.page {
     };
 }
 ```
-### 5. 针对原生API进行优化。
+### 6. 针对原生API进行优化。
 
 对现在API进行promise处理，同时修复一些现有API的缺陷，比如：wx.request并发问题等。
 原有代码：
