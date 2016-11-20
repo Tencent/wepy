@@ -1,5 +1,3 @@
-[TOC]
-
 # 小程序框架wepy文档
 
 ## 主要解决问题：
@@ -246,8 +244,9 @@ wepy build --watch
 </script>
 ```
 标签对应 `type` 值如下表所示：
-|标签|type默认值|type支持值|
-|--|--|--|
+
+| 标签 | type默认值 | type支持值 |
+| ---- | ---- | ---- |
 |style|`css`|`css`，`less`，`sass（待完成）`|
 |template|`wxml`|`wxml`，`xml`，`html（待完成）`|
 |script|`js`|`js`，`TypeScript(待完成)`|
@@ -309,8 +308,9 @@ export default class Index extends wepy.page {
 </script>
 ```
 页面入口继承自`wepy.page`，主要属性说明如下：
-|属性|说明|
-|--|--|
+
+| 属性 | 说明 |
+| ---- | ---- |
 |config|页面config，相当于原来的index.json，同`app.wpy`中的config|
 |components|页面引入的组件列表|
 |data|页面需要渲染的数据|
@@ -431,25 +431,25 @@ setTimeout(() => {
 ### wepy.event
 
 |父类 | 无 |
-| -- | -- |
+| ---- | ---- | 
 
 | 属性 | 类型 | 默认值 | 说明 |
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 | name | String | - | 事件名称 |
 | source | wepy.component | - | 事件来源 |
 | type | String | - | emit 或者 broadcast |
 
 | 方法 | 参数 | 返回值 | 说明|
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 | destroy | - | - | 在 emit 或者 broadcast 过程中，调用destroy方法将会停止事件传播。|
 
 ### wepy.component
 
 |父类 | 无 |
-| -- | -- |
+| ---- | ---- |
 
 | 属性 | 类型 | 默认值 | 说明 |
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 | isComponent | Boolean | true | 是否是组件，如果是页面，此值为false |
 | prefix | String | '' | 组件前缀，组件前缀+组件方法属性才是在小程序中真实存在的方法或属性。 |
 | $root | wepy.page | - | 根组件，一般都是页面 |
@@ -458,7 +458,7 @@ setTimeout(() => {
 | $coms | List(wepy.component) | {} | 子组件列表 |
 
 | 方法 | 参数 | 返回值 | 说明|
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 | init | - | - | 组件初始化。|
 | getWxPage | - | Page | 返回小程序Page对象。|
 | $getComponent | path(String) | wepy.component | 通过组件路径返回组件对象。|
@@ -470,21 +470,21 @@ setTimeout(() => {
 ### wepy.page
 
 |父类 | wepy.component |
-| -- | -- |
+| ---- | ---- |
 
 | 属性 | 类型 | 默认值 | 说明 |
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 
 | 方法 | 参数 | 返回值 | 说明|
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 | init | - | - | 页面始化。|
 
 ### wepy.app
 
 |父类 | 无 |
-| -- | -- |
+| ---- | ---- |
 
 | 属性 | 类型 | 默认值 | 说明 |
-| -- | -- | -- | -- |
+| ---- | ---- | ---- | ---- |
 |$wxapp|App|-|小程序getApp()|
 | init | - | - | 应用始化包括对原生API的改造与优化|
