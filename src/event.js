@@ -9,7 +9,14 @@ export default class {
         this.type = type;
     }
 
-    destroy () {
+    $destroy () {
         this.active = false;
+    }
+
+    $transfor(wxevent) {
+        let k = 0;
+        for (k in wxevent) {
+            this[k] = wxevent[k];
+        }
     }
 }

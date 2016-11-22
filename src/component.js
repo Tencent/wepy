@@ -49,7 +49,7 @@ export default class {
             }
             return this.$wxpage.setData(k);
         }
-        let t = null, reg = new RegExp('^' + this.prefix, 'ig');
+        let t = null, reg = new RegExp('^' + this.prefix.replace(/\$/g, '\\$'), 'ig');
         for (t in k) {
             let noPrefix = t.replace(reg, '');
             this.data[noPrefix] = util.$copy(k[t], true);
@@ -78,8 +78,11 @@ export default class {
                         } else if (s === '.') {
                             // ./a/b/c
                             com = this;
+                        } else if (s === '..') {
+                            // ../a/b/c
+                            com = this.$parent;
                         } else {
-                            com = this.$getComponent(com);
+                            com = this.$getComponent(s);
                         }
                     } else {
                         com = com.$com[s];
@@ -97,10 +100,19 @@ export default class {
             throw 'Invalid path: ' + com;
         }
 
-        let fn = this.$wxpage[com.prefix + method] || com[method];
+        let fn = this.$wxpage[com.prefix + method];
 
         if (typeof(fn) === 'function') {
-            fn.apply(com, args);
+            let evt = new event('', this, 'invoke');
+            return fn.apply(com, [evt].concat(args));
+        } else {
+            fn = com[method];
+        }
+
+        if (typeof(fn) === 'function') {
+            return fn.apply(com, args);
+        } else {
+            throw 'Invalid method: ' + method;
         }
     }
 

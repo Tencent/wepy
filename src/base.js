@@ -1,3 +1,5 @@
+import event from './event';
+
 
 const PREFIX = '$';
 const JOIN = '$';
@@ -41,9 +43,18 @@ let $bindEvt = (config, com, prefix) => {
         }
     });
     Object.getOwnPropertyNames(com.methods || []).forEach((method, i) => {
-        config[com.prefix + method] = function () {
-            com.methods[method].apply(com, arguments);
+        config[com.prefix + method] = function (e) {
+            let evt = new event('system', this, e.type);
+            evt.$transfor(e);
+            let args = [evt];
+            let wepyParams = !e.currentTarget ? null : (e.currentTarget.dataset ? e.currentTarget.dataset.wepyParams : '');
+            if (wepyParams && wepyParams.length) {
+                wepyParams = wepyParams.split('-');
+                args = args.concat(wepyParams);
+            }
+            let rst = com.methods[method].apply(com, args);
             com.$apply();
+            return rst;
         }
     });
     return config;
