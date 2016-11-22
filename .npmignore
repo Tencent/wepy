@@ -7,3 +7,4 @@ appveyor.yml
 README_zh-CN.md
 *.map
 src/
+screenshots/
