@@ -142,7 +142,7 @@ export default class Index extends wepy.page {
 
 在编译过程当中，会递归遍历代码中的`require`然后将对应依赖文件从node_modules当中拷贝出来，并且修改`require`为相对路径，从而实现对外部NPM包的支持。如下图：
 
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479633616918.png)
+![npm](https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png)
 
 ### 4. 单文件模式，使得目录结构更加清晰。
 
@@ -227,11 +227,11 @@ async onLoad() {
 
 在同时并发10个request请求测试时：
 不使用wepy:
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479634257268.png)
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479634227631.png)
+![2 small](https://cloud.githubusercontent.com/assets/2182004/20554651/5185f740-b198-11e6-88f8-45e359090dc3.png)
+![3 small](https://cloud.githubusercontent.com/assets/2182004/20554658/5cc466aa-b198-11e6-93b7-37d6f864ffc3.png)
 
 使用wepy后：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479633912259.png)
+![4 small](https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png)
 
 
 
@@ -239,7 +239,7 @@ async onLoad() {
 
 ### wpy文件说明
 `wpy`文件的编译过程过下：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479635612077.png)
+![5 small](https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png)
 
 一个`.wpy`文件分为三个部分：
 
@@ -363,7 +363,7 @@ export default class Com extends wepy.component {
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](页面index.wpy)。
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479043724149.png)
+![6 small](https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png)
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
 
@@ -393,12 +393,12 @@ export default class Com extends wepy.component {
 ```
 1. **$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479635726903.png)
+![7 small](https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png)
 
 
 2. **$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479635810316.png)
+![8 small](https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png)
 
 
 3. **$invoke**
@@ -436,7 +436,7 @@ setTimeout(() => {
 
 #### wepy脏数据检查流程
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
-![Alt text](https://github.com/wepyjs/wepy/raw/master/screenshots/1479046984414.png)
+![9 small](https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png)
 
 ## API
 
