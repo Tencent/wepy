@@ -1,5 +1,8 @@
 # 小程序框架wepy文档
 
+![1 pic](https://cloud.githubusercontent.com/assets/2182004/20553394/4fefc22a-b18f-11e6-91bd-45c323d4a540.jpg)
+扫码加入体验交流群。
+
 ## 快速入门
 
 ### 项目创建与使用
