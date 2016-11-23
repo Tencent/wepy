@@ -4,6 +4,8 @@
 
 扫码加入体验交流群。
 
+[点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
+
 ## 快速入门
 
 ### 项目创建与使用
