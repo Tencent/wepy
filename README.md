@@ -252,9 +252,13 @@ async onLoad() {
 }
 ```
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
+
 **sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
+
 **less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
+
 **babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
+
 
 ### wpy文件说明
 `wpy`文件的编译过程过下：
