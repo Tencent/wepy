@@ -241,6 +241,21 @@ async onLoad() {
 
 ## 进阶说明
 
+### .wepyrc 配置文件说明
+执行`wepy new demo`后，会生成类似配置文件。
+```
+{
+  "wpyExt": ".wpy",
+  "sass": {},
+  "less": {},
+  "babel": {}
+}
+```
+**wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
+**sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
+**less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
+**babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
+
 ### wpy文件说明
 `wpy`文件的编译过程过下：
 
@@ -446,6 +461,106 @@ setTimeout(() => {
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
 ![9 small](https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png)
+
+### 其它优化细节
+
+#### 1. wx.request 接收参数修改
+点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122)
+```javascript
+// 官方
+wx.request({
+    url: 'xxx',
+    success: function (data) {
+        console.log(data);
+    }
+});
+
+// wepy 使用方式
+// request 接口从只接收Object变为可接收String
+wx.request('xxxx').then((d) => console.log(d));
+```
+
+#### 2. 优化事件参数传递
+点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122)
+```javascript
+// 官方
+<view id="tapTest" data-hi="WeChat" bindtap="tapName"> Click me! </view>
+Page({
+  tapName: function(event) {
+    console.log(event.currentTarget.hi)// output: WeChat
+  }
+});
+
+// wepy 建议传参方式
+<view id="tapTest" data-wepy-params="1-wepy-something" bindtap="tapName"> Click me! </view>
+
+events: {
+    tapName (event, id, title, other) {
+        console.log(id, title, other)// output: 1, wepy, something
+    }
+}
+```
+
+#### 3. 改变数据绑定方式
+保留setData方法，但不建议使用setData执行绑定，修复传入`undefined`的bug，并且修改入参支持：
+`this.setData(target, value)`
+`this.setData(object)`
+
+点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122)
+```
+// 官方
+<view> {{ message }} </view>
+
+onLoad: function () {
+    this.setData({message: 'hello world'});
+}
+
+
+// wepy
+<view> {{ message }} </view>
+
+onLoad () {
+    this.message = 'hello world';
+}
+```
+
+#### 4. 组件代替模板和模块
+
+点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122)
+```
+// 官方
+<!-- item.wxml -->
+<template name="item">
+  <text>{{text}}</text>
+</template>
+
+<!-- index.wxml -->
+<import src="item.wxml"/>
+<template is="item" data="{{text: 'forbar'}}"/>
+
+<!-- index.js -->
+var item = require('item.js')
+
+
+
+
+// wepy
+<!-- /components/item.wpy -->
+ <text>{{text}}</text>
+
+<!-- index.wpy -->
+<template>
+    <component id="item"></component>
+</template>
+<script>
+    import wepy from 'wepy';
+    import Item from '../components/item';
+    export default class Index extends wepy.page {
+        components = { Item }
+    }
+</script>
+
+```
 
 ## API
 
