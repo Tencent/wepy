@@ -1,6 +1,6 @@
 # 小程序框架wepy文档
 
-![2 pic](https://cloud.githubusercontent.com/assets/2182004/20553469/deb6d052-b18f-11e6-8724-18e04a29302d.jpg)
+![2 pic](https://cloud.githubusercontent.com/assets/2182004/20553595/b959f572-b190-11e6-94b0-93f8263823ad.jpg)
 
 扫码加入体验交流群。
 
