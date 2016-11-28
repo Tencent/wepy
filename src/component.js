@@ -84,7 +84,7 @@ export default class {
                         } else {
                             com = this.$getComponent(s);
                         }
-                    } else {
+                    } else if (s) {
                         com = com.$com[s];
                     }
                 });

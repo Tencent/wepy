@@ -121,11 +121,11 @@ export default {
         let page = new pageClass();
         let self = this;
 
-        config.onLoad = function () {
+        config.onLoad = function (v) {
 
             page.name = pageClass.name;
             page.init(this, self.instance, self.instance);
-            page.onLoad && page.onLoad();
+            page.onLoad && page.onLoad(v);
 
             page.$apply();
 
