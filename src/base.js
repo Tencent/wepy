@@ -18,6 +18,8 @@ let $getPrefix = (prefix) => {
     return prefixList[prefix];*/
 }
 
+const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom'];
+
 
 let $bindEvt = (config, com, prefix) => {
     com.prefix = $getPrefix(prefix);
@@ -35,7 +37,7 @@ let $bindEvt = (config, com, prefix) => {
         $bindEvt(config, child, comPrefix);
     });
     Object.getOwnPropertyNames(com.constructor.prototype || []).forEach((prop) => {
-        if(prop !== 'constructor' && prop !== 'onLoad') {
+        if(prop !== 'constructor' && pageEvent.indexOf(prop) === -1) {
             config[prop] = function () {
                 com.constructor.prototype[prop].apply(com.$com[name], arguments);
                 com.$apply();
@@ -43,10 +45,10 @@ let $bindEvt = (config, com, prefix) => {
         }
     });
     Object.getOwnPropertyNames(com.methods || []).forEach((method, i) => {
-        config[com.prefix + method] = function (e) {
+        config[com.prefix + method] = function (e, ...args) {
             let evt = new event('system', this, e.type);
             evt.$transfor(e);
-            let args = [evt];
+            args = [evt].concat(args);
             let wepyParams = !e.currentTarget ? null : (e.currentTarget.dataset ? e.currentTarget.dataset.wepyParams : '');
             if (wepyParams && wepyParams.length) {
                 wepyParams = wepyParams.split('-');
@@ -121,11 +123,11 @@ export default {
         let page = new pageClass();
         let self = this;
 
-        config.onLoad = function (v) {
+        config.onLoad = function (...args) {
 
             page.name = pageClass.name;
             page.init(this, self.instance, self.instance);
-            page.onLoad && page.onLoad(v);
+            page.onLoad && page.onLoad.apply(page, args);
 
             page.$apply();
 
@@ -133,6 +135,15 @@ export default {
                 page.$parent.$wxapp = getApp();
             }
         }
+
+        pageEvent.forEach((v) => {
+            if (v !== 'onLoad') {
+                config[v] = function (...args) {
+                    page[v] && page[v].apply(page, args);
+                    page.$apply();
+                }
+            }
+        });
 
         return $bindEvt(config, page, '');
     },
