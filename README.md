@@ -25,9 +25,17 @@ npm install wepy-cli -g
 ```bash
 wepy new myproject
 ```
-开发实时编译。
- 
+
+切换至项目目录。
+
 ```bash
+cd myproject
+```
+
+开发实时编译。
+
+```bash
+cd myproject
 wepy build --watch
 ```
 #### 项目目录结构
@@ -181,7 +189,7 @@ project
 
 ### 5. 默认使用babel编译，支持ES6/7的一些新特性。
 
-用户可以通过修改`.wepyrc`配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
+用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
 
 示例代码：
 ```javascript
@@ -242,16 +250,54 @@ async onLoad() {
 
 ## 进阶说明
 
-### .wepyrc 配置文件说明
+### wepy.config.js 配置文件说明
 执行`wepy new demo`后，会生成类似配置文件。
-```
-{
+```javascript
+let prod = process.env.NODE_ENV === 'production';
+
+module.exports = {
   "wpyExt": ".wpy",
-  "sass": {},
-  "less": {},
-  "babel": {}
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-1"
+    ],
+    "plugins": [
+      "transform-export-extensions",
+      "syntax-export-extensions",
+      "transform-runtime"
+    ]
+  }
+};
+
+
+if (prod || true) {
+  // 压缩sass
+  module.exports['sass'] = {"outputStyle": "compressed"};
+  
+  // 压缩less
+  module.exports['less'] = {"compress": true};
+
+  // 压缩js
+  module.exports.plugins = {
+      'UglifyJsPlugin': {
+          filter: /\.js$/,
+          config: {
+              compress: {
+                warning: false
+              }
+          }
+      },
+      'TestPlugin': {
+          filter: /\.wxml$/,
+          config: {
+          }
+      }
+  };
 }
+
 ```
+
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
 
 **sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
@@ -259,6 +305,8 @@ async onLoad() {
 **less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
 
 **babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
+
+**plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，持续开发...
 
 
 ### wpy文件说明
