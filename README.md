@@ -35,7 +35,6 @@ cd myproject
 开发实时编译。
 
 ```bash
-cd myproject
 wepy build --watch
 ```
 #### 项目目录结构
