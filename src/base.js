@@ -26,7 +26,7 @@ let $bindEvt = (config, com, prefix) => {
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
-        child.name = name.toLowerCase();
+        child.name = name;
         let comPrefix = prefix ? (prefix + child.name + '$') : ('$' + child.name + '$');
 
         //prefixList[comPrefix] = comCount++;
