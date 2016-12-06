@@ -270,7 +270,7 @@ module.exports = {
 };
 
 
-if (prod || true) {
+if (prod) {
   // 压缩sass
   module.exports['sass'] = {"outputStyle": "compressed"};
   
@@ -485,6 +485,93 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 如果想在组件A中调用组件G的某个方法：
 ```
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
+```
+
+### 混合
+
+混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
+
+* 默认式混合
+* 兼容式混合
+
+#### 默认式混合
+
+对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
+```
+// mixins/test.js
+import wepy from 'wepy';
+
+export default class TestMixin extends wepy.page {
+    data = {
+        foo: 'foo defined by page',
+        bar: 'bar defined by testMix'
+    };
+    methods: {
+    tap () {
+      console.log('mix tap');
+    }
+  }
+}
+
+// pages/index.wpy
+import wepy from 'wepy';
+import TestMixin from './mixins/test';
+
+export default class Index extends wepy.mixin {
+    data = {
+        foo: 'foo defined by index'
+    };
+    mixins = [TestMixin ];
+    onShow() {
+    console.log(this.foo); // foo defined by index.
+    console.log(this.bar); // foo defined by testMix.
+  }
+}
+```
+
+
+#### 兼容式混合
+
+对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
+
+```
+// mixins/test.js
+import wepy from 'wepy';
+
+export default class TestMixin extends wepy.page {
+    methods = {
+    tap () {
+      console.log('mix tap');
+    }
+  };
+    onShow() {
+    console.log('mix onshow');
+  }
+}
+
+// pages/index.wpy
+import wepy from 'wepy';
+import TestMixin from './mixins/test';
+
+export default class Index extends wepy.mixin {
+
+    mixins = [TestMixin];
+    methods = {
+    tap () {
+      console.log('index tap');
+    }
+  };
+    onShow() {
+    console.log('index onshow');
+  }
+}
+
+
+// index onshow
+// mix onshow
+// ----- when tap
+// index tap
+// mix tap
 ```
 
 ### 数据绑定

@@ -4,6 +4,7 @@ import component from './component';
 import event from './event';
 import base from './base';
 import util from './util';
+import mixin from './mixin';
 
 
 export default {
@@ -11,6 +12,7 @@ export default {
     app: app,
     component: component,
     page: page,
+    mixin: mixin,
 
     $createApp: base.$createApp,
     $createPage: base.$createPage,
