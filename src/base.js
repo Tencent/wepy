@@ -26,6 +26,7 @@ let $bindEvt = (config, com, prefix) => {
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
+        child.initMixins();
         child.name = name;
         let comPrefix = prefix ? (prefix + child.name + '$') : ('$' + child.name + '$');
 
@@ -55,6 +56,11 @@ let $bindEvt = (config, com, prefix) => {
                 args = args.concat(wepyParams);
             }
             let rst = com.methods[method].apply(com, args);
+
+            com.$mixins.forEach((mix) => {
+                mix.methods[com.prefix + method] && mix.methods[com.prefix + method].apply(com, args);
+            });
+
             com.$apply();
             return rst;
         }
@@ -121,6 +127,7 @@ export default {
     $createPage (pageClass) {
         let config = {}, k;
         let page = new pageClass();
+        page.initMixins();
         let self = this;
 
         config.onLoad = function (...args) {
@@ -128,6 +135,10 @@ export default {
             page.name = pageClass.name;
             page.init(this, self.instance, self.instance);
             page.onLoad && page.onLoad.apply(page, args);
+
+            page.$mixins.forEach((mix) => {
+                mix['onLoad'] && mix['onLoad'].apply(page, args);
+            });
 
             page.$apply();
 
@@ -138,10 +149,15 @@ export default {
 
         pageEvent.forEach((v) => {
             if (v !== 'onLoad') {
-                config[v] = function (...args) {
+                config[v] = (...args) => {
                     page[v] && page[v].apply(page, args);
+
+                    page.$mixins.forEach((mix) => {
+                        mix[v] && mix[v].apply(page, args);
+                    });
+
                     page.$apply();
-                }
+                };
             }
         });
 

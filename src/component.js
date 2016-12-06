@@ -4,8 +4,11 @@ import util from './util';
 export default class {
 
     $com = {};
+    $mixins = [];
+
     isComponent = true;
     prefix = '';
+
 
     init ($wxpage, $root, $parent) {
         let self = this;
@@ -32,6 +35,21 @@ export default class {
                 this.$com[name].$apply();
             });
         }
+    }
+
+    initMixins () {
+        if (this.mixins) {
+            if (typeof(this.mixins) === 'funciton') {
+                this.mixins = [this.mixins];
+            }
+        } else {
+            this.mixins = [];
+        }
+        this.mixins.forEach((mix) => {
+            let inst = new mix();
+            inst.init(this);
+            this.$mixins.push(inst);
+        });
     }
 
     onLoad () {
