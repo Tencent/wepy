@@ -1,7 +1,7 @@
 # 小程序框架wepy文档
 
 
-![wepy_group](https://cloud.githubusercontent.com/assets/2182004/20737578/833523ce-b6e8-11e6-87f4-44ee72c0e5f0.png)
+![_20161208000012](https://cloud.githubusercontent.com/assets/2182004/20975381/534932e8-bcda-11e6-9c77-aac35f466f5e.png)
 
 扫码加入体验交流群。
 
