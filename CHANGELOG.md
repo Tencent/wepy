@@ -1,11 +1,11 @@
 ## 1.1.8 (2016-12-08)
 * 修复了script使用src外链报错的BUG。
 * 修复了LESS编译会调用到SASS的BUG。
-* 优化了事件传参数，支持直接传参。详情参考文档。
+* 优化了事件传参数，支持直接传参。详情[参考文档](https://github.com/wepyjs/wepy#2-优化事件参数传递)。
 
 ## 1.1.7 (2016-12-06)
 * script/template/style的属性同时支持type和lang。
-* 添加mixins支持，详情请参考文档。
+* 添加mixins支持，详情请[参考文档](https://github.com/wepyjs/wepy#混合)。
 
 ## 1.1.6 (2016-12-02)
 * 修复了组件ID大写导致无法识别的问题。
