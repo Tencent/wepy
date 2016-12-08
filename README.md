@@ -623,20 +623,31 @@ wx.request('xxxx').then((d) => console.log(d));
 点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122)
 ```javascript
 // 官方
-<view id="tapTest" data-hi="WeChat" bindtap="tapName"> Click me! </view>
+<view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
 Page({
   tapName: function(event) {
-    console.log(event.currentTarget.hi)// output: WeChat
+    console.log(event.currentTarget.dataset.id)// output: 1
+    console.log(event.currentTarget.dataset.title)// output: wepy
+    console.log(event.currentTarget.dataset.other)// output: otherparams
   }
 });
 
 // wepy 建议传参方式
-<view id="tapTest" data-wepy-params="1-wepy-something" bindtap="tapName"> Click me! </view>
+<view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
-        console.log(id, title, other)// output: 1, wepy, something
-    }
+  tapName (event, id, title, other) {
+    console.log(id, title, other)// output: 1, wepy, otherparams
+  }
+}
+
+// wepy 1.1.8以后的版本，只允许传string。
+<view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
+
+events: {
+  tapName (event, id, title, other) {
+    console.log(id, title, other)// output: 1, wepy, otherparams
+  }
 }
 ```
 
