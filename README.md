@@ -1,9 +1,9 @@
 # 小程序框架wepy文档
 
 
-![_20161208000012](https://cloud.githubusercontent.com/assets/2182004/20975381/534932e8-bcda-11e6-9c77-aac35f466f5e.png)
+![wepy_group](https://cloud.githubusercontent.com/assets/2182004/21045917/35ffc6ac-be3d-11e6-8387-d8eb3f737b71.jpg)
 
-扫码加入体验交流群。
+扫码加入wepyjs体验交流群。
 
 [点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
 
