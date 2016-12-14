@@ -1,5 +1,8 @@
 # 小程序框架wepy文档
 
+[![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
+[![travis-ci](https://travis-ci.org/wepyjs/wepy.svg?branch=master)](https://travis-ci.org/wepyjs/wepy)
+
 
 ![wepy_group](https://cloud.githubusercontent.com/assets/2182004/21045917/35ffc6ac-be3d-11e6-8387-d8eb3f737b71.jpg)
 
