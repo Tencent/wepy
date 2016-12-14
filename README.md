@@ -492,6 +492,12 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
+
+### 第三方组件
+
+wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考[wepy-com-toast](https://github.com/wepyjs/wepy-com-toast)。
+
+
 ### 混合
 
 混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：

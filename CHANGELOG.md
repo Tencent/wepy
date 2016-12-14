@@ -1,3 +1,10 @@
+## 1.1.9 (2016-12-14)
+* 新增了wepy upgrade命令升级wepyjs版本。
+* 新增对第三方组件的支持。
+* 新增第三方组件[wepy-com-toast](https://github.com/wepyjs/wepy-com-toast)。
+* 模板中添加toast组件测试。
+
+
 ## 1.1.8 (2016-12-08)
 * 修复了script使用src外链报错的BUG。
 * 修复了LESS编译会调用到SASS的BUG。
