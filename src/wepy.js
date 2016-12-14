@@ -18,6 +18,7 @@ export default {
     $createPage: base.$createPage,
 
     $isEmpty: util.$isEmpty,
+    $isEqual: util.$isEqual,
     $isDeepEqual: util.$isDeepEqual,
     $has: util.$has,
     $extend: util.$extend,

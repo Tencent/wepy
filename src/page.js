@@ -12,7 +12,6 @@ export default class extends component {
     }
 
     onLoad () {
-        console.log('page ' + this.name + ' onload');
         super.onLoad();
     }
 

@@ -19,6 +19,7 @@ export default class {
             this.$parent = $parent || this.$parent;
         }
 
+
         let k, defaultData = {};
         for (k in this.data) {
             defaultData[`${this.prefix}${k}`] = this.data[k];
@@ -39,7 +40,7 @@ export default class {
 
     initMixins () {
         if (this.mixins) {
-            if (typeof(this.mixins) === 'funciton') {
+            if (typeof(this.mixins) === 'function') {
                 this.mixins = [this.mixins];
             }
         } else {
@@ -53,7 +54,7 @@ export default class {
     }
 
     onLoad () {
-        console.log('component ' + this.name + ' onload');
+        //console.log('component ' + this.name + ' onload');
     }
 
     setData (k, v) {
@@ -63,7 +64,9 @@ export default class {
                 tmp[k] = v;
                 k = tmp;
             } else {
-                k = this.data[`${this.prefix}${k}`];
+                let tmp = {};
+                tmp[k] = this.data[`${k}`];
+                k = tmp;
             }
             return this.$wxpage.setData(k);
         }
@@ -80,13 +83,15 @@ export default class {
     }
 
     getCurrentPages () {
-        return this.$wxpage.getCurrentPages;
+        return this.$wxpage.getCurrentPages();
     }
 
     $getComponent(com) {
         if (typeof(com) === 'string') {
             if (com.indexOf('/') === -1) {
                 return this.$com[com];
+            } else if (com === '/') {
+                return this.$parent;
             } else {
                 let path = com.split('/');
                 path.forEach((s, i) => {
@@ -108,14 +113,14 @@ export default class {
                 });
             }
         }
-        return com;
+        return (typeof(com) !== 'object') ? null : com;
     }
 
     $invoke (com, method, ...args) {
         com = this.$getComponent(com);
 
         if (!com) {
-            throw 'Invalid path: ' + com;
+            throw new Error('Invalid path: ' + com);
         }
 
         let fn = this.$wxpage[com.prefix + method];
@@ -130,7 +135,7 @@ export default class {
         if (typeof(fn) === 'function') {
             return fn.apply(com, args);
         } else {
-            throw 'Invalid method: ' + method;
+            throw new Error('Invalid method: ' + method);
         }
     }
 
@@ -158,7 +163,7 @@ export default class {
         let com = this;
         let source = this;
         let $evt = new event(evtName, source, 'emit');
-        while(com.isComponent !== undefined && $evt.active) {
+        while(com && com.isComponent !== undefined && $evt.active) {
             let fn = com.events ? com.events[evtName] : undefined;
             if (typeof(fn) === 'function') {
                 fn.apply(com, [$evt].concat(args));

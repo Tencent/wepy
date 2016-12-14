@@ -7,13 +7,13 @@ export default {
         // Identical objects are equal. `0 === -0`, but they aren't identical.
         // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
         if (a === b) return a !== 0 || 1 / a === 1 / b;
-        // A strict comparison is necessary because `null == undefined`.
-        if (a == null || b == null) return a === b;
         // `NaN`s are equivalent, but non-reflexive.
         if (a !== a) return b !== b;
+        // A strict comparison is necessary because `null == undefined`.
+        if (!a || !b) return a === b;
         // Exhaust primitive checks
         var type = typeof a;
-        if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;
+        if (type !== 'function' && type !== 'object' && typeof b !== 'object') return false;
         return this.$isDeepEqual(a, b, aStack, bStack);
     },
 
@@ -43,18 +43,19 @@ export default {
             // of `NaN` are not equivalent.
             return +a === +b;
           case '[object Symbol]':
+            var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
             return SymbolProto.valueOf.call(a) === SymbolProto.valueOf.call(b);
         }
 
         var areArrays = className === '[object Array]';
         if (!areArrays) {
-          if (typeof a != 'object' || typeof b != 'object') return false;
+          if (typeof a !== 'object' || typeof b !== 'object') return a === b;
 
           // Objects with different constructors are not equivalent, but `Object`s or `Array`s
           // from different frames are.
           var aCtor = a.constructor, bCtor = b.constructor;
-          if (aCtor !== bCtor && !(typeof aCtor == 'function' && aCtor instanceof aCtor &&
-                                   typeof bCtor == 'function' && bCtor instanceof bCtor)
+          if (aCtor !== bCtor && !(typeof aCtor === 'function' && aCtor instanceof aCtor &&
+                                   typeof bCtor === 'function' && bCtor instanceof bCtor)
                               && ('constructor' in a && 'constructor' in b)) {
             return false;
           }
@@ -105,13 +106,13 @@ export default {
     },
 
     $has (obj, path) {
-        if (toString.call(obj) !== '[object Array]') {
-            return obj != null && hasOwnProperty.call(obj, path);
+        if (toString.call(path) !== '[object Array]') {
+            return obj && hasOwnProperty.call(obj, path);
         }
         var length = path.length;
         for (var i = 0; i < length; i++) {
             var key = path[i];
-            if (obj == null || !hasOwnProperty.call(obj, key)) {
+            if (!obj || !hasOwnProperty.call(obj, key)) {
                 return false;
             }
             obj = obj[key];
@@ -128,7 +129,7 @@ export default {
         var self = this;
 
         // Handle a deep copy situation
-        if ( typeof target === "boolean" ) {
+        if ( typeof target === 'boolean' ) {
             deep = target;
 
             // Skip the boolean and the target
@@ -137,7 +138,7 @@ export default {
         }
 
         // Handle case when target is a string or something (possible in deep copy)
-        if ( typeof target !== "object" && !(typeof(target) === 'function') ) {
+        if ( typeof target !== 'object' && !(typeof(target) === 'function') ) {
             target = {};
         }
 
@@ -150,7 +151,7 @@ export default {
         for ( ; i < length; i++ ) {
 
             // Only deal with non-null/undefined values
-            if ( ( options = arguments[ i ] ) != null ) {
+            if ( ( options = arguments[ i ] ) ) {
 
                 // Extend the base object
                 for ( name in options ) {
@@ -192,6 +193,8 @@ export default {
     $copy (obj, deep = false) {
         if (Array.isArray(obj)) {
             return this.$extend(deep, [], obj);
+        } else if ('' + obj === 'null') {
+            return obj;
         } else if (typeof (obj) === 'object') {
             return this.$extend(deep, {}, obj);
         } else
@@ -203,7 +206,7 @@ export default {
 
         // Detect obvious negatives
         // Use toString instead of jQuery.type to catch host objects
-        if ( !obj || Object.prototype.toString.call( obj ) !== "[object Object]" ) {
+        if ( !obj || Object.prototype.toString.call( obj ) !== '[object Object]' ) {
             return false;
         }
 
@@ -215,8 +218,8 @@ export default {
         }
 
         // Objects with prototype are plain iff they were constructed by a global Object function
-        Ctor = Object.prototype.hasOwnProperty.call( proto, "constructor" ) && proto.constructor;
-        return typeof Ctor === "function" && Object.prototype.hasOwnProperty.toString.call( Ctor ) === Object.prototype.hasOwnProperty.toString.call(Object);
+        Ctor = Object.prototype.hasOwnProperty.call( proto, 'constructor' ) && proto.constructor;
+        return typeof Ctor === 'function' && Object.prototype.hasOwnProperty.toString.call( Ctor ) === Object.prototype.hasOwnProperty.toString.call(Object);
     },
 };
 

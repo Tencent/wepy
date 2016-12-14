@@ -30,7 +30,6 @@ let $bindEvt = (config, com, prefix) => {
         child.name = name;
         let comPrefix = prefix ? (prefix + child.name + '$') : ('$' + child.name + '$');
 
-        //prefixList[comPrefix] = comCount++;
         $getPrefix(comPrefix);
         
         com.$com[name] = child;
@@ -40,7 +39,7 @@ let $bindEvt = (config, com, prefix) => {
     Object.getOwnPropertyNames(com.constructor.prototype || []).forEach((prop) => {
         if(prop !== 'constructor' && pageEvent.indexOf(prop) === -1) {
             config[prop] = function () {
-                com.constructor.prototype[prop].apply(com.$com[name], arguments);
+                com.constructor.prototype[prop].apply(com, arguments);
                 com.$apply();
             }
         }
@@ -71,45 +70,6 @@ let $bindEvt = (config, com, prefix) => {
 
 
 export default {
-    init () {
-        let noPromiseMethods = {
-            stopRecord: true,
-            pauseVoice: true,
-            stopVoice: true,
-            pauseBackgroundAudio: true,
-            stopBackgroundAudio: true,
-            showNavigationBarLoading: true,
-            hideNavigationBarLoading: true,
-            createAnimation: true,
-            createContext: true,
-            hideKeyboard: true,
-            stopPullDownRefresh: true
-        };
-        Object.keys(wx).forEach((key) => {
-            if (!noPromiseMethods[key] && key !== 'request' && key.substr(0, 2) !== 'on' && !(/\w+Sync$/.test(key))) {
-                wx[key + '_bak'] = wx[key];
-                Object.defineProperty(wx, key, {
-                    get () {
-                        return (obj) => {
-                            obj = obj || {};
-                            return new Promise((resolve, reject) => {
-                                obj.success = resolve;
-                                obj.fail = (res) => {
-                                    if (res && res.errMsg) {
-                                        reject(new Error(res.errMsg));
-                                    } else {
-                                        reject(res);
-                                    }
-                                }
-                                wx[key + '_bak'](obj);
-                            });
-                        };
-                    }
-                });
-            }
-        });
-
-    },
     $createApp (appClass) {
         let config = {};
         let app = new appClass();

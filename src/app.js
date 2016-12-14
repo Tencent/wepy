@@ -12,8 +12,6 @@ let RequestMQ = {
         this.mq.push(param.t);
         this.map[param.t] = param;
     },
-    exec (param) {
-    },
     next () {
         let me = this;
 
@@ -78,7 +76,7 @@ export default class {
                     get () {
                         return (obj) => {
                             obj = obj || {};
-                            obj = (typeof(obj) === 'string') ? {url: obj} : obj;
+                            //obj = (typeof(obj) === 'string') ? {url: obj} : obj;
                             return new Promise((resolve, reject) => {
                                 obj.success = resolve;
                                 obj.fail = (res) => {

@@ -6,3 +6,4 @@ npm-debug.log
 lib/
 demo/
 .vscode
+coverage
