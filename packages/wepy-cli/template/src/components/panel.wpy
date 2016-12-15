@@ -1,0 +1,44 @@
+<style lang="less">
+    .panel {
+        text-align: left;
+        width: 100%;
+    }
+</style>
+<template>
+    <view class="panel">
+        <label class="checkbox">
+            <button bindtap="change" size="mini">{{toggle ? '显示': '隐藏'}}</button>
+        </label>
+        <view hidden="{{!toggle}}">
+            子组件: <component id="counter1" path="counter"/>
+        </view>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import Counter from './counter';
+
+    export default class Panel extends wepy.component {
+
+        components = {
+            counter1: Counter,
+        };
+
+        data = {
+            toggle: true
+        };
+
+        events = {
+            'index-broadcast': ($event, ...args) => {
+                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+                $event.$destroy();
+            }
+        };
+        methods = {
+            change () {
+                console.log(this.name + ' changed');
+                this.toggle = !this.toggle;
+            }
+        };
+    }
+</script>
