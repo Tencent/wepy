@@ -2,7 +2,8 @@ import {DOMParser, DOMImplementation} from 'xmldom';
 import path from 'path';
 import util from './util';
 import cache from './cache';
-import loader from './plugins/loader';
+
+import loader from './loader';
 
 const PREFIX = '$';
 const JOIN = '$';
@@ -168,23 +169,41 @@ export default {
         return node;
     },
 
-    compile (content, opath) {
+    compile (lang, content, opath) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
-        let node = new DOMParser().parseFromString(content);
-        node = this.compileXML(node);
-        let target = util.getDistPath(opath, 'wxml', src, dist);
 
-        let plg = new loader(config.plugins, {
-            type: 'wxml',
-            code: util.decode(node.toString()),
-            file: target,
-            done (rst) {
-                util.output('写入', rst.file);
-                util.writeFile(target, rst.code);
-            }
+        
+        let compiler = loader.loadCompiler(lang);
+
+        if (!compiler) {
+            return;
+        }
+
+
+        compiler(content, config[lang] || {}).then(content => {
+            let node = new DOMParser().parseFromString(content);
+            node = this.compileXML(node);
+            let target = util.getDistPath(opath, 'wxml', src, dist);
+
+            let plg = loader.loadPlugin(config.plugins, {
+                type: 'wxml',
+                code: util.decode(node.toString()),
+                file: target,
+                done (rst) {
+                    util.output('写入', rst.file);
+                    util.writeFile(target, rst.code);
+                }
+            });
+        }).catch((e) => {
+            console.log(e);
         });
+
+
+
+
+        
         //util.log('WXML: ' + path.relative(process.cwd(), target), '写入');
         //util.writeFile(target, util.decode(node.toString()));
     }

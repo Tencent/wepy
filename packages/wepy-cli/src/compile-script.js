@@ -4,7 +4,7 @@ import util from './util';
 import cache from './cache';
 import compileWpy from './compile-wpy';
 
-import loader from './plugins/loader';
+import loader from './loader';
 
 
 const currentPath = util.currentDir;
@@ -97,7 +97,7 @@ export default {
                         resolved = resolved.replace(/\.wpy$/, '') + '.js';
                         lib = resolved;
                     }
-                    this.compile(null, 'npm', path.parse(source));
+                    this.compile('js', null, 'npm', path.parse(source));
 
                 }
                 /*if (!buildCache[source] || buildCache[source] !== getModifiedTime(source)) {
@@ -141,15 +141,74 @@ export default {
         return code;
     },
 
-    compile (code, type, opath) {
+    compile (lang, code, type, opath) {
         let config = util.getConfig();
+
         if (!code) {
             code = util.readFile(path.join(opath.dir, opath.base));
             if (code === null) {
                 throw '打开文件失败: ' + path.join(opath.dir, opath.base);
             }
         }
-        if (type !== 'npm') {
+
+        let compiler = loader.loadCompiler(lang);
+
+        if (!compiler) {
+            return;
+        }
+
+
+        compiler(code, config[lang] || {}).then(code => {
+            if (type !== 'npm') {
+                if (type === 'page' || type === 'app') {
+                    let defaultExport = 'exports.default';
+                    let matchs = code.match(/exports\.default\s*=\s*(\w+);/i);
+                    if (matchs) {
+                        defaultExport = matchs[1];
+                        code = code.replace(/exports\.default\s*=\s*(\w+);/i, '');
+
+                        if (type === 'page') {
+                            code += `\nPage(require('wepy').default.$createPage(${defaultExport}));\n`;
+                        } else {
+                            code += `\nApp(require('wepy').default.$createApp(${defaultExport}));\n`;
+                        }
+                    }
+                }
+            }
+
+            code = this.resolveDeps(code, type, opath);
+
+            if (type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
+                compileWpy.compile(opath);
+                return;
+            }
+
+            let target;
+            if (type !== 'npm') {
+                target = util.getDistPath(opath, 'js', src, dist);
+            } else {
+                code = this.npmHack(opath.base, code);
+                target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
+            }
+
+            let plg = loader.loadPlugin(config.plugins, {
+                type: type,
+                code: code,
+                file: target,
+                done (rst) {
+                    util.output('写入', rst.file);
+                    util.writeFile(target, rst.code);
+                }
+            });
+        }).catch((e) => {
+            debugger;
+            console.log(e);
+        });
+
+
+
+
+        /*if (type !== 'npm') {
             code = transform(code, config.babel).code;
 
             if (type === 'page' || type === 'app') {
@@ -190,7 +249,7 @@ export default {
                 util.output('写入', rst.file);
                 util.writeFile(target, rst.code);
             }
-        });
+        });*/
     }
 
 }

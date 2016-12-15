@@ -1,0 +1,17 @@
+{
+  "name": "wepy-compiler-sass",
+  "version": "1.0.0",
+  "description": "wepy compile sass",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sass"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "node-sass": "^4.0.0"
+  }
+}

@@ -5,11 +5,10 @@ import cache from './cache';
 import util from './util';
 import cWpy from './compile-wpy';
 import cWxml from './compile-wxml';
-import cLess from './compile-less';
-import cSass from './compile-sass';
-import cJS from './compile-js';
+import cStyle from './compile-style';
+import cScript from './compile-script';
 
-import loader from './plugins/loader';
+import loader from './loader';
 
 
 let watchReady = false;
@@ -201,46 +200,41 @@ export default {
             return;
         }
         
-        try {
-            switch(opath.ext) {
-                case ext:
-                    cWpy.compile(opath);
-                    break;
-                case '.less':
-                    cLess.compile(opath);
-                    break;
-                case '.sass':
-                case '.scss':
-                    cSass.compile(opath);
-                    break;
-                case '.js':
-                    cJS.compile(null, 'js', opath);
-                    break;
-                default:
-                    util.output('拷贝', path.join(opath.dir, opath.base));
-                    //util.copy(opath);
+        switch(opath.ext) {
+            case ext:
+                cWpy.compile(opath);
+                break;
+            case '.less':
+                cStyle.compile('less', opath);
+                break;
+            case '.sass':
+            case '.scss':
+                cStyle.compile('sass', opath);
+                break;
+            case '.js':
+                cScript.compile('babel', null, 'js', opath);
+                break;
+            default:
+                util.output('拷贝', path.join(opath.dir, opath.base));
+                //util.copy(opath);
 
-                    let plg = new loader(config.plugins, {
-                        type: opath.ext.substr(1),
-                        code: null,
-                        file: path.join(opath.dir, opath.base),
-                        done (rst) {
-                            if (rst.code) {
-                                let target = util.getDistPath(path.parse(rst.file));
-                                util.writeFile(target, rst.code);
-                            } else {
-                                util.copy(path.parse(rst.file));
-                            }
-                        },
-                        error (rst) {
-                            util.warning(rst.err);
+                let plg = loader.loadPlugin(config.plugins, {
+                    type: opath.ext.substr(1),
+                    code: null,
+                    file: path.join(opath.dir, opath.base),
+                    done (rst) {
+                        if (rst.code) {
+                            let target = util.getDistPath(path.parse(rst.file));
+                            util.writeFile(target, rst.code);
+                        } else {
                             util.copy(path.parse(rst.file));
                         }
-                    });
-            }
-
-        } catch (e) {
-            util.log(e, '错误');
+                    },
+                    error (rst) {
+                        util.warning(rst.err);
+                        util.copy(path.parse(rst.file));
+                    }
+                });
         }
     }
 }

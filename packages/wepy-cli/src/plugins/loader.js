@@ -2,11 +2,12 @@
 
 export default class {
 
-    plugins = [];
-    index = 0;
+    
     
     constructor(plugins, op) {
         let plg, plgkey, setting, config;
+        this.plugins = [];
+        this.index = 0;
         for (plgkey in plugins) {
             setting = plugins[plgkey];
             try {

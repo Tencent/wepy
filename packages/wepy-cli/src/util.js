@@ -1,3 +1,4 @@
+
 import colors from 'colors/safe';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
@@ -32,6 +33,7 @@ colors.setTheme({
     '编译': 'blue',
     '写入': 'green'
 });
+
 
 export default {
 

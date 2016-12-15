@@ -1,0 +1,17 @@
+{
+  "name": "wepy-compiler-less",
+  "version": "1.0.0",
+  "description": "wepy compile less",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "less"
+  ],
+  "dependencies": {
+    "less": "^2.7.1"
+  },
+  "author": "Gcaufy",
+  "license": "MIT"
+}

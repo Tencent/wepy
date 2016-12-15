@@ -5,11 +5,12 @@ import cache from './cache';
 import util from './util';
 
 import cConfig from './compile-config';
-import cLess from './compile-less';
+/*import cLess from './compile-less';
 import cSass from './compile-sass';
-import cCss from './compile-css';
-import cWxml from './compile-wxml';
-import cJS from './compile-js';
+import cCss from './compile-css';*/
+import cStyle from './compile-style';
+import cTemplate from './compile-template';
+import cScript from './compile-script';
 
 export default {
 
@@ -83,7 +84,7 @@ export default {
         // default type
         rst.style.type = rst.style.type || 'css';
         rst.template.type = rst.template.type || 'wxml';
-        rst.script.type = rst.script.type || 'js';
+        rst.script.type = rst.script.type || 'babel';
 
         let match = rst.script.code.match(/[\s\r\n]config\s*=[\s\r\n]*/);
         match = match ? match[0] : undefined;
@@ -156,23 +157,23 @@ export default {
         }
 
         if (wpy.style.code || wpy.template.requires.length) {
-            if (wpy.style.type === 'less') 
+            /*if (wpy.style.type === 'less') 
                 cLess.compile(wpy.style.code, wpy.template.requires, opath);
             if (wpy.style.type === 'sass') 
                 cSass.compile(wpy.style.code, wpy.template.requires, opath);
             if (wpy.style.type === 'css')
-                cCss.compile(wpy.style.code, wpy.template.requires, opath);
+                cCss.compile(wpy.style.code, wpy.template.requires, opath);*/
+            cStyle.compile(wpy.style.type, wpy.style.code, wpy.template.requires, opath);
         } else {
             this.remove(opath, 'wxss');
         }
 
         if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
-            if (wpy.template.type === 'wxml')
-                cWxml.compile(wpy.template.code, opath);
+            cTemplate.compile(wpy.template.type, wpy.template.code, opath);
         }
 
         if (wpy.script.code) {
-            cJS.compile(wpy.script.code, type, opath);
+            cScript.compile(wpy.script.type, wpy.script.code, type, opath);
         }
     }
 }

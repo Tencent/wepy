@@ -8,3 +8,4 @@ demo/
 .vscode
 coverage
 lerna-debug.log
+/packages/*/lib
