@@ -5,19 +5,17 @@
   "main": "lib/wepy.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
+    "build": "./scripts/build.sh",
     "watch-compile": "npm run build -- --watch",
     "watch": "npm run watch-compile",
-    "test": "npm run eslint && npm run test-cov",
-    "eslint": "eslint src/",
-    "test-cov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -t 50000 --recursive  -R spec test/"
+    "test": "./scripts/test.sh"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:wepyjs/wepy.git"
   },
   "author": "Gcaufy",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wepyjs/wepy/issues"
   },

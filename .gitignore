@@ -7,3 +7,4 @@ lib/
 demo/
 .vscode
 coverage
+lerna-debug.log
