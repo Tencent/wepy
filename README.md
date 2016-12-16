@@ -5,12 +5,13 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
-
+<center>
 ![wepy](https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png)
 
 扫码加入wepyjs体验交流群。
 
 [点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
+</center>
 
 ## 快速入门
 
@@ -157,7 +158,9 @@ export default class Index extends wepy.page {
 
 在编译过程当中，会递归遍历代码中的`require`然后将对应依赖文件从node_modules当中拷贝出来，并且修改`require`为相对路径，从而实现对外部NPM包的支持。如下图：
 
+<center>
 ![npm](https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png)
+</center>
 
 ### 4. 单文件模式，使得目录结构更加清晰。
 
@@ -242,13 +245,15 @@ async onLoad() {
 
 在同时并发10个request请求测试时：
 不使用wepy:
-
+<center>
 ![2 small](https://cloud.githubusercontent.com/assets/2182004/20554651/5185f740-b198-11e6-88f8-45e359090dc3.png)
 ![3 small](https://cloud.githubusercontent.com/assets/2182004/20554886/c30e802a-b199-11e6-927d-08cd4e5ed0b0.png)
+</center>
 
 使用wepy后：
-
+<center>
 ![4 small](https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png)
+</center>
 
 
 
@@ -333,7 +338,9 @@ if (prod) {
 
 `wpy`文件的编译过程过下：
 
+<center>
 ![5 small](https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png)
+</center>
 
 一个`.wpy`文件分为三个部分：
 
@@ -353,14 +360,14 @@ if (prod) {
 
 | 标签 | type默认值 | type支持值 |
 | ---- | ---- | ---- |
-|style|`css`|`css`，`less`，`sass（待完成）`|
+|style|`css`|`css`，`less`，`sass（已完成）`|
 |template|`wxml`|`wxml`，`xml`，`html（待完成）`|
 |script|`js`|`js`，`TypeScript(待完成)`|
 
 ### script说明
 
 #### 程序入口app.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -387,7 +394,7 @@ export default class extends wepy.app {
 入口`app.wpy`继承自`wepy.app`，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原有的`app.json`，编译时会根据`config`生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供API。
 
 #### 页面index.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -425,7 +432,7 @@ export default class Index extends wepy.page {
 |其它|如`onLoad`，`onReady`等小程序事件以及其它自定义方法与属性|
 
 #### 组件com.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -458,7 +465,9 @@ export default class Com extends wepy.component {
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
 
+<center>
 ![6 small](https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png)
+</center>
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
 
@@ -489,13 +498,17 @@ export default class Com extends wepy.component {
 1. **$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
+<center>
 ![7 small](https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png)
+</center>>
 
 
 2. **$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
+<center>
 ![8 small](https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png)
+</center>
 
 
 3. **$invoke**
@@ -525,7 +538,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 #### 默认式混合
 
 对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
-```
+```js
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -562,7 +575,7 @@ export default class Index extends wepy.mixin {
 
 对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
 
-```
+```js
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -606,7 +619,7 @@ export default class Index extends wepy.mixin {
 
 #### 小程序数据绑定方式
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
-```
+```js
 this.setData({title: 'this is title'});
 ```
 因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
@@ -627,7 +640,9 @@ setTimeout(() => {
 #### wepy脏数据检查流程
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
+<center>
 ![9 small](https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png)
+</center>
 
 ### 其它优化细节
 
@@ -685,7 +700,7 @@ events: {
 `this.setData(object)`
 
 点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122)
-```
+```html
 // 官方
 <view> {{ message }} </view>
 
@@ -705,7 +720,7 @@ onLoad () {
 #### 4. 组件代替模板和模块
 
 点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122)
-```
+```html
 // 官方
 <!-- item.wxml -->
 <template name="item">
