@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-less",
-  "version": "1.0.0",
+  "version": "0.0.3",
   "description": "wepy compile less",
   "main": "lib/index.js",
   "scripts": {
