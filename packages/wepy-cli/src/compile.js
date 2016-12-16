@@ -108,6 +108,23 @@ export default {
             util.log('开始监听文件改动。', '信息');
         });
     },
+    checkCompiler (compilers) {
+        if (compilers === undefined) {
+            util.log('检测到老版本config文件，请先更新配置文件版本。', '错误');
+            return false;
+        }
+        let k, exsit = true;
+        for (k in compilers) {
+            if (!loader.loadCompiler(k)) {
+                return false;
+            }
+        }
+        return true;
+
+    },
+    checkPlugin (plugins = {}) {
+        return loader.loadPlugin(plugins);
+    },
     build (config) {
           
         let wepyrc = util.getConfig();
@@ -120,6 +137,14 @@ export default {
         if (config.noCache) {
             cache.clearBuildCache();
         }
+        if (!this.checkCompiler(wepyrc.compilers)) {
+            return;
+        }
+        if (!this.checkPlugin(wepyrc.plugins)) {
+            return;
+        }
+
+
 
         let src = config.source || wepyrc.src;
         let dist = config.output || wepyrc.output;
@@ -182,8 +207,7 @@ export default {
             }
         });
 
-        // 缓存文件修改时间戳
-        cache.saveBuildCache();
+        
 
         if (config.watch) {
             this.watch(config);
@@ -218,10 +242,13 @@ export default {
                 util.output('拷贝', path.join(opath.dir, opath.base));
                 //util.copy(opath);
 
-                let plg = loader.loadPlugin(config.plugins, {
+                let plg = new loader.PluginHelper(config.plugins, {
                     type: opath.ext.substr(1),
                     code: null,
                     file: path.join(opath.dir, opath.base),
+                    output (p) {
+                        util.output(p.action, p.file);
+                    },
                     done (rst) {
                         if (rst.code) {
                             let target = util.getDistPath(path.parse(rst.file));

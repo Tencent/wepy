@@ -7,6 +7,32 @@ import util from './util';
 let relativeModules = {};
 let requiredModules = {};
 
+let loadedPlugins = [];
+
+
+class PluginHelper {
+    constructor (plugins, op) {
+        this.applyPlugin(0, op);
+        return true;
+    }
+    applyPlugin (index, op) {
+        let plg = loadedPlugins[index];
+
+        if (!plg) {
+            op.done && op.done(op);
+        } else {
+            op.next = () => {
+                this.applyPlugin(index + 1, op);
+            };
+            op.catch = () => {
+                op.error && op.error(op);
+            };
+            if (plg)
+                plg.apply(op);
+        }
+    }
+}
+
 export default {
     loadCompiler (lang) {
         if (['wxml', 'xml', 'css', 'js'].indexOf(lang) > -1) {
@@ -15,12 +41,11 @@ export default {
             };
         }
 
-        lang = 'wepy-compiler-' + lang;
-
-        let compiler = this.load(lang);
+        let name = 'wepy-compiler-' + lang;
+        let compiler = this.load(name);
 
         if (!compiler) {
-            util.log('找不到编译器：' + 'wepy-compiler-' + lang, '错误');
+            util.log(`找不到编译器：${name}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
         }
 
         return compiler;
@@ -58,7 +83,9 @@ export default {
         let m = null;
         try {
             m = require(modulePath);
-        } catch (e) {}
+        } catch (e) {
+            console.log(e);
+        }
         if (m) {
             m = m.default ? m.default : m;
             requiredModules[loc] = m;
@@ -68,34 +95,18 @@ export default {
 
     loadPlugin(plugins, op) {
         let plg, plgkey, setting, config;
-        this.plugins = [];
-        this.index = 0;
         for (plgkey in plugins) {
+            let name = 'wepy-plugin-' + plgkey;
             setting = plugins[plgkey];
-            plg = this.load(plgkey);
+            plg = this.load(name);
 
             if (!plg) {
-                util.log('找不到插件：' + plgkey, '错误');
-                return;
+                util.log(`找不到插件：${name}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
+                return false;
             }
-            this.plugins.push(new plg(setting));
+            loadedPlugins.push(new plg(setting));
         }
-        this.applyPlugin(0, op);
+        return true;
     },
-    applyPlugin(index, op) {
-        let plg = this.plugins[index];
-
-        if (!plg) {
-            op.done && op.done(op);
-        } else {
-            op.next = () => {
-                this.applyPlugin(index + 1, op);
-            };
-            op.catch = () => {
-                op.error && op.error(op);
-            };
-            if (plg)
-                plg.apply(op);
-        }
-    }
+    PluginHelper: PluginHelper
 }

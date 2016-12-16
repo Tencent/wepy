@@ -2,7 +2,6 @@ import path from 'path';
 import imagemin from 'imagemin';
 import imageminMozjpeg from 'imagemin-mozjpeg';
 import imageminPngquant from 'imagemin-pngquant';
-import util from './../util';
 import fs from 'fs';
 
 
@@ -26,8 +25,10 @@ export default class {
         if (!setting.filter.test(op.file)) {
             op.next();
         } else {
-            util.output('压缩', op.file);
-
+            op.output && op.output({
+                action: '压缩',
+                file: op.file
+            });
             imagemin([op.file], '', {
                 plugins: [
                     imageminMozjpeg(this.setting.config.jpg),

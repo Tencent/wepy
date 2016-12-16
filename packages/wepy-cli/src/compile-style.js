@@ -9,7 +9,7 @@ import loader from './loader';
 const LANG_MAP = {
     'less': '.less',
     'sass': '.sass;.scss'
-}
+};
 
 export default {
     compile (lang, content, requires, opath) {
@@ -30,7 +30,7 @@ export default {
             return;
         }
 
-        compiler(content, config[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
+        compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
             if (requires && requires.length) {
                 requires.forEach((r) => {
                     let comsrc = util.findComponent(r);
@@ -56,10 +56,13 @@ export default {
 
             let target = util.getDistPath(opath, 'wxss', src, dist);
 
-            let plg = loader.loadPlugin(config.plugins, {
+            let plg = new loader.PluginHelper(config.plugins, {
                 type: 'css',
                 code: content,
                 file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
                 done (rst) {
                     util.output('写入', rst.file);
                     util.writeFile(target, css);

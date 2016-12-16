@@ -1,6 +1,6 @@
 {
   "name": "wepy-cli",
-  "version": "0.0.3",
+  "version": "1.2.1",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
@@ -30,17 +30,10 @@
     "babel-preset-stage-1": "^6.16.0"
   },
   "dependencies": {
-    "babel-core": "^6.18.2",
     "chokidar": "^1.6.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "imagemin": "^5.2.2",
-    "imagemin-mozjpeg": "^6.0.0",
-    "imagemin-pngquant": "^5.0.0",
-    "less": "^2.7.1",
     "mkdirp": "^0.5.1",
-    "node-sass": "^3.13.0",
-    "uglify-js": "^2.7.5",
     "update-notifier": "^1.0.2",
     "xmldom": "^0.1.22"
   }

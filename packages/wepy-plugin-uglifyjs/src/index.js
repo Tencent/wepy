@@ -20,7 +20,11 @@ export default class {
         if (!setting.filter.test(op.file)) {
             op.next();
         } else {
-            util.output('压缩', op.file);
+            //util.output('压缩', op.file);
+            op.output && op.output({
+                action: '压缩',
+                file: op.file
+            });
             this.setting.config.fromString = true;
             let rst = uglify.minify(op.code, this.setting.config);
             let k;

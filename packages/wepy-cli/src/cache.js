@@ -2,6 +2,7 @@ import util from './util';
 
 const cachePath = '.wepycache';
 let _buildCache = null;
+let _cacheChanged = false;
 let _filelistCache = {};
 
 export default {
@@ -66,16 +67,19 @@ export default {
         let cache = this.getBuildCache();
         cache[file] = util.getModifiedTime(file);
         _buildCache = cache;
+        _cacheChanged = true;
     },
     clearBuildCache() {
         util.unlink(cachePath);
     },
     saveBuildCache() {
-        util.writeFile(cachePath, JSON.stringify(_buildCache));
+        if (_cacheChanged) {
+            util.writeFile(cachePath, JSON.stringify(_buildCache));
+            _cacheChanged = false;
+        }
     },
     checkBuildCache(file) {
         let cache = this.getBuildCache();
         return cache[file] && cache[file] === util.getModifiedTime(file);
     }
-
 }

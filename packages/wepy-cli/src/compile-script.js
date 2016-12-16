@@ -158,7 +158,7 @@ export default {
         }
 
 
-        compiler(code, config[lang] || {}).then(code => {
+        compiler(code, config.compilers[lang] || {}).then(code => {
             if (type !== 'npm') {
                 if (type === 'page' || type === 'app') {
                     let defaultExport = 'exports.default';
@@ -191,15 +191,20 @@ export default {
                 target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
             }
 
-            let plg = loader.loadPlugin(config.plugins, {
+            let plg = new loader.PluginHelper(config.plugins, {
                 type: type,
                 code: code,
                 file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
                 done (rst) {
                     util.output('写入', rst.file);
                     util.writeFile(target, rst.code);
                 }
             });
+            // 缓存文件修改时间戳
+            cache.saveBuildCache();
         }).catch((e) => {
             debugger;
             console.log(e);

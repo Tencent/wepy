@@ -182,15 +182,18 @@ export default {
         }
 
 
-        compiler(content, config[lang] || {}).then(content => {
+        compiler(content, config.compilers[lang] || {}).then(content => {
             let node = new DOMParser().parseFromString(content);
             node = this.compileXML(node);
             let target = util.getDistPath(opath, 'wxml', src, dist);
 
-            let plg = loader.loadPlugin(config.plugins, {
+            let plg = new loader.PluginHelper(config.plugins, {
                 type: 'wxml',
                 code: util.decode(node.toString()),
                 file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
                 done (rst) {
                     util.output('写入', rst.file);
                     util.writeFile(target, rst.code);

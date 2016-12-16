@@ -3,16 +3,27 @@ let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
     "wpyExt": ".wpy",
-    "babel": {
-        "presets": [
-            "es2015",
-            "stage-1"
-        ],
-        "plugins": [
-            "transform-export-extensions",
-            "syntax-export-extensions",
-            "transform-runtime"
-        ]
+    "compilers": {
+        less: {
+            "compress": true
+        },
+        /*sass: {
+            "outputStyle": "compressed"
+        },*/
+        babel: {
+            "presets": [
+                "es2015",
+                "stage-1"
+            ],
+            "plugins": [
+                "transform-export-extensions",
+                "syntax-export-extensions",
+                "transform-runtime"
+            ]
+        }
+    },
+    "plugins": {
+
     }
 };
 
@@ -25,15 +36,12 @@ if (prod) {
 
     // 压缩js
     module.exports.plugins = {
-        'UglifyJsPlugin': {
+        'uglifyjs': {
             filter: /\.js$/,
             config: {
             }
         },
-        'TestPlugin': {
-            filter: /\.(wxss)/
-        },
-        'ImageMinPlugin': {
+        'imagemin': {
             filter: /\.(jpg|png|jpge)$/,
             config: {
                 'jpg': {

@@ -49,6 +49,8 @@ let generateProject = (name) => {
     let dependencies = [
         'wepy',
         'wepy-com-toast',
+        'wepy-compiler-less',
+        'wepy-compiler-babel',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
         'babel-plugin-transform-runtime',
@@ -93,6 +95,9 @@ let generateProject = (name) => {
 
     });
     fcmd.stdout.on('data', (d) => {
+        console.log(d.substring(d, d.length - 1));
+    });
+    fcmd.stdout.on('err', (d) => {
         console.log(d.substring(d, d.length - 1));
     });
 };
