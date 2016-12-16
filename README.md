@@ -6,7 +6,7 @@
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 
-![wepy_group](https://cloud.githubusercontent.com/assets/2182004/21045917/35ffc6ac-be3d-11e6-8387-d8eb3f737b71.jpg)
+![wepy](https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png)
 
 扫码加入wepyjs体验交流群。
 
@@ -84,17 +84,17 @@ wepy build --watch
 //获取应用实例
 var app = getApp()
 Page({
-  data: {
-    motto: 'Hello World',
-    userInfo: {}
-  },
-  //事件处理函数
-  bindViewTap: function() {
-    console.log('button clicked')
-  },
-  onLoad: function () {
-    console.log('onLoad')
-  }
+    data: {
+        motto: 'Hello World',
+        userInfo: {}
+    },
+    //事件处理函数
+    bindViewTap: function() {
+        console.log('button clicked')
+    },
+    onLoad: function () {
+        console.log('onLoad')
+    }
 })
 ```
 
@@ -257,63 +257,80 @@ async onLoad() {
 ### wepy.config.js 配置文件说明
 执行`wepy new demo`后，会生成类似配置文件。
 ```javascript
+
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  "wpyExt": ".wpy",
-  "babel": {
-    "presets": [
-      "es2015",
-      "stage-1"
-    ],
-    "plugins": [
-      "transform-export-extensions",
-      "syntax-export-extensions",
-      "transform-runtime"
-    ]
-  }
+    'wpyExt': '.wpy',
+    'compilers': {
+        less: {
+            'compress': true
+        },
+        /*sass: {
+            'outputStyle': 'compressed'
+        },*/
+        babel: {
+            'presets': [
+                'es2015',
+                'stage-1'
+            ],
+            'plugins': [
+                'transform-export-extensions',
+                'syntax-export-extensions',
+                'transform-runtime'
+            ]
+        }
+    },
+    'plugins': {
+    }
 };
 
-
 if (prod) {
-  // 压缩sass
-  module.exports['sass'] = {"outputStyle": "compressed"};
-  
-  // 压缩less
-  module.exports['less'] = {"compress": true};
+    // 压缩sass
+    module.exports.compilers['sass'] = {'outputStyle': 'compressed'};
+    
+    // 压缩less
+    module.exports.compilers['less'] = {'compress': true};
 
-  // 压缩js
-  module.exports.plugins = {
-      'UglifyJsPlugin': {
-          filter: /\.js$/,
-          config: {
-              compress: {
-                warning: false
-              }
-          }
-      },
-      'TestPlugin': {
-          filter: /\.wxml$/,
-          config: {
-          }
-      }
-  };
+    // 压缩js
+    module.exports.plugins = {
+        'uglifyjs': {
+            filter: /\.js$/,
+            config: {
+            }
+        },
+        'imagemin': {
+            filter: /\.(jpg|png|jpge)$/,
+            config: {
+                'jpg': {
+                    quality: 80
+                },
+                'png': {
+                    quality: 80
+                }
+            }
+        }
+    };
 }
 
 ```
 
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
 
-**sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。持续开发...
+对应compiler请参考各自文档
+>**sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
+>**less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
+>**babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
 
-**less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
+**plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
 
-**babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
+### 关于compilers和plugins
 
-**plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，持续开发...
-
+1.3.1版本新功能，文档建设中...
 
 ### wpy文件说明
+
 `wpy`文件的编译过程过下：
 
 ![5 small](https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png)
@@ -324,15 +341,15 @@ if (prod) {
 2. 模板`<template></template>`对应原有`wxml`。
 3. 代码`<script></script>`对应原有`js`。
 
-其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`type`和`src`属性，`type`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
+其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
 ```
-<style type="less" src="page1.less"></style>
-<template type="wxml" src="page1.wxml"></template>
+<style lang="less" src="page1.less"></style>
+<template lang="wxml" src="page1.wxml"></template>
 <script>
     // some code
 </script>
 ```
-标签对应 `type` 值如下表所示：
+标签对应 `lang` 值如下表所示：
 
 | 标签 | type默认值 | type支持值 |
 | ---- | ---- | ---- |
@@ -344,7 +361,7 @@ if (prod) {
 
 #### 程序入口app.wpy
 ```
-<style type="less">
+<style lang="less">
 /** less **/
 </style>
 <script>
@@ -371,10 +388,10 @@ export default class extends wepy.app {
 
 #### 页面index.wpy
 ```
-<style type="less">
+<style lang="less">
 /** less **/
 </style>
-<template type="wxml">
+<template lang="wxml">
     <view>
     </view>
     <component id="counter1" path="counter"></component>
@@ -409,10 +426,10 @@ export default class Index extends wepy.page {
 
 #### 组件com.wpy
 ```
-<style type="less">
+<style lang="less">
 /** less **/
 </style>
-<template type="wxml">
+<template lang="wxml">
     <view>  </view>
 </template>
 <script>
@@ -534,9 +551,9 @@ export default class Index extends wepy.mixin {
     };
     mixins = [TestMixin ];
     onShow() {
-    console.log(this.foo); // foo defined by index.
-    console.log(this.bar); // foo defined by testMix.
-  }
+        console.log(this.foo); // foo defined by index.
+        console.log(this.bar); // foo defined by testMix.
+    }
 }
 ```
 
@@ -551,13 +568,13 @@ import wepy from 'wepy';
 
 export default class TestMixin extends wepy.page {
     methods = {
-    tap () {
-      console.log('mix tap');
-    }
-  };
+        tap () {
+            console.log('mix tap');
+        }
+    };
     onShow() {
-    console.log('mix onshow');
-  }
+        console.log('mix onshow');
+    }
 }
 
 // pages/index.wpy
@@ -568,13 +585,13 @@ export default class Index extends wepy.mixin {
 
     mixins = [TestMixin];
     methods = {
-    tap () {
-      console.log('index tap');
-    }
-  };
+        tap () {
+            console.log('index tap');
+        }
+    };
     onShow() {
-    console.log('index onshow');
-  }
+        console.log('index onshow');
+    }
 }
 
 
@@ -647,18 +664,18 @@ Page({
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 events: {
-  tapName (event, id, title, other) {
-    console.log(id, title, other)// output: 1, wepy, otherparams
-  }
+    tapName (event, id, title, other) {
+        console.log(id, title, other)// output: 1, wepy, otherparams
+    }
 }
 
 // wepy 1.1.8以后的版本，只允许传string。
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 events: {
-  tapName (event, id, title, other) {
-    console.log(id, title, other)// output: 1, wepy, otherparams
-  }
+    tapName (event, id, title, other) {
+        console.log(id, title, other)// output: 1, wepy, otherparams
+    }
 }
 ```
 
