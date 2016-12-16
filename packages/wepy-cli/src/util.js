@@ -3,7 +3,7 @@ import colors from 'colors/safe';
 import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
-
+import {exec} from 'child_process';
 import cache from './cache';
 
 colors.enabled = true;
@@ -37,6 +37,46 @@ colors.setTheme({
 
 export default {
 
+    seqPromise(promises) {
+        return new Promise((resolve, reject) => {
+
+            let count = 0;
+            let results = [];
+
+            const iterateeFunc = (previousPromise, currentPromise) => {
+                return previousPromise
+                    .then(function (result) {
+                        if (count++ !== 0) results = results.concat(result);
+                        return currentPromise(result, results, count);
+                    })
+                    .catch((err) => {
+                        return reject(err);
+                    });
+            }
+
+            promises = promises.concat(() => Promise.resolve());
+
+            promises.reduce(iterateeFunc, Promise.resolve(false))
+            .then(function (res) {
+                resolve(results);
+            });
+
+        });
+    },
+    exec(cmd, quite) {
+        return new Promise((resolve, reject) => {
+            let fcmd = exec(cmd, (err, stdout, stderr) => {
+                if (err) { reject(err); }
+                else { resolve(stdout, stderr); }
+            });
+            fcmd.stdout.on('data', (chunk) => {
+                !quite && process.stdout.write(chunk);
+            });
+            fcmd.stderr.on('data', (chunk) => {
+                !quite && process.stdout.write(chunk);
+            });
+        });
+    },
     findComponent(com) {
         let wpyExt = cache.getExt();
         let comPath = path.join(this.currentDir, cache.getSrc(), 'components', com);

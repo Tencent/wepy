@@ -109,7 +109,7 @@ export default {
     },
     checkCompiler (compilers) {
         if (compilers === undefined) {
-            util.log('检测到老版本config文件，请先更新配置文件版本。', '错误');
+            util.log('检测到老版本config文件，请先更新配置文件版本，参考链接：https://github.com/wepyjs/wepy#wepyconfigjs-配置文件说明', '错误');
             return false;
         }
         let k, exsit = true;
@@ -124,8 +124,8 @@ export default {
     checkPlugin (plugins = {}) {
         return loader.loadPlugin(plugins);
     },
+    
     build (config) {
-          
         let wepyrc = util.getConfig();
         if (!wepyrc) {
             util.error('没有检测到wepy.config.js文件, 请执行`wepy new demo`创建');
@@ -136,14 +136,22 @@ export default {
         if (config.noCache) {
             cache.clearBuildCache();
         }
-        if (!this.checkCompiler(wepyrc.compilers)) {
+        if (!this.checkCompiler(wepyrc.compilers) || !this.checkPlugin(wepyrc.plugins)) {
+            util.exec(`npm info ${loader.missingNPM}`, true).then(d => {
+                util.log('检测到有效NPM包资源，正在尝试安装，请稍等。', '信息');
+                util.exec(`npm install ${loader.missingNPM} --save-dev`).then(d => {
+                    util.log('已完成安装 ${loader.missingNPM}，重新启动编译。', '完成');
+                    this.build(config);
+                }).catch(e => {
+                    util.log(`安装插件失败：${loader.missingNPM}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
+                    console.log(e);
+                });
+            }).catch(e => {
+                util.log(`不存在插件：${loader.missingNPM}，请检测是否拼写错误。`, '错误');
+                console.log(e);
+            });
             return;
         }
-        if (!this.checkPlugin(wepyrc.plugins)) {
-            return;
-        }
-
-
 
         let src = config.source || wepyrc.src;
         let dist = config.output || wepyrc.output;

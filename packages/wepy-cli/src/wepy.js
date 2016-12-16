@@ -1,13 +1,12 @@
 import commander from 'commander';
 import path from 'path';
 import {exec} from 'child_process';
-import updateNotifier from 'update-notifier';
+//import updateNotifier from 'update-notifier';
 import util from './util';
 import compile from './compile';
 
 
 const templateDir = path.join(util.cliDir, '../template', path.sep);
-
 
 let displayVersion = () => {
     let version = util.getVersion();
@@ -60,7 +59,6 @@ let generateProject = (name) => {
         'babel-polyfill'
     ];
 
-
     util.writeFile(packagePath, JSON.stringify(pkg));
     util.log('配置: ' + 'package.json', '写入');
 
@@ -77,28 +75,23 @@ let generateProject = (name) => {
     let cmd = 'npm install --save ' + dependencies.join(' ');
     util.log('执行命令: ' + cmd, '执行');
     util.log('可能需要几分钟, 请耐心等待...', '信息');
-    let fcmd = exec('npm install --save ' + dependencies.join(' '), () => {
+
+
+    util.exec(cmd).then((d) => {
         util.log('安装依赖完成', '完成');
-        
+
         let cmd = 'wepy build';
         util.log('执行命令: ' + cmd, '执行');
         util.log('可能需要几分钟, 请耐心等待...', '信息');
 
-        let fcmd2 = exec(cmd, () => {
+        util.exec(cmd).then(d => {
             util.log('代码编译完成', '完成');
-            util.log('项目初始化完成, 可以开始使用小程序', '完成');
-        });
-
-        fcmd2.stdout.on('data', (d) => {
-            console.log(d.substring(d, d.length - 1));
-        });
-
-    });
-    fcmd.stdout.on('data', (d) => {
-        console.log(d.substring(d, d.length - 1));
-    });
-    fcmd.stdout.on('err', (d) => {
-        console.log(d.substring(d, d.length - 1));
+            util.log('项目初始化完成, 可以开始使用小程序。', '完成');
+        }).catch(e => {
+            util.log('代码编译出错', '错误');
+        })
+    }).catch(e => {
+        util.log('安装依赖出错', '错误');
     });
 };
 
@@ -146,13 +139,18 @@ let upgrade = (name) => {
 
 
 let checkUpdates = () => {
-    let pkg = require(path.join(util.cliDir, '..' + path.sep + 'package.json'));
-    let notifier = updateNotifier({pkg, callback: (err, update) => {
-    }});
-    notifier.notify();
-    console.log(pkg.version);
+    util.exec('npm info wepy-cli', true).then(d => {
+        let last = d.match(/latest\:\s\'([\d\.]*)\'/);
+        last = last ? last[1] : undefined;
+        let me = util.getVersion();
+        if (last && last !== me) {
+            util.warning(`当前版本${me}，最新版本${last}`);
+            util.warning('请关注版本更新日志：https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md');
+            util.warning('升级命令：npm install wepy-cli -g');
+        }
+    }).catch(e => {});
 };
-//checkUpdates();
+checkUpdates();
 
 
 commander.usage('[command] <options ...>');
@@ -173,7 +171,6 @@ commander.option('-m, --mode <mode>', 'project mode type(normal, module), defaul
     console.log('mode value must one of ' + modeList.join(', '));
     process.exit();
   }
-  think.mode = think['mode_' + mode];
 });*/
 
 commander.command('build').description('编译项目').action(projectPath => {

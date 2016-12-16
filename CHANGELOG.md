@@ -1,11 +1,12 @@
 ## 1.3.1 (2016-12-16)
-* 新增对第三方Compiler的支持
-* 新增pug编译器，需要执行命令安装`npm install wepy-compiler-pug`。
-* 抽离编译过程，将编译交给第三方Compiler处理，因此第一安装再也不用安装所有编译器。
+* 新增对第三方Compiler的支持。
+* 新增pug编译器。
 * 重新整理代码结构，使用lerna维护不同的NPM包。
 * 重新处理Plugins，同样交由第三方包处理。
+* 添加了编译时检测依赖的Compiler或者Plugins是否缺失的逻辑，如果缺失会自行安装。
+* 添加了cli工具版本检测的功能。
 
-*老版本在升级1.3.1版本时，要修改`wepy.config.js`并且添加compilers属性，并且安装对应的编译器方可使用。*
+*老版本在升级1.3.1版本时，要修改`wepy.config.js`并且添加compilers属性，并且安装对应的编译器方可使用。[参考这里](https://github.com/wepyjs/wepy#wepyconfigjs-配置文件说明)*
 
 
 ## 1.1.9 (2016-12-14)
