@@ -5,13 +5,13 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
-<div align="center">
+<center>
 ![wepy](https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png)
 
 扫码加入wepyjs体验交流群。
 
 [点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
-</div>
+</center>
 
 ## 快速入门
 
