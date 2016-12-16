@@ -10,7 +10,7 @@
     "watch": "node ./node_modules/gulp/bin/gulp watch",
     "test": "sh ./scripts/test.sh",
     "clean": "sh ./scripts/clean.sh",
-    "publish": "npm run clean && npm run test && npm run build && ./node_modules/.bin/lerna publish --only-explicit-updates"
+    "publish": "npm run clean && npm run build && npm run test && sh ./node_modules/.bin/lerna publish --only-explicit-updates"
   },
   "repository": {
     "type": "git",
