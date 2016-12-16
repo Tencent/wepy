@@ -97,7 +97,7 @@ describe('index.js', () => {
         assert.strictEqual(wepy.$extend(1, {a: 'b'}).a, 'b', 'target is not a object');
         assert.strictEqual(wepy.$extend({}, {a: 'b'}).a, 'b', 'can extend an object with the attributes of another');
         assert.strictEqual(wepy.$extend({a: 'x'}, {a: 'b'}).a, 'b', 'properties in source override destination');
-        assert.strictEqual(wepy.$extend({x: 'x'}, {a: 'b'}).x, 'x', "properties not in source don't get overridden");
+        assert.strictEqual(wepy.$extend({x: 'x'}, {a: 'b'}).x, 'x', 'properties not in source don\'t get overridden');
 
 
         result = wepy.$extend({x: 'x'}, {a: 'a'}, {b: 'b'});
@@ -114,7 +114,7 @@ describe('index.js', () => {
         subObj.c = 'd';
         assert.deepEqual(wepy.$extend({}, subObj), {a: 'b', c: 'd'}, 'extend copies all properties from source');
         wepy.$extend(subObj, {});
-        assert.deepEqual(subObj.hasOwnProperty('a'), false, "extend does not convert destination object's 'in' properties to 'own' properties");
+        assert.deepEqual(subObj.hasOwnProperty('a'), false, 'extend does not convert destination object\'s \'in\' properties to \'own\' properties');
 
         result = {};
         wepy.$extend(result, null, void 0, {a: 1});

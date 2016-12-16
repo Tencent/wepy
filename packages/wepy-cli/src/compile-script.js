@@ -128,7 +128,7 @@ export default {
         switch(filename) {
             case 'lodash.js':
             case '_global.js':
-                code = code.replace("Function('return this')()", 'this');
+                code = code.replace('Function(\'return this\')()', 'this');
                 break;
             case '_html.js':
                 code = 'module.exports = false;';

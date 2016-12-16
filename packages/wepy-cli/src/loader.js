@@ -53,14 +53,14 @@ export default {
 
     getNodeModulePath(loc, relative) {
         relative = relative || util.currentDir;
-        if (typeof Module === "object") return null;
+        if (typeof Module === 'object') return null;
 
         let relativeMod = relativeModules[relative];
 
         if (!relativeMod) {
             relativeMod = new Module;
 
-            let filename = path.join(relative, ".babelrc");
+            let filename = path.join(relative, '.babelrc');
             relativeMod.id = filename;
             relativeMod.filename = filename;
 

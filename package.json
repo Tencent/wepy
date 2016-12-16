@@ -5,10 +5,12 @@
   "main": "lib/wepy.js",
   "scripts": {
     "prepublish": "npm run build",
-    "build": "./scripts/build.sh",
+    "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
-    "watch": "npm run watch-compile",
-    "test": "./scripts/test.sh"
+    "watch": "node ./node_modules/gulp/bin/gulp watch",
+    "test": "sh ./scripts/test.sh",
+    "clean": "sh ./scripts/clean.sh",
+    "publish": "npm run clean && npm run test && npm run build && ./node_modules/.bin/lerna publish --only-explicit-updates"
   },
   "repository": {
     "type": "git",

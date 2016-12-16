@@ -43,7 +43,7 @@ export default {
         let last = '';
         for (let i = 0; i < n; i++) {
             let c = str[i];
-            if (c === '"' || c === "'") {
+            if (c === '"' || c === '\'') {
                 if (!char) {
                     char = c;
                 } else if (char === c && last !== '\\') {
@@ -68,14 +68,14 @@ export default {
             }
             if ((char === ',' || char === ')') && stack.length === 0) {
                 let p = tmp.replace(/^\s*/ig, '').replace(/\s*$/ig, '');
-                if (p && (p[0] === '"' || p[0] === "'") && p[0] === p[p.length - 1]) {
+                if (p && (p[0] === '"' || p[0] === '\'') && p[0] === p[p.length - 1]) {
                     p = p.substring(1, p.length - 1);
                 }
                 rst.params.push(p);
                 tmp = '';
                 continue;
             }
-            if (char === "'" || char === '"') {
+            if (char === '\'' || char === '"') {
                 if (stack.length && stack[stack.length - 1] === char)
                     stack.pop();
                 else

@@ -2,37 +2,37 @@
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    "wpyExt": ".wpy",
-    "compilers": {
+    'wpyExt': '.wpy',
+    'compilers': {
         less: {
-            "compress": true
+            'compress': true
         },
         /*sass: {
-            "outputStyle": "compressed"
+            'outputStyle': 'compressed'
         },*/
         babel: {
-            "presets": [
-                "es2015",
-                "stage-1"
+            'presets': [
+                'es2015',
+                'stage-1'
             ],
-            "plugins": [
-                "transform-export-extensions",
-                "syntax-export-extensions",
-                "transform-runtime"
+            'plugins': [
+                'transform-export-extensions',
+                'syntax-export-extensions',
+                'transform-runtime'
             ]
         }
     },
-    "plugins": {
+    'plugins': {
 
     }
 };
 
 if (prod) {
     // 压缩sass
-    module.exports.compilers['sass'] = {"outputStyle": "compressed"};
+    module.exports.compilers['sass'] = {'outputStyle': 'compressed'};
     
     // 压缩less
-    module.exports.compilers['less'] = {"compress": true};
+    module.exports.compilers['less'] = {'compress': true};
 
     // 压缩js
     module.exports.plugins = {

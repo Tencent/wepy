@@ -135,7 +135,7 @@ describe('component.js', () => {
                 assert.strictEqual(a + b + c, 1 + 2 + 3, 'test invoke params');
             }
         }
-        childchildCom.prefix = "$coma$comaa$comaaa";
+        childchildCom.prefix = '$coma$comaa$comaaa';
         childchildCom.events = childCom.events;
         com.$com = {comaa: childCom, comab: childCom};
 

@@ -11,5 +11,5 @@ if [ "$TEST_DEBUG" ]; then
    node="node --inspect --debug-brk"
 fi
 
-cd packages/wepy
-npm run test
+eslint packages/*
+istanbul cover ./node_modules/mocha/bin/_mocha -- -t 50000 --recursive  -R spec packages/*/test/
