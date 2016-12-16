@@ -6,6 +6,3 @@ npm-debug.log
 lib/
 demo/
 .vscode
-coverage
-lerna-debug.log
-/packages/*/lib

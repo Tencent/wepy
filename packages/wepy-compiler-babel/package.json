@@ -1,0 +1,17 @@
+{
+  "name": "wepy-compiler-babel",
+  "version": "0.0.3",
+  "description": "wepy compile babel",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "babel"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "babel-core": "^6.20.0"
+  }
+}

@@ -1,0 +1,50 @@
+<style lang="less">
+    .counter {
+      text-align: left;
+      font-size: 12px;
+    }
+    .count {
+      font-size: 18px;
+      font-weight: bold;
+    }
+</style>
+<template>
+    <view class="counter {{style}}">
+        <button bindtap="plus" size="mini">  +  </button>
+        <button bindtap="minus" size="mini">  -  </button>
+        <text class="count"> {{num}} </text>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    //import abc from 'abc';
+
+    export default class Counter extends wepy.component {
+
+        data = {
+            num: 0
+        };
+        events = {
+            'index-broadcast': ($event, ...args) => {
+                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+            }
+        };
+
+        methods = {
+            plus () {
+                this.num = this.num + 1;
+                console.log(this.name + ' plus tap');
+
+                this.$emit('index-emit', 1, 2, 3);
+            },
+            minus () {
+                this.num = this.num - 1;
+                console.log(this.name + ' minus tap');
+            }
+        };
+
+        onLoad () {
+            this.num = 50;
+        }
+    }
+</script>

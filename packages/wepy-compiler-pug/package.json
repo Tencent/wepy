@@ -1,0 +1,17 @@
+{
+  "name": "wepy-compiler-pug",
+  "version": "0.0.3",
+  "description": "wepy compile pug",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pug"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "pug": "^2.0.0-beta6"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "wepy-plugin-uglifyjs",
+  "version": "0.0.3",
+  "description": "wepy uglifyjs plugin",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "uglifyjs"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "uglify-js": "^2.7.5"
+  }
+}
