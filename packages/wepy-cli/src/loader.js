@@ -45,7 +45,8 @@ export default {
         let compiler = this.load(name);
 
         if (!compiler) {
-            util.log(`找不到编译器：${name}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
+            this.missingNPM = name;
+            util.log(`找不到编译器：${name}。`, 'warning');
         }
 
         return compiler;
@@ -84,7 +85,8 @@ export default {
         try {
             m = require(modulePath);
         } catch (e) {
-            console.log(e);
+            if (e.message !== 'missing path')
+                console.log(e);
         }
         if (m) {
             m = m.default ? m.default : m;
@@ -101,7 +103,8 @@ export default {
             plg = this.load(name);
 
             if (!plg) {
-                util.log(`找不到插件：${name}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
+                this.missingNPM = name;
+                util.log(`找不到插件：${name}。`, 'warning');
                 return false;
             }
             loadedPlugins.push(new plg(setting));
