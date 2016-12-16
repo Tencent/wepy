@@ -1,4 +1,3 @@
-import {transform} from 'babel-core';
 import path from 'path';
 import util from './util';
 import cache from './cache';

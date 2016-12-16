@@ -4,7 +4,6 @@ import chokidar from 'chokidar';
 import cache from './cache';
 import util from './util';
 import cWpy from './compile-wpy';
-import cWxml from './compile-wxml';
 import cStyle from './compile-style';
 import cScript from './compile-script';
 
