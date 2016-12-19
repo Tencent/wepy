@@ -11,7 +11,7 @@
 <center>
 扫码加入wepyjs体验交流群。
 
-[点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
+<a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
 </center>
 
 ## 快速入门
@@ -163,7 +163,7 @@ export default class Index extends wepy.page {
 
 ### 4. 单文件模式，使得目录结构更加清晰。
 
-[官方目录结构](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107){:target="_blank"}要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
+<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
 所以使用wepy开发前后开发目录对比如下：
 
 官方DEMO：
@@ -323,9 +323,9 @@ if (prod) {
 
 **compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。持续开发...
 对应compiler请参考各自文档
->**sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass){:target="_blank"}。
->**less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code){:target="_blank"}。
->**babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/){:target="_blank"}。
+>**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
+>**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+>**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
 
@@ -455,12 +455,12 @@ export default class Com extends wepy.component {
 页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
 
 ### 组件
-小程序支持js[模块化](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107){:target="_blank"}引用，也支持[wxml模板](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161107){:target="_blank"}，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
+小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
 #### 组件引用
-当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](页面index.wpy)。
+当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
 
@@ -522,7 +522,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 ### 第三方组件
 
-wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考[wepy-com-toast](https://github.com/wepyjs/wepy-com-toast)。
+wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
 ### 混合
@@ -644,7 +644,7 @@ setTimeout(() => {
 ### 其它优化细节
 
 #### 1. wx.request 接收参数修改
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122){:target="_blank"}
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 ```javascript
 // 官方
 wx.request({
@@ -660,7 +660,7 @@ wx.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122){:target="_blank"}
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 ```javascript
 // 官方
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
@@ -696,7 +696,7 @@ events: {
 `this.setData(target, value)`
 `this.setData(object)`
 
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122){:target="_blank"}
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 ```html
 // 官方
 <view> {{ message }} </view>
@@ -716,7 +716,7 @@ onLoad () {
 
 #### 4. 组件代替模板和模块
 
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122){:target="_blank"}
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 ```html
 // 官方
 <!-- item.wxml -->
