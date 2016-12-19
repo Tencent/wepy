@@ -44,7 +44,14 @@ let $bindEvt = (config, com, prefix) => {
             }
         }
     });
-    Object.getOwnPropertyNames(com.methods || []).forEach((method, i) => {
+
+    let allMethods = Object.getOwnPropertyNames(com.methods || []);
+
+    com.$mixins.forEach((mix) => {
+        allMethods = allMethods.concat(Object.getOwnPropertyNames(mix.methods || []));
+    });
+
+    allMethods.forEach((method, i) => {
         config[com.prefix + method] = function (e, ...args) {
             let evt = new event('system', this, e.type);
             evt.$transfor(e);
@@ -54,19 +61,20 @@ let $bindEvt = (config, com, prefix) => {
                 wepyParams = wepyParams.split('-');
                 args = args.concat(wepyParams);
             }
-            let rst = com.methods[method].apply(com, args);
-
+            let rst, mixRst;
+            let comfn = com.methods[method];
+            if (comfn) {
+                rst = comfn.apply(com, args);
+            }
             com.$mixins.forEach((mix) => {
-                mix.methods[com.prefix + method] && mix.methods[com.prefix + method].apply(com, args);
+                mix.methods[method] && (mixRst = mix.methods[method].apply(com, args));
             });
-
             com.$apply();
-            return rst;
+            return comfn ? rst : mixRst;
         }
     });
     return config;
 };
-
 
 
 export default {

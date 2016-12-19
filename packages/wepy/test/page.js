@@ -24,6 +24,5 @@ describe('page.js', () => {
 
         assert.strictEqual(page.isComponent, false, 'page is not a component');
 
-        
     });
 });

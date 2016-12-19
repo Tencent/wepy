@@ -13,6 +13,15 @@ import cTemplate from './compile-template';
 import cScript from './compile-script';
 
 export default {
+    createParser () {
+        return new DOMParser({errorHandler: {
+            warning (x) {
+                if (x.indexOf('missed value!!') === -1) {
+                    util.warning(x);                    
+                }
+            }
+        }}); 
+    },
 
     grabConfigFromScript(str, n) {
         let stash = [], rst = '';
@@ -123,7 +132,7 @@ export default {
             // do nothing;
         }
         content = util.encode(content, startlen, content.indexOf('</script>') - 1);
-        let doc = new DOMParser().parseFromString(content);
+        let doc = this.createParser().parseFromString(content);
 
         let type = '';
 

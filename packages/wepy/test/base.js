@@ -42,7 +42,5 @@ describe('base.js', () => {
 
         page.custom('user_custom');
 
-        //console.log(page);
-
     });
 });

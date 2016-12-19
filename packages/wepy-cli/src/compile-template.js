@@ -8,6 +8,8 @@ import loader from './loader';
 const PREFIX = '$';
 const JOIN = '$';
 
+const BOOLEAN_ATTRS = ['wx:else', 'show-info', 'active', 'controls', 'danmu-btn', 'enable-danmu', 'autoplay', 'disabled', 'show-value', 'checked', 'scroll-x', 'scroll-y', 'auto-focus', 'focus', 'auto-height', 'password', 'indicator-dots', 'report-submit', 'hidden', 'plain', 'loading', 'redirect', 'loop', 'controls'];
+
 export default {
     comPrefix: {},
     comCount: 0,
@@ -84,6 +86,16 @@ export default {
             tmp += char;
         }
         return rst;
+    },
+
+    // 替换xmldom生成的无值属性
+    replaceBooleanAttr(code) {
+        let reg;
+        BOOLEAN_ATTRS.forEach((v) => {
+            reg = new RegExp(`${v}=['"]${v}['"]`, 'ig');
+            code = code.replace(reg, v);
+        })
+        return code;
     },
 
     parseExp (content, prefix, ignores) {
@@ -173,6 +185,7 @@ export default {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
+        let self = this;
 
         
         let compiler = loader.loadCompiler(lang);
@@ -183,6 +196,7 @@ export default {
 
 
         compiler(content, config.compilers[lang] || {}).then(content => {
+
             let node = new DOMParser().parseFromString(content);
             node = this.compileXML(node);
             let target = util.getDistPath(opath, 'wxml', src, dist);
@@ -196,6 +210,7 @@ export default {
                 },
                 done (rst) {
                     util.output('写入', rst.file);
+                    rst.code = self.replaceBooleanAttr(rst.code);
                     util.writeFile(target, rst.code);
                 }
             });
@@ -203,10 +218,6 @@ export default {
             console.log(e);
         });
 
-
-
-
-        
         //util.log('WXML: ' + path.relative(process.cwd(), target), '写入');
         //util.writeFile(target, util.decode(node.toString()));
     }
