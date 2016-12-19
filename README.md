@@ -10,7 +10,7 @@
 </p>
 <p align="center">
   扫码加入wepyjs体验交流群。
-  <p>
+  <p align="center">
    <a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
   </p>
 </p>
