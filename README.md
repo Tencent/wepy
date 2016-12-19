@@ -6,12 +6,13 @@
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png" alt="qrcode">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png" alt="qrcode">
 </p>
 <p align="center">
-扫码加入wepyjs体验交流群。
-
-<a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
+  扫码加入wepyjs体验交流群。
+  <p>
+   <a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
+  </p>
 </p>
 
 ## 快速入门
