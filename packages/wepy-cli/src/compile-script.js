@@ -83,6 +83,13 @@ export default {
             lib += ext;
             resolved = lib;
 
+            // 第三方组件
+            if (/\.wpy$/.test(resolved)) {
+                target = target.replace(/\.wpy$/, '') + '.js';
+                resolved = resolved.replace(/\.wpy$/, '') + '.js';
+                lib = resolved;
+            }
+
             if (needCopy) {
                 if (!cache.checkBuildCache(source)) {
                     cache.setBuildCache(source);
@@ -90,12 +97,6 @@ export default {
                     /*let dirname = path.dirname(target);
                     mkdirp.sync(dirname);*/
                     
-                    // 第三方组件
-                    if (/\.wpy$/.test(resolved)) {
-                        target = target.replace(/\.wpy$/, '') + '.js';
-                        resolved = resolved.replace(/\.wpy$/, '') + '.js';
-                        lib = resolved;
-                    }
                     this.compile('js', null, 'npm', path.parse(source));
 
                 }
