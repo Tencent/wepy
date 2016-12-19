@@ -9,7 +9,8 @@ module.exports = class Mix extends wepy.mixin {
             'a': 1
         };
         this.methods = {
-            'tap': function () {}
+            'tap': function () {},
+            'notInPage': function () {}
         };
     }
 
