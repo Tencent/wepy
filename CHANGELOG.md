@@ -1,7 +1,7 @@
 ## 1.3.2 (2016-12-19)
 * 修复wx:else, scroll-x等boolean属性报warning的[BUG](https://github.com/wepyjs/wepy/issues/5)。
-* 修复了组件method不存在时，mixin的method不会被注册的BUG。感谢[@@huike1989]。
-* 修复了引用第三方组件路径报错的BUG。感谢[@@huike1989]。
+* 修复了组件method不存在时，mixin的method不会被注册的BUG。感谢[@huike1989]()。
+* 修复了引用第三方组件路径报错的BUG。感谢[@huike1989]()。
 
 ## 1.3.1 (2016-12-16)
 * 新增对第三方Compiler的支持。
