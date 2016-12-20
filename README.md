@@ -358,11 +358,11 @@ if (prod) {
 ```
 标签对应 `lang` 值如下表所示：
 
-| 标签 | type默认值 | type支持值 |
+| 标签 | lang默认值 | lang支持值 |
 | ---- | ---- | ---- |
-|style|`css`|`css`，`less`，`sass（已完成）`|
-|template|`wxml`|`wxml`，`xml`，`html（待完成）`|
-|script|`js`|`js`，`TypeScript(待完成)`|
+|style|`css`|`css`，`less`，`sass`|
+|template|`wxml`|`wxml`，`xml`，`pug(原jade)`|
+|script|`bable`|`bable`，`TypeScript`，`CoffeeScript`|
 
 ### script说明
 
