@@ -5,63 +5,64 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
-
-![wepy](https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png)
-
-扫码加入wepyjs体验交流群。
-
-[点此查看CHANGELOG](https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png" alt="qrcode">
+</p>
+<p align="center">
+  扫码加入wepyjs体验交流群。
+  <p align="center">
+   <a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
+  </p>
+</p>
 
 ## 快速入门
 
 ### 项目创建与使用
 
-#### 安装wepy
 以下安装都通过`npm`安装
 
-安装 wepy 命令行工具。
+**安装（更新） wepy 命令行工具。**
  
 ```bash
 npm install wepy-cli -g
 ```
 
-在开发目录生成开发DEMO。
+**在开发目录生成开发DEMO。**
  
 ```bash
 wepy new myproject
 ```
 
-切换至项目目录。
+**切换至项目目录。**
 
 ```bash
 cd myproject
 ```
 
-开发实时编译。
+**开发实时编译。**
 
 ```bash
 wepy build --watch
 ```
 #### 项目目录结构
 ```
-    dist
-    node_modules
-    src
-        components
-            com_a.wpy
-            com_b.wpy
-        pages
-            index.wpy
-            page2.wpy
-        app.wpy
-    package.json
+├── dist                   微信开发者工具指定的目录
+├── node_modules           
+├── src                    代码编写的目录
+|   ├── components         组件文件夹（非完整页面）
+|   |   ├── com_a.wpy      可复用组件 a
+|   |   └── com_b.wpy      可复用组件 b
+|   ├── pages              页面文件夹（完整页面）
+|   |   ├── index.wpy      页面 index
+|   |   └── page.wpy       页面 page
+|   └── app.wpy            小程序配置项（全局样式配置、声明钩子等）
+└── package.json           package 配置
 ```
 
 #### 开发使用说明
 1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
 2. `微信开发者工具` --> 项目 --> 关闭ES6转ES5。
 3. 本地项目根目录运行`wepy build --watch`，开启实时编译。
-
 
 ###代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
@@ -157,38 +158,41 @@ export default class Index extends wepy.page {
 
 在编译过程当中，会递归遍历代码中的`require`然后将对应依赖文件从node_modules当中拷贝出来，并且修改`require`为相对路径，从而实现对外部NPM包的支持。如下图：
 
-![npm](https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png">
+</p>
 
 ### 4. 单文件模式，使得目录结构更加清晰。
 
-[官方目录结构](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107)要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
+<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
 所以使用wepy开发前后开发目录对比如下：
+
 官方DEMO：
 ```
 project
-    pages
-        index
-            index.json
-            index.js
-            index.wxml
-            index.wxss
-        log
-            log.json
-            log.wxml
-            log.js
-            log.wxss
-    app.js
-    app.json
-    app.wxss
+├── pages
+|   ├── index
+|   |   ├── index.json  index 页面配置
+|   |   ├── index.js    index 页面逻辑
+|   |   ├── index.wxml  index 页面结构
+|   |   └── index.wxss  index 页面样式表
+|   └── log
+|       ├── log.json    log 页面配置
+|       ├── log.wxml    log 页面逻辑
+|       ├── log.js      log 页面结构
+|       └── log.wxss    log 页面样式表
+├── app.js              小程序逻辑
+├── app.json            小程序公共设置
+└── app.wxss            小程序公共样式表
 ```
 使用wepy框架后目录结构：
 ```
 project
-    src
-        pages
-            index.wpy
-            log.wpy
-        app.wpy
+└── src
+    ├── pages
+    |   ├── index.wpy    index 页面配置、结构、样式、逻辑
+    |   └── log.wpy      log 页面配置、结构、样式、逻辑
+    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
 ```
 
 ### 5. 默认使用babel编译，支持ES6/7的一些新特性。
@@ -241,16 +245,17 @@ async onLoad() {
 ```
 
 在同时并发10个request请求测试时：
-不使用wepy:
 
-![2 small](https://cloud.githubusercontent.com/assets/2182004/20554651/5185f740-b198-11e6-88f8-45e359090dc3.png)
-![3 small](https://cloud.githubusercontent.com/assets/2182004/20554886/c30e802a-b199-11e6-927d-08cd4e5ed0b0.png)
+不使用wepy:
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554651/5185f740-b198-11e6-88f8-45e359090dc3.png" alt="2 small">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554886/c30e802a-b199-11e6-927d-08cd4e5ed0b0.png" alt="2 small">
+</p>
 
 使用wepy后：
-
-![4 small](https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png)
-
-
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png">
+</p>
 
 ## 进阶说明
 
@@ -319,9 +324,9 @@ if (prod) {
 
 **compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。持续开发...
 对应compiler请参考各自文档
->**sass：**sass编译配置，参见[这里](https://github.com/sass/node-sass)。
->**less：**less编译配置，参见[这里](http://lesscss.org/#using-less-usage-in-code)。
->**babel：**babel编译配置，参见[这里](http://babeljs.io/docs/usage/options/)。
+>**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
+>**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+>**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
 
@@ -333,7 +338,9 @@ if (prod) {
 
 `wpy`文件的编译过程过下：
 
-![5 small](https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png" alt="5 small">
+</p>
 
 一个`.wpy`文件分为三个部分：
 
@@ -353,14 +360,14 @@ if (prod) {
 
 | 标签 | type默认值 | type支持值 |
 | ---- | ---- | ---- |
-|style|`css`|`css`，`less`，`sass（待完成）`|
+|style|`css`|`css`，`less`，`sass（已完成）`|
 |template|`wxml`|`wxml`，`xml`，`html（待完成）`|
 |script|`js`|`js`，`TypeScript(待完成)`|
 
 ### script说明
 
 #### 程序入口app.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -387,7 +394,7 @@ export default class extends wepy.app {
 入口`app.wpy`继承自`wepy.app`，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原有的`app.json`，编译时会根据`config`生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供API。
 
 #### 页面index.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -425,7 +432,7 @@ export default class Index extends wepy.page {
 |其它|如`onLoad`，`onReady`等小程序事件以及其它自定义方法与属性|
 
 #### 组件com.wpy
-```
+```html
 <style lang="less">
 /** less **/
 </style>
@@ -449,22 +456,24 @@ export default class Com extends wepy.component {
 页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
 
 ### 组件
-小程序支持js[模块化](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107)引用，也支持[wxml模板](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161107)，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
+小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
 #### 组件引用
-当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](页面index.wpy)。
+当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
 
-![6 small](https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
+</p>
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
 
 #### 组件通信与交互
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
-```
+```js
 $this.$emit('some-event', 1, 2, 3, 4);
 ```
 
@@ -489,30 +498,32 @@ export default class Com extends wepy.component {
 1. **$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
-![7 small](https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png)
-
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
+</p>
 
 2. **$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
-![8 small](https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png)
-
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
+</p>
 
 3. **$invoke**
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
-```
+```js
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
 如果想在组件A中调用组件G的某个方法：
-```
+```js
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
 
 ### 第三方组件
 
-wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考[wepy-com-toast](https://github.com/wepyjs/wepy-com-toast)。
+wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
 ### 混合
@@ -525,7 +536,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 #### 默认式混合
 
 对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
-```
+```js
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -562,7 +573,7 @@ export default class Index extends wepy.mixin {
 
 对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
 
-```
+```js
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -606,7 +617,7 @@ export default class Index extends wepy.mixin {
 
 #### 小程序数据绑定方式
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
-```
+```js
 this.setData({title: 'this is title'});
 ```
 因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
@@ -627,12 +638,14 @@ setTimeout(() => {
 #### wepy脏数据检查流程
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
-![9 small](https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png)
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png">
+</p>
 
 ### 其它优化细节
 
 #### 1. wx.request 接收参数修改
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122)
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 ```javascript
 // 官方
 wx.request({
@@ -648,7 +661,7 @@ wx.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122)
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 ```javascript
 // 官方
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
@@ -684,8 +697,8 @@ events: {
 `this.setData(target, value)`
 `this.setData(object)`
 
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122)
-```
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
+```html
 // 官方
 <view> {{ message }} </view>
 
@@ -704,8 +717,8 @@ onLoad () {
 
 #### 4. 组件代替模板和模块
 
-点这里查看[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122)
-```
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
+```html
 // 官方
 <!-- item.wxml -->
 <template name="item">
