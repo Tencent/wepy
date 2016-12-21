@@ -35,8 +35,9 @@ export default {
                     break;
                 }
             }
-            if (stash.length)
+            if (stash.length) {
                 rst += str[i];
+            }
         }
         return rst;
     },
@@ -99,9 +100,13 @@ export default {
         match = match ? match[0] : undefined;
 
         rst.config = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
-        if (rst.config)
-            rst.config = JSON.parse(rst.config);
-
+        try {
+            if (rst.config) {
+                rst.config = new Function(`return ${rst.config}`)();
+            }
+        } catch (e) {
+            util.error(`${opath.dir}/${opath.base} config错误 \r\n 报错信息：${e}`, )
+        }
         return rst;
     },
 
@@ -185,4 +190,4 @@ export default {
             cScript.compile(wpy.script.type, wpy.script.code, type, opath);
         }
     }
-}
+};
