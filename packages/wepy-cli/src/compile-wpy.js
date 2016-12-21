@@ -102,8 +102,7 @@ export default {
         rst.config = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
         try {
             if (rst.config) {
-                const fn = new Function(`return ${rst.config}`);
-                rst.config = fn();
+                rst.config = new Function(`return ${rst.config}`)();
             }
         } catch (e) {
             util.error(`${opath.dir}/${opath.base} config错误 \r\n 报错信息：${e}`, )
