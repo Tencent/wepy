@@ -119,23 +119,25 @@ export default {
 
     updateBind (node, prefix, ignores = {}) {
 
-        let comid = this.getPrefix(prefix);
+        let comid = prefix ? this.getPrefix(prefix) : '';
 
-        if (node.nodeName === '#text') {
+        if (node.nodeName === '#text' && prefix) {
             if (node.data && node.data.indexOf('{{') > -1) {
                 node.replaceData(0, node.data.length, this.parseExp(node.data, prefix, ignores));
             }
         } else {
             [].slice.call(node.attributes || []).forEach((attr) => {
-                if (attr.value.indexOf('{{') > -1) {
-                    attr.value = this.parseExp(attr.value, prefix, ignores);
-                }
-                if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
-                    let index = node.getAttribute('wx:for-index') || 'index';
-                    let item = node.getAttribute('wx:for-item') || 'item';
-                    ignores[index] = true;
-                    ignores[item] = true;
-                    //attr.value = parseExp(attr.value, prefix, ignores);
+                if (prefix) {
+                    if (attr.value.indexOf('{{') > -1) {
+                        attr.value = this.parseExp(attr.value, prefix, ignores);
+                    }
+                    if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
+                        let index = node.getAttribute('wx:for-index') || 'index';
+                        let item = node.getAttribute('wx:for-item') || 'item';
+                        ignores[index] = true;
+                        ignores[item] = true;
+                        //attr.value = parseExp(attr.value, prefix, ignores);
+                    }
                 }
                 // bindtap="abc" => bindtap="prefix_abc"
                 if (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0) {
@@ -144,7 +146,8 @@ export default {
                         attr.value = funcInfo.name;
                         node.setAttribute('data-wepy-params', funcInfo.params.join('-'));
                     }
-                    attr.value = `${PREFIX}${comid}${JOIN}` + attr.value;
+                    if (prefix)
+                        attr.value = `${PREFIX}${comid}${JOIN}` + attr.value;
                 }
             });
             [].slice.call(node.childNodes || []).forEach((child) => {
@@ -154,23 +157,14 @@ export default {
         return node;
     },
 
-    toArray(elems) {
-        let rst = [];
-        for (let i = 0, len = elems.$$length; i < len; i++) {
-            rst.push(elems[i]);
-        }
-        return rst;
-    },
-
     compileXML (node, template, prefix) {
-        if (prefix) {
-            this.updateBind(node, prefix);
-        }
+        
+        this.updateBind(node, prefix);
 
-        let componentElements = this.toArray(node.getElementsByTagName('component'));
+        let componentElements = util.elemToArray(node.getElementsByTagName('component'));
         let customElements = [];
         Object.keys(template.components).forEach((com) => {
-            customElements = customElements.concat(this.toArray(node.getElementsByTagName(com)));
+            customElements = customElements.concat(util.elemToArray(node.getElementsByTagName(com)));
         });
 
         componentElements = componentElements.concat(customElements);
@@ -178,20 +172,17 @@ export default {
         componentElements.forEach((com) => {
             let comid, definePath, isCustom = false;
             if (com.nodeName === 'component') {
-                comid = com.getAttribute('id');
-                definePath = com.getAttribute('path');
-                if (comid && !definePath)
-                    definePath = comid;
-                if (!comid && definePath)
-                    definePath = comid;
+                comid = util.getComId(com);
+                definePath = util.getComPath(com);
                 if (!comid)
                     throw new Error('Unknow component id');
             } else {
                 isCustom = true;
-                comid = com.nodeName;
+                comid = util.getComId(com);
                 definePath = template.components[comid];
                 definePath = definePath.indexOf('.') === -1 ? definePath : path.resolve(template.src, '..' + path.sep + template.components[comid])
-            }   
+            }
+
             let src = util.findComponent(definePath, isCustom);
             if (!src) {
                 util.error('找不到组件：' + definePath, '错误');

@@ -121,39 +121,72 @@ export default {
         rst.script.type = rst.script.type || 'babel';
 
         // get config
-        let match = rst.script.code.match(/[\s\r\n]config\s*=[\s\r\n]*/);
-        match = match ? match[0] : undefined;
+        (() => {
+            let match = rst.script.code.match(/[\s\r\n]config\s*=[\s\r\n]*/);
+            match = match ? match[0] : undefined;
 
-        rst.config = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
-        try {
-            if (rst.config) {
-                rst.config = new Function(`return ${rst.config}`)();
+            rst.config = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
+            try {
+                if (rst.config) {
+                    rst.config = new Function(`return ${rst.config}`)();
+                }
+            } catch (e) {
+                util.output('错误', path.join(opath.dir, opath.base));
+                util.error(`解析config出错，报错信息：${e}\r\n${rst.config}`);
             }
-        } catch (e) {
-            util.output('错误', path.join(opath.dir, opath.base));
-            util.error(`解析config出错，报错信息：${e}\r\n${rst.config}`);
-        }
+        })();
 
         // get imports
-        let coms = {};
-        rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/]*)['"]/ig, (match, com, path) => {
-            coms[com] = path;
-        });
+        (() => {
+            let coms = {};
+            rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/]*)['"]/ig, (match, com, path) => {
+                coms[com] = path;
+            });
 
-        match = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
-        match = match ? match[0] : undefined;
-        let components = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
-        let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com]}";`).join('\r\n');
-        try {
-            if (components) {
-                rst.template.components = new Function(`${vars}\r\nreturn ${components}`)();
-            } else {
-                rst.template.components = {};
+            let match = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
+            match = match ? match[0] : undefined;
+            let components = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
+            let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com]}";`).join('\r\n');
+            try {
+                if (components) {
+                    rst.template.components = new Function(`${vars}\r\nreturn ${components}`)();
+                } else {
+                    rst.template.components = {};
+                }
+            } catch (e) {
+                util.output('错误', path.join(opath.dir, opath.base));
+                util.error(`解析components出错，报错信息：${e}\r\n${vars}\r\nreturn ${components}`);
             }
-        } catch (e) {
-            util.output('错误', path.join(opath.dir, opath.base));
-            util.error(`解析components出错，报错信息：${e}\r\n${vars}\r\nreturn ${components}`);
-        }
+        })();
+
+
+        // get props
+        (() => {
+            let coms = Object.keys(rst.template.components);
+            let elems = [];
+            let props = {};
+            coms.concat('component').forEach((com) => {
+                elems = elems.concat(util.elemToArray(xml.getElementsByTagName(com)));
+            });
+
+            elems.forEach((elem) => {
+                let comid = util.getComId(elem);
+                [].slice.call(elem.attributes || []).forEach((attr) => {
+                    if (attr.name !== 'id' && attr.name !== 'path') {
+                        if (!props[comid])
+                            props[comid] = {};
+                        props[comid][attr.name] = attr.value;
+                    }
+                });
+            });
+
+            if (Object.keys(props).length) {
+                rst.script.code =rst.script.code.replace(/[\s\r\n]components\s*=[\s\r\n]*/, (match, item, index) => {
+                    return `$props = ${JSON.stringify(props)};\r\n${match}`;
+                });
+            }
+        })();
+        
         return rst;
     },
 

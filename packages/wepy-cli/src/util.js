@@ -77,6 +77,27 @@ export default {
             });
         });
     },
+    elemToArray(elems) {
+        let rst = [];
+        for (let i = 0, len = elems.$$length; i < len; i++) {
+            rst.push(elems[i]);
+        }
+        return rst;
+    },
+    getComId(elem) {
+        let tagName = elem.nodeName;
+        let path = elem.getAttribute('path');
+        let id = elem.getAttribute('id');
+        if (tagName !== 'component')
+            return tagName;
+        if (id)
+            return id;
+        if (path && !id)
+            return path;
+    },
+    getComPath(elem) {
+        return elem.getAttribute('path') || id;
+    },
     findComponent(com, isRealPath) {
         let wpyExt = cache.getExt();
         let comPath = isRealPath ? com : path.join(this.currentDir, cache.getSrc(), 'components', com);
