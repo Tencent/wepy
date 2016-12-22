@@ -59,6 +59,30 @@ export default {
     },
 
     resolveWpy (xml, opath) {
+        let filepath;
+
+        if (arguments.length === 1) {
+
+            if (typeof(xml) === 'object' && xml.dir) {
+                opath = xml;
+                filepath = path.join(xml.dir, xml.base);
+            } else {
+                opath = path.parse(xml);
+                filepath = xml;
+            }
+            let content = util.readFile(filepath);
+
+            if (content === null) {
+                util.error('打开文件失败: ' + filepath)
+                return;
+            }
+            let startlen = content.indexOf('<script') + 7;
+            while(content[startlen++] !== '>') {
+                // do nothing;
+            }
+            content = util.encode(content, startlen, content.indexOf('</script>') - 1);
+            xml = this.createParser().parseFromString(content);
+        }
 
         let rst = {style: {code: ''}, template: {code: ''}, script: {code: ''}};
 
@@ -96,6 +120,7 @@ export default {
         rst.template.type = rst.template.type || 'wxml';
         rst.script.type = rst.script.type || 'babel';
 
+        // get config
         let match = rst.script.code.match(/[\s\r\n]config\s*=[\s\r\n]*/);
         match = match ? match[0] : undefined;
 
@@ -105,7 +130,29 @@ export default {
                 rst.config = new Function(`return ${rst.config}`)();
             }
         } catch (e) {
-            util.error(`${opath.dir}/${opath.base} config错误 \r\n 报错信息：${e}`, )
+            util.output('错误', path.join(opath.dir, opath.base));
+            util.error(`解析config出错，报错信息：${e}\r\n${rst.config}`);
+        }
+
+        // get imports
+        let coms = {};
+        rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/]*)['"]/ig, (match, com, path) => {
+            coms[com] = path;
+        });
+
+        match = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
+        match = match ? match[0] : undefined;
+        let components = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
+        let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com]}";`).join('\r\n');
+        try {
+            if (components) {
+                rst.template.components = new Function(`${vars}\r\nreturn ${components}`)();
+            } else {
+                rst.template.components = {};
+            }
+        } catch (e) {
+            util.output('错误', path.join(opath.dir, opath.base));
+            util.error(`解析components出错，报错信息：${e}\r\n${vars}\r\nreturn ${components}`);
         }
         return rst;
     },
@@ -127,17 +174,6 @@ export default {
         let dist = cache.getDist();
         let wpyExt = cache.getExt();
         let pages = cache.getPages();
-        let content = util.readFile(filepath);
-        if (content === null) {
-            throw new Error('打开文件失败: ' + filepath);
-            return;
-        }
-        let startlen = content.indexOf('<script') + 7;
-        while(content[startlen++] !== '>') {
-            // do nothing;
-        }
-        content = util.encode(content, startlen, content.indexOf('</script>') - 1);
-        let doc = this.createParser().parseFromString(content);
 
         let type = '';
 
@@ -158,7 +194,7 @@ export default {
             util.log('Other: ' + relative, '编译');
         }
 
-        let wpy = this.resolveWpy(doc, opath);
+        let wpy = this.resolveWpy(opath);
 
         if (type === 'app') { // 第一个编译
             cache.setPages(wpy.config.pages.map(v => path.join(src, v + wpyExt)));
@@ -183,7 +219,8 @@ export default {
         }
 
         if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
-            cTemplate.compile(wpy.template.type, wpy.template.code, opath);
+            //cTemplate.compile(wpy.template.type, wpy.template.code, opath);
+            cTemplate.compile(wpy.template);
         }
 
         if (wpy.script.code) {

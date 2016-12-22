@@ -2,6 +2,7 @@ import {DOMParser, DOMImplementation} from 'xmldom';
 import path from 'path';
 import util from './util';
 import cache from './cache';
+import cWpy from './compile-wpy';
 
 import loader from './loader';
 
@@ -153,35 +154,59 @@ export default {
         return node;
     },
 
-    compileXML (node, prefix) {
+    toArray(elems) {
+        let rst = [];
+        for (let i = 0, len = elems.$$length; i < len; i++) {
+            rst.push(elems[i]);
+        }
+        return rst;
+    },
+
+    compileXML (node, template, prefix) {
         if (prefix) {
             this.updateBind(node, prefix);
         }
 
-        let componentElements = node.getElementsByTagName('component');
-        for (let i = 0, len = componentElements.$$length; i < len; i++) {
-            let com = componentElements[i];
-            let comid = com.getAttribute('id');
-            let definePath = com.getAttribute('path');
-            if (comid && !definePath)
-                definePath = comid;
-            if (!comid && definePath)
-                definePath = comid;
-            if (!comid)
-                throw new Error('Unknow component id');
+        let componentElements = this.toArray(node.getElementsByTagName('component'));
+        let customElements = [];
+        Object.keys(template.components).forEach((com) => {
+            customElements = customElements.concat(this.toArray(node.getElementsByTagName(com)));
+        });
 
-            let src = util.findComponent(definePath);
-            if (!src) {
-                util.log('找不到组件：' + definePath, '错误');
+        componentElements = componentElements.concat(customElements);
+
+        componentElements.forEach((com) => {
+            let comid, definePath, isCustom = false;
+            if (com.nodeName === 'component') {
+                comid = com.getAttribute('id');
+                definePath = com.getAttribute('path');
+                if (comid && !definePath)
+                    definePath = comid;
+                if (!comid && definePath)
+                    definePath = comid;
+                if (!comid)
+                    throw new Error('Unknow component id');
             } else {
-                node.replaceChild(this.compileXML(this.getTemplate(src), prefix ? `${prefix}$${comid}` : `${comid}`), com);    
+                isCustom = true;
+                comid = com.nodeName;
+                definePath = template.components[comid];
+                definePath = definePath.indexOf('.') === -1 ? definePath : path.resolve(template.src, '..' + path.sep + template.components[comid])
+            }   
+            let src = util.findComponent(definePath, isCustom);
+            if (!src) {
+                util.error('找不到组件：' + definePath, '错误');
+            } else {
+                let wpy = cWpy.resolveWpy(src);
+                node.replaceChild(this.compileXML(this.getTemplate(src), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`), com);    
             }
-
-        };
+        });
         return node;
     },
 
-    compile (lang, content, opath) {
+    compile (template) {
+        let lang = template.type;
+        let content = template.code;
+
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
@@ -198,8 +223,8 @@ export default {
         compiler(content, config.compilers[lang] || {}).then(content => {
 
             let node = new DOMParser().parseFromString(content);
-            node = this.compileXML(node);
-            let target = util.getDistPath(opath, 'wxml', src, dist);
+            node = this.compileXML(node, template);
+            let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'wxml',

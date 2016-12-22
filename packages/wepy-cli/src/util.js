@@ -77,9 +77,9 @@ export default {
             });
         });
     },
-    findComponent(com) {
+    findComponent(com, isRealPath) {
         let wpyExt = cache.getExt();
-        let comPath = path.join(this.currentDir, cache.getSrc(), 'components', com);
+        let comPath = isRealPath ? com : path.join(this.currentDir, cache.getSrc(), 'components', com);
         let src = '';
         if (this.isFile(comPath + wpyExt)) {
             src = comPath + wpyExt;

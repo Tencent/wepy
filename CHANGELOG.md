@@ -1,3 +1,8 @@
+## 1.3.3 (2016-12-22)
+* 修复了config使用单引号导致解析出错的问题。感谢[@Lxxyx]()
+* 支持自定义组件标签，`<component id="mycom" path="mycom"></component>` 优化为 `<mycom></mycom>`。
+
+
 ## 1.3.2 (2016-12-19)
 * 修复wx:else, scroll-x等boolean属性报warning的[问题](https://github.com/wepyjs/wepy/issues/5)。
 * 修复了组件method不存在时，mixin的method不会被注册的BUG。感谢[@huike1989]()。
