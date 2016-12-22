@@ -7,10 +7,10 @@
 <template>
     <view class="panel">
         <label class="checkbox">
-            <button bindtap="change" size="mini">{{toggle ? '显示': '隐藏'}}</button>
+            <button bindtap="change" size="mini">{{toggle ? '显示': '隐藏'}}{{pannelNum}}</button>
         </label>
         <view hidden="{{!toggle}}">
-            子组件: <component id="counter1" path="counter"/>
+            子组件: <counter1 v-bind:num="pannelNum"></counter1>
         </view>
     </view>
 </template>
@@ -19,7 +19,15 @@
     import Counter from './counter';
 
     export default class Panel extends wepy.component {
-
+        props = {
+            pannelNum: {
+                type: [Number, String],
+                coerce: function (v) {
+                    return +v;
+                },
+                default: 500
+            }
+        };
         components = {
             counter1: Counter,
         };

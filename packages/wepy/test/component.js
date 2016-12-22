@@ -12,8 +12,11 @@ var Index = require('./fake/page');
 describe('component.js', () => {
     
 
+    let index = new Index();
+
     let com = new ComA();
-    com.init(wxfake.getWxPage());
+    com.init(wxfake.getWxPage(), index, index);
+
 
     com.prefix = '$coma';
 

@@ -20,9 +20,17 @@
     //import abc from 'abc';
 
     export default class Counter extends wepy.component {
-
+        props = {
+            num: {
+                type: [Number, String],
+                coerce: function (v) {
+                    return +v;
+                },
+                default: 50
+            }
+        };
+        
         data = {
-            num: 0
         };
         events = {
             'index-broadcast': ($event, ...args) => {
@@ -42,9 +50,5 @@
                 console.log(this.name + ' minus tap');
             }
         };
-
-        onLoad () {
-            this.num = 50;
-        }
     }
 </script>

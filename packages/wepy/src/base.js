@@ -90,6 +90,8 @@ export default {
             if(name !== 'constructor')
                 config[name] = app.constructor.prototype[name];
         });
+
+        config.$app = app;
         return config;
     },
     $createPage (pageClass) {
@@ -97,6 +99,7 @@ export default {
         let page = new pageClass();
         page.initMixins();
         let self = this;
+        config.$page = page;
 
         config.onLoad = function (...args) {
 

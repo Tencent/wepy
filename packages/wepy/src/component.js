@@ -41,6 +41,9 @@ const Props = {
                     }
                 } else
                     rst[p] = props[p];
+
+                if (rst[p].type && toString.call(rst[p].type) !== '[object Array]')
+                    rst[p].type = [rst[p].type];
             });
         }
         return rst;
@@ -51,9 +54,7 @@ const Props = {
             if (!props[key].type) {
                 valid = true;
             } else {
-                props[key].type.forEach(t => {
-                    valid = valid || this.check(t, val);
-                });
+                return props[key].type.some(t => this.check(t, val));
             }
         }
         return valid;
@@ -111,7 +112,7 @@ export default class {
             for (key in props) {
                 if ($parent && $parent.$props && $parent.$props[this.name]) {
                     val = $parent.$props[this.name][key];
-                    binded = $parent.$props[this.name][`v-bind:${key}`]
+                    binded = $parent.$props[this.name][`v-bind:${key}`];
                     if (binded) {
                         val = $parent[binded];
                         if (!this.$mappingProps[key])
@@ -159,7 +160,6 @@ export default class {
     }
 
     onLoad () {
-        //console.log('component ' + this.name + ' onload');
     }
 
     setData (k, v) {
@@ -274,20 +274,6 @@ export default class {
                 fn.apply(com, [$evt].concat(args));
             }
             com = com.$parent;
-        }
-    }
-
-    $applyAll () {
-
-        if (typeof(fn) === 'function') {
-            fn.call(this);
-            this.$apply();
-        } else {
-            if (this.$$phase) {
-                this.$$phase = '$apply';
-            } else {
-                this.$digest();
-            }
         }
     }
 

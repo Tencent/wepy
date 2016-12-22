@@ -1,6 +1,8 @@
 ## 1.3.3 (2016-12-22)
 * 修复了config使用单引号导致解析出错的问题。感谢[@Lxxyx]()
 * 支持自定义组件标签，`<component id="mycom" path="mycom"></component>` 优化为 `<mycom></mycom>`。
+* 新增props传值功能，支持静态传值如 `num="50"` 或者绑定传值如 `v-bind:num="parentnum"`，使用方式基于与[Vue Props传值](https://vuejs.org.cn/guide/components.html#Props)一致。
+* 修复了组件支持事件传参，但页面不支持的问题。
 
 
 ## 1.3.2 (2016-12-19)

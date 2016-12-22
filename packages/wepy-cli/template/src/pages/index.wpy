@@ -53,6 +53,7 @@
             <text class="testinfo">{{normalTitle}}</text>
             <text class="testinfo">{{setTimeoutTitle}}</text>
             <text class="testinfo">{{mixin}}</text>
+            <text class="testinfo" bindtap="plus">{{mynum}}</text>
         </view>
         <view class="testarea">
             <view class="testtitle">测试第三方组件</view>
@@ -77,30 +78,31 @@
             <view class="testtitle">测试组件: </view>
             <text class="testcounter">计数组件1: </text>
             <view class="counterview">
-                <component id="counter1" path="counter"/>
+                <counter1 />
             </view>
 
             <text class="testcounter">计数组件2: </text>
 
             <view class="counterview">
-                <component id="counter2" path="counter"/>
+                <counter2 />
             </view>
 
         </view>
 
         <view class="testarea">
             <view class="testtitle">测试组件嵌套: </view>
-            <component id="panel" />
+            <panel v-bind:pannelNum="mynum" />
         </view>
 
 
 
         <view class="testarea">
             <view class="testtitle">测试列表: </view>
-            <component id="list" />
+            <list />
         </view>
 
-        <component id="toast" path="wepy-com-toast" />
+
+        <toast />
 
     </view>
 </template>
@@ -130,6 +132,7 @@
         mixins = [testMixin];
 
         data = {
+            mynum: 20,
             userInfo: {
                 nickName: '加载中...'
             },
@@ -139,6 +142,9 @@
             netrst: ''
         };
         methods = {
+            plus () {
+                this.mynum++;
+            },
             toast () {
                 let promise = this.$invoke('toast', 'show', {
                     title: '自定义标题',
