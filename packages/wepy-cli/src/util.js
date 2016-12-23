@@ -98,19 +98,16 @@ export default {
     getComPath(elem) {
         return elem.getAttribute('path') || this.getComId(elem);
     },
-    findComponent(com, isRealPath) {
+    findComponent(com) {
         let wpyExt = cache.getExt();
-        let comPath = isRealPath ? com : path.join(this.currentDir, cache.getSrc(), 'components', com);
+
         let src = '';
-        if (this.isFile(comPath + wpyExt)) {
-            src = comPath + wpyExt;
-        } else if (this.isFile(comPath + '/index' + wpyExt)) {
-            src = comPath + '/index' + wpyExt;
-        } else if (this.isFile(comPath + '/' + com + wpyExt)) {
-            src = comPath + '/' + com + wpyExt;
-        }
-        if (!src) {
-            comPath = path.join(this.currentDir, 'node_modules', com);
+        if (com.indexOf(path.sep) !== -1) {
+            if (this.isFile(com + wpyExt)) {
+                src = com + wpyExt;
+            }
+        } else {
+            let comPath = path.join(this.currentDir, 'node_modules', com);
             if (this.isDir(comPath)) {
                 let pkg = this.readFile(path.join(comPath, 'package.json'));
                 try {
@@ -119,6 +116,15 @@ export default {
                     pkg = null;
                 }
                 src = path.join(comPath, pkg.main);
+            } else {
+                let comPath = path.join(this.currentDir, cache.getSrc(), 'components', com);
+                if (this.isFile(comPath + wpyExt)) {
+                    src = comPath + wpyExt;
+                } else if (this.isFile(comPath + '/index' + wpyExt)) {
+                    src = comPath + '/index' + wpyExt;
+                } else if (this.isFile(comPath + '/' + com + wpyExt)) {
+                    src = comPath + '/' + com + wpyExt;
+                }
             }
         }
         return src;

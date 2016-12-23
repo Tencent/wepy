@@ -41,6 +41,9 @@ export default {
         }
         return rst;
     },
+    /*
+    Use components instead, unused functions
+     */
     resolveRelation (xml) {
         let requires = [];
         let matchs = xml.match(/<component[^/>]*\/>/ig);
@@ -111,9 +114,11 @@ export default {
             }
         });
 
+        /*
+        Use components instead
         if (rst.template.code) {
             rst.template.requires = this.resolveRelation(rst.template.code);
-        }
+        }*/
 
         // default type
         rst.style.type = rst.style.type || 'css';
@@ -240,13 +245,17 @@ export default {
         }
 
         if (wpy.style.code || wpy.template.requires.length) {
-            /*if (wpy.style.type === 'less') 
-                cLess.compile(wpy.style.code, wpy.template.requires, opath);
-            if (wpy.style.type === 'sass') 
-                cSass.compile(wpy.style.code, wpy.template.requires, opath);
-            if (wpy.style.type === 'css')
-                cCss.compile(wpy.style.code, wpy.template.requires, opath);*/
-            cStyle.compile(wpy.style.type, wpy.style.code, wpy.template.requires, opath);
+            let requires = [];
+            let k, tmp;
+            for (k in wpy.template.components) {
+                tmp = wpy.template.components[k];
+                if (tmp.indexOf('.') === -1) {
+                    requires.push(tmp); // 第三方组件
+                } else {
+                    requires.push(path.join(opath.dir, wpy.template.components[k]));
+                }
+            }
+            cStyle.compile(wpy.style.type, wpy.style.code, requires, opath);
         } else {
             this.remove(opath, 'wxss');
         }

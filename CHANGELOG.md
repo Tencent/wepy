@@ -1,6 +1,9 @@
-## 1.3.4 (2016-12-23)
+## 1.3.5 (2016-12-23)
 * 修复了升级1.3.3导致旧项目报`id is not defined`的错误。
 * 发布过程中加入了LF强制转换逻辑，确保MAC在更新后不会出现`env: node\r: No such file or directory`的错误。
+* 修复了用`<component>`时，导致样式丢失的问题。
+* 修复了用`<component>`时，props不工作的问题。
+* 更新了`wepy-wechat-demo`使用自定义component与props，并添加toast组件。
 
 ## 1.3.3 (2016-12-22)
 * 修复了config使用单引号导致解析出错的问题。感谢[@Lxxyx]()
