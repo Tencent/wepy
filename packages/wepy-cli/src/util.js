@@ -96,7 +96,7 @@ export default {
             return path;
     },
     getComPath(elem) {
-        return elem.getAttribute('path') || id;
+        return elem.getAttribute('path') || this.getComId(elem);
     },
     findComponent(com, isRealPath) {
         let wpyExt = cache.getExt();

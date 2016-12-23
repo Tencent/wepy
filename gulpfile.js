@@ -1,6 +1,7 @@
 var path    = require("path");
 var watch = require("gulp-watch");
 var newer = require('gulp-newer');
+var lec = require('gulp-line-ending-corrector');
 var plumber = require("gulp-plumber");
 var babel   = require("gulp-babel");
 var gutil   = require("gulp-util");
@@ -9,6 +10,7 @@ var gulp    = require("gulp");
 var chalk   = require("chalk");
 
 var scripts = "./packages/*/src/**/*.js";
+var bins = "./packages/*/bin/**/*";
 var srcEx, libFragment;
 
 
@@ -26,7 +28,11 @@ var dest = "packages";
 
 gulp.task("default", ["build"]);
 
-gulp.task("build", function () {
+gulp.task('lec', function () {
+    return gulp.src(bins, { base: "./" }).pipe(lec({eolc: 'LF', encoding:'utf8'})).pipe(gulp.dest('.'));
+});
+
+gulp.task("build", ['lec'], function () {
   return gulp.src(scripts)
     .pipe(plumber({
         errorHandler: function (err) {
