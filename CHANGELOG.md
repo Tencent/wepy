@@ -1,3 +1,7 @@
+## 1.3.4 (2016-12-23)
+* 修复了升级1.3.3导致旧项目报`id is not defined`的错误。
+* 发布过程中加入了LF强制转换逻辑，确保MAC在更新后不会出现`env: node\r: No such file or directory`的错误。
+
 ## 1.3.3 (2016-12-22)
 * 修复了config使用单引号导致解析出错的问题。感谢[@Lxxyx]()
 * 支持自定义组件标签，`<component id="mycom" path="mycom"></component>` 优化为 `<mycom></mycom>`。
