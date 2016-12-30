@@ -1,5 +1,6 @@
 import path from 'path';
 import chokidar from 'chokidar';
+import compareVersions from 'compare-versions';
 
 import cache from './cache';
 import util from './util';
@@ -8,6 +9,8 @@ import cStyle from './compile-style';
 import cScript from './compile-script';
 
 import loader from './loader';
+
+
 
 
 let watchReady = false;
@@ -124,6 +127,17 @@ export default {
     checkPlugin (plugins = {}) {
         return loader.loadPlugin(plugins);
     },
+
+    wepyUpdate(required = '1.3.6') {
+        let pkgfile = path.join(util.currentDir, 'node_modules', 'wepy', 'package.json');
+        let pkg;
+        try {
+            pkg = JSON.parse(util.readFile(pkgfile));
+        } catch (e) {
+            pkg = {version: '0.0.0'};
+        }
+        return compareVersions(required, pkg.version) === 1;
+    },
     
     build (config) {
         let wepyrc = util.getConfig();
@@ -133,6 +147,17 @@ export default {
         }
         config.noCache = config.rawArgs.indexOf('--no-cache') !== -1;
 
+        if (this.wepyUpdate()) { // 需要更新wepy版本
+            util.log('检测到wepy版本不符合要求，正在尝试更新，请稍等。', '信息');
+            util.exec(`npm install wepy --save`).then(d => {
+                util.log(`已完成更新，重新启动编译。`, '完成');
+                this.build(config);
+            }).catch(e => {
+                util.log(`安装wepy失败，请尝试运行命令 "npm install wepy --save" 进行安装。`, '错误');
+                console.log(e);
+            });
+            return;
+        }
         if (config.noCache) {
             cache.clearBuildCache();
         }

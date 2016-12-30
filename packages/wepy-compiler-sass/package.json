@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-sass",
-  "version": "1.3.6",
+  "version": "1.3.5",
   "description": "wepy compile sass",
   "main": "lib/index.js",
   "scripts": {

@@ -97,7 +97,6 @@ export default {
                 });
             })
             xml = this.createParser().parseFromString(content);
-
         }
 
         let rst = {style: {code: ''}, template: {code: ''}, script: {code: ''}};
@@ -186,7 +185,6 @@ export default {
             coms.concat('component').forEach((com) => {
                 elems = elems.concat(util.elemToArray(xml.getElementsByTagName(com)));
             });
-            debugger;
 
             elems.forEach((elem) => {
                 let comid = util.getComId(elem);

@@ -64,5 +64,14 @@
         ]
       }
     }
+  },
+  "dependencies": {
+    "chokidar": "^1.6.1",
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "mkdirp": "^0.5.1",
+    "update-notifier": "^1.0.2",
+    "xmldom": "^0.1.22",
+    "compare-versions": "^3.0.0"
   }
 }
