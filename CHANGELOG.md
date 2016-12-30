@@ -1,4 +1,4 @@
-## 1.3.7 (2016-12-30)
+## 1.3.8 (2016-12-30)
 * 修改组件原属性`name`，`prefix`为`$name`，`$prefix`。防止命名冲突的问题，参见[Issue](https://github.com/wepyjs/wepy/issues/8)。
 * 修复了编译过程中的日志错误的问题。
 * 简化语法，可以使用`:myprop`代替`v-bind:myprop`。
