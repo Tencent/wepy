@@ -33,7 +33,7 @@ describe('component.js', () => {
     it('new', () => {
         assert.strictEqual(com instanceof ComA, true, 'create a component instance');
 
-        assert.strictEqual(com.isComponent, true, 'component is not a component');
+        assert.strictEqual(com.$isComponent, true, 'component is not a component');
 
     });
 
@@ -120,7 +120,7 @@ describe('component.js', () => {
         }
         let childCom = new ComAA();
         let childchildCom = new ComAA();
-        childCom.prefix = '$coma$comaa$'
+        childCom.$prefix = '$coma$comaa$'
         
         childCom.customMethod = function (a, b, c) {
             assert.strictEqual(a + b + c, 1 + 2 + 3, 'test invoke params');
@@ -138,7 +138,7 @@ describe('component.js', () => {
                 assert.strictEqual(a + b + c, 1 + 2 + 3, 'test invoke params');
             }
         }
-        childchildCom.prefix = '$coma$comaa$comaaa';
+        childchildCom.$prefix = '$coma$comaa$comaaa';
         childchildCom.events = childCom.events;
         com.$com = {comaa: childCom, comab: childCom};
 

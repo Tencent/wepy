@@ -43,9 +43,15 @@ module.exports = class Com extends wepy.component {
             comprop5: {
                 default: 60
             },
-            comprop6: {
-                type: [Number],
+            onceProp: {
                 default: 70
+            },
+            syncProp: {
+                default: 70
+            },
+            twoWayProp: {
+                default: 70,
+                twoWay: true
             },
             comprop10: {
                 type: [Boolean, Function, Object, Array, Car],
@@ -59,7 +65,7 @@ module.exports = class Com extends wepy.component {
         };
 
         this.$props = {
-            comaa: { 'v-bind:comaaprop': 'comprop6' }
+            comaa: { 'v-bind:comaaprop.sync': 'twoWayProp' }
         };
     }
 

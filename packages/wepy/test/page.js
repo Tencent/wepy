@@ -42,25 +42,47 @@ describe('page.js', () => {
 
         assert.strictEqual(page.$com.coma.comprop5, 60, 'test prop default value');
         
-        assert.strictEqual(page.$com.coma.comprop6, 70, 'test prop validate');
+        assert.strictEqual(page.$com.coma.onceProp, '50', 'test once prop validate');
+        assert.strictEqual(page.$com.coma.syncProp, '50', 'test sync prop validate');
+        assert.strictEqual(page.$com.coma.twoWayProp, '50', 'test two way prop validate');
 
-        page.$com.coma.comprop6 = 80;
+        page.$com.coma.onceProp = 80;
         page.$com.coma.$apply();
 
-        assert.strictEqual(page.testValid, 80, 'child prop changed will trigger parent data changed');
+        assert.strictEqual(page.testValid, '50', 'child prop.once changed will not change parent props');
 
         page.testValid = 90;
         page.$apply();
 
-        assert.strictEqual(page.$com.coma.comprop6, 90, 'parent prop changed will trigger child data changed');
+
+        assert.strictEqual(page.$com.coma.onceProp, 80, 'parent prop.once changed will not change child props');
+        assert.strictEqual(page.$com.coma.twoWayProp, '50', 'parent prop.once changed will not change child props, even child prop is two way');
+
+        
+        assert.strictEqual(page.$com.coma.syncProp, 90, 'parent prop.sync changed will change child props');
+
+        page.$com.coma.syncProp = 91;
+        page.$com.coma.$apply();
+
+        assert.strictEqual(page.testValid, 90, 'child prop changed will not change parent prop.sync');
 
 
-        assert.strictEqual(page.$com.coma.$com.comaa.comaaprop, 90, 'prop goes to all children');
+        page.$com.coma.twoWayProp = 92;
+        page.$com.coma.$apply();
+        assert.strictEqual(page.testValid, 92, 'child two way prop changed will change parent prop even it is once prop');
+
+        assert.strictEqual(page.$com.coma.syncProp, 92, 'sync prop changed, because parent prop changed');
+
+
+
+
+
+        assert.strictEqual(page.$com.coma.$com.comaa.comaaprop, 92, 'prop goes to all children');
 
         page.$com.coma.$com.comaa.comaaprop = 100;
         page.$com.coma.$com.comaa.$apply();
 
-        assert.strictEqual(page.$com.coma.comprop6, 100, 'parent prop changed will trigger child data changed');
+        assert.strictEqual(page.$com.coma.twoWayProp, 100, 'parent prop changed will trigger child data changed');
         assert.strictEqual(page.testValid, 100, 'child prop changed will trigger parent data changed');
 
     });

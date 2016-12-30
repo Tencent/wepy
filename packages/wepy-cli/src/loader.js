@@ -61,7 +61,7 @@ export default {
         if (!relativeMod) {
             relativeMod = new Module;
 
-            let filename = path.join(relative, '.babelrc');
+            let filename = path.join(relative, './');
             relativeMod.id = filename;
             relativeMod.filename = filename;
 

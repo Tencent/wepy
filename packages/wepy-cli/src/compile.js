@@ -140,7 +140,7 @@ export default {
             util.exec(`npm info ${loader.missingNPM}`, true).then(d => {
                 util.log('检测到有效NPM包资源，正在尝试安装，请稍等。', '信息');
                 util.exec(`npm install ${loader.missingNPM} --save-dev`).then(d => {
-                    util.log('已完成安装 ${loader.missingNPM}，重新启动编译。', '完成');
+                    util.log(`已完成安装 ${loader.missingNPM}，重新启动编译。`, '完成');
                     this.build(config);
                 }).catch(e => {
                     util.log(`安装插件失败：${loader.missingNPM}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');

@@ -16,9 +16,10 @@ export default {
     createParser () {
         return new DOMParser({errorHandler: {
             warning (x) {
-                if (x.indexOf('missed value!!') === -1) {
-                    util.warning(x);                    
-                }
+                if (x.indexOf('missed value!!') > -1) {
+                    // ignore warnings
+                } else 
+                    util.warning(x);
             }
         }}); 
     },
@@ -84,7 +85,19 @@ export default {
                 // do nothing;
             }
             content = util.encode(content, startlen, content.indexOf('</script>') - 1);
+
+            // replace :attr to v-bind:attr
+            content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+                return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => {
+                    if (type === '.once' || type === '.sync') {
+                    }
+                    else
+                        type = '.once';
+                    return ` v-bind:${name}${type}=`;
+                });
+            })
             xml = this.createParser().parseFromString(content);
+
         }
 
         let rst = {style: {code: ''}, template: {code: ''}, script: {code: ''}};
@@ -173,6 +186,7 @@ export default {
             coms.concat('component').forEach((com) => {
                 elems = elems.concat(util.elemToArray(xml.getElementsByTagName(com)));
             });
+            debugger;
 
             elems.forEach((elem) => {
                 let comid = util.getComId(elem);

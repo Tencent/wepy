@@ -1,3 +1,11 @@
+## 1.3.6 (2016-12-30)
+* 修改组件原属性`name`，`prefix`为`$name`，`$prefix`。防止命名冲突的问题，参见[Issue](https://github.com/wepyjs/wepy/issues/8)。
+* 修复了编译过程中的日志错误的问题。
+* 简化语法，可以使用`:myprop`代替`v-bind:myprop`。
+* 使用props时，添加了`once`和`sync`关键字，`:myprop.once="data"`：当父组件data改变时，不会修改子组件的myprop的值，除非将`once`改为`sync`关键字。默认为`once`
+* 子组件申明props时，添加了`twoWay`选项，为false时，子组件数据变更不影响父组件。为true时，同步到父组件。
+* 1.3.6版本后props默认父子互相不影响，除非加上`sync`和`twoWay`的属性。
+
 ## 1.3.5 (2016-12-23)
 * 修复了升级1.3.3导致旧项目报`id is not defined`的错误。
 * 发布过程中加入了LF强制转换逻辑，确保MAC在更新后不会出现`env: node\r: No such file or directory`的错误。

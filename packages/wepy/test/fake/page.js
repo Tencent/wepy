@@ -28,12 +28,14 @@ module.exports = class Index extends wepy.page {
 
         this.$props = {
             coma: {
-                'v-bind:comprop1': 'c',
+                'v-bind:comprop1.once': 'c',
                 'comprop2': 'static props',
-                'v-bind:comprop4': 'objProp',
-                'v-bind:comprop6': 'testValid',
-                'v-bind:comprop3': 'stringNumber',
-                'v-bind:comprop10': 'a'
+                'v-bind:comprop4.once': 'objProp',
+                'v-bind:onceProp.once': 'testValid',
+                'v-bind:syncProp.sync': 'testValid',
+                'v-bind:twoWayProp.once': 'testValid',
+                'v-bind:comprop3.once': 'stringNumber',
+                'v-bind:comprop10.once': 'a'
             }
         };
     }

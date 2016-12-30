@@ -74,8 +74,8 @@ export default class {
     $com = {};
     $mixins = [];
 
-    isComponent = true;
-    prefix = '';
+    $isComponent = true;
+    $prefix = '';
 
     $mappingProps = {};
 
@@ -83,7 +83,7 @@ export default class {
         let self = this;
 
         this.$wxpage = $wxpage;
-        if (this.isComponent) {
+        if (this.$isComponent) {
             this.$root = $root || this.$root;
             this.$parent = $parent || this.$parent;
         }
@@ -101,23 +101,27 @@ export default class {
         if (this.$props) { // generate mapping Props
             for (key in this.$props) {
                 for (binded in this.$props[key]) {
-                    if (!this.$mappingProps[this.$props[key][binded]])
-                        this.$mappingProps[this.$props[key][binded]] = {};
-                    this.$mappingProps[this.$props[key][binded]][key] = binded.replace(/^v-bind:/, '');
+                    if (/\.sync$/.test(binded)) { // sync goes to mapping
+                        if (!this.$mappingProps[this.$props[key][binded]])
+                            this.$mappingProps[this.$props[key][binded]] = {};
+                        this.$mappingProps[this.$props[key][binded]][key] = binded.substring(7, binded.length - 5);
+                    }
                 }
             }
         }
 
         if (props) {
             for (key in props) {
-                if ($parent && $parent.$props && $parent.$props[this.name]) {
-                    val = $parent.$props[this.name][key];
-                    binded = $parent.$props[this.name][`v-bind:${key}`];
+                if ($parent && $parent.$props && $parent.$props[this.$name]) {
+                    val = $parent.$props[this.$name][key];
+                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
                     if (binded) {
                         val = $parent[binded];
-                        if (!this.$mappingProps[key])
-                            this.$mappingProps[key] = {};
-                        this.$mappingProps[key]['parent'] = binded;
+                        if (props[key].twoWay) {
+                            if (!this.$mappingProps[key])
+                                this.$mappingProps[key] = {};
+                            this.$mappingProps[key]['parent'] = binded;
+                        }
                     }
                 }
                 if (!this.data[k]) {
@@ -128,7 +132,7 @@ export default class {
         }
 
         for (k in this.data) {
-            defaultData[`${this.prefix}${k}`] = this.data[k];
+            defaultData[`${this.$prefix}${k}`] = this.data[k];
 
             this[k] = util.$copy(this.data[k], true);
         }
@@ -175,7 +179,7 @@ export default class {
             }
             return this.$wxpage.setData(k);
         }
-        let t = null, reg = new RegExp('^' + this.prefix.replace(/\$/g, '\\$'), 'ig');
+        let t = null, reg = new RegExp('^' + this.$prefix.replace(/\$/g, '\\$'), 'ig');
         for (t in k) {
             let noPrefix = t.replace(reg, '');
             this.data[noPrefix] = util.$copy(k[t], true);
@@ -228,7 +232,7 @@ export default class {
             throw new Error('Invalid path: ' + com);
         }
 
-        let fn = this.$wxpage[com.prefix + method];
+        let fn = this.$wxpage[com.$prefix + method];
 
         if (typeof(fn) === 'function') {
             let evt = new event('', this, 'invoke');
@@ -268,7 +272,7 @@ export default class {
         let com = this;
         let source = this;
         let $evt = new event(evtName, source, 'emit');
-        while(com && com.isComponent !== undefined && $evt.active) {
+        while(com && com.$isComponent !== undefined && $evt.active) {
             let fn = com.events ? com.events[evtName] : undefined;
             if (typeof(fn) === 'function') {
                 fn.apply(com, [$evt].concat(args));
@@ -298,7 +302,7 @@ export default class {
             let readyToSet = {};
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) {
-                    readyToSet[this.prefix + k] = this[k];
+                    readyToSet[this.$prefix + k] = this[k];
                     originData[k] = util.$copy(this[k], true);
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {

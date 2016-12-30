@@ -16,7 +16,11 @@ module.exports = class Com extends wepy.component {
 
 
 
-        this.props = 'comaaprop';
+        this.props = {
+            'comaaprop': {
+                twoWay: true
+            }
+        };
     }
 
     customMethod () {

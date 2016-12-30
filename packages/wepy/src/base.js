@@ -22,13 +22,13 @@ const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullD
 
 
 let $bindEvt = (config, com, prefix) => {
-    com.prefix = $getPrefix(prefix);
+    com.$prefix = $getPrefix(prefix);
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
         child.initMixins();
-        child.name = name;
-        let comPrefix = prefix ? (prefix + child.name + '$') : ('$' + child.name + '$');
+        child.$name = name;
+        let comPrefix = prefix ? (prefix + child.$name + '$') : ('$' + child.$name + '$');
 
         $getPrefix(comPrefix);
         
@@ -52,7 +52,7 @@ let $bindEvt = (config, com, prefix) => {
     });
 
     allMethods.forEach((method, i) => {
-        config[com.prefix + method] = function (e, ...args) {
+        config[com.$prefix + method] = function (e, ...args) {
             let evt = new event('system', this, e.type);
             evt.$transfor(e);
             args = [evt].concat(args);
@@ -82,9 +82,9 @@ export default {
         let config = {};
         let app = new appClass();
 
-        if (!this.instance) {
+        if (!this.$instance) {
             app.init();
-            this.instance = app;
+            this.$instance = app;
         }
         Object.getOwnPropertyNames(app.constructor.prototype).forEach((name) => {
             if(name !== 'constructor')
@@ -103,8 +103,8 @@ export default {
 
         config.onLoad = function (...args) {
 
-            page.name = pageClass.name;
-            page.init(this, self.instance, self.instance);
+            page.$name = pageClass.name || 'unnamed';
+            page.init(this, self.$instance, self.$instance);
             page.onLoad && page.onLoad.apply(page, args);
 
             page.$mixins.forEach((mix) => {
