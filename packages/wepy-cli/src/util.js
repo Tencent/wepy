@@ -289,6 +289,10 @@ export default {
         cache.setConfig(config);
         return config;
     },
+    getIgnore () {
+        let ignoreFile = path.join(this.currentDir, path.sep, '.wepyignore');
+        return this.isFile(ignoreFile) ? this.readFile(ignoreFile) : '';
+    },
     getFiles (dir = process.cwd(), prefix = '') {
         let cfiles = cache.getFileList(dir);
         if (cfiles)

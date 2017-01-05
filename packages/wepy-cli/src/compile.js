@@ -1,6 +1,7 @@
 import path from 'path';
 import chokidar from 'chokidar';
 import compareVersions from 'compare-versions';
+import ignore from 'ignore';
 
 import cache from './cache';
 import util from './util';
@@ -228,6 +229,14 @@ export default {
                 util.error('根目录不存在app' + ext);
             }
         }
+
+        let igfiles = util.getIgnore();
+        debugger;
+        if (igfiles) {
+            let ig = ignore().add(igfiles);
+            files = ig.filter(files);
+        }
+
         files.forEach((f) => {
             let opath = path.parse(path.join(current, src, f));
             if (file) {
@@ -272,7 +281,6 @@ export default {
                 break;
             default:
                 util.output('拷贝', path.join(opath.dir, opath.base));
-                //util.copy(opath);
 
                 let plg = new loader.PluginHelper(config.plugins, {
                     type: opath.ext.substr(1),

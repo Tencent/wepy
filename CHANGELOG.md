@@ -1,3 +1,9 @@
+## 1.3.9 (2017-01-05)
+* 修复了wx.createCanvasContext在prmoise下报错的问题。
+* 添加了`.wepyignore`忽略编译一些非必要文件。[ISSUE 12](https://github.com/wepyjs/wepy/issues/12)。
+* 添加了typescript支持，wepy-compile-typescript。
+* 添加了stylus支持，wepy-compile-stylus。
+
 ## 1.3.8 (2016-12-30)
 * 修改组件原属性`name`，`prefix`为`$name`，`$prefix`。防止命名冲突的问题，参见[Issue](https://github.com/wepyjs/wepy/issues/8)。
 * 修复了编译过程中的日志错误的问题。

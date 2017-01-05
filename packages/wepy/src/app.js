@@ -66,6 +66,7 @@ export default class {
             hideNavigationBarLoading: true,
             createAnimation: true,
             createContext: true,
+            createCanvasContext: true,
             hideKeyboard: true,
             stopPullDownRefresh: true
         };

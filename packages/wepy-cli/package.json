@@ -34,6 +34,7 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "mkdirp": "^0.5.1",
+    "ignore": "^3.2.0",
     "update-notifier": "^1.0.2",
     "xmldom": "^0.1.22",
     "compare-versions": "^3.0.0"
