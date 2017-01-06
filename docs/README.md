@@ -6,7 +6,7 @@
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/21253210/b591dd2e-c397-11e6-8e28-177e449e37c9.png" alt="qrcode">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/21707696/65cedfc8-d40c-11e6-9bc7-ba58dbbedb72.png" alt="qrcode">
 </p>
 <p align="center">
   扫码加入wepyjs体验交流群。
@@ -326,7 +326,9 @@ if (prod) {
 对应compiler请参考各自文档
 >**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 >**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+>**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 >**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
+>**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/tutorial.html" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
 
@@ -360,9 +362,9 @@ if (prod) {
 
 | 标签 | lang默认值 | lang支持值 |
 | ---- | ---- | ---- |
-|style|`css`|`css`，`less`，`sass`|
+|style|`css`|`css`，`less`，`sass`，`stylus`|
 |template|`wxml`|`wxml`，`xml`，`pug(原jade)`|
-|script|`bable`|`bable`，`TypeScript`，`CoffeeScript`|
+|script|`bable`|`bable`，`TypeScript`|
 
 ### script说明
 
@@ -460,6 +462,7 @@ export default class Com extends wepy.component {
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
+
 #### 组件引用
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
 
@@ -470,6 +473,67 @@ export default class Com extends wepy.component {
 </p>
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+
+#### Props 传值
+
+1. **静态传值**
+
+使用静态传值时，子组件会接收到字符串的值。
+
+```
+<child title="mytitle"></child>
+
+// child.wpy
+props = {
+    title: String
+};
+
+onLoad () {
+    console.log(this.title); // mytitle
+}
+```
+
+2. **动态传值**
+
+使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
+
+```
+// parent.wpy
+<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
+
+data = {
+    parentTitle: 'p-title'
+};
+
+
+// child.wpy
+props = {
+    title: String,
+    syncTitle: {
+        type: String,
+        default: 'null'
+    },
+    twoWayTitle: {
+        type: Number,
+        default: 50,
+        twoWay: true
+    }
+};
+
+onLoad () {
+    console.log(this.title); // p-title
+    console.log(this.syncTitle); // p-title
+    console.log(this.twoWayTitle); // 50
+
+    this.title = 'c-title';
+    console.log(this.$parent.parentTitle); // p-title.
+    this.twoWayTitle = 60;
+    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props修改会改变父组件对应的值
+    this.$parent.parentTitle = 'p-title-changed';
+    console.log(this.title); // 'p-title';
+    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props，当父组件改变时，会影响子组件的值。
+}
+```
 
 #### 组件通信与交互
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：

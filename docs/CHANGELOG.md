@@ -1,3 +1,32 @@
+## 1.3.9 (2017-01-05)
+* 修复了wx.createCanvasContext在prmoise下报错的问题。
+* 添加了`.wepyignore`忽略编译一些非必要文件。[ISSUE 12](https://github.com/wepyjs/wepy/issues/12)。
+* 添加了typescript支持，wepy-compile-typescript。
+* 添加了stylus支持，wepy-compile-stylus。
+
+## 1.3.8 (2016-12-30)
+* 修改组件原属性`name`，`prefix`为`$name`，`$prefix`。防止命名冲突的问题，参见[Issue](https://github.com/wepyjs/wepy/issues/8)。
+* 修复了编译过程中的日志错误的问题。
+* 简化语法，可以使用`:myprop`代替`v-bind:myprop`。
+* 使用props时，添加了`once`和`sync`关键字，`:myprop.once="data"`：当父组件data改变时，不会修改子组件的myprop的值，除非将`once`改为`sync`关键字。默认为`once`
+* 子组件申明props时，添加了`twoWay`选项，为false时，子组件数据变更不影响父组件。为true时，同步到父组件。
+* 1.3.6版本后props默认父子互相不影响，除非加上`sync`和`twoWay`的属性。
+* 编译时加入了版本检测，cli如果检测到wepy不符合版本要求会自动更新wepy版本。
+
+## 1.3.5 (2016-12-23)
+* 修复了升级1.3.3导致旧项目报`id is not defined`的错误。
+* 发布过程中加入了LF强制转换逻辑，确保MAC在更新后不会出现`env: node\r: No such file or directory`的错误。
+* 修复了用`<component>`时，导致样式丢失的问题。
+* 修复了用`<component>`时，props不工作的问题。
+* 更新了`wepy-wechat-demo`使用自定义component与props，并添加toast组件。
+
+## 1.3.3 (2016-12-22)
+* 修复了config使用单引号导致解析出错的问题。感谢[@Lxxyx]()
+* 支持自定义组件标签，`<component id="mycom" path="mycom"></component>` 优化为 `<mycom></mycom>`。
+* 新增props传值功能，支持静态传值如 `num="50"` 或者绑定传值如 `v-bind:num="parentnum"`，使用方式基于与[Vue Props传值](https://vuejs.org.cn/guide/components.html#Props)一致。
+* 修复了组件支持事件传参，但页面不支持的问题。
+
+
 ## 1.3.2 (2016-12-19)
 * 修复wx:else, scroll-x等boolean属性报warning的[问题](https://github.com/wepyjs/wepy/issues/5)。
 * 修复了组件method不存在时，mixin的method不会被注册的BUG。感谢[@huike1989]()。
