@@ -1,9 +1,11 @@
 import stylus from 'stylus';
+import path from 'path';
 
 export default function (content, config, file) {
     return new Promise ((resolve, reject) => {
-        config.filename = file.name;
-        config.paths = [file.dir];
+        let opath = path.parse(file);
+        config.paths = [opath.dir];
+        config.filename = opath.base;
 
         stylus.render(content, config, function (err, css) {
             if (err) reject(err);
