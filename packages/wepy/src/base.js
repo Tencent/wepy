@@ -105,6 +105,11 @@ export default {
 
             page.$name = pageClass.name || 'unnamed';
             page.init(this, self.$instance, self.$instance);
+
+            if (!page.$parent.$wxapp) {
+                page.$parent.$wxapp = getApp();
+            }
+            
             page.onLoad && page.onLoad.apply(page, args);
 
             page.$mixins.forEach((mix) => {
@@ -112,10 +117,6 @@ export default {
             });
 
             page.$apply();
-
-            if (!page.$parent.$wxapp) {
-                page.$parent.$wxapp = getApp();
-            }
         }
 
         pageEvent.forEach((v) => {
