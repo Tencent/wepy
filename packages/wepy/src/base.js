@@ -92,6 +92,7 @@ export default {
         });
 
         config.$app = app;
+        app.$wxapp = getApp();
         return config;
     },
     $createPage (pageClass) {
@@ -106,10 +107,6 @@ export default {
             page.$name = pageClass.name || 'unnamed';
             page.init(this, self.$instance, self.$instance);
 
-            if (!page.$parent.$wxapp) {
-                page.$parent.$wxapp = getApp();
-            }
-            
             page.onLoad && page.onLoad.apply(page, args);
 
             page.$mixins.forEach((mix) => {

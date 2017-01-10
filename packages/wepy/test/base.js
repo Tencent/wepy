@@ -7,6 +7,9 @@ var App = require('./fake/app');
 var Index = require('./fake/page');
 
 
+wxfake.resetGlobal();
+
+
 describe('base.js', () => {
 
 
@@ -21,9 +24,11 @@ describe('base.js', () => {
     it('create page', () => {
         let page = wepy.$createPage(Index);
 
+        page.onLoad.call(wxfake.getWxPage());
+
         assert.strictEqual(typeof page.onShow, 'function', 'return a page object');
 
-        page.onLoad.call(wxfake.getWxPage(), {p: 1});
+        //page.onLoad.call(wxfake.getWxPage(), {p: 1});
 
 
         page.onShow.call(wxfake.getWxPage(), {p: 1});
@@ -41,6 +46,21 @@ describe('base.js', () => {
         page.tap(new wepy.event('test_page_tap', page, 'test_case'));
 
         page.custom('user_custom');
+
+
+        let index = page.$page;
+
+
+        assert.strictEqual(index instanceof Index, true, 'return a page object');
+
+        assert.strictEqual(index.$wxapp.app, global.getApp().app, '$wxapp reuturns getApp()');
+
+        assert.strictEqual(index.$wxpage.getCurrentPages(), 'wxpage', '$wxpage returns wxpage');
+
+
+        assert.strictEqual(index.$com.coma.$wxapp.app, global.getApp().app, '$wxapp reuturns getApp()');
+        
+        assert.strictEqual(index.$com.coma.$wxpage.getCurrentPages(), 'wxpage', '$wxpage returns wxpage');
 
     });
 });

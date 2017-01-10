@@ -8,11 +8,14 @@ var ComAA = require('./fake/com_a_a');
 
 var Index = require('./fake/page');
 
+var MixinA = require('./fake/mixin');
+
 
 describe('component.js', () => {
     
 
     let index = new Index();
+    index.init(wxfake.getWxPage(), wxfake.getWxPage());
 
     let com = new ComA();
     com.init(wxfake.getWxPage(), index, index);
@@ -28,6 +31,8 @@ describe('component.js', () => {
             assert.strictEqual(e instanceof TypeError, true, 'throw a TypeError');
         }
         assert.strictEqual(inst, null, 'Component can not call as a function');
+
+
     });
 
     it('new', () => {
@@ -43,10 +48,10 @@ describe('component.js', () => {
 
     it('add mixin', () => {
 
-        com.mixins = ComAA;
+        com.mixins = MixinA;
         com.initMixins();
 
-        assert.strictEqual(com.$mixins[0] instanceof ComAA, true, 'added a mixin for component');
+        assert.strictEqual(com.$mixins[0] instanceof MixinA, true, 'added a mixin for component');
     });
 
     it('setData', () => {

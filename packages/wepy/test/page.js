@@ -3,6 +3,7 @@ var wepy = require('../lib/wepy.js').default;
 var wxfake = require('./wxfake');
 
 var Index = require('./fake/page');
+var App = require('./fake/app');
 
 
 describe('page.js', () => {
@@ -15,6 +16,19 @@ describe('page.js', () => {
             assert.strictEqual(e instanceof TypeError, true, 'throw a TypeError');
         }
         assert.strictEqual(inst, null, 'Page can not call as a function');
+    });
+
+    it('wx instance', () => {
+        let appConfig = wepy.$createApp(App);
+        let pageConfig = wepy.$createPage(Index);
+
+        let page = pageConfig.$page;
+
+        pageConfig.onLoad.call(wxfake.getWxPage());
+
+        assert.strictEqual(page.$wxapp.app, 'app', 'wxapp equal getApp()');
+        assert.strictEqual(page.$wxpage.getCurrentPages(), 'wxpage', 'wxpage equal wxpages');
+
     });
 
     it('new', () => {

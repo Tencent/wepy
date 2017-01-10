@@ -1,6 +1,8 @@
 
 var assert = require('assert');
-var app = require('../lib/app.js').default;
+var app = require('../lib/app').default;
+var wepy = require('../lib/wepy').default;
+var App = require('./fake/app');
 var wxfake = require('./wxfake');
 
 
@@ -8,16 +10,17 @@ wxfake.resetGlobal();
 
 describe('app.js', () => {
 
-    let inst = new app();
-
     it('new', () => {
+        let inst = new app();
         assert.strictEqual(typeof inst.init, 'function', 'new instance');
     });
 
-    it('init', () => {
-        inst.init();
-        //console.log(inst.$wxapp);console.log(global.getApp());
-        assert.strictEqual(inst.$wxapp.app, global.getApp().app, 'app init');
+
+    it('wx instance', () => {
+        let appConfig = wepy.$createApp(App);
+        let app = appConfig.$app;
+        
+        assert.strictEqual(app.$wxapp.app, 'app', 'wxapp equal getApp()');
     });
 
     it('api call success', () => {
@@ -94,21 +97,4 @@ describe('app.js', () => {
         params.fail({msg: 'wrong'}); 
     });
 
-/*
-    it('transfor', () => {
-        let inst = new event();
-        inst.$transfor({a:1});
-        assert.strictEqual(inst.a, 1, 'event transfor');
-
-    });
-
-    it('constructor', () => {
-        try {
-            let inst = event();
-        } catch (e) {
-            inst = null;
-            assert.strictEqual(e instanceof TypeError, true, 'throw a TypeError');
-        }
-        assert.strictEqual(inst, null, 'event can not call as a function');
-    });*/
 });

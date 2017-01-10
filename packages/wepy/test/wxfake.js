@@ -18,6 +18,7 @@ module.exports = {
     },
     getWxPage: function () {
         return {
+            $root: { '$wxapp': { app: 'app' } },
             setData: function (v) { return v; },
             getCurrentPages: function () {
                 return 'wxpage';

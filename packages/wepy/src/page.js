@@ -8,6 +8,7 @@ export default class extends component {
 
         this.$parent = $parent;
         this.$root = this;
+        this.$wxapp = $parent.$wxapp;
         super.init(wxpage, this);
     }
 
