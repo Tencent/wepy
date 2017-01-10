@@ -231,7 +231,6 @@ export default {
         }
 
         let igfiles = util.getIgnore();
-        debugger;
         if (igfiles) {
             let ig = ignore().add(igfiles);
             files = ig.filter(files);

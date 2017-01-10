@@ -60,12 +60,14 @@ const Props = {
         return valid;
     },
     getValue (props, key, value) {
+        var rst;
         if (value !== undefined && this.valid(props, key, value)) {
-            return props[key].coerce ? props[key].coerce(value) : value;
-        }
-        if (typeof(props[key].default) === 'function')
-            return props[key].default();
-        return props[key].default;
+            rst = value;
+        } else if (typeof(props[key].default) === 'function') {
+            rst = props[key].default();
+        } else
+            rst = props[key].default;
+        return props[key].coerce ? props[key].coerce(rst) : rst;
     }
 };
 
@@ -113,6 +115,7 @@ export default class {
 
         if (props) {
             for (key in props) {
+                val = undefined;
                 if ($parent && $parent.$props && $parent.$props[this.$name]) {
                     val = $parent.$props[this.$name][key];
                     binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
@@ -125,7 +128,7 @@ export default class {
                         }
                     }
                 }
-                if (!this.data[k]) {
+                if (!this.data[key]) {
                     val = Props.getValue(props, key, val);
                     this.data[key] = val;
                 }

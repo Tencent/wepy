@@ -46,8 +46,23 @@ module.exports = class Com extends wepy.component {
             onceProp: {
                 default: 70
             },
+            staticDefault: {
+                default: 'static'
+            },
+            funcProp: {
+                default: function () {
+                    return 'func';
+                }
+            },
+            staticAndCoerce: {
+                default: 1,
+                coerce: function (v) {
+                    return v + 1;
+                }
+            },
+
             syncProp: {
-                default: 70
+                default: 80
             },
             twoWayProp: {
                 default: 70,
@@ -56,7 +71,7 @@ module.exports = class Com extends wepy.component {
             comprop10: {
                 type: [Boolean, Function, Object, Array, Car],
                 coerce: function (v) {
-                    return +v;
+                    return v + 1;
                 },
                 default: function () {
                     return 50

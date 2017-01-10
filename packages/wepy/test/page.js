@@ -54,7 +54,15 @@ describe('page.js', () => {
 
         assert.strictEqual(page.$com.coma.comprop4.a, 1, 'test object prop');
 
-        assert.strictEqual(page.$com.coma.comprop5, 60, 'test prop default value');
+        assert.strictEqual(page.$com.coma.comprop5, 60, 'test prop static default value');
+
+        assert.strictEqual(page.$com.coma.staticDefault, 'static', 'test prop static default value again');
+
+        assert.strictEqual(page.$com.coma.funcProp, 'func', 'test prop function default value');
+
+        assert.strictEqual(page.$com.coma.staticAndCoerce, 2, 'test prop default value with coerce');
+
+        
         
         assert.strictEqual(page.$com.coma.onceProp, '50', 'test once prop validate');
         assert.strictEqual(page.$com.coma.syncProp, '50', 'test sync prop validate');
