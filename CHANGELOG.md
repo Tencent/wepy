@@ -1,3 +1,9 @@
+## 1.3.10 (2017-01-10)
+* 修复了less文件中使用import找不到路径的BUG。
+* 修复了prop默认值混乱的BUG。
+* 修复了prop默认值不会触发coerce的BUG。
+* 优化编译过程中的一个报错提示。
+
 ## 1.3.9 (2017-01-05)
 * 修复了wx.createCanvasContext在prmoise下报错的问题。
 * 添加了`.wepyignore`忽略编译一些非必要文件。[ISSUE 12](https://github.com/wepyjs/wepy/issues/12)。
