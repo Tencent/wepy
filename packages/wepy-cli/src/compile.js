@@ -261,7 +261,7 @@ export default {
         let config = util.getConfig();
 
         if (!util.isFile(opath)) {
-            util.error('文件不存在：' + getRelative(opath));
+            util.error('文件不存在：' + util.getRelative(opath));
             return;
         }
         

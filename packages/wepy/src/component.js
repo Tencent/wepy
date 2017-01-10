@@ -87,8 +87,6 @@ export default class {
             this.$root = $root || this.$root;
             this.$parent = $parent || this.$parent;
             this.$wxapp = this.$root.$parent.$wxapp;
-        } else {
-            this.$wxapp = this.$parent.$wxapp;
         }
 
         if (this.props) {
