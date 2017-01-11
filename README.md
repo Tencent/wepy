@@ -127,10 +127,10 @@ export default class Index extends wepy.page {
 // index.wpy
 <template>
     <view>
-        <component id="pannel" path="pannel"></component>
-        <component id="counter1" path="counter"></component>
-        <component id="counter2" path="counter"></component>
-        <component id="list" path="list"></component>
+        <pannel title="My Title"></pannel>
+        <counter1 :num="myNum"></counter1>
+        <counter2 :num.sync="syncNum"></counter2>
+        <list :item="items"></list>
     </view>
 </template>
 <script>
@@ -150,6 +150,11 @@ export default class Index extends wepy.page {
         counter2: Counter,
         list: List
     };
+    data = {
+        myNum: 50,
+        syncNum: 100,
+        items: [1, 2, 3, 4]
+    }
 }
 </script>
 ```
@@ -403,7 +408,7 @@ export default class extends wepy.app {
 <template lang="wxml">
     <view>
     </view>
-    <component id="counter1" path="counter"></component>
+    <counter1></counter1>
 </template>
 <script>
 import wepy form 'wepy';
