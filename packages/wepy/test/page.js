@@ -23,11 +23,26 @@ describe('page.js', () => {
         let pageConfig = wepy.$createPage(Index);
 
         let page = pageConfig.$page;
+        let app = appConfig.$app;
 
         pageConfig.onLoad.call(wxfake.getWxPage());
 
         assert.strictEqual(page.$wxapp.app, 'app', 'wxapp equal getApp()');
         assert.strictEqual(page.$wxpage.getCurrentPages(), 'wxpage', 'wxpage equal wxpages');
+
+        // app created many times in test case, can not make a object compare here.
+        assert.strictEqual(page.$parent.$wxapp.app, app.$wxapp.app, 'page\'s parent is page');
+
+        assert.strictEqual(page.$root, page, 'page\'s parent is page');
+
+        assert.strictEqual(page.$com.coma.$parent, page, 'component\'s parent is page');
+
+        assert.strictEqual(page.$com.coma.$root, page, 'component\'s root is page');
+
+        assert.strictEqual(page.$com.coma.$com.comaa.$parent, page.$com.coma, 'component\'s parent is parent component');
+
+        assert.strictEqual(page.$com.coma.$com.comaa.$root, page, 'component\'s root is page');
+
 
     });
 
