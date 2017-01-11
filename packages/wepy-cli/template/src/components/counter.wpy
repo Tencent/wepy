@@ -34,20 +34,20 @@
         };
         events = {
             'index-broadcast': ($event, ...args) => {
-                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+                console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
             }
         };
 
         methods = {
             plus () {
                 this.num = this.num + 1;
-                console.log(this.name + ' plus tap');
+                console.log(this.$name + ' plus tap');
 
                 this.$emit('index-emit', 1, 2, 3);
             },
             minus () {
                 this.num = this.num - 1;
-                console.log(this.name + ' minus tap');
+                console.log(this.$name + ' minus tap');
             }
         };
     }

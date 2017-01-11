@@ -156,11 +156,11 @@
                 });
             },
             tap () {
-                console.log('do noting from ' + this.name);
+                console.log('do noting from ' + this.$name);
             },
             communicate () {
 
-                console.log(this.name + ' tap');
+                console.log(this.$name + ' tap');
 
                 this.$invoke('/panel/counter1', 'plus', 45, 6);
                 this.$invoke('counter2', 'minus', 45, 6);
@@ -183,14 +183,11 @@
 
         events = {
             'index-emit': ($event, ...args) => {
-                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+                console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
             }
         };
         async onLoad() {
             try {
-                console.log(222);
-
-                
                 // 调用应用实例的方法获取全局数据
                 let userInfo;
                 try {

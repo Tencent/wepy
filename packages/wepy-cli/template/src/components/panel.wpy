@@ -38,13 +38,13 @@
 
         events = {
             'index-broadcast': ($event, ...args) => {
-                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+                console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
                 $event.$destroy();
             }
         };
         methods = {
             change () {
-                console.log(this.name + ' changed');
+                console.log(this.$name + ' changed');
                 this.toggle = !this.toggle;
             }
         };
