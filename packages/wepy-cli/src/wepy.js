@@ -144,13 +144,30 @@ let checkUpdates = () => {
         last = last ? last[1] : undefined;
         let me = util.getVersion();
         if (last && last !== me) {
+            let lastArr = last.split('.');
+            let meArr = me.split('.');
+            let lastBig = lastArr[0] + '.' + lastArr[1];
+            let meBig = meArr[0] + '.' + meArr[1];
+
             util.warning(`当前版本${me}，最新版本${last}`);
-            util.warning('请关注版本更新日志：https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md');
-            util.warning('升级命令：npm install wepy-cli -g');
+            if (lastBig - meBig > 0) {
+                util.warning('跨版本升级可能不去向下兼容，升级前请查看CHANGLOG了解所有更新。');
+            } else {
+                util.warning('请关注版本更新日志：https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md');
+                util.warning('升级命令：npm install wepy-cli -g');
+            }
         }
     }).catch(e => {});
 };
 checkUpdates();
+
+if (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 5) {
+    util.error('检测到当前Node.js版本过低，请升级Node.js到5以上版本，NPM升级到3以上版本。');
+    process.exit(1);
+}
+
+
+
 
 
 commander.usage('[command] <options ...>');
