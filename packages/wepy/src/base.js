@@ -18,7 +18,7 @@ let $getPrefix = (prefix) => {
     return prefixList[prefix];*/
 }
 
-const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom'];
+const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
 
 let $bindEvt = (config, com, prefix) => {
@@ -119,13 +119,16 @@ export default {
         pageEvent.forEach((v) => {
             if (v !== 'onLoad') {
                 config[v] = (...args) => {
-                    page[v] && page[v].apply(page, args);
+                    let rst;
+                    page[v] && rst = page[v].apply(page, args);
 
                     page.$mixins.forEach((mix) => {
                         mix[v] && mix[v].apply(page, args);
                     });
 
                     page.$apply();
+                    
+                    return rst;
                 };
             }
         });
