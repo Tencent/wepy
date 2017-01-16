@@ -1,3 +1,10 @@
+## 1.3.11 (2017-01-16)
+* 页面和组件均添加`$wxapp`和`$wxpage`属性
+* 添加了`wepy-plugin-filemin`，可以压缩`wxml`和`json`文件。
+* 修复了`onShareAppMessage` API 不生效的问题。
+* 修复了组件template使用pug时不会编译的问题。
+* 加入了node版本检测功能，低于Node版本低于5时提示更新Node版本。
+
 ## 1.3.10 (2017-01-10)
 * 修复了less文件中使用import找不到路径的BUG。
 * 修复了prop默认值混乱的BUG。
