@@ -120,7 +120,7 @@ export default {
             if (v !== 'onLoad') {
                 config[v] = (...args) => {
                     let rst;
-                    page[v] && rst = page[v].apply(page, args);
+                    page[v] && (rst = page[v].apply(page, args));
 
                     page.$mixins.forEach((mix) => {
                         mix[v] && mix[v].apply(page, args);
