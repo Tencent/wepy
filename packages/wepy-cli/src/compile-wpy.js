@@ -11,6 +11,7 @@ import cCss from './compile-css';*/
 import cStyle from './compile-style';
 import cTemplate from './compile-template';
 import cScript from './compile-script';
+import loader from './loader';
 
 export default {
     createParser () {
@@ -63,6 +64,7 @@ export default {
     },
 
     resolveWpy (xml, opath) {
+        let config = util.getConfig();
         let filepath;
 
         if (arguments.length === 1) {
@@ -150,6 +152,17 @@ export default {
             } catch (e) {
                 util.output('错误', path.join(opath.dir, opath.base));
                 util.error(`解析config出错，报错信息：${e}\r\n${rst.config}`);
+            }
+        })();
+
+        // pre compile wxml
+        (() => {
+            if (rst.template.type !== 'wxml' && rst.template.type !== 'xml') {
+                let compiler = loader.loadCompiler(rst.template.type);
+                if (compiler && compiler.sync) {
+                    rst.template.code = compiler.sync(rst.template.code, config.compilers[rst.template.type] || {});
+                    rst.template.type = 'wxml';
+                }
             }
         })();
 

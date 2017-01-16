@@ -21,13 +21,8 @@ export default {
         this.comPrefix[prefix] = this.comCount++;
         return this.comPrefix[prefix];
     },
-    getTemplate (src) {
-        let content = util.readFile(src);
-        if (content === null) {
-            throw '打开文件失败: ' + content;
-        }
-        content = content.substring(content.indexOf('<template>'), content.indexOf('</template>') + 11);
-
+    getTemplate (content) {
+        content = `<template>${content}</template>`;
         content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => {
                 if (type === '.once' || type === '.sync') {
@@ -39,10 +34,8 @@ export default {
         });
 
         let doc = new DOMImplementation().createDocument();
-        let node = (util.isString(src) ? new DOMParser().parseFromString(content) : src);
+        let node = new DOMParser().parseFromString(content);
         let template = [].slice.call(node.childNodes || []).filter((n) => n.nodeName === 'template');
-        if (!template.length)
-            throw 'Can not find template from ' + src;
 
         [].slice.call(template[0].childNodes || []).forEach((n) => {
             doc.appendChild(n);
@@ -199,7 +192,7 @@ export default {
                 util.error('找不到组件：' + definePath, '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
-                node.replaceChild(this.compileXML(this.getTemplate(src), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`), com);    
+                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`), com);    
             }
         });
         return node;

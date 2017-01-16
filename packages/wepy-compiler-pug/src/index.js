@@ -1,6 +1,6 @@
 import pug from 'pug';
 
-export default function (content, config) {
+let compiler = function (content, config) {
     let data = config.data;
     let p;
     delete config.data;
@@ -13,3 +13,17 @@ export default function (content, config) {
     }
     return p;
 };
+
+compiler.sync = function (content, config) {
+    let data = config.data;
+    let p, html;
+    delete config.data;
+    try {
+        let fn = pug.compile(content, config);
+        html = fn(data);
+    } catch (e) {
+    }
+    return html;
+};
+
+export default compiler;

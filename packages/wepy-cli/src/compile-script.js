@@ -206,7 +206,6 @@ export default {
             // 缓存文件修改时间戳
             cache.saveBuildCache();
         }).catch((e) => {
-            debugger;
             console.log(e);
         });
 
