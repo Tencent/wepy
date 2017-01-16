@@ -1,0 +1,17 @@
+{
+  "name": "wepy-plugin-filemin",
+  "version": "0.0.1",
+  "description": "wepy filemin plugin",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "filemin"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "pretty-data": "^0.40.0"
+  }
+}
