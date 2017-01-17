@@ -18,7 +18,7 @@ let $getPrefix = (prefix) => {
     return prefixList[prefix];*/
 }
 
-const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
+const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom'];
 
 
 let $bindEvt = (config, com, prefix) => {
@@ -132,6 +132,12 @@ export default {
                 };
             }
         });
+
+        if (page.onShareAppMessage) {
+            config.onShareAppMessage = (...args) => {
+                return page.onShareAppMessage.apply(page, args);
+            }
+        }
 
         return $bindEvt(config, page, '');
     },
