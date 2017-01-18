@@ -268,8 +268,7 @@ export default {
         } else {
             this.remove(opath, 'json');
         }
-
-        if (wpy.style.code || wpy.template.requires.length) {
+        if (wpy.style.code || Object.keys(wpy.template.components).length) {
             let requires = [];
             let k, tmp;
             for (k in wpy.template.components) {
