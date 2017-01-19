@@ -66,6 +66,7 @@ wepy build --watch
 
 #### Sublime下代码高亮
 文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+
 1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
 2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
 3. 关闭`.wpy`文件重新打开即可高亮。
