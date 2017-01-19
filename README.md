@@ -6,7 +6,7 @@
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/21894419/1d9cb0f0-d91a-11e6-9d1c-ea4d63abe2b6.png" alt="qrcode">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22090433/7c243582-de2c-11e6-9bb6-a8cb786b1d11.png" alt="qrcode">
 </p>
 <p align="center">
   扫码加入wepyjs体验交流群。
