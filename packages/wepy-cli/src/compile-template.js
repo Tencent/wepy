@@ -148,7 +148,9 @@ export default {
                     if (attr.value.indexOf('(') > 0) {  // method('{{p}}', 123);
                         let funcInfo = this.getFunctionInfo(attr.value);
                         attr.value = funcInfo.name;
-                        node.setAttribute('data-wepy-params', funcInfo.params.join('-'));
+                        funcInfo.params.forEach((p, i) => {
+                            node.setAttribute('data-wepy-params-' + String.fromCharCode(97 + i), p);    
+                        });
                     }
                     if (prefix)
                         attr.value = `${PREFIX}${comid}${JOIN}` + attr.value;

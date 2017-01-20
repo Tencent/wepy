@@ -55,16 +55,18 @@ let $bindEvt = (config, com, prefix) => {
         config[com.$prefix + method] = function (e, ...args) {
             let evt = new event('system', this, e.type);
             evt.$transfor(e);
-            args = [evt].concat(args);
-            let wepyParams = !e.currentTarget ? null : (e.currentTarget.dataset ? e.currentTarget.dataset.wepyParams : '');
-            if (wepyParams && wepyParams.length) {
-                wepyParams = wepyParams.split('-');
-                args = args.concat(wepyParams);
+            let wepyParams = [], paramsLength = 0, tmp, p;
+            if (e.currentTarget && e.currentTarget.dataset) {
+                tmp = e.currentTarget.dataset;
+                while(tmp['wepyParams' + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
+                    wepyParams.push(tmp['wepyParams' + p]);
+                }
             }
+            args = args.concat(wepyParams);
             let rst, mixRst;
             let comfn = com.methods[method];
             if (comfn) {
-                rst = comfn.apply(com, args);
+                rst = comfn.apply(com, args.concat(evt));
             }
             com.$mixins.forEach((mix) => {
                 mix.methods[method] && (mixRst = mix.methods[method].apply(com, args));
