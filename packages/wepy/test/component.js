@@ -84,7 +84,7 @@ describe('component.js', () => {
     it('$emit', () => {
         let page = new Index();
         page.events = {
-            'test-emit': function (evt, a, b, c) {
+            'test-emit': function (a, b, c, evt) {
                 assert.strictEqual(evt.name, 'test-emit', 'test emit function');
                 assert.strictEqual(evt.type, 'emit', 'test emit event type');
                 assert.strictEqual(evt.source, com, 'test emit event source');
@@ -102,7 +102,7 @@ describe('component.js', () => {
             comaaa: childchildCom
         };
         childCom.events = {
-            'test-broadcast': function (evt, a, b, c) {
+            'test-broadcast': function (a, b, c, evt) {
                 assert.strictEqual(evt.name, 'test-broadcast', 'test broadcast function');
                 assert.strictEqual(evt.type, 'broadcast', 'test broadcast event type');
                 assert.strictEqual(evt.source, com, 'test broadcast event source');

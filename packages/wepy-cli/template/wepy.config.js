@@ -1,5 +1,4 @@
-
-let prod = process.env.NODE_ENV === 'production';
+var prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
     'wpyExt': '.wpy',
@@ -17,8 +16,7 @@ module.exports = {
             ],
             'plugins': [
                 'transform-export-extensions',
-                'syntax-export-extensions',
-                'transform-runtime'
+                'syntax-export-extensions'
             ]
         }
     },
@@ -27,9 +25,9 @@ module.exports = {
     }
 };
 
-if (prod) {
+if (true || prod) {
     // 压缩sass
-    module.exports.compilers['sass'] = {'outputStyle': 'compressed'};
+    //module.exports.compilers['sass'] = {'outputStyle': 'compressed'};
     
     // 压缩less
     module.exports.compilers['less'] = {'compress': true};

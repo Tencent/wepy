@@ -173,44 +173,38 @@
                 let i = 10;
                 let map = ['MA==', 'MQo=', 'Mg==', 'Mw==', 'NA==', 'NQ==', 'Ng==', 'Nw==', 'OA==', 'OQ=='];
                 while(i--) {
-                    wx.request('https://www.madcoder.cn/tests/sleep.php?time=1&t=css&c=' + map[i] + '&i=' + i).then(function (d) {
-                        self.netrst += d.data + '.';
-                        self.$apply();
+                    wx.request({
+                        url: 'https://www.madcoder.cn/tests/sleep.php?time=1&t=css&c=' + map[i] + '&i=' + i,
+                        success: function (d) {
+                            self.netrst += d.data + '.';
+                            self.$apply();
+                        }
                     });
                 }
             }
         };
 
         events = {
-            'index-emit': ($event, ...args) => {
+            'index-emit': (...args) => {
+                let $event = args[args.length - 1];
                 console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
             }
         };
-        async onLoad() {
-            try {
-                // 调用应用实例的方法获取全局数据
-                let userInfo;
-                try {
-                    userInfo = await this.$parent.getUserInfo();
-                } catch (e) {
-                    userInfo = {
-                        nickName: 'Network error'
-                    }
-                }
+        onLoad() {
+            let userInfo, self = this;
+            this.$parent.getUserInfo(function (userInfo) {
                 if (userInfo)
-                    this.userInfo = userInfo;
-                this.normalTitle = '标题已被修改';
+                    self.userInfo = userInfo;
+                self.normalTitle = '标题已被修改';
 
-                this.setTimeoutTitle = '标题三秒后会被修改';
+                self.setTimeoutTitle = '标题三秒后会被修改';
                 setTimeout(() => {
-                    this.setTimeoutTitle = '到三秒了';
-                    this.$apply();
+                    self.setTimeoutTitle = '到三秒了';
+                    self.$apply();
                 }, 3000);
 
-                this.$apply();
-            } catch (error) {
-                console.error(error.stack);
-            }
+                self.$apply();
+            });
         }
     }
 </script>

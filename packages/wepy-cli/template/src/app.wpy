@@ -13,7 +13,6 @@
 <script>
 
 import wepy from 'wepy';
-import "babel-polyfill";
 
 export default class extends wepy.app {
 
@@ -37,14 +36,17 @@ export default class extends wepy.app {
         console.log(this);
     }
 
-    async getUserInfo() {
+    getUserInfo(cb) {
+        var self = this;
         if (this.globalData.userInfo) {
             return this.globalData.userInfo;
         }
-        let x = await wx.login();
-        let res = await wx.getUserInfo();
-        this.globalData.userInfo = res.userInfo;
-        return res.userInfo;
+        wepy.getUserInfo({
+            success (res) {
+                self.globalData.userInfo = res.userInfo;
+                cb && cb(res.userInfo);
+            }
+        });
     }
 }
 </script>

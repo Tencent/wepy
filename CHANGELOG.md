@@ -1,3 +1,16 @@
+## 1.4.1 (2017-01-26)
+* 修复了`onShareAppMessage`在所有页面都生效的问题。
+* 修改了页面响应事件和组件通讯事件的参数顺序，改为默认最后一个参数为$event。
+* 不再会重写wx原有API，例如使用wepy.request代替wx.request。
+* 添加了两个API：app.use()，app.intercept()。
+* 不再默认添加Promise polyfill支持，需要手动import，然后使用`app.use('promisify')`。
+* 不再默认处理request并发问题，需要手动调用`app.use('requestfix')`。
+* 不再默认支持async/await，需要手动引入`babel-polyfill`。
+* 将默认npm目录压缩后的大小由170kb减少至23kb。
+
+**以上改动将不向下兼容，升级前请查看[迁移指南](https://github.com/wepyjs/wepy/wiki/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97#13x---141)**
+
+
 ## 1.3.11 (2017-01-16)
 * 页面和组件均添加`$wxapp`和`$wxpage`属性
 * 添加了`wepy-plugin-filemin`，可以压缩`wxml`和`json`文件。

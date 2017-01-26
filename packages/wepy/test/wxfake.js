@@ -9,9 +9,34 @@ module.exports = {
         }
 
         global.wx = {
-            request: function () {},
+            request: function (p) {
+                p.success({
+                    number: p.data.number
+                });
+                p.complete({
+                    complete: 'complete'
+                });
+            },
             pauseVoice: function () {},
-            getUserInfo: function () { return {name: 'gcaufy'}; }
+            getUserInfo: function (p) {
+                p.success({
+                    name: 'gcaufy'
+                });
+                p.complete({
+                    complete: 'complete'
+                });
+            },
+            login: function (p) {
+                p.fail({
+                    code: 'xxx'
+                });
+                p.complete({
+                    complete: 'complete'
+                });
+            },
+            createCanvasContext: function () {
+                return 'createCanvasContext';
+            }
         };
 
         global.getApp = function () { return {app:'app'}; };
