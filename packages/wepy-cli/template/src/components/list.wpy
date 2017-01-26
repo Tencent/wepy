@@ -28,7 +28,8 @@
         };
         
         events = {
-            'index-broadcast': ($event, ...args) => {
+            'index-broadcast': (...args) => {
+                let $event = args[args.length - 1];
                 console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
             }
         };

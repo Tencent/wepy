@@ -239,8 +239,8 @@ export default class {
         let fn = this.$wxpage[com.$prefix + method];
 
         if (typeof(fn) === 'function') {
-            let evt = new event('', this, 'invoke');
-            return fn.apply(com, [evt].concat(args));
+            let $evt = new event('', this, 'invoke');
+            return fn.apply(com, args.concat($evt));
         } else {
             fn = com[method];
         }
@@ -264,7 +264,7 @@ export default class {
                 queue.push(c);
                 let fn = c.events ? c.events[evtName] : undefined;
                 if (typeof(fn) === 'function') {
-                    fn.apply(c, [$evt].concat(args));
+                    fn.apply(c, args.concat($evt));
                 }
                 if (!$evt.active)
                     break;
@@ -279,7 +279,7 @@ export default class {
         while(com && com.$isComponent !== undefined && $evt.active) {
             let fn = com.events ? com.events[evtName] : undefined;
             if (typeof(fn) === 'function') {
-                fn.apply(com, [$evt].concat(args));
+                fn.apply(com, args.concat($evt));
             }
             com = com.$parent;
         }

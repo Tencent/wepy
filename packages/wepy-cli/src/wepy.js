@@ -52,11 +52,8 @@ let generateProject = (name) => {
         'wepy-compiler-babel',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
-        'babel-plugin-transform-runtime',
         'babel-preset-es2015',
-        'babel-preset-stage-1',
-        'babel-runtime',
-        'babel-polyfill'
+        'babel-preset-stage-1'
     ];
 
     util.writeFile(packagePath, JSON.stringify(pkg));

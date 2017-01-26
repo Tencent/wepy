@@ -19,7 +19,7 @@ module.exports = class Com extends wepy.component {
             'a': 1
         };
         this.methods = {
-            'tap': function (evt, a, b) {
+            'tap': function (a, b, evt) {
                 assert.strictEqual(evt.name, 'test_com_tap', 'com tap triggered');
                 assert.strictEqual(a, 1, 'com tap triggered with addtional params');
                 assert.strictEqual(b, 2, 'com tap triggered with addtional params');

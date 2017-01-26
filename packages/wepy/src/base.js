@@ -85,7 +85,7 @@ export default {
         let app = new appClass();
 
         if (!this.$instance) {
-            app.init();
+            app.init(this);
             this.$instance = app;
         }
         Object.getOwnPropertyNames(app.constructor.prototype).forEach((name) => {
