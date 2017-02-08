@@ -163,7 +163,49 @@ export default {
         return node;
     },
 
-    compileXML (node, template, prefix) {
+    updateSlot (node, childNodes) {
+        let slots = {}, has;
+        if (!childNodes || childNodes.length === 0)
+            slots = {};
+        else {
+            [].slice.call(childNodes || []).forEach((child) => {
+                let name = (child.nodeName === '#text') ? '' : child.getAttribute('slot');
+
+                if (!name) {
+                    name = '$$default';
+                }
+                if (slots[name])
+                    slots[name].push(child);
+                else
+                    slots[name] = [child];
+            });
+        }
+
+        let slotsElems = util.elemToArray(node.getElementsByTagName('slot'));
+
+        slotsElems.forEach((slot) => {
+            let name = slot.getAttribute('name');
+            if (!name)
+                name = '$$default';
+
+            // 无内容时，用子内容替换
+            let replacements = (slots[name] && slots[name].length > 0) ? slots[name] : [].slice.call(slot.childNodes || []);
+
+            let doc = new DOMImplementation().createDocument();
+            replacements.forEach((n) => {
+                if (name !== '$$default' && n.nodeName !== '#text')
+                    n.removeAttribute('slot');
+                doc.appendChild(n);
+            });
+
+            node.replaceChild(doc, slot);
+        });
+        return node;
+    },
+
+    compileXML (node, template, prefix, childNodes) {
+
+        this.updateSlot(node, childNodes);
         
         this.updateBind(node, prefix);
 
@@ -194,7 +236,7 @@ export default {
                 util.error('找不到组件：' + definePath, '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
-                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`), com);    
+                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes), com);    
             }
         });
         return node;

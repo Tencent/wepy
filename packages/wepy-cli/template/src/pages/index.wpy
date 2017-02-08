@@ -14,32 +14,6 @@
     .userinfo-nickname {
         color: #aaa;
     }
-    .testarea {
-        width: 100%;
-        margin-top: 20rpx;
-        text-align: left;
-        font-size: 12px;
-        padding-top: 20rpx;
-        padding-left: 50rpx;
-        padding-bottom: 20rpx;
-        border: 1px solid #ccc;
-
-        .testtitle {
-            padding-bottom: 20rpx;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .testinfo {
-            padding: 15rpx;
-        }
-        .testcounter {
-            margin-top: 15rpx;
-            position: absolute;
-        }
-        .counterview {
-            margin-left: 120rpx;
-        }
-    }
 </style>
 <template>
     <view class="container">
@@ -48,34 +22,34 @@
             <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
         </view>
 
-        <view class="testarea">
-            <view class="testtitle">测试数据绑定</view>
-            <text class="testinfo">{{normalTitle}}</text>
-            <text class="testinfo">{{setTimeoutTitle}}</text>
-            <text class="testinfo">{{mixin}}</text>
-            <text class="testinfo" bindtap="plus">{{mynum}}</text>
-        </view>
-        <view class="testarea">
-            <view class="testtitle">测试第三方组件</view>
-            <button bindtap="toast" size="mini"> 点我出现toast </button>
-        </view>
-        <view class="testarea">
-            <view class="testtitle">测试组件通信</view>
-            <button bindtap="communicate" size="mini"> 点我修改组件 </button>
-        </view>
-        <view class="testarea">
-            <view class="testtitle">测试混合</view>
-            <button bindtap="tap" size="mini"> 混合TAP事件 </button>
-        </view>
-        
-        
-        <view class="testarea">
-            <view class="testtitle">测试并发网络请求</view>
+        <panel>
+            <view class="title" slot="title">测试数据绑定</view>
+
+            <text class="info">{{normalTitle}}</text>
+            <text class="info">{{setTimeoutTitle}}</text>
+            <text class="info">{{mixin}}</text>
+            <text class="info">{{mynum}}</text>
+            <button bindtap="plus('a')" size="mini">  +  </button>
+        </panel>
+
+        <panel>
+            <view class="title" slot="title">其它测试</view>
+            <button bindtap="toast" size="mini">第三方组件</button>
+            <button bindtap="communicate" size="mini">组件通信</button>
+            <button bindtap="tap" size="mini">混合TAP事件</button>
+        </panel>
+
+
+        <panel>
+            <view class="title" slot="title">测试并发网络请求</view>
             <view>返回结果: <text>{{netrst}}</text></view>
             <button bindtap="request" size="mini"> 点我发起10个请求 </button>
-        </view>
-        <view class="testarea">
-            <view class="testtitle">测试组件: </view>
+        </panel>
+
+
+        <panel>
+            <view class="title" slot="title">测试组件</view>
+
             <text class="testcounter">计数组件1: </text>
             <view class="counterview">
                 <counter1 />
@@ -84,23 +58,18 @@
             <text class="testcounter">计数组件2: </text>
 
             <view class="counterview">
-                <counter2 />
+                <counter2 :num.sync="mynum"></counter2>
             </view>
-
-        </view>
-
-        <view class="testarea">
-            <view class="testtitle">测试组件嵌套: </view>
-            <panel v-bind:pannelNum="mynum" />
-        </view>
+        </panel>
 
 
 
-        <view class="testarea">
-            <view class="testtitle">测试列表: </view>
-            <list />
-        </view>
 
+        <panel>
+            <view class="title" slot="title">测试列表</view>
+            <list></list>
+            </view>
+        </panel>
 
         <toast />
 
@@ -162,7 +131,6 @@
 
                 console.log(this.$name + ' tap');
 
-                this.$invoke('/panel/counter1', 'plus', 45, 6);
                 this.$invoke('counter2', 'minus', 45, 6);
                 this.$invoke('counter1', 'plus', 45, 6);
 

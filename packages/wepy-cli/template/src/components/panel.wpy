@@ -1,53 +1,44 @@
 <style lang="less">
     .panel {
-        text-align: left;
         width: 100%;
+        margin-top: 20rpx;
+        text-align: left;
+        font-size: 12px;
+        padding-top: 20rpx;
+        padding-left: 50rpx;
+        padding-bottom: 20rpx;
+        border: 1px solid #ccc;
+
+        .title {
+            padding-bottom: 20rpx;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .info {
+            padding: 15rpx;
+        }
+        .testcounter {
+            margin-top: 15rpx;
+            position: absolute;
+        }
+        .counterview {
+            margin-left: 120rpx;
+        }
     }
 </style>
 <template>
     <view class="panel">
-        <label class="checkbox">
-            <button bindtap="change" size="mini">{{toggle ? '显示': '隐藏'}}{{pannelNum}}</button>
-        </label>
-        <view hidden="{{!toggle}}">
-            子组件: <counter1 v-bind:num="pannelNum"></counter1>
-        </view>
+        <slot name="title">
+            Title
+        </slot>
+        <slot>
+        </slot>
     </view>
 </template>
 <script>
     import wepy from 'wepy';
-    import Counter from './counter';
 
     export default class Panel extends wepy.component {
-        props = {
-            pannelNum: {
-                type: [Number, String],
-                coerce: function (v) {
-                    return +v;
-                },
-                default: 500
-            }
-        };
-        components = {
-            counter1: Counter,
-        };
 
-        data = {
-            toggle: true
-        };
-
-        events = {
-            'index-broadcast': (...args) => {
-                let $event = args[args.length - 1];
-                console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
-                $event.$destroy();
-            }
-        };
-        methods = {
-            change () {
-                console.log(this.$name + ' changed');
-                this.toggle = !this.toggle;
-            }
-        };
     }
 </script>
