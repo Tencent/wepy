@@ -478,6 +478,11 @@ export default class Com extends wepy.component {
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
+wepy编译组件的过程如下：
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774767/8f090dd6-eee3-11e6-942b-1591a6379ad3.png">
+</p>
 
 #### 组件引用
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
