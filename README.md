@@ -134,7 +134,9 @@ export default class Index extends wepy.page {
 // index.wpy
 <template>
     <view>
-        <pannel title="My Title"></pannel>
+        <panel>
+            <h1 slot="title"></h1>
+        </panel>
         <counter1 :num="myNum"></counter1>
         <counter2 :num.sync="syncNum"></counter2>
         <list :item="items"></list>
@@ -278,6 +280,8 @@ async onLoad() {
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
+    'output': 'dist',
+    'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
         less: {
@@ -488,7 +492,7 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 #### Props 传值
 
-1. **静态传值**
+**静态传值**
 
 使用静态传值时，子组件会接收到字符串的值。
 
@@ -505,7 +509,7 @@ onLoad () {
 }
 ```
 
-2. **动态传值**
+**动态传值**
 
 使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
 
@@ -571,21 +575,21 @@ export default class Com extends wepy.component {
     // Other properties
 }
 ```
-1. **$broadcast**
+**$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
 </p>
 
-2. **$emit**
+**$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
 </p>
 
-3. **$invoke**
+**$invoke**
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
 ```js
@@ -596,6 +600,31 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
+#### 组件内容分发slot
+
+可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
+
+在`Panel`组件中有以下模板：
+
+```
+<view class="panel">
+    <slot name="title">默认标题</slot>
+    <slot>
+        默认内容
+    </slot>
+</view>
+```
+
+在父组件使用`Pannel`组件时，可以这样使用：
+
+```
+<panel>
+    <view>
+        <text>这是我放到的内容</text>
+    </view>
+    <view slot="title">Panel的Title</view>
+</panel>
+```
 
 ### 第三方组件
 
@@ -688,6 +717,37 @@ export default class Index extends wepy.mixin {
 // index tap
 // mix tap
 ```
+
+### 拦截器
+
+可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
+
+```javascript
+
+import wepy from 'wepy';
+
+export default class extends wepy.app {
+
+    constructor () {
+        this.intercept('request', {
+            config (p) {
+                p.timestamp = +new Date();
+                return p;
+            },
+            success (p) {
+                console.log('request success');
+                return p;
+            },
+            fail (p) {
+                console.log('request error');
+                return p;
+            }
+        });
+    }
+}
+
+```
+
 
 ### 数据绑定
 
@@ -870,6 +930,7 @@ var item = require('item.js')
 | $emit | evtName(String), [args] | - | emit事件。|
 | $apply | fn(Function) | - | 准备执行脏数据检查。|
 | $digest | - | - | 脏检查。|
+
 ### wepy.page
 
 |父类 | wepy.component |
@@ -890,4 +951,9 @@ var item = require('item.js')
 | 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
 |$wxapp|App|-|小程序getApp()|
+
+
+| 方法 | 参数 | 返回值 | 说明|
+| ---- | ---- | ---- | ---- |
 | init | - | - | 应用始化包括对原生API的改造与优化|
+| intercept | api(String), provider(Function) | - | API拦截器 |

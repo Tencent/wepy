@@ -1,5 +1,10 @@
+## 1.4.2 (2017-02-09)
+* 添加slot支持。
+* 更新最新template支持slot。
+
 ## 1.4.1 (2017-01-26)
 * 修复了`onShareAppMessage`在所有页面都生效的问题。
+* 修改了`bind/catch`事件的传参机制，支持传入非String类型参数。
 * 修改了页面响应事件和组件通讯事件的参数顺序，改为默认最后一个参数为$event。
 * 不再会重写wx原有API，例如使用wepy.request代替wx.request。
 * 添加了两个API：app.use()，app.intercept()。
