@@ -357,7 +357,7 @@ if (prod) {
 `wpy`文件的编译过程过下：
 
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png" alt="5 small">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
 一个`.wpy`文件分为三个部分：
