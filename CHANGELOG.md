@@ -1,5 +1,5 @@
 ## 1.4.2 (2017-02-09)
-* 添加slot支持。
+* 添加slot支持，参看[slot说明](https://github.com/wepyjs/wepy#组件内容分发slot)。
 * 更新最新template支持slot。
 
 ## 1.4.1 (2017-01-26)
@@ -7,7 +7,7 @@
 * 修改了`bind/catch`事件的传参机制，支持传入非String类型参数。
 * 修改了页面响应事件和组件通讯事件的参数顺序，改为默认最后一个参数为$event。
 * 不再会重写wx原有API，例如使用wepy.request代替wx.request。
-* 添加了两个API：app.use()，app.intercept()。
+* 添加了两个API：app.use()，app.intercept()，参看[拦截器说明](https://github.com/wepyjs/wepy#拦截器)。
 * 不再默认添加Promise polyfill支持，需要手动import，然后使用`app.use('promisify')`。
 * 不再默认处理request并发问题，需要手动调用`app.use('requestfix')`。
 * 不再默认支持async/await，需要手动引入`babel-polyfill`。
