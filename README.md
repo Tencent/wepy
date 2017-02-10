@@ -573,7 +573,7 @@ export default class Com extends wepy.component {
     methods = {};
 
     events = {
-        'some-event': ($event, ...args) {
+        'some-event': ($event, ...args) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
         }
     };
