@@ -252,9 +252,11 @@ onLoad = function () {
 ```
 基于wepy实现代码：
 ```javascript
+import wepy from 'wepy';
+
 async onLoad() {
-    await wx.login();
-    this.userInfo = await wx.getUserInfo();
+    await wepy.login();
+    this.userInfo = await wepy.getUserInfo();
 }
 ```
 
@@ -797,8 +799,7 @@ wx.request({
 });
 
 // wepy 使用方式
-// request 接口从只接收Object变为可接收String
-wx.request('xxxx').then((d) => console.log(d));
+wepy.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
@@ -818,7 +819,7 @@ Page({
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
@@ -827,7 +828,7 @@ events: {
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
