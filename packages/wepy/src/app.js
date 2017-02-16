@@ -156,7 +156,7 @@ export default class {
                 });
             } else {
                 Object.defineProperty(wepy, key, {
-                    get () { return (obj) => wx[key](obj) }
+                    get () { return (...args) => wx[key].apply(wx, args) }
                 });
             }
         });
