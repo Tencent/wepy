@@ -210,7 +210,10 @@ export default {
         Object.keys(comAppendAttribute).forEach((key) => {
           if ('class' === key) {
             let oldClass = node.documentElement.getAttribute('class');
-            node.documentElement.setAttribute(key, oldClass + ' ' + comAppendAttribute[key]);
+            if (oldClass) {
+              oldClass += ' ';
+            }
+            node.documentElement.setAttribute(key, oldClass + comAppendAttribute[key]);
           }
           else {
             node.documentElement.setAttribute(key, comAppendAttribute[key]);
