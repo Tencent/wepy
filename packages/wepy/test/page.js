@@ -77,8 +77,8 @@ describe('page.js', () => {
 
         assert.strictEqual(page.$com.coma.staticAndCoerce, 2, 'test prop default value with coerce');
 
-        
-        
+
+
         assert.strictEqual(page.$com.coma.onceProp, '50', 'test once prop validate');
         assert.strictEqual(page.$com.coma.syncProp, '50', 'test sync prop validate');
         assert.strictEqual(page.$com.coma.twoWayProp, '50', 'test two way prop validate');
@@ -95,7 +95,7 @@ describe('page.js', () => {
         assert.strictEqual(page.$com.coma.onceProp, 80, 'parent prop.once changed will not change child props');
         assert.strictEqual(page.$com.coma.twoWayProp, '50', 'parent prop.once changed will not change child props, even child prop is two way');
 
-        
+
         assert.strictEqual(page.$com.coma.syncProp, 90, 'parent prop.sync changed will change child props');
 
         page.$com.coma.syncProp = 91;

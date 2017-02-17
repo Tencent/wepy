@@ -13,7 +13,7 @@ describe('app.js', () => {
 
     let appConfig = wepy.$createApp(App);
     let app = appConfig.$app;
-    
+
 
 
     it('wx instance', () => {
@@ -69,7 +69,7 @@ describe('app.js', () => {
         });
 
         assert.strictEqual(wepy.createCanvasContext(), 'createCanvasContext', 'wepy.createCanvasContext called');
-        
+
     });
 
     it('api use requestfix', () => {
@@ -137,7 +137,7 @@ describe('app.js', () => {
         app.use('requestfix');
 
         assert.strictEqual(wepy.getUserInfo() instanceof Promise, true, 'it\'s a Promise');
-        
+
         wepy.request({data: {number: 1}}).then(function (res) {
             assert.strictEqual(res.number, 1, 'wepy.request 1 success');
         });
@@ -159,7 +159,7 @@ describe('app.js', () => {
         wepy.request({data: {number: 7}}).then(function (res) {
             assert.strictEqual(res.number, 7, 'wepy.request 7 success');
         });
-        
+
     });
 
 
@@ -227,7 +227,7 @@ describe('app.js', () => {
         }).catch(function (e) {
             assert.strictEqual(e, 'aborted by interceptor wrong', 'Should not go here');
         });
-        
+
     });
 
 
@@ -240,7 +240,7 @@ describe('app.js', () => {
         app.use(C, 1, 2, 3);
 
         assert.strictEqual(app.$addons.C.name, 'addon', '3rd part addon');
-        
+
     });
 
 

@@ -244,7 +244,7 @@ export default {
         let target = this.getDistPath(opath, ext, src, dist);
         this.writeFile(target, this.readFile(path.join(opath.dir, opath.base)));
         let readable = fs.createReadStream(path.join(opath.dir, opath.base));
-        let writable = fs.createWriteStream(target);   
+        let writable = fs.createWriteStream(target);
         readable.pipe(writable);
     },
     getRelative(opath) {
@@ -258,7 +258,7 @@ export default {
         // 第三组件
         if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
             dir = opath.dir.replace('node_modules', `${dist}${path.sep}npm`) + path.sep;
-        } else 
+        } else
             dir = (opath.dir + path.sep).replace(path.sep + src + path.sep, path.sep + dist + path.sep);
         return dir + opath.name + ext;
     },
@@ -364,7 +364,7 @@ export default {
                 console.log(dateTime + fn(`[${type}]`) + ' ' + msg);
             }
         } else {
-            console.log(dateTime + msg); 
+            console.log(dateTime + msg);
         }
     },
     output (type, file, flag) {

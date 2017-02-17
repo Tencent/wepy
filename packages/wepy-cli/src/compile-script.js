@@ -25,7 +25,7 @@ export default {
     },
 
     resolveDeps (code, type, opath) {
-        
+
         let params = cache.getParams();
         let wpyExt = params.wpyExt;
 
@@ -96,7 +96,7 @@ export default {
                     util.log('依赖: ' + path.relative(process.cwd(), target), '拷贝');
                     /*let dirname = path.dirname(target);
                     mkdirp.sync(dirname);*/
-                    
+
                     this.compile('js', null, 'npm', path.parse(source));
 
                 }
@@ -113,7 +113,7 @@ export default {
                 if (lib[0] !== '.') {
                     resolved = path.join('..' + path.sep, path.relative(opath.dir, modulesPath), lib);
                 } else {
-                    if (lib[0] === '.' && lib[1] === '.')   
+                    if (lib[0] === '.' && lib[1] === '.')
                         resolved = './' + resolved;
                 }
 

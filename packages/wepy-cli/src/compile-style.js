@@ -17,7 +17,7 @@ export default {
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
-        
+
         if (arguments.length === 2) {
             requires = [];
             opath = content;

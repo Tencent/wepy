@@ -26,7 +26,7 @@
         data = {
             list: [{id: '0', title: 'loading'}]
         };
-        
+
         events = {
             'index-broadcast': (...args) => {
                 let $event = args[args.length - 1];

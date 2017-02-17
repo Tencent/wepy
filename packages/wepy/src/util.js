@@ -199,7 +199,7 @@ export default {
             return this.$extend(deep, {}, obj);
         } else
             return obj;
-    }, 
+    },
 
     $isPlainObject (obj) {
         var proto, Ctor;

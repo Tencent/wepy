@@ -23,7 +23,7 @@ let RequestMQ = {
                 let oldComplete = obj.complete;
                 obj.complete = (...args) => {
                     me.running.splice(me.running.indexOf(obj.t), 1);
-                    delete me.map[obj.t]; 
+                    delete me.map[obj.t];
                     oldComplete && oldComplete.apply(obj, args);
                     me.next();
                 }
@@ -33,11 +33,11 @@ let RequestMQ = {
     },
     request (obj) {
         let me = this;
-        
+
         obj = obj || {};
         obj = (typeof(obj) === 'string') ? {url: obj} : obj;
-        
-        
+
+
         this.push(obj);
 
         return this.next();
