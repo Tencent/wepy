@@ -203,9 +203,13 @@ export default {
         return node;
     },
 
-    compileXML (node, template, prefix, childNodes) {
+    compileXML (node, template, prefix, childNodes, comAppendAttribute = {}) {
 
         this.updateSlot(node, childNodes);
+
+        Object.keys(comAppendAttribute).forEach((key) => {
+          node.documentElement.setAttribute(key, comAppendAttribute[key]);
+        });
 
         this.updateBind(node, prefix);
 
@@ -218,13 +222,20 @@ export default {
         componentElements = componentElements.concat(customElements);
 
         componentElements.forEach((com) => {
+            let comAttributes = {};
             let comid, definePath, isCustom = false;
             if (com.nodeName === 'component') {
+                [].slice.call(com.attributes || []).forEach((attr) => {
+                  comAttributes[attr.name] = attr.value;
+                });
                 comid = util.getComId(com);
                 definePath = util.getComPath(com);
                 if (!comid)
                     throw new Error('Unknow component id');
             } else {
+                [].slice.call(com.attributes || []).forEach((attr) => {
+                  comAttributes[attr.name] = attr.value;
+                });
                 isCustom = true;
                 comid = util.getComId(com);
                 definePath = template.components[comid];
@@ -236,7 +247,7 @@ export default {
                 util.error('找不到组件：' + definePath, '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
-                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes), com);
+                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes), com);
             }
         });
         return node;
