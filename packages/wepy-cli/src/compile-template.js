@@ -207,18 +207,19 @@ export default {
 
         this.updateSlot(node, childNodes);
 
-        Object.keys(comAppendAttribute).forEach((key) => {
-          if ('class' === key) {
-            let oldClass = node.documentElement.getAttribute('class');
-            if (oldClass) {
-              oldClass += ' ';
+        if (node && node.documentElement) {
+          Object.keys(comAppendAttribute).forEach((key) => {
+            let value= comAppendAttribute[key];
+            if ('class' === key) {
+              let oldClass = node.documentElement.getAttribute('class');
+              if (oldClass) {
+                value = oldClass + ' ';
+              }
             }
-            node.documentElement.setAttribute(key, oldClass + comAppendAttribute[key]);
-          }
-          else {
+
             node.documentElement.setAttribute(key, comAppendAttribute[key]);
-          }
-        });
+          });
+        }
 
         this.updateBind(node, prefix);
 
