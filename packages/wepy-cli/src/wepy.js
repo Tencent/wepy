@@ -15,7 +15,7 @@ let displayVersion = () => {
         '( \/\/ )( ___)(  _ \( \/ )',
         ' )    (  )__)  )___/ \  / ',
         '(__/\__)(____)(__)   (__) ',
-        '                                         '                                       
+        '                                         '
     ].join('\n');
     console.log('\n v' + version + '\n');
     console.log(chars);
@@ -200,4 +200,4 @@ commander.command('upgrade').description('升级wepyjs版本').action(name => {
     upgrade();
 });
 
-commander.parse(process.argv);  
+commander.parse(process.argv);

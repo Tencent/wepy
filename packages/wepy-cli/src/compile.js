@@ -23,7 +23,6 @@ export default {
      * find parent, import xxxx from xxx;
      */
     findParents (file) {
-        //import Counter from '../components/counter';
         let src = cache.getSrc();
         let files = util.getFiles(src);
         let ext = cache.getExt();
@@ -42,7 +41,7 @@ export default {
                 reg = new RegExp('\\' + ext + '$');
                 if (!reg.test(importpath))
                     importpath = importpath + ext;
-                
+
                 if (path.join(opath.dir, importpath) === path.join(util.currentDir, src, file)) {
                     if (!reg.test(f)) {
                         parents = parents.concat(this.findReference(f));
@@ -107,7 +106,7 @@ export default {
                 }, 500);
             }
         }).on('ready', () => {
-            watchReady = true;   
+            watchReady = true;
             util.log('开始监听文件改动。', '信息');
         });
     },
@@ -139,7 +138,7 @@ export default {
         }
         return compareVersions(required, pkg.version) === 1;
     },
-    
+
     build (config) {
         let wepyrc = util.getConfig();
         if (!wepyrc) {
@@ -247,7 +246,7 @@ export default {
             }
         });
 
-        
+
 
         if (config.watch) {
             this.watch(config);
@@ -263,7 +262,7 @@ export default {
             util.error('文件不存在：' + util.getRelative(opath));
             return;
         }
-        
+
         switch(opath.ext) {
             case ext:
                 cWpy.compile(opath);
