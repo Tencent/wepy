@@ -69,7 +69,7 @@ let $bindEvt = (config, com, prefix) => {
                 rst = comfn.apply(com, args.concat(evt));
             }
             com.$mixins.forEach((mix) => {
-                mix.methods[method] && (mixRst = mix.methods[method].apply(com, args));
+                mix.methods[method] && (mixRst = mix.methods[method].apply(com, args.concat(evt)));
             });
             com.$apply();
             return comfn ? rst : mixRst;
