@@ -136,6 +136,8 @@ export default {
                 break;
             case '_microtask.js':
                 code = code.replace('if(Observer)', 'if(false && Observer)');
+                // IOS 1.10.2 Promise BUG
+                code = code.replace('Promise && Promise.resolve', 'false && Promise && Promise.resolve');
                 break;
         }
         return code;
