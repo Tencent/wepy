@@ -1,3 +1,12 @@
+## 1.4.3 (2017-02-20)
+* `F` 修复调用原生api参数报错的BUG。
+* `A` 添加wepy-plugin-replace插件。
+* `F` 修复了Mixin事件中，event丢失的BUG。[PR #40](https://github.com/wepyjs/wepy/pull/40)
+* `F` 修复了IOS 1.10.2 中Promise.resolve没被调用的BUG。
+* `F` 修复了Mixin的自定义事件无效的BUG。[ISSUE #44](https://github.com/wepyjs/wepy/issues/44)
+* `F` 修复了SASS和SCSS编译混乱的BUG。[ISSUE #43](https://github.com/wepyjs/wepy/issues/43)
+* `A` 解决了不支持`moment.js`的问题。[ISSUE #45](https://github.com/wepyjs/wepy/issues/45)
+
 ## 1.4.2 (2017-02-09)
 * 添加slot支持，参看[slot说明](https://github.com/wepyjs/wepy#组件内容分发slot)。
 * 更新最新template支持slot。
