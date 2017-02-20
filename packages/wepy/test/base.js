@@ -59,7 +59,7 @@ describe('base.js', () => {
 
 
         assert.strictEqual(index.$com.coma.$wxapp.app, global.getApp().app, '$wxapp reuturns getApp()');
-        
+
         assert.strictEqual(index.$com.coma.$wxpage.getCurrentPages(), 'wxpage', '$wxpage returns wxpage');
 
     });

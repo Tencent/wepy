@@ -81,7 +81,7 @@
     import List from '../components/list';
     import Panel from '../components/panel';
     import Counter from '../components/counter';
-    import Toast from 'wepy-com-toast'; 
+    import Toast from 'wepy-com-toast';
 
     import testMixin from '../mixins/test';
 

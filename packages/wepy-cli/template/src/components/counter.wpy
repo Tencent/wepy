@@ -29,7 +29,7 @@
                 default: 50
             }
         };
-        
+
         data = {
         };
         events = {

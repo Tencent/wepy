@@ -5,13 +5,13 @@
 以下安装都通过`npm`安装
 
 **安装（更新） wepy 命令行工具。**
- 
+
 ```bash
 npm install wepy-cli -g
 ```
 
 **在开发目录生成开发DEMO。**
- 
+
 ```bash
 wepy new myproject
 ```
@@ -30,7 +30,7 @@ wepy build --watch
 #### 项目目录结构
 ```
 ├── dist                   微信开发者工具指定的目录
-├── node_modules           
+├── node_modules
 ├── src                    代码编写的目录
 |   ├── components         组件文件夹（非完整页面）
 |   |   ├── com_a.wpy      可复用组件 a

@@ -12,7 +12,7 @@ var MixinA = require('./fake/mixin');
 
 
 describe('component.js', () => {
-    
+
 
     let index = new Index();
     index.init(wxfake.getWxPage(), wxfake.getWxPage());
@@ -126,7 +126,7 @@ describe('component.js', () => {
         let childCom = new ComAA();
         let childchildCom = new ComAA();
         childCom.$prefix = '$coma$comaa$'
-        
+
         childCom.customMethod = function (a, b, c) {
             assert.strictEqual(a + b + c, 1 + 2 + 3, 'test invoke params');
         };
@@ -166,7 +166,7 @@ describe('component.js', () => {
         } catch (e) {
             assert.strictEqual(e.message.indexOf('Invalid path') > -1, true, 'test invoke undefined method');
         }
-        
+
     });
 
 

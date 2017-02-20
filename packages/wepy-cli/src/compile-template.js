@@ -149,7 +149,7 @@ export default {
                         let funcInfo = this.getFunctionInfo(attr.value);
                         attr.value = funcInfo.name;
                         funcInfo.params.forEach((p, i) => {
-                            node.setAttribute('data-wepy-params-' + String.fromCharCode(97 + i), p);    
+                            node.setAttribute('data-wepy-params-' + String.fromCharCode(97 + i), p);
                         });
                     }
                     if (prefix)
@@ -206,7 +206,7 @@ export default {
     compileXML (node, template, prefix, childNodes) {
 
         this.updateSlot(node, childNodes);
-        
+
         this.updateBind(node, prefix);
 
         let componentElements = util.elemToArray(node.getElementsByTagName('component'));
@@ -236,7 +236,7 @@ export default {
                 util.error('找不到组件：' + definePath, '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
-                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes), com);    
+                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes), com);
             }
         });
         return node;
@@ -251,7 +251,7 @@ export default {
         let dist = cache.getDist();
         let self = this;
 
-        
+
         let compiler = loader.loadCompiler(lang);
 
         if (!compiler) {

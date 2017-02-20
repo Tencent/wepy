@@ -19,10 +19,10 @@ export default {
             warning (x) {
                 if (x.indexOf('missed value!!') > -1) {
                     // ignore warnings
-                } else 
+                } else
                     util.warning(x);
             }
-        }}); 
+        }});
     },
 
     grabConfigFromScript(str, n) {
@@ -216,7 +216,7 @@ export default {
                 });
             }
         })();
-        
+
         return rst;
     },
 

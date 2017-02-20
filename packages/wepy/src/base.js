@@ -31,7 +31,7 @@ let $bindEvt = (config, com, prefix) => {
         let comPrefix = prefix ? (prefix + child.$name + '$') : ('$' + child.$name + '$');
 
         $getPrefix(comPrefix);
-        
+
         com.$com[name] = child;
 
         $bindEvt(config, child, comPrefix);
@@ -129,7 +129,7 @@ export default {
                     });
 
                     page.$apply();
-                    
+
                     return rst;
                 };
             }
