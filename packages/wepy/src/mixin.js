@@ -11,13 +11,16 @@ export default class {
     init (parent) {
         let k;
 
-        // 自定义方法与属性覆盖
-        Object.getOwnPropertyNames(this).forEach((k) => {
-            if (k[0] + k[1] !== 'on') {
-                if (!parent[k])
-                    parent[k] = this[k];
-            }
+        // 自定义属性覆盖
+        Object.getOwnPropertyNames(this)
+            .concat(Object.getOwnPropertyNames(Object.getPrototypeOf(this)))
+            .forEach((k) => {
+                if (k[0] + k[1] !== 'on' && k !== 'constructor') {
+                    if (!parent[k])
+                        parent[k] = this[k];
+                }
         });
+
 
         // 数据，事件，组件覆盖
         ['data', 'events', 'components'].forEach((item) => {

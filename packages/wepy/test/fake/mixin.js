@@ -14,6 +14,14 @@ module.exports = class Mix extends wepy.mixin {
         };
     }
 
+    func1 () {
+        return 'mixin-func1';
+    }
+
+    func2 () {
+        return 'mixin-func2';
+    }
+
     onLoad() {
 
     }

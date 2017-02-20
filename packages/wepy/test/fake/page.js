@@ -47,4 +47,9 @@ module.exports = class Index extends wepy.page {
         assert.strictEqual(this instanceof Index, true, 'page custom method triggered, this is self');
         assert.strictEqual(arg, 'user_custom', 'page custom method triggered with params');
     }
+
+
+    func1 () {
+        return 'parent-func1';
+    }
 }
