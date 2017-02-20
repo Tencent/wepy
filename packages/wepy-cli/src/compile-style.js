@@ -24,6 +24,9 @@ export default {
             content = util.readFile(path.join(opath.dir, opath.base));
         }
 
+        if (lang === 'scss')
+            lang = 'sass';
+
         let compiler = loader.loadCompiler(lang);
 
         if (!compiler) {
