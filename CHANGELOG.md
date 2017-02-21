@@ -6,6 +6,7 @@
 * `F` 修复了Mixin的自定义事件无效的BUG。[ISSUE #44](https://github.com/wepyjs/wepy/issues/44)
 * `F` 修复了SASS和SCSS编译混乱的BUG。[ISSUE #43](https://github.com/wepyjs/wepy/issues/43)
 * `A` 解决了不支持`moment.js`的问题。[ISSUE #45](https://github.com/wepyjs/wepy/issues/45)
+* `F` 优化了wepy使用async/await的方式，不再依赖`babel-polyfill`。
 
 ## 1.4.2 (2017-02-09)
 * 添加slot支持，参看[slot说明](https://github.com/wepyjs/wepy#组件内容分发slot)。
