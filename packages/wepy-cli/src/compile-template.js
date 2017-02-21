@@ -234,18 +234,17 @@ export default {
         componentElements.forEach((com) => {
             let comAttributes = {};
             let comid, definePath, isCustom = false;
+            [].slice.call(com.attributes || []).forEach((attr) => {
+              if (-1 < ['hidden', 'class', 'wx:if'].indexOf(attr.name)) {
+                comAttributes[attr.name] = attr.value;
+              }
+            });
             if (com.nodeName === 'component') {
-                [].slice.call(com.attributes || []).forEach((attr) => {
-                  comAttributes[attr.name] = attr.value;
-                });
                 comid = util.getComId(com);
                 definePath = util.getComPath(com);
                 if (!comid)
                     throw new Error('Unknow component id');
             } else {
-                [].slice.call(com.attributes || []).forEach((attr) => {
-                  comAttributes[attr.name] = attr.value;
-                });
                 isCustom = true;
                 comid = util.getComId(com);
                 definePath = template.components[comid];
