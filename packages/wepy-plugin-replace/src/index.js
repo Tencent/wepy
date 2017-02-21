@@ -19,15 +19,14 @@ export default class {
 
         if (setting instanceof Array) {
             settings = settings.concat(setting);
-        } else if (setting instanceof Object && setting['0']) {
+        } else if (setting instanceof Object) {
             for (let key in setting) {
                 let value = setting[key];
                 if(value.filter) {
                     settings.push(value);
                 }
             }
-        }
-        else if (setting instanceof Object && setting.filter) {
+        } else if (setting instanceof Object && setting.filter) {
             settings.push(setting);
         }
 
