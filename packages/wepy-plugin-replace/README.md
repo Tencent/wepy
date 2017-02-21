@@ -12,6 +12,19 @@ npm install wepy-plugin-replace --save-dev
 
 ```
 module.exports.plugins = {
+    'replace': {
+        filter: /moment\.js$/,
+        config: {
+            find: /([\w\[\]a-d\.]+)\s*instanceof Function/g,
+            replace: function (matchs, word) {
+                return ' typeof ' + word + " ==='function' ";
+            }
+        }
+    }
+};
+
+
+module.exports.plugins = {
     'replace': [{
         filter: /moment\.js$/,
         config: {
@@ -20,7 +33,33 @@ module.exports.plugins = {
                 return ' typeof ' + word + " ==='function' ";
             }
         }
+    }, {
+        filter: /anotherfile\.js$/,
+        config: {
+            find: 'hello world',
+            replace: 'hello gcaufy'
+        }
     }]
 };
 
+module.exports.plugins = {
+    'replace': {
+        'fix-moment': {
+            filter: /moment\.js$/,
+            config: {
+                find: /([\w\[\]a-d\.]+)\s*instanceof Function/g,
+                replace: function (matchs, word) {
+                    return ' typeof ' + word + " ==='function' ";
+                }
+            }
+        }, 
+        'fix-other': {
+            filter: /anotherfile\.js$/,
+            config: {
+                find: 'hello world',
+                replace: 'hello gcaufy'
+            }
+        }
+    }
+};
 ```
