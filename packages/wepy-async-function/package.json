@@ -1,0 +1,20 @@
+{
+  "name": "wepy-async-function",
+  "version": "1.3.8",
+  "description": "wepy async function support",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "async",
+    "await",
+    "promise"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "promise-polyfill": "^6.0.2",
+    "regenerator-runtime": "^0.10.3"
+  }
+}
