@@ -217,7 +217,7 @@ export default {
               }
             }
 
-            node.documentElement.setAttribute(key, comAppendAttribute[key]);
+            node.documentElement.setAttribute(key, value);
           });
         }
 
