@@ -12,7 +12,7 @@ npm install wepy-plugin-replace --save-dev
 
 ```
 module.exports.plugins = {
-    'replace': {
+    'replace': [{
         filter: /moment\.js$/,
         config: {
             find: /([\w\[\]a-d\.]+)\s*instanceof Function/g,
@@ -20,7 +20,7 @@ module.exports.plugins = {
                 return ' typeof ' + word + " ==='function' ";
             }
         }
-    }
+    }]
 };
 
 ```
