@@ -50,6 +50,7 @@ let generateProject = (name) => {
         'wepy-com-toast',
         'wepy-compiler-less',
         'wepy-compiler-babel',
+        'wepy-async-function',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
         'babel-preset-es2015',
