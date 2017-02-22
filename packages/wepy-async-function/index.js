@@ -1,4 +1,6 @@
 var g = require('./global');
-g.Promise = g.Promise || require('promise-polyfill');
-g.regeneratorRuntime = g.regeneratorRuntime || require('regenerator-runtime/runtime');
+
+// IOS 10.0.1 may cause IOS crash.
+g.Promise = require('promise-polyfill');
+g.regeneratorRuntime = require('regenerator-runtime/runtime');
 
