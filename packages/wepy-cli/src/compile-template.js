@@ -207,21 +207,13 @@ export default {
 
         this.updateSlot(node, childNodes);
 
-        if (node && node.documentElement) {
-          Object.keys(comAppendAttribute).forEach((key) => {
-            let value= comAppendAttribute[key];
-            if ('class' === key) {
-              let oldClass = node.documentElement.getAttribute('class');
-              if (oldClass) {
-                value = oldClass + ' ';
-              }
-            }
-
-            node.documentElement.setAttribute(key, value);
-          });
-        }
-
         this.updateBind(node, prefix);
+
+        if (node && node.documentElement) {
+            Object.keys(comAppendAttribute).forEach((key) => {
+                node.documentElement.setAttribute(key, comAppendAttribute[key]);
+            });
+        }
 
         let componentElements = util.elemToArray(node.getElementsByTagName('component'));
         let customElements = [];
@@ -232,12 +224,11 @@ export default {
         componentElements = componentElements.concat(customElements);
 
         componentElements.forEach((com) => {
-            let comAttributes = {};
-            let comid, definePath, isCustom = false;
+            let comid, definePath, isCustom = false, comAttributes = {};
             [].slice.call(com.attributes || []).forEach((attr) => {
-              if (-1 < ['hidden', 'class', 'wx:if'].indexOf(attr.name)) {
-                comAttributes[attr.name] = attr.value;
-              }
+                if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) > -1) {
+                    comAttributes[attr.name] = attr.value;
+                }
             });
             if (com.nodeName === 'component') {
                 comid = util.getComId(com);
