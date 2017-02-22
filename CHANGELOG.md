@@ -1,4 +1,4 @@
-## 1.4.3 (2017-02-20)
+## 1.4.3 (2017-02-22)
 * `F` 修复调用原生api参数报错的BUG。
 * `A` 添加wepy-plugin-replace插件。
 * `F` 修复了Mixin事件中，event丢失的BUG。[PR #40](https://github.com/wepyjs/wepy/pull/40)
@@ -7,6 +7,10 @@
 * `F` 修复了SASS和SCSS编译混乱的BUG。[ISSUE #43](https://github.com/wepyjs/wepy/issues/43)
 * `A` 解决了不支持`moment.js`的问题。[ISSUE #45](https://github.com/wepyjs/wepy/issues/45)
 * `F` 优化了wepy使用async/await的方式，不再依赖`babel-polyfill`。
+* `F` 生成DEMO默认使用`async/await`。
+* `A` 组件支持`'hidden', 'wx:if', 'wx:elif', 'wx:else'`四个属性。[PR #47](https://github.com/wepyjs/wepy/pull/47)
+
+**感谢@shenqihui的贡献**
 
 ## 1.4.2 (2017-02-09)
 * 添加slot支持，参看[slot说明](https://github.com/wepyjs/wepy#组件内容分发slot)。
