@@ -10,7 +10,6 @@ let compiler = function (content, config) {
         html = (html || '').replace(/<div /ig, '<view ').replace(/<\/div>/ig, '</view>').replace(/<div>/ig, '<view>')
         p = Promise.resolve(html);
     } catch (e) {
-        console.log('编辑 PUG 错误', e);
         p = Promise.reject(e);
     }
     return p;
@@ -25,7 +24,6 @@ compiler.sync = function (content, config) {
         html = fn(data);
         html = (html || '').replace(/<div /ig, '<view ').replace(/<\/div>/ig, '</view>').replace(/<div>/ig, '<view>')
     } catch (e) {
-      console.log('编辑 PUG 错误', e);
     }
     return html;
 };
