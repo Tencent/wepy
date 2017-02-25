@@ -236,7 +236,7 @@ export default class {
             throw new Error('Invalid path: ' + com);
         }
 
-        let fn = this.$wxpage[com.$prefix + method];
+        let fn = com.methods[method];
 
         if (typeof(fn) === 'function') {
             let $evt = new event('', this, 'invoke');
