@@ -1,3 +1,51 @@
+## 1.4.5 (waiting)
+* `F` 修复`$invoke`事件`event`参数错误的BUG。[PR #50](https://github.com/wepyjs/wepy/issues/50)
+
+## 1.4.3 (2017-02-22)
+* `F` 修复调用原生api参数报错的BUG。
+* `A` 添加wepy-plugin-replace插件。
+* `F` 修复了Mixin事件中，event丢失的BUG。[PR #40](https://github.com/wepyjs/wepy/pull/40)
+* `F` 修复了IOS 1.10.2 中Promise.resolve没被调用的BUG。
+* `F` 修复了Mixin的自定义事件无效的BUG。[ISSUE #44](https://github.com/wepyjs/wepy/issues/44)
+* `F` 修复了SASS和SCSS编译混乱的BUG。[ISSUE #43](https://github.com/wepyjs/wepy/issues/43)
+* `A` 解决了不支持`moment.js`的问题。[ISSUE #45](https://github.com/wepyjs/wepy/issues/45)
+* `F` 优化了wepy使用async/await的方式，不再依赖`babel-polyfill`。
+* `F` 生成DEMO默认使用`async/await`。
+* `A` 组件支持`'hidden', 'wx:if', 'wx:elif', 'wx:else'`四个属性。[PR #47](https://github.com/wepyjs/wepy/pull/47)
+
+**感谢@shenqihui的贡献**
+
+## 1.4.2 (2017-02-09)
+* 添加slot支持，参看[slot说明](https://github.com/wepyjs/wepy#组件内容分发slot)。
+* 更新最新template支持slot。
+
+## 1.4.1 (2017-01-26)
+* 修复了`onShareAppMessage`在所有页面都生效的问题。
+* 修改了`bind/catch`事件的传参机制，支持传入非String类型参数。
+* 修改了页面响应事件和组件通讯事件的参数顺序，改为默认最后一个参数为$event。
+* 不再会重写wx原有API，例如使用wepy.request代替wx.request。
+* 添加了两个API：app.use()，app.intercept()，参看[拦截器说明](https://github.com/wepyjs/wepy#拦截器)。
+* 不再默认添加Promise polyfill支持，需要手动import，然后使用`app.use('promisify')`。
+* 不再默认处理request并发问题，需要手动调用`app.use('requestfix')`。
+* 不再默认支持async/await，需要手动引入`babel-polyfill`。
+* 将默认npm目录压缩后的大小由170kb减少至23kb。
+
+**以上改动将不向下兼容，升级前请查看[迁移指南](https://github.com/wepyjs/wepy/wiki/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97#13x---141)**
+
+
+## 1.3.11 (2017-01-16)
+* 页面和组件均添加`$wxapp`和`$wxpage`属性
+* 添加了`wepy-plugin-filemin`，可以压缩`wxml`和`json`文件。
+* 修复了`onShareAppMessage` API 不生效的问题。
+* 修复了组件template使用pug时不会编译的问题。
+* 加入了node版本检测功能，低于Node版本低于5时提示更新Node版本。
+
+## 1.3.10 (2017-01-10)
+* 修复了less文件中使用import找不到路径的BUG。
+* 修复了prop默认值混乱的BUG。
+* 修复了prop默认值不会触发coerce的BUG。
+* 优化编译过程中的一个报错提示。
+
 ## 1.3.9 (2017-01-05)
 * 修复了wx.createCanvasContext在prmoise下报错的问题。
 * 添加了`.wepyignore`忽略编译一些非必要文件。[ISSUE 12](https://github.com/wepyjs/wepy/issues/12)。
