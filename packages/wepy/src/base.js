@@ -18,7 +18,7 @@ let $getPrefix = (prefix) => {
     return prefixList[prefix];*/
 }
 
-const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom'];
+const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
 
 let $bindEvt = (config, com, prefix) => {
@@ -124,6 +124,9 @@ export default {
                     let rst;
                     page[v] && (rst = page[v].apply(page, args));
 
+                    if (v === 'onShareAppMessage')
+                        return rst;
+
                     page.$mixins.forEach((mix) => {
                         mix[v] && mix[v].apply(page, args);
                     });
@@ -135,10 +138,8 @@ export default {
             }
         });
 
-        if (page.onShareAppMessage) {
-            config.onShareAppMessage = (...args) => {
-                return page.onShareAppMessage.apply(page, args);
-            }
+        if (!page.onShareAppMessage) {
+            delete config.onShareAppMessage;
         }
 
         return $bindEvt(config, page, '');
