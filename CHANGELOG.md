@@ -1,6 +1,7 @@
 ## 1.4.5 (waiting)
-* `F` 修复`$invoke`事件`event`参数错误的BUG。[PR #50](https://github.com/wepyjs/wepy/issues/50)。
-* `F` 修复`onShareAppMessage`报错的问题。
+* `F` 修复`$invoke`事件`event`参数错误的BUG。[PR #50](https://github.com/wepyjs/wepy/issues/50)
+* `F` 修复`onShareAppMessage`报错的问题。[PR #52](https://github.com/wepyjs/wepy/issues/52)
+* `F` 修复了在没有申明`data`时使用`props`报错的BUG。[PR #54](https://github.com/wepyjs/wepy/issues/54)
 
 ## 1.4.3 (2017-02-22)
 * `F` 修复调用原生api参数报错的BUG。

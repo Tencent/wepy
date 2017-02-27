@@ -81,6 +81,8 @@ export default class {
 
     $mappingProps = {};
 
+    data = {};
+
     init ($wxpage, $root, $parent) {
         let self = this;
 

@@ -4,6 +4,7 @@ let wepy = require('../../lib/wepy.js').default;
 let Mix = require('./mixin');
 let ComA = require('./com_a');
 let ComB = require('./com_b');
+let ComC = require('./com_c');
 
 module.exports = class Index extends wepy.page {
     constructor () {
@@ -15,7 +16,8 @@ module.exports = class Index extends wepy.page {
         };
         this.components = {
             coma: ComA,
-            comb: ComB
+            comb: ComB,
+            comc: ComC,
         };
         this.data = {
             'a': 1,
