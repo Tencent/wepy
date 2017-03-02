@@ -1,3 +1,8 @@
+## 1.4.5 (waiting)
+* `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
+* `working on` 使用空template报错的BUG。
+
+
 ## 1.4.4 (2017-02-28)
 * `F` 修复`$invoke`事件`event`参数错误的BUG。[PR #50](https://github.com/wepyjs/wepy/issues/50)
 * `F` 修复`onShareAppMessage`报错的问题。[PR #52](https://github.com/wepyjs/wepy/issues/52)
