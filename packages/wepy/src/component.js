@@ -82,6 +82,7 @@ export default class {
     $mappingProps = {};
 
     data = {};
+    methods = {};
 
     init ($wxpage, $root, $parent) {
         let self = this;
@@ -238,7 +239,7 @@ export default class {
             throw new Error('Invalid path: ' + com);
         }
 
-        let fn = com.methods[method];
+        let fn = com.methods ? com.methods[method] : '';
 
         if (typeof(fn) === 'function') {
             let $evt = new event('', this, 'invoke');
