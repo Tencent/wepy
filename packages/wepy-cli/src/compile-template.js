@@ -276,6 +276,10 @@ export default {
             node = this.compileXML(node, template);
             let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 
+            // empty node tostring will cause an error.
+            if (node.childNodes.length === 0)
+                node = '';
+
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'wxml',
                 code: util.decode(node.toString()),
