@@ -1,6 +1,6 @@
 ## 1.4.5 (waiting)
 * `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
-* `working on` 使用空template报错的BUG。
+* `F` 使用空template报错的BUG。
 
 
 ## 1.4.4 (2017-02-28)
