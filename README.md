@@ -5,13 +5,15 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
+
+
+## 微信交流群
+
+
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/23350301/959039e4-fcf4-11e6-9396-a7bd64ecfee9.png" alt="qrcode">
-</p>
-<p align="center">
-  扫码加入wepyjs体验交流群。
-  <p align="center">
-   <a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
+  <img src="https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png" alt="qrcode">
+    <p align="center">
+  WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
   </p>
 </p>
 
