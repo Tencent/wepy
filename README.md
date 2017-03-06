@@ -6,14 +6,17 @@
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 
-
-
-
-
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png" alt="qrcode">
-    <p align="center">
-  WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
+  <p align="center"></p>
+  <p align="center"></p>
+  <p align="center"></p>
+  
+  <p align="center">
+    <img src="https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png" alt="qrcode">
+  </p>
+  
+  <p align="center">
+     WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
   </p>
 </p>
 
