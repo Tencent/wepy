@@ -7,6 +7,7 @@ import compile from './compile';
 
 
 const templateDir = path.join(util.cliDir, '../template', path.sep);
+const emptyDir = path.join(util.cliDir, '../empty', path.sep);
 
 let displayVersion = () => {
     let version = util.getVersion();
@@ -21,7 +22,7 @@ let displayVersion = () => {
     console.log(chars);
 };
 
-let generateProject = (name) => {
+let generateProject = (name, config) => {
 
     util.log('目录：' + name, '创建');
 
@@ -40,33 +41,38 @@ let generateProject = (name) => {
         return;
     }
 
-    let pkg = path.join(templateDir, 'package.json');
+    let template = config.empty ? emptyDir : templateDir;
+
+    let pkg = path.join(template, 'package.json');
     pkg = util.readFile(pkg);
     pkg = JSON.parse(pkg);
     pkg.name = name;
 
     let dependencies = [
         'wepy',
-        'wepy-com-toast',
-        'wepy-compiler-less',
         'wepy-compiler-babel',
-        'wepy-async-function',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
         'babel-preset-es2015',
+        'wepy-compiler-less',
         'babel-preset-stage-1'
     ];
+
+    if (!config.empty) {
+        dependencies.push('wepy-com-toast');
+        dependencies.push('wepy-async-function');
+    }
 
     util.writeFile(packagePath, JSON.stringify(pkg));
     util.log('配置: ' + 'package.json', '写入');
 
-    let files = util.getFiles(templateDir);
+    let files = util.getFiles(template);
 
     files.forEach((file) => {
         let target = path.join(util.currentDir, file);
         let opath = path.parse(target);
 
-        util.writeFile(target, util.readFile(path.join(templateDir, file)));
+        util.writeFile(target, util.readFile(path.join(template, file)));
         util.log('文件: ' + file, '拷贝');
     });
 
@@ -179,6 +185,7 @@ commander.option('-s, --source <source>', '源码目录');
 commander.option('-t, --target <target>', '生成代码目录');
 commander.option('-f, --file <file>', '待编译wpy文件');
 commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
+commander.option('--empty', '使用new生成项目时，生成空项目内容');
 commander.option('-w, --watch', '监听文件改动');
 /*
 commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is module, used in `new` command', mode => {
@@ -193,7 +200,7 @@ commander.command('build').description('编译项目').action(projectPath => {
 });
 
 commander.command('new <projectName>').description('生成项目').action(name => {
-    generateProject(name || 'temp');
+    generateProject(name || 'temp', commander);
 });
 
 

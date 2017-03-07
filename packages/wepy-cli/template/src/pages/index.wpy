@@ -29,6 +29,7 @@
             <text class="info">{{setTimeoutTitle}}</text>
             <text class="info">{{mixin}}</text>
             <text class="info">{{mynum}}</text>
+            <text class="info">{{now}}</text>
             <button bindtap="plus('a')" size="mini">  +  </button>
         </panel>
 
@@ -109,6 +110,12 @@
             setTimeoutTitle: '标题三秒后会被修改',
             count: 0,
             netrst: ''
+        };
+
+        computed = {
+            now () {
+                return +new Date();
+            }
         };
         methods = {
             plus () {
