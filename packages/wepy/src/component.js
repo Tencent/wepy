@@ -143,6 +143,14 @@ export default class {
 
             this[k] = util.$copy(this.data[k], true);
         }
+
+        if (this.computed) {
+            for (k in this.computed) {
+                let fn = this.computed[k];
+                defaultData[`${this.$prefix}${k}`] = fn.call(this);
+                this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
+            }
+        }
         this.setData(defaultData);
 
         let coms = Object.getOwnPropertyNames(this.$com);
@@ -325,8 +333,18 @@ export default class {
                     }
                 }
             }
-            if (Object.keys(readyToSet).length)
+            if (Object.keys(readyToSet).length) {
+                if (this.computed) {
+                    for (k in this.computed) {
+                        let fn = this.computed[k], val = fn.call(this);
+                        if (!util.$isEqual(this[k], val)) {
+                            readyToSet[this.$prefix + k] = val;
+                            this[k] = util.$copy(val, true);
+                        }
+                    }
+                }
                 this.setData(readyToSet);
+            }
             this.$$phase = false;
         }
     }

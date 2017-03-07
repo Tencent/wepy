@@ -16,7 +16,13 @@ module.exports = class Com extends wepy.component {
     constructor () {
         super();
         this.data = {
-            'a': 1
+            'a': 1,
+            'num': 10,
+        };
+        this.computed = {
+            computedNum: function () {
+                return this.num * 2;
+            }
         };
         this.methods = {
             'tap': function (a, b, evt) {

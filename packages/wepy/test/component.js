@@ -83,6 +83,14 @@ describe('component.js', () => {
 
     });
 
+
+    it('computed test', () => {
+        com.num = 11;
+        com.$apply();
+
+        assert.strictEqual(com.computedNum, 11 * 2, 'test computed');
+    });
+
     it('$emit', () => {
         let page = new Index();
         page.events = {
