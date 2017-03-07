@@ -3,6 +3,7 @@
 * `F` 使用空template报错的BUG。
 * `A` 添加了`computed`属性。
 * `A` 添加了`onRoute`事件。
+* `A` `wepy-cli`添加了`--empty`选项，`wepy new demo --empty`用于生成空项目。
 
 
 ## 1.4.4 (2017-02-28)
