@@ -1,6 +1,8 @@
-## 1.4.5 (waiting)
+## 1.4.5 (2017-03-07)
 * `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
 * `F` 使用空template报错的BUG。
+* `A` 添加了`computed`属性。
+* `A` 添加了`onRoute`事件。
 
 
 ## 1.4.4 (2017-02-28)
