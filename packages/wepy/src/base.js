@@ -116,10 +116,35 @@ export default {
             });
 
             page.$apply();
-        }
+        };
+
+        config.onShow = function (...args) {
+
+            page.onShow && page.onShow.apply(page, args);
+
+            page.$mixins.forEach((mix) => {
+                mix['onShow'] && mix['onShow'].apply(page, args);
+            });
+
+            let pages = getCurrentPages();
+            let pageId = pages[pages.length - 1].__route__;
+
+            if (self.$instance.__route__ !== pageId) {
+
+                self.$instance.__route__ = pageId;
+
+                page.onRoute && page.onRoute.apply(page, args);
+
+                page.$mixins.forEach((mix) => {
+                    mix['onRoute'] && mix['onRoute'].apply(page, args);
+                });
+            }
+
+            page.$apply();
+        };
 
         pageEvent.forEach((v) => {
-            if (v !== 'onLoad') {
+            if (v !== 'onLoad' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
                     page[v] && (rst = page[v].apply(page, args));

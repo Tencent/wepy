@@ -40,6 +40,9 @@ module.exports = {
         };
 
         global.getApp = function () { return {app:'app'}; };
+        global.getCurrentPages = function () { 
+            return [{__route__: 'index'}]; 
+        };
     },
     getWxPage: function () {
         return {
