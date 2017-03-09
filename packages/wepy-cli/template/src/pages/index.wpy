@@ -148,7 +148,7 @@
                 let i = 10;
                 let map = ['MA==', 'MQo=', 'Mg==', 'Mw==', 'NA==', 'NQ==', 'Ng==', 'Nw==', 'OA==', 'OQ=='];
                 while(i--) {
-                    wx.request({
+                    wepy.request({
                         url: 'https://www.madcoder.cn/tests/sleep.php?time=1&t=css&c=' + map[i] + '&i=' + i,
                         success: function (d) {
                             self.netrst += d.data + '.';
