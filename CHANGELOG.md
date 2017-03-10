@@ -1,3 +1,6 @@
+## 1.4.6 (waiting)
+* `F` 移除了编译过程中自动生成的`xmlns:wx`属性。
+
 ## 1.4.5 (2017-03-07)
 * `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
 * `F` 使用空template报错的BUG。

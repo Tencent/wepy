@@ -279,6 +279,12 @@ export default {
             // empty node tostring will cause an error.
             if (node.childNodes.length === 0)
                 node = '';
+            else {
+                // xmldom will auto generate something like xmlns:wx.
+                node = node.toString().replace(/\sxmlns\:wx\=\"\"/ig, '')
+                    .replace(/\sxmlns\:v\-bind\=\"\"/ig, '')
+            }
+
 
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'wxml',
