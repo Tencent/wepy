@@ -5,7 +5,7 @@
 ### wepy.event
 
 |父类 | 无 |
-| ---- | ---- |
+| ---- | ---- | 
 
 | 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
@@ -41,6 +41,7 @@
 | $emit | evtName(String), [args] | - | emit事件。|
 | $apply | fn(Function) | - | 准备执行脏数据检查。|
 | $digest | - | - | 脏检查。|
+
 ### wepy.page
 
 |父类 | wepy.component |
@@ -61,4 +62,9 @@
 | 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
 |$wxapp|App|-|小程序getApp()|
+
+
+| 方法 | 参数 | 返回值 | 说明|
+| ---- | ---- | ---- | ---- |
 | init | - | - | 应用始化包括对原生API的改造与优化|
+| intercept | api(String), provider(Function) | - | API拦截器 |

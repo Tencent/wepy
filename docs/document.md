@@ -8,6 +8,8 @@
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
+    'output': 'dist',
+    'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
         less: {
@@ -35,7 +37,7 @@ module.exports = {
 if (prod) {
     // 压缩sass
     module.exports.compilers['sass'] = {'outputStyle': 'compressed'};
-
+    
     // 压缩less
     module.exports.compilers['less'] = {'compress': true};
 
@@ -68,7 +70,9 @@ if (prod) {
 对应compiler请参考各自文档
 >**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 >**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+>**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 >**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
+>**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/tutorial.html" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
 
@@ -81,7 +85,7 @@ if (prod) {
 `wpy`文件的编译过程过下：
 
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png" alt="5 small">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
 一个`.wpy`文件分为三个部分：
@@ -102,9 +106,9 @@ if (prod) {
 
 | 标签 | lang默认值 | lang支持值 |
 | ---- | ---- | ---- |
-|style|`css`|`css`，`less`，`sass`|
+|style|`css`|`css`，`less`，`sass`，`stylus`|
 |template|`wxml`|`wxml`，`xml`，`pug(原jade)`|
-|script|`bable`|`bable`，`TypeScript`，`CoffeeScript`|
+|script|`bable`|`bable`，`TypeScript`|
 
 ### script说明
 
@@ -143,7 +147,7 @@ export default class extends wepy.app {
 <template lang="wxml">
     <view>
     </view>
-    <component id="counter1" path="counter"></component>
+    <counter1></counter1>
 </template>
 <script>
 import wepy form 'wepy';
@@ -202,6 +206,12 @@ export default class Com extends wepy.component {
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
+wepy编译组件的过程如下：
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774767/8f090dd6-eee3-11e6-942b-1591a6379ad3.png">
+</p>
+
 #### 组件引用
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
 
@@ -212,6 +222,67 @@ export default class Com extends wepy.component {
 </p>
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+
+#### Props 传值
+
+**静态传值**
+
+使用静态传值时，子组件会接收到字符串的值。
+
+```
+<child title="mytitle"></child>
+
+// child.wpy
+props = {
+    title: String
+};
+
+onLoad () {
+    console.log(this.title); // mytitle
+}
+```
+
+**动态传值**
+
+使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
+
+```
+// parent.wpy
+<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
+
+data = {
+    parentTitle: 'p-title'
+};
+
+
+// child.wpy
+props = {
+    title: String,
+    syncTitle: {
+        type: String,
+        default: 'null'
+    },
+    twoWayTitle: {
+        type: Number,
+        default: 50,
+        twoWay: true
+    }
+};
+
+onLoad () {
+    console.log(this.title); // p-title
+    console.log(this.syncTitle); // p-title
+    console.log(this.twoWayTitle); // 50
+
+    this.title = 'c-title';
+    console.log(this.$parent.parentTitle); // p-title.
+    this.twoWayTitle = 60;
+    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props修改会改变父组件对应的值
+    this.$parent.parentTitle = 'p-title-changed';
+    console.log(this.title); // 'p-title';
+    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props，当父组件改变时，会影响子组件的值。
+}
+```
 
 #### 组件通信与交互
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
@@ -230,28 +301,28 @@ export default class Com extends wepy.component {
     methods = {};
 
     events = {
-        'some-event': ($event, ...args) {
+        'some-event': ($event, ...args) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
         }
     };
     // Other properties
 }
 ```
-1. **$broadcast**
+**$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
 </p>
 
-2. **$emit**
+**$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
 </p>
 
-3. **$invoke**
+**$invoke**
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
 ```js
@@ -262,6 +333,31 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
+#### 组件内容分发slot
+
+可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
+
+在`Panel`组件中有以下模板：
+
+```
+<view class="panel">
+    <slot name="title">默认标题</slot>
+    <slot>
+        默认内容
+    </slot>
+</view>
+```
+
+在父组件使用`Pannel`组件时，可以这样使用：
+
+```
+<panel>
+    <view>
+        <text>这是我放到的内容</text>
+    </view>
+    <view slot="title">Panel的Title</view>
+</panel>
+```
 
 ### 第三方组件
 
@@ -355,6 +451,37 @@ export default class Index extends wepy.mixin {
 // mix tap
 ```
 
+### 拦截器
+
+可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
+
+```javascript
+
+import wepy from 'wepy';
+
+export default class extends wepy.app {
+
+    constructor () {
+        this.intercept('request', {
+            config (p) {
+                p.timestamp = +new Date();
+                return p;
+            },
+            success (p) {
+                console.log('request success');
+                return p;
+            },
+            fail (p) {
+                console.log('request error');
+                return p;
+            }
+        });
+    }
+}
+
+```
+
+
 ### 数据绑定
 
 #### 小程序数据绑定方式
@@ -398,8 +525,7 @@ wx.request({
 });
 
 // wepy 使用方式
-// request 接口从只接收Object变为可接收String
-wx.request('xxxx').then((d) => console.log(d));
+wepy.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
@@ -419,7 +545,7 @@ Page({
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
@@ -428,7 +554,7 @@ events: {
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }

@@ -1,5 +1,18 @@
-## 1.4.5 (waiting)
+## 1.4.6 (waiting)
+* `F` 移除了编译过程中自动生成的`xmlns:wx`属性。
+
+## 1.4.5 (2017-03-07)
+* `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
+* `F` 使用空template报错的BUG。
+* `A` 添加了`computed`属性。
+* `A` 添加了`onRoute`事件。
+* `A` `wepy-cli`添加了`--empty`选项，`wepy new demo --empty`用于生成空项目。
+
+
+## 1.4.4 (2017-02-28)
 * `F` 修复`$invoke`事件`event`参数错误的BUG。[PR #50](https://github.com/wepyjs/wepy/issues/50)
+* `F` 修复`onShareAppMessage`报错的问题。[PR #52](https://github.com/wepyjs/wepy/issues/52)
+* `F` 修复了在没有申明`data`时使用`props`报错的BUG。[PR #54](https://github.com/wepyjs/wepy/issues/54)
 
 ## 1.4.3 (2017-02-22)
 * `F` 修复调用原生api参数报错的BUG。

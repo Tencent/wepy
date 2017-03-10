@@ -5,13 +5,18 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
+
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/21707696/65cedfc8-d40c-11e6-9bc7-ba58dbbedb72.png" alt="qrcode">
-</p>
-<p align="center">
-  扫码加入wepyjs体验交流群。
+  <p align="center"></p>
+  <p align="center"></p>
+  <p align="center"></p>
+  
   <p align="center">
-   <a href="https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md" target="_blank">点此查看CHANGELOG</a>
+    <img src="https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png" alt="qrcode">
+  </p>
+  
+  <p align="center">
+     WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
   </p>
 </p>
 
@@ -64,7 +69,14 @@ wepy build --watch
 2. `微信开发者工具` --> 项目 --> 关闭ES6转ES5。
 3. 本地项目根目录运行`wepy build --watch`，开启实时编译。
 
-###代码规范：
+#### Sublime下代码高亮
+文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+
+1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
+2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
+3. 关闭`.wpy`文件重新打开即可高亮。
+
+### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
 以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
 2. 入口，页面，组件的命名后缀为`.wpy`。外链的文件可以是其它后缀。
@@ -127,10 +139,12 @@ export default class Index extends wepy.page {
 // index.wpy
 <template>
     <view>
-        <component id="pannel" path="pannel"></component>
-        <component id="counter1" path="counter"></component>
-        <component id="counter2" path="counter"></component>
-        <component id="list" path="list"></component>
+        <panel>
+            <h1 slot="title"></h1>
+        </panel>
+        <counter1 :num="myNum"></counter1>
+        <counter2 :num.sync="syncNum"></counter2>
+        <list :item="items"></list>
     </view>
 </template>
 <script>
@@ -150,6 +164,11 @@ export default class Index extends wepy.page {
         counter2: Counter,
         list: List
     };
+    data = {
+        myNum: 50,
+        syncNum: 100,
+        items: [1, 2, 3, 4]
+    }
 }
 </script>
 ```
@@ -238,9 +257,11 @@ onLoad = function () {
 ```
 基于wepy实现代码：
 ```javascript
+import wepy from 'wepy';
+
 async onLoad() {
-    await wx.login();
-    this.userInfo = await wx.getUserInfo();
+    await wepy.login();
+    this.userInfo = await wepy.getUserInfo();
 }
 ```
 
@@ -266,6 +287,8 @@ async onLoad() {
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
+    'output': 'dist',
+    'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
         less: {
@@ -341,7 +364,7 @@ if (prod) {
 `wpy`文件的编译过程过下：
 
 <p align="center">
-  <img src="https://cloud.githubusercontent.com/assets/2182004/20554671/70a797a0-b198-11e6-8355-b7c234713d0c.png" alt="5 small">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
 一个`.wpy`文件分为三个部分：
@@ -403,7 +426,7 @@ export default class extends wepy.app {
 <template lang="wxml">
     <view>
     </view>
-    <component id="counter1" path="counter"></component>
+    <counter1></counter1>
 </template>
 <script>
 import wepy form 'wepy';
@@ -462,6 +485,11 @@ export default class Com extends wepy.component {
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
 因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
+wepy编译组件的过程如下：
+
+<p align="center">
+  <img src="https://cloud.githubusercontent.com/assets/2182004/22774767/8f090dd6-eee3-11e6-942b-1591a6379ad3.png">
+</p>
 
 #### 组件引用
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
@@ -476,7 +504,7 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 #### Props 传值
 
-1. **静态传值**
+**静态传值**
 
 使用静态传值时，子组件会接收到字符串的值。
 
@@ -493,7 +521,7 @@ onLoad () {
 }
 ```
 
-2. **动态传值**
+**动态传值**
 
 使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
 
@@ -552,28 +580,28 @@ export default class Com extends wepy.component {
     methods = {};
 
     events = {
-        'some-event': ($event, ...args) {
+        'some-event': ($event, ...args) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
         }
     };
     // Other properties
 }
 ```
-1. **$broadcast**
+**$broadcast**
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
 </p>
 
-2. **$emit**
+**$emit**
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
 </p>
 
-3. **$invoke**
+**$invoke**
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
 ```js
@@ -584,6 +612,31 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
+#### 组件内容分发slot
+
+可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
+
+在`Panel`组件中有以下模板：
+
+```
+<view class="panel">
+    <slot name="title">默认标题</slot>
+    <slot>
+        默认内容
+    </slot>
+</view>
+```
+
+在父组件使用`Pannel`组件时，可以这样使用：
+
+```
+<panel>
+    <view>
+        <text>这是我放到的内容</text>
+    </view>
+    <view slot="title">Panel的Title</view>
+</panel>
+```
 
 ### 第三方组件
 
@@ -677,6 +730,37 @@ export default class Index extends wepy.mixin {
 // mix tap
 ```
 
+### 拦截器
+
+可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
+
+```javascript
+
+import wepy from 'wepy';
+
+export default class extends wepy.app {
+
+    constructor () {
+        this.intercept('request', {
+            config (p) {
+                p.timestamp = +new Date();
+                return p;
+            },
+            success (p) {
+                console.log('request success');
+                return p;
+            },
+            fail (p) {
+                console.log('request error');
+                return p;
+            }
+        });
+    }
+}
+
+```
+
+
 ### 数据绑定
 
 #### 小程序数据绑定方式
@@ -720,8 +804,7 @@ wx.request({
 });
 
 // wepy 使用方式
-// request 接口从只接收Object变为可接收String
-wx.request('xxxx').then((d) => console.log(d));
+wepy.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
@@ -741,7 +824,7 @@ Page({
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
@@ -750,7 +833,7 @@ events: {
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 events: {
-    tapName (event, id, title, other) {
+    tapName (id, title, other, event) {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
@@ -858,6 +941,7 @@ var item = require('item.js')
 | $emit | evtName(String), [args] | - | emit事件。|
 | $apply | fn(Function) | - | 准备执行脏数据检查。|
 | $digest | - | - | 脏检查。|
+
 ### wepy.page
 
 |父类 | wepy.component |
@@ -878,4 +962,9 @@ var item = require('item.js')
 | 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
 |$wxapp|App|-|小程序getApp()|
+
+
+| 方法 | 参数 | 返回值 | 说明|
+| ---- | ---- | ---- | ---- |
 | init | - | - | 应用始化包括对原生API的改造与优化|
+| intercept | api(String), provider(Function) | - | API拦截器 |

@@ -5,13 +5,13 @@
 以下安装都通过`npm`安装
 
 **安装（更新） wepy 命令行工具。**
-
+ 
 ```bash
 npm install wepy-cli -g
 ```
 
 **在开发目录生成开发DEMO。**
-
+ 
 ```bash
 wepy new myproject
 ```
@@ -30,7 +30,7 @@ wepy build --watch
 #### 项目目录结构
 ```
 ├── dist                   微信开发者工具指定的目录
-├── node_modules
+├── node_modules           
 ├── src                    代码编写的目录
 |   ├── components         组件文件夹（非完整页面）
 |   |   ├── com_a.wpy      可复用组件 a
@@ -47,7 +47,14 @@ wepy build --watch
 2. `微信开发者工具` --> 项目 --> 关闭ES6转ES5。
 3. 本地项目根目录运行`wepy build --watch`，开启实时编译。
 
-###代码规范：
+#### Sublime下代码高亮
+文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+
+1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
+2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
+3. 关闭`.wpy`文件重新打开即可高亮。
+
+### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
 以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
 2. 入口，页面，组件的命名后缀为`.wpy`。外链的文件可以是其它后缀。
