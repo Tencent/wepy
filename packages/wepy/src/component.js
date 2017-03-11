@@ -140,9 +140,11 @@ export default class {
 
         for (k in this.data) {
             defaultData[`${this.$prefix}${k}`] = this.data[k];
-
-            this[k] = util.$copy(this.data[k], true);
+            this[k] = this.data[k];
+            //this[k] = util.$copy(this.data[k], true);
         }
+
+        this.$data = util.$copy(this.data, true);
 
         if (this.computed) {
             for (k in this.computed) {
@@ -197,7 +199,7 @@ export default class {
         let t = null, reg = new RegExp('^' + this.$prefix.replace(/\$/g, '\\$'), 'ig');
         for (t in k) {
             let noPrefix = t.replace(reg, '');
-            this.data[noPrefix] = util.$copy(k[t], true);
+            this.$data[noPrefix] = util.$copy(k[t], true);
         }
         return this.$wxpage.setData(k);
     }
@@ -311,13 +313,13 @@ export default class {
 
     $digest () {
         let k;
-        let originData = this.data;
+        let originData = this.$data;
         this.$$phase = '$digest';
         while (this.$$phase) {
             let readyToSet = {};
             for (k in originData) {
-                if (!util.$isEqual(this[k], originData[k])) {
-                    readyToSet[this.$prefix + k] = this[k];
+                if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
+                    readyToSet[this.$prefix + k] = this[k]; // send to ReadyToSet
                     originData[k] = util.$copy(this[k], true);
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {
@@ -335,9 +337,9 @@ export default class {
             }
             if (Object.keys(readyToSet).length) {
                 if (this.computed) {
-                    for (k in this.computed) {
+                    for (k in this.computed) { // If there are computed property, calculated every times
                         let fn = this.computed[k], val = fn.call(this);
-                        if (!util.$isEqual(this[k], val)) {
+                        if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
                             readyToSet[this.$prefix + k] = val;
                             this[k] = util.$copy(val, true);
                         }
@@ -345,7 +347,7 @@ export default class {
                 }
                 this.setData(readyToSet);
             }
-            this.$$phase = false;
+            this.$$phase = (this.$$phase === '$apply') ? '$digest' : false;
         }
     }
 
