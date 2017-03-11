@@ -133,9 +133,8 @@ export default {
         let pkg;
         try {
             pkg = JSON.parse(util.readFile(pkgfile));
-        } catch (e) {
-            pkg = {version: '0.0.0'};
-        }
+        } catch (e) {}
+        pkg = pkg || {version: '0.0.0'};
         return compareVersions(required, pkg.version) === 1;
     },
 
