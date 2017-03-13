@@ -1,6 +1,5 @@
 import event from './event';
 
-
 const PREFIX = '$';
 const JOIN = '$';
 
@@ -55,13 +54,31 @@ let $bindEvt = (config, com, prefix) => {
         config[com.$prefix + method] = function (e, ...args) {
             let evt = new event('system', this, e.type);
             evt.$transfor(e);
-            let wepyParams = [], paramsLength = 0, tmp, p;
+            let wepyParams = [], paramsLength = 0, tmp, p, comIndex;
             if (e.currentTarget && e.currentTarget.dataset) {
                 tmp = e.currentTarget.dataset;
                 while(tmp['wepyParams' + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
                     wepyParams.push(tmp['wepyParams' + p]);
                 }
+                if (tmp.comIndex !== undefined) {
+                    comIndex = tmp.comIndex;
+                }
             }
+
+            // Update repeat components data.
+            if (comIndex !== undefined) {
+                comIndex = ('' + comIndex).split('-');
+                let level = comIndex.length, tmp = level;
+                while(level-- > 0) {
+                    tmp = level;
+                    let tmpcom = com;
+                    while (tmp-- > 0) {
+                        tmpcom = tmpcom.$parent;
+                    }
+                    tmpcom.$setIndex(comIndex.shift());
+                }
+            }
+
             args = args.concat(wepyParams);
             let rst, mixRst;
             let comfn = com.methods[method];

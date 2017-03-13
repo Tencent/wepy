@@ -195,6 +195,38 @@ export default {
             let coms = Object.keys(rst.template.components);
             let elems = [];
             let props = {};
+
+            // Get components in repeat
+            util.elemToArray(xml.getElementsByTagName('repeat')).forEach(repeat => {
+                elems = [];
+                if (repeat.getAttribute('for')) {
+                    let tmp = {
+                        for: repeat.getAttribute('for').replace(/^\s*\{\{\s*/, '').replace(/\s*\}\}\s*$/, ''),
+                        item: repeat.getAttribute('item') || 'item',
+                        index: repeat.getAttribute('index') || 'index',
+                        key: repeat.getAttribute('key') || 'key',
+                    }
+                    coms.concat('component').forEach((com) => {
+                        elems = elems.concat(util.elemToArray(repeat.getElementsByTagName(com)));
+                    });
+
+                    elems.forEach((elem) => {
+                        let comid = util.getComId(elem);
+                        [].slice.call(elem.attributes || []).forEach((attr) => {
+                            if (attr.name !== 'id' && attr.name !== 'path') {
+                                if (!props[comid])
+                                    props[comid] = {};
+                                if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                    props[comid][attr.name] = tmp;
+                                    props[comid][attr.name]['value'] = attr.value;
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+
+            elems = [];
             coms.concat('component').forEach((com) => {
                 elems = elems.concat(util.elemToArray(xml.getElementsByTagName(com)));
             });
@@ -203,9 +235,12 @@ export default {
                 let comid = util.getComId(elem);
                 [].slice.call(elem.attributes || []).forEach((attr) => {
                     if (attr.name !== 'id' && attr.name !== 'path') {
-                        if (!props[comid])
+                        if (!props[comid]) {
                             props[comid] = {};
-                        props[comid][attr.name] = attr.value;
+                            if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                props[comid][attr.name] = attr.value;
+                            }
+                        }
                     }
                 });
             });

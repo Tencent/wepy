@@ -103,6 +103,7 @@ export default class {
 
         let props = this.props;
         let key, val, binded;
+        let inRepeat = false, repeatKey;
 
         if (this.$props) { // generate mapping Props
             for (key in this.$props) {
@@ -123,15 +124,33 @@ export default class {
                     val = $parent.$props[this.$name][key];
                     binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
                     if (binded) {
-                        val = $parent[binded];
-                        if (props[key].twoWay) {
-                            if (!this.$mappingProps[key])
-                                this.$mappingProps[key] = {};
-                            this.$mappingProps[key]['parent'] = binded;
+                        if (typeof(binded) === 'object') {
+                            props[key].repeat = binded.for;
+                            
+                            inRepeat = true;
+
+                            let bindfor = binded.for, binddata = $parent;
+                            bindfor.split('.').forEach(t => {
+                                binddata = binddata[t];
+                            });
+                            repeatKey = Object.keys(binddata)[0];
+
+
+                            if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
+                            this.$mappingProps[key]['parent'] = {
+                                mapping: binded.for,
+                                from: key
+                            };
+                        } else {
+                            val = $parent[binded];
+                            if (props[key].twoWay) {
+                                if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
+                                this.$mappingProps[key]['parent'] = binded;
+                            }
                         }
                     }
                 }
-                if (!this.data[key]) {
+                if (!this.data[key] && !props[key].repeat) {
                     val = Props.getValue(props, key, val);
                     this.data[key] = val;
                 }
@@ -145,6 +164,8 @@ export default class {
         }
 
         this.$data = util.$copy(this.data, true);
+        if (inRepeat)
+            this.$setIndex(repeatKey);
 
         if (this.computed) {
             for (k in this.computed) {
@@ -210,6 +231,48 @@ export default class {
 
     getCurrentPages () {
         return this.$wxpage.getCurrentPages();
+    }
+
+    /**
+     * 对于在repeat中的组件，index改变时需要修改对应的数据
+     */
+    $setIndex (index) {
+        if (this.$index === index)
+            return;
+
+        this.$index = index;
+
+        let props = this.props,
+            $parent = this.$parent;
+        let key, val, binded;
+        if (props) {
+            for (key in props) {
+                val = undefined;
+                if ($parent && $parent.$props && $parent.$props[this.$name]) {
+                    val = $parent.$props[this.$name][key];
+                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
+                    if (binded) {
+                        if (typeof(binded) === 'object') {
+                            let bindfor = binded.for, binddata = $parent;
+                            bindfor.split('.').forEach(t => {
+                                binddata = binddata[t];
+                            });
+
+                            val = binddata[index];
+                            this.$index = index;
+                            this.data[key] = val;
+                            this[key] = val;
+                            this.$data[key] = util.$copy(this[key], true);
+                        }
+                    }
+                }
+            }
+            // Clear all childrens index;
+            for (key in this.$com) {
+                this.$com[key].$index = undefined;
+            }
+        }
+
     }
 
     $getComponent(com) {
@@ -324,7 +387,9 @@ export default class {
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {
                             let mapping = this.$mappingProps[k][changed];
-                            if (changed === 'parent' && !util.$isEqual(this.$parent[mapping], this[k])) {
+                            if (typeof(mapping) === 'object') {
+                                this.$parent.$apply();
+                            } else if (changed === 'parent' && !util.$isEqual(this.$parent[mapping], this[k])) {
                                 this.$parent[mapping] = this[k];
                                 this.$parent.$apply();
                             } else if (changed !== 'parent' && !util.$isEqual(this.$com[changed][mapping], this[k])) {

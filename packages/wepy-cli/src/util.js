@@ -98,6 +98,14 @@ export default {
     getComPath(elem) {
         return elem.getAttribute('path') || this.getComId(elem);
     },
+    findComponentInTemplate (com, template) {
+        if (typeof(com) !== 'string') {
+            com = this.getComId(com);
+        }
+        let definePath = template.components[com];
+        definePath = definePath.indexOf('.') === -1 ? definePath : path.resolve(template.src, '..' + path.sep + definePath)
+        return this.findComponent(definePath, true);
+    },
     findComponent(com) {
         let wpyExt = cache.getExt();
 

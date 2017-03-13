@@ -103,37 +103,60 @@ export default {
         return code;
     },
 
-    parseExp (content, prefix, ignores) {
+    parseExp (content, prefix, ignores, mapping) {
         let comid = this.getPrefix(prefix);
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
         return content.replace(/\{\{([^}]+)\}\}/ig, (matchs, words) => {
             return matchs.replace(/[^\.\w'"]([a-z_\$][\w\d\._\$]*)/ig, (match, word, n) => {
                 //console.log(matchs + '------' + match + '--' + word + '--' + n);
                 let char = match[0];
-                let w = word.match(/^\w+/)[0];
+                let tmp = word.match(/^(\w+)(.*)/);
+                let w = tmp[1];
+                let rest = tmp[2];
                 if (ignores[w] || this.isInQuote(matchs, n)) {
                     return match;
                 } else {
+                    if (mapping.items && mapping.items[w]) {
+                        // prefix 减少一层
+                        let upper = comid.split(PREFIX);
+                        upper.pop();
+                        upper = upper.join(PREFIX);
+                        upper = upper ? `${PREFIX}${upper}${JOIN}` : '';
+                        return `${char}${upper}${mapping.items[w].mapping}${rest}`;
+                    }
                     return `${char}${PREFIX}${comid}${JOIN}${word}`;
                 }
             });
         });
     },
 
+    // 通过mapping一层层映射，反应到属性上
+    getMappingIndex (mapping, arr) {
+        if (!arr)
+            arr = [];
 
-    updateBind (node, prefix, ignores = {}) {
+        if (mapping === null)
+            return arr.reverse();
+
+        let val = mapping.prefix ? `${PREFIX}${mapping.prefix}${JOIN}${mapping.for.index}` : mapping.for.index;
+        arr.push(`{{${val}}}`);
+        return this.getMappingIndex(mapping.parent, arr);
+    },
+
+
+    updateBind (node, prefix, ignores = {}, mapping = {}) {
 
         let comid = prefix ? this.getPrefix(prefix) : '';
 
         if (node.nodeName === '#text' && prefix) {
             if (node.data && node.data.indexOf('{{') > -1) {
-                node.replaceData(0, node.data.length, this.parseExp(node.data, prefix, ignores));
+                node.replaceData(0, node.data.length, this.parseExp(node.data, prefix, ignores, mapping));
             }
         } else {
             [].slice.call(node.attributes || []).forEach((attr) => {
                 if (prefix) {
                     if (attr.value.indexOf('{{') > -1) {
-                        attr.value = this.parseExp(attr.value, prefix, ignores);
+                        attr.value = this.parseExp(attr.value, prefix, ignores, mapping);
                     }
                     if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
                         let index = node.getAttribute('wx:for-index') || 'index';
@@ -145,6 +168,16 @@ export default {
                 }
                 // bindtap="abc" => bindtap="prefix_abc"
                 if (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0) {
+                    // added index for all events;
+                    if (mapping.items && mapping.items.length > 0) {
+                        // prefix 减少一层
+                        let upper = comid.split(PREFIX);
+                        upper.pop();
+                        upper = upper.join(PREFIX);
+                        upper = upper ? `${PREFIX}${upper}${JOIN}` : '';
+                        let comIndex = this.getMappingIndex(mapping);
+                        node.setAttribute('data-com-index', comIndex.join('-'));
+                    }
                     if (attr.value.indexOf('(') > 0) {  // method('{{p}}', 123);
                         let funcInfo = this.getFunctionInfo(attr.value);
                         attr.value = funcInfo.name;
@@ -157,7 +190,7 @@ export default {
                 }
             });
             [].slice.call(node.childNodes || []).forEach((child) => {
-                this.updateBind(child, prefix, ignores);
+                this.updateBind(child, prefix, ignores, mapping);
             });
         }
         return node;
@@ -203,17 +236,99 @@ export default {
         return node;
     },
 
-    compileXML (node, template, prefix, childNodes, comAppendAttribute = {}) {
+    compileXML (node, template, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
 
         this.updateSlot(node, childNodes);
 
-        this.updateBind(node, prefix);
+        this.updateBind(node, prefix, {}, propsMapping);
 
         if (node && node.documentElement) {
             Object.keys(comAppendAttribute).forEach((key) => {
                 node.documentElement.setAttribute(key, comAppendAttribute[key]);
             });
         }
+
+        let repeats = util.elemToArray(node.getElementsByTagName('repeat'));
+
+
+        
+        let forDetail = {};
+        template.props = {};
+        repeats.forEach(repeat => {
+            let repeatComs = [];
+            // <repeat for="xxx" index="idx" item="xxx" key="xxx"></repeat>
+            //                    To
+            // <block wx:for="xxx" wx:for-index="xxx" wx:for-item="xxx" wx:key="xxxx"></block>
+            repeat.tagName = 'block'; 
+            let val = repeat.getAttribute('for');
+            if (val) {
+                repeat.setAttribute('wx:for', val);
+                repeat.removeAttribute('for');
+                ['index', 'item', 'key'].forEach(attr => {
+                    let val = repeat.getAttribute(attr);
+                    let tag = attr === 'key' ? 'wx:key' : `wx:for-${attr}`;
+                    val = val || attr;
+                    forDetail[attr] = val;
+
+                    if (prefix) {
+                        repeat.setAttribute(tag, `${PREFIX}${prefix}${JOIN}${val}`);
+                    } else {
+                        repeat.setAttribute(tag, val);
+                    }
+                    repeat.removeAttribute(attr);
+                });
+            }
+            Object.keys(template.components).forEach((com) => {
+                repeatComs = repeatComs.concat(util.elemToArray(repeat.getElementsByTagName(com)));
+            });
+            repeatComs.forEach(com => {
+                let comAttributes = {};
+                template.props[com.tagName] = {
+                    items: {length: 0},
+                    for: forDetail,
+                    prefix: prefix,
+                    parent: propsMapping.for ? propsMapping : null
+                };
+                [].slice.call(com.attributes || []).forEach(attr => {
+
+                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) > -1) {
+                        comAttributes[attr.name] = attr.value;
+                    }
+                    let name = attr.name;
+
+                    let prop = template.props[com.tagName], tmp = {};
+
+
+                    if (name.indexOf('v-bind') === 0) {
+                        tmp.bind = true;
+                        name = name.replace(/^v\-bind\:/, '');
+                    }
+
+                    if (name.indexOf('.once') === name.length - 5) {
+                        name = name.replace(/\.once$/, '');
+                        tmp.type = 'once';
+                    } else if (name.indexOf('.sync') === name.length - 5) {
+                        tmp.type = 'sync';
+                        name = name.replace(/\.sync$/, '');
+                    }
+                    tmp.mapping = attr.value;
+
+                    prop.items[name] = tmp;
+                    prop.items.length++;
+                });
+
+                let comid = util.getComId(com);
+                let src = util.findComponentInTemplate(com, template);
+                if (!src) {
+                    util.error('找不到组件：' + definePath, '错误');
+                } else {
+                    let wpy = cWpy.resolveWpy(src);
+                    let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
+                    node.replaceChild(newnode, com);
+                }
+            });
+        });
+
 
         let componentElements = util.elemToArray(node.getElementsByTagName('component'));
         let customElements = [];

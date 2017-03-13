@@ -6,6 +6,9 @@ let ComA = require('./com_a');
 let ComB = require('./com_b');
 let ComC = require('./com_c');
 
+
+let RepeatItem = require('./repeatItem');
+
 module.exports = class Index extends wepy.page {
     constructor () {
         super(1, 2, 3);
@@ -18,13 +21,48 @@ module.exports = class Index extends wepy.page {
             coma: ComA,
             comb: ComB,
             comc: ComC,
+            repeatitem: RepeatItem
         };
         this.data = {
             'a': 1,
             'objProp': {a:1},
             'c': 'string',
             'stringNumber': '123',
-            'testValid': '50'
+            'testValid': '50',
+            myList: [{
+                id: 1,
+                name: '点击改变',
+                list: [{
+                    childid: '1.1',
+                    childname: '子项，点我改变'
+                }, {
+                    childid: '1.2',
+                    childname: '子项，点我改变'
+                }, {
+                    childid: '1.3',
+                    childname: '子项，点我改变'
+                }]
+            }, {
+                id: 2,
+                name: '点击改变',
+                list: [{
+                    childid: '2.1',
+                    childname: '子项，点我改变'
+                }, {
+                    childid: '2.2',
+                    childname: '子项，点我改变'
+                }, {
+                    childid: '2.3',
+                    childname: '子项，点我改变'
+                }]
+            }, {
+                id: 3,
+                name: '点击改变',
+                list: [{
+                    childid: '3.1',
+                    childname: '子项，点我改变'
+                }]
+            }]
         };
         this.mixins = [Mix];
 
@@ -38,7 +76,11 @@ module.exports = class Index extends wepy.page {
                 'v-bind:twoWayProp.once': 'testValid',
                 'v-bind:comprop3.once': 'stringNumber',
                 'v-bind:comprop10.once': 'a'
-            }
+            },
+            'repeatitem': { 
+                'v-bind:ritem.once': { 'for': 'myList', 'item': 'item', 'index': 'index', 'key': 'key', 'value': 'item' }, 
+                'v-bind:rindex.once': { 'for': 'myList', 'item': 'item', 'index': 'index', 'key': 'key', 'value': 'index' }
+            } 
         };
     }
     onShow (args) {
