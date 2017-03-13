@@ -7,6 +7,7 @@ let compiler = function (content, config) {
     try {
         let fn = pug.compile(content, config);
         let html = fn(data);
+        html = (html || '').replace(/<div /ig, '<view ').replace(/<\/div>/ig, '</view>').replace(/<div>/ig, '<view>')
         p = Promise.resolve(html);
     } catch (e) {
         p = Promise.reject(e);
@@ -21,6 +22,7 @@ compiler.sync = function (content, config) {
     try {
         let fn = pug.compile(content, config);
         html = fn(data);
+        html = (html || '').replace(/<div /ig, '<view ').replace(/<\/div>/ig, '</view>').replace(/<div>/ig, '<view>')
     } catch (e) {
     }
     return html;
