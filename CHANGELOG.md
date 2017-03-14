@@ -1,10 +1,11 @@
-## 1.4.6 (waiting)
+## 1.4.6 (2017-03-14)
 * `F` 移除了编译过程中自动生成的`xmlns:wx`属性。
 * `F` 修改自带demo并发10个请求报错的BUG。
 * `F` 修复了项目在没有安装NPM资源，时使用wepy报错的BUG。
 * `A` 添加了repeat标签，代替`<block wx:for></block>`。
 * `F` 修复了在`wx:for`中使用自定义组件时，使用props无法取值的BUG。
 * `A` 在默认demo中添加了repeat示例。
+* `F` 修复了使用pug出错时的错误提示。
 
 ## 1.4.5 (2017-03-07)
 * `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
