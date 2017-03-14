@@ -63,17 +63,20 @@
             </view>
         </panel>
 
-
-
+        <panel>
+            <view class="title" slot="title">测试组件Repeat</view>
+            <repeat for="{{groupList}}" index="index" item="item" key="key">
+                <group :grouplist="item" :indexa="index"></group>
+            </repeat>
+        </panel>
 
         <panel>
             <view class="title" slot="title">测试列表</view>
             <list></list>
-            </view>
         </panel>
 
-        <toast />
 
+        <toast />
     </view>
 </template>
 
@@ -82,6 +85,7 @@
     import List from '../components/list';
     import Panel from '../components/panel';
     import Counter from '../components/counter';
+    import Group from '../components/group';
     import Toast from 'wepy-com-toast';
 
     import testMixin from '../mixins/test';
@@ -96,7 +100,8 @@
             counter1: Counter,
             counter2: Counter,
             list: List,
-            toast: Toast
+            group: Group,
+            toast: Toast,
         };
 
         mixins = [testMixin];
@@ -109,7 +114,41 @@
             normalTitle: '原始标题',
             setTimeoutTitle: '标题三秒后会被修改',
             count: 0,
-            netrst: ''
+            netrst: '',
+            groupList: [{
+                id: 1,
+                name: '点击改变', 
+                list: [{
+                    childid: '1.1',
+                    childname: '子项，点我改变'
+                },{
+                    childid: '1.2',
+                    childname: '子项，点我改变'
+                },{
+                    childid: '1.3',
+                    childname: '子项，点我改变'
+                },]
+            },{
+                id: 2,
+                name: '点击改变', 
+                list: [{
+                    childid: '2.1',
+                    childname: '子项，点我改变'
+                },{
+                    childid: '2.2',
+                    childname: '子项，点我改变'
+                },{
+                    childid: '2.3',
+                    childname: '子项，点我改变'
+                },]
+            },{
+                id: 3,
+                name: '点击改变',
+                list: [{
+                    childid: '3.1',
+                    childname: '子项，点我改变'
+                }]
+            }]
         };
 
         computed = {
