@@ -18,11 +18,8 @@ compiler.sync = function (content, config) {
     let data = config.data;
     let p, html;
     delete config.data;
-    try {
-        let fn = pug.compile(content, config);
-        html = fn(data);
-    } catch (e) {
-    }
+    let fn = pug.compile(content, config);
+    html = fn(data);
     return html;
 };
 
