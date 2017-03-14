@@ -143,7 +143,8 @@ let upgrade = (name) => {
 
 
 let checkUpdates = () => {
-    util.exec('npm info wepy-cli', true).then(d => {
+    util.timeoutExec(2, 'npm info wepy-cli', true).then(d => {
+    //util.exec('npm info wepy-cli', true).then(d => {
         let last = d.match(/latest\:\s\'([\d\.]*)\'/);
         last = last ? last[1] : undefined;
         let me = util.getVersion();
@@ -196,7 +197,12 @@ commander.option('-m, --mode <mode>', 'project mode type(normal, module), defaul
 });*/
 
 commander.command('build').description('编译项目').action(projectPath => {
-    compile.build(commander);
+    if (!util.isDir(path.join(util.currentDir, 'node_modules'))) {
+        util.error('请先执行npm install安装所需依赖', '错误');
+        return;
+    } else {
+        compile.build(commander);
+    }
 });
 
 commander.command('new <projectName>').description('生成项目').action(name => {

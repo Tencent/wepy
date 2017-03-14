@@ -77,6 +77,15 @@ export default {
             });
         });
     },
+    timeoutExec(sec, cmd, quite) {
+        let timeout = new Promise(function(resolve, reject) { 
+            setTimeout(() => {
+                reject('timeout');
+            }, sec * 1000); 
+        });
+        let task = this.exec(cmd, quite);
+        return Promise.race([timeout, task]);
+    },
     elemToArray(elems) {
         let rst = [];
         for (let i = 0, len = elems.$$length; i < len; i++) {
