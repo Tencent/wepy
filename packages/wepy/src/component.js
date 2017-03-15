@@ -391,9 +391,11 @@ export default class {
                                 this.$parent.$apply();
                             } else if (changed === 'parent' && !util.$isEqual(this.$parent.$data[mapping], this[k])) {
                                 this.$parent[mapping] = this[k];
+                                this.$parent.data[mapping] = this[k];
                                 this.$parent.$apply();
                             } else if (changed !== 'parent' && !util.$isEqual(this.$com[changed].$data[mapping], this[k])) {
                                 this.$com[changed][mapping] = this[k];
+                                this.$com[changed].data[mapping] = this[k];
                                 this.$com[changed].$apply();
                             }
                         });
