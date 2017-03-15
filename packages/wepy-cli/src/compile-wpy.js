@@ -235,11 +235,10 @@ export default {
                 let comid = util.getComId(elem);
                 [].slice.call(elem.attributes || []).forEach((attr) => {
                     if (attr.name !== 'id' && attr.name !== 'path') {
-                        if (!props[comid]) {
+                        if (!props[comid])
                             props[comid] = {};
-                            if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                                props[comid][attr.name] = attr.value;
-                            }
+                        if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                            props[comid][attr.name] = attr.value;
                         }
                     }
                 });
