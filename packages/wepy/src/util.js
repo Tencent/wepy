@@ -179,7 +179,7 @@ export default {
                         target[ name ] = self.$extend( deep, clone, copy );
 
                     // Don't bring in undefined values
-                    } else if ( copy !== undefined ) {
+                    } else {
                         target[ name ] = copy;
                     }
                 }
