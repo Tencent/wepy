@@ -389,10 +389,10 @@ export default class {
                             let mapping = this.$mappingProps[k][changed];
                             if (typeof(mapping) === 'object') {
                                 this.$parent.$apply();
-                            } else if (changed === 'parent' && !util.$isEqual(this.$parent[mapping], this[k])) {
+                            } else if (changed === 'parent' && !util.$isEqual(this.$parent.$data[mapping], this[k])) {
                                 this.$parent[mapping] = this[k];
                                 this.$parent.$apply();
-                            } else if (changed !== 'parent' && !util.$isEqual(this.$com[changed][mapping], this[k])) {
+                            } else if (changed !== 'parent' && !util.$isEqual(this.$com[changed].$data[mapping], this[k])) {
                                 this.$com[changed][mapping] = this[k];
                                 this.$com[changed].$apply();
                             }
