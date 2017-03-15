@@ -324,7 +324,11 @@ export default {
                 } else {
                     let wpy = cWpy.resolveWpy(src);
                     let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
-                    node.replaceChild(newnode, com);
+                    // 如果最顶层就是components
+                    if (node.documentElement === com)
+                        node = newnode;
+                    else
+                        node.replaceChild(newnode, com);
                 }
             });
         });
@@ -362,7 +366,14 @@ export default {
                 util.error('找不到组件：' + definePath, '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
-                node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes), com);
+                let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes);
+                
+                // 如果最顶层就是components
+                if (node.documentElement === com)
+                    node = newnode;
+                else
+                    node.replaceChild(newnode, com);
+                //node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes), com);
             }
         });
         return node;
@@ -386,19 +397,15 @@ export default {
 
 
         compiler(content, config.compilers[lang] || {}).then(content => {
-
             let node = new DOMParser().parseFromString(content);
             node = this.compileXML(node, template);
             let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 
             // empty node tostring will cause an error.
-            if (node.childNodes.length === 0)
-                node = '';
-            else {
-                // xmldom will auto generate something like xmlns:wx.
-                node = node.toString().replace(/\sxmlns\:wx\=\"\"/ig, '')
-                    .replace(/\sxmlns\:v\-bind\=\"\"/ig, '')
-            }
+            // xmldom will auto generate something like xmlns:wx.
+            node = node.childNodes.length === 0 ? '' : 
+                    node.toString().replace(/\sxmlns\:wx\=\"\"/ig, '')
+                        .replace(/\sxmlns\:v\-bind\=\"\"/ig, '')
 
 
             let plg = new loader.PluginHelper(config.plugins, {
