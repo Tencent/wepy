@@ -196,6 +196,8 @@ export default {
             let elems = [];
             let props = {};
 
+            let calculatedComs = [];
+
             // Get components in repeat
             util.elemToArray(xml.getElementsByTagName('repeat')).forEach(repeat => {
                 elems = [];
@@ -211,6 +213,7 @@ export default {
                     });
 
                     elems.forEach((elem) => {
+                        calculatedComs.push(elem);
                         let comid = util.getComId(elem);
                         [].slice.call(elem.attributes || []).forEach((attr) => {
                             if (attr.name !== 'id' && attr.name !== 'path') {
@@ -232,18 +235,21 @@ export default {
             });
 
             elems.forEach((elem) => {
-                let comid = util.getComId(elem);
-                [].slice.call(elem.attributes || []).forEach((attr) => {
-                    if (attr.name !== 'id' && attr.name !== 'path') {
-                        if (!props[comid])
-                            props[comid] = {};
-                        if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                            props[comid][attr.name] = attr.value;
+                // ignore the components calculated in repeat.
+                if (calculatedComs.indexOf(elem) === -1) {
+                    let comid = util.getComId(elem);
+                    [].slice.call(elem.attributes || []).forEach((attr) => {
+                        if (attr.name !== 'id' && attr.name !== 'path') {
+                            if (!props[comid])
+                                props[comid] = {};
+                            if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                props[comid][attr.name] = attr.value;
+                            }
+                        
                         }
-                    }
-                });
+                    });
+                }
             });
-
             if (Object.keys(props).length) {
                 rst.script.code =rst.script.code.replace(/[\s\r\n]components\s*=[\s\r\n]*/, (match, item, index) => {
                     return `$props = ${JSON.stringify(props)};\r\n${match}`;
