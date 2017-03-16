@@ -4,7 +4,7 @@
 <template>
     <view class="group">
         <text class="id">{{grouplist.id}}. </text>
-        <text class="name" bindtap="tap">{{grouplist.name}}</text>
+        <text class="name" @tap="tap">{{grouplist.name}}</text>
         <view>
             <repeat for="{{grouplist.list}}" item="item">
                 <groupitem :gitem="item"></groupitem>

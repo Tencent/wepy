@@ -3,6 +3,7 @@
 * `F` 统一修复`$invoke`，`$broadcast`，`$emit`事件在执行完成时会出发`$apply`。
 * `A` 添加了`@`符号来代替`bind`和`catch`。[ISSUE #71](https://github.com/wepyjs/wepy/issues/71)
 * `A` 添加了组件自定义事件，如`@doSomething="someFunc"`。参考文档[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+* `F` 修复demo默认使用`@`符。
 
 
 ## 1.4.7 (2017-03-15)

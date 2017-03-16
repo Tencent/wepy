@@ -17,7 +17,7 @@
 </style>
 <template>
     <view class="container">
-        <view class="userinfo" bindtap="handleViewTap">
+        <view class="userinfo" @tap="handleViewTap">
             <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
             <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
         </view>
@@ -30,21 +30,21 @@
             <text class="info">{{mixin}}</text>
             <text class="info">{{mynum}}</text>
             <text class="info">{{now}}</text>
-            <button bindtap="plus('a')" size="mini">  +  </button>
+            <button @tap="plus('a')" size="mini">  +  </button>
         </panel>
 
         <panel>
             <view class="title" slot="title">其它测试</view>
-            <button bindtap="toast" size="mini">第三方组件</button>
-            <button bindtap="communicate" size="mini">组件通信</button>
-            <button bindtap="tap" size="mini">混合TAP事件</button>
+            <button @tap="toast" size="mini">第三方组件</button>
+            <button @tap="communicate" size="mini">组件通信</button>
+            <button @tap="tap" size="mini">混合TAP事件</button>
         </panel>
 
 
         <panel>
             <view class="title" slot="title">测试并发网络请求</view>
             <view>返回结果: <text>{{netrst}}</text></view>
-            <button bindtap="request" size="mini"> 点我发起10个请求 </button>
+            <button @tap="request" size="mini"> 点我发起10个请求 </button>
         </panel>
 
 

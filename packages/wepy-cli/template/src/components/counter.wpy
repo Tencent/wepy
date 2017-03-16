@@ -10,8 +10,8 @@
 </style>
 <template>
     <view class="counter {{style}}">
-        <button bindtap="plus" size="mini">  +  </button>
-        <button bindtap="minus" size="mini">  -  </button>
+        <button @tap="plus" size="mini">  +  </button>
+        <button @tap="minus" size="mini">  -  </button>
         <text class="count"> {{num}} </text>
     </view>
 </template>
