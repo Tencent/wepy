@@ -1,3 +1,7 @@
+## 1.4.8 (waiting)
+* `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
+
+
 ## 1.4.7 (2017-03-15)
 * `F` 修复1.4.6版本中只一个`props`生效的BUG。[ISSUE #68](https://github.com/wepyjs/wepy/issues/68)
 * `F` 修复了使用引用类型作为双向绑定不会触发父组件脏检查的BUG。
