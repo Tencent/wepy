@@ -23,16 +23,19 @@ export default {
     },
     getTemplate (content) {
         content = `<template>${content}</template>`;
-        content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
-            return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => {
+        content = util.attrReplace(content);
+        /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+            return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                 if (type === '.once' || type === '.sync') {
                 }
                 else
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
+            }).replace(/\s+\@([\w-_]*)\s*=/ig, (attr, name) => { // replace @change => v-on:change
+                return `v-on:${name}`;
             });
         });
-
+        */
         let doc = new DOMImplementation().createDocument();
         let node = new DOMParser().parseFromString(content);
         let template = [].slice.call(node.childNodes || []).filter((n) => n.nodeName === 'template');

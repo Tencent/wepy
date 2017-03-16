@@ -89,15 +89,20 @@ export default {
             content = util.encode(content, startlen, content.indexOf('</script>') - 1);
 
             // replace :attr to v-bind:attr
-            content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
-                return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => {
+            /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+                return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                     if (type === '.once' || type === '.sync') {
                     }
                     else
                         type = '.once';
                     return ` v-bind:${name}${type}=`;
+                }).replace(/\s+\@([\w-_]*)\s*=/ig, (attr, name) => { // replace @change => v-on:change
+                    return `v-on:${name}`;
                 });
-            })
+            })*/
+
+            content = util.attrReplace(content);
+
             xml = this.createParser().parseFromString(content);
         }
 
@@ -190,11 +195,12 @@ export default {
         })();
 
 
-        // get props
+        // get props and events
         (() => {
             let coms = Object.keys(rst.template.components);
             let elems = [];
             let props = {};
+            let events = {};
 
             let calculatedComs = [];
 
@@ -217,11 +223,17 @@ export default {
                         let comid = util.getComId(elem);
                         [].slice.call(elem.attributes || []).forEach((attr) => {
                             if (attr.name !== 'id' && attr.name !== 'path') {
-                                if (!props[comid])
-                                    props[comid] = {};
-                                if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                                    props[comid][attr.name] = tmp;
-                                    props[comid][attr.name]['value'] = attr.value;
+                                if (/v-on:/.test(attr.name)) { // v-on:fn user custom event
+                                    if (!events[comid])
+                                        events[comid] = {};
+                                    events[comid][attr.name] = attr.value;
+                                } else {
+                                    if (!props[comid])
+                                        props[comid] = {};
+                                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                        props[comid][attr.name] = tmp;
+                                        props[comid][attr.name]['value'] = attr.value;
+                                    }
                                 }
                             }
                         });
@@ -240,19 +252,24 @@ export default {
                     let comid = util.getComId(elem);
                     [].slice.call(elem.attributes || []).forEach((attr) => {
                         if (attr.name !== 'id' && attr.name !== 'path') {
-                            if (!props[comid])
-                                props[comid] = {};
-                            if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                                props[comid][attr.name] = attr.value;
+                            if (/v-on:/.test(attr.name)) { // v-on:fn user custom event
+                                if (!events[comid])
+                                    events[comid] = {};
+                                events[comid][attr.name] = attr.value;
+                            } else {
+                                if (!props[comid])
+                                    props[comid] = {};
+                                if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                    props[comid][attr.name] = attr.value;
+                                }
                             }
-                        
                         }
                     });
                 }
             });
             if (Object.keys(props).length) {
                 rst.script.code =rst.script.code.replace(/[\s\r\n]components\s*=[\s\r\n]*/, (match, item, index) => {
-                    return `$props = ${JSON.stringify(props)};\r\n${match}`;
+                    return `$props = ${JSON.stringify(props)};\r\n$events = ${JSON.stringify(events)};\r\n${match}`;
                 });
             }
         })();

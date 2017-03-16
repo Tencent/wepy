@@ -82,6 +82,12 @@ module.exports = class Index extends wepy.page {
                 'v-bind:rindex.once': { 'for': 'myList', 'item': 'item', 'index': 'index', 'key': 'key', 'value': 'index' }
             } 
         };
+
+        this.$events = {
+            coma: {
+                'v-on:fn': 'customEvent'
+            }
+        };
     }
     onShow (args) {
         assert.strictEqual(this instanceof Index, true, 'page onShow triggered, this is self');

@@ -316,7 +316,9 @@ export default class {
 
         if (typeof(fn) === 'function') {
             let $evt = new event('', this, 'invoke');
-            return fn.apply(com, args.concat($evt));
+            let rst = fn.apply(com, args.concat($evt));
+            com.$apply();
+            return rst;
         } else {
             fn = com[method];
         }
@@ -340,7 +342,9 @@ export default class {
                 queue.push(c);
                 let fn = c.events ? c.events[evtName] : undefined;
                 if (typeof(fn) === 'function') {
-                    fn.apply(c, args.concat($evt));
+                    c.$apply(() => {
+                        fn.apply(c, args.concat($evt));
+                    });
                 }
                 if (!$evt.active)
                     break;
@@ -352,10 +356,31 @@ export default class {
         let com = this;
         let source = this;
         let $evt = new event(evtName, source, 'emit');
+
+        if (this.$parent === undefined)
+            console.log(this);
+
+        // User custom event;
+        if (this.$parent.$events && this.$parent.$events[this.$name]) {
+            let method = this.$parent.$events[this.$name]['v-on:' + evtName];
+            if (method && this.$parent.methods) {
+                let fn = this.$parent.methods[method];
+                if (typeof(fn) === 'function') {
+                    this.$parent.$apply(() => {
+                        fn.apply(this.$parent, args.concat($evt));
+                    });
+                    return;
+                } else {
+                    throw new Error(`Invalid method from emit, component is ${this.$parent.$name}, method is ${method}. Make sure you defined it already.\n`);
+                }
+            }
+        }
         while(com && com.$isComponent !== undefined && $evt.active) {
             let fn = com.events ? com.events[evtName] : undefined;
             if (typeof(fn) === 'function') {
-                fn.apply(com, args.concat($evt));
+                com.$apply(() => {
+                    fn.apply(com, args.concat($evt));
+                });
             }
             com = com.$parent;
         }

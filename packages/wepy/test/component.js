@@ -12,8 +12,18 @@ var Index = require('./fake/page');
 
 var MixinA = require('./fake/mixin');
 
+var wxfake = require('./wxfake');
+
 
 describe('component.js', () => {
+
+
+    wxfake.resetGlobal();
+
+    let appConfig = wepy.$createApp(App);
+    let pageConfig = wepy.$createPage(Index);
+    pageConfig.onLoad.call(wxfake.getWxPage());
+
 
 
     let index = new Index();
@@ -104,6 +114,22 @@ describe('component.js', () => {
         }
         com.$parent = page;
         com.$emit('test-emit', 1, 2, 3);
+
+        page = pageConfig.$page;
+
+        try {
+            page.$com.coma.$emit('fn', 'a', 'b');
+            assert.strictEqual(false, true, 'emit an invalid method will always cause an error');
+        } catch (e) {
+        }
+
+        page.methods.customEvent = function (a, b, evt) {
+            assert.strictEqual(evt.type, 'emit', 'test emit event type');
+            assert.strictEqual(a + b, 'ab', 'test emit params');
+
+        };
+        page.$com.coma.$emit('fn', 'a', 'b');
+
     });
 
     it('$broadcast', () => {

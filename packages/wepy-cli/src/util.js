@@ -211,6 +211,30 @@ export default {
         }
         return buffer.join('');
     },
+    /**
+     * xml replace
+     */
+    attrReplace(content) {
+        return content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+            return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
+                if (type === '.once' || type === '.sync') {
+                }
+                else
+                    type = '.once';
+                return ` v-bind:${name}${type}=`;
+            }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
+                let prefix = '';
+                if (type === '.stop') {
+                    prefix = 'catch';
+                } else if (type === '.user') {
+                    prefix = 'v-on:'
+                } else {
+                    prefix = 'bind';
+                }
+                return ` ${prefix}${name}=`;
+            });
+        });
+    },
     unique (arr) {
         let tmp = {}, out = [];
         arr.forEach((v) => {
