@@ -685,7 +685,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 // index.wpy
 <template>
-    <child @childFn="parentFn"></child>
+    <child @childFn.user="parentFn"></child>
 </template>
 <script>
     import wepy form 'wepy';
