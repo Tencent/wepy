@@ -1,5 +1,8 @@
-## 1.4.8 (waiting)
+## 1.4.8 (2017-03-16)
 * `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
+* `F` 统一修复`$invoke`，`$broadcast`，`$emit`事件在执行完成时会出发`$apply`
+* `A` 添加了`@`符号来代替`bind`和`catch`，如`@tap="myClick"`等同于`bindtap="myClick"`，`@tap.stop="myClick"`等同于`catchtap="myClick"`。[ISSUE #71](https://github.com/wepyjs/wepy/issues/71)
+* `A` 添加了组件自定义事件，如`@doSomething="someFunc"`。
 
 
 ## 1.4.7 (2017-03-15)
