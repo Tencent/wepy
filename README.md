@@ -85,6 +85,12 @@ wepy build --watch
 框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
 4. 使用Promise
 框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
+5. 事件绑定语法使用优化语法代替
+原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+6. 事件传参使用优化后语法代替
+原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
+7. 自定义组件命名应避开微信原生组件以及功能标签`<repeat>`。
+不可以使用`input, button, view, repeat`等命名自定义组件。更多`repeat`用法，参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
 ## 主要解决问题：

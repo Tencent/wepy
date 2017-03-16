@@ -85,6 +85,12 @@ wepy build --watch
 框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
 4. 使用Promise
 框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
+5. 事件绑定语法使用优化语法代替
+原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+6. 事件传参使用优化后语法代替
+原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
+7. 自定义组件命名应避开微信原生组件以及功能标签`<repeat>`。
+不可以使用`input, button, view, repeat`等命名自定义组件。更多`repeat`用法，参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
 ## 主要解决问题：
@@ -491,8 +497,72 @@ wepy编译组件的过程如下：
   <img src="https://cloud.githubusercontent.com/assets/2182004/22774767/8f090dd6-eee3-11e6-942b-1591a6379ad3.png">
 </p>
 
-#### 组件引用
-当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
+#### 普通组件引用
+当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签。如：
+
+```
+/**
+project
+└── src
+    ├── coms
+    |   └── child.wpy
+    ├── pages
+    |   ├── index.wpy    index 页面配置、结构、样式、逻辑
+    |   └── log.wpy      log 页面配置、结构、样式、逻辑
+    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+**/
+// index.wpy
+<template>
+    <child></child>
+</template>
+<script>
+    import wepy form 'wepy';
+    import Child from './coms/child';
+    export default class Index extends wepy.component {
+        components = {
+            child: Child
+        };
+    }
+</script>
+```
+
+#### 循环列表组件引用
+
+*1.4.6新增*
+
+当想在`wx:for`中使用组件时，需要使用辅助标签`<repeat>`，如下：
+
+```
+/**
+project
+└── src
+    ├── coms
+    |   └── child.wpy
+    ├── pages
+    |   ├── index.wpy    index 页面配置、结构、样式、逻辑
+    |   └── log.wpy      log 页面配置、结构、样式、逻辑
+    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+**/
+// index.wpy
+<template>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+        <child :item="item"></child>
+    </repeat>
+</template>
+<script>
+    import wepy form 'wepy';
+    import Child from './coms/child';
+    export default class Index extends wepy.component {
+        components = {
+            child: Child
+        };
+        data = {
+            list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
+        }
+    }
+</script>
+```
+
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
 
@@ -611,6 +681,56 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 ```js
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
+
+#### 组件自定义事件
+
+*1.4.8新增*
+
+可以使用`@customEvent.user`来给组件生成自定义事件，示例如下：
+
+```
+// index.wpy
+<template>
+    <child @childFn.user="parentFn"></child>
+</template>
+<script>
+    import wepy form 'wepy';
+    import Child from './coms/child';
+    export default class Index extends wepy.page {
+        components = {
+            child: Child
+        };
+
+        methods = {
+            parentFn (num, evt) {
+                console.log('parent received emit event, number is: ' + num)
+            }
+        }
+    }
+</script>
+
+
+// child.wpy
+<template>
+    <view @tap="tap">Click me</view>
+</template>
+<script>
+    import wepy form 'wepy';
+    export default class Child extends wepy.component {
+        components = {
+            child: Child
+        };
+
+        methods = {
+            tap () {
+                console.log('child is clicked');
+                this.$emit('childFn', 100);
+            }
+        }
+    }
+</script>
+```
+
 
 #### 组件内容分发slot
 

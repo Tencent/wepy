@@ -1,5 +1,24 @@
-## 1.4.6 (waiting)
+## 1.4.8 (2017-03-16)
+* `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
+* `F` 统一修复`$invoke`，`$broadcast`，`$emit`事件在执行完成时会出发`$apply`。
+* `A` 添加了`@`符号来代替`bind`和`catch`。[ISSUE #71](https://github.com/wepyjs/wepy/issues/71)
+* `A` 添加了组件自定义事件，如`@doSomething="someFunc"`。参考文档[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+
+
+## 1.4.7 (2017-03-15)
+* `F` 修复1.4.6版本中只一个`props`生效的BUG。[ISSUE #68](https://github.com/wepyjs/wepy/issues/68)
+* `F` 修复了使用引用类型作为双向绑定不会触发父组件脏检查的BUG。
+* `F` 修复了在`template`的`root`元素为自定义组件会导致编译报错的BUG。[ISSUE #67](https://github.com/wepyjs/wepy/issues/67)
+
+
+## 1.4.6 (2017-03-14)
 * `F` 移除了编译过程中自动生成的`xmlns:wx`属性。
+* `F` 修改自带demo并发10个请求报错的BUG。
+* `F` 修复了项目在没有安装NPM资源，时使用wepy报错的BUG。
+* `A` 添加了repeat标签，代替`<block wx:for></block>`。
+* `F` 修复了在`wx:for`中使用自定义组件时，使用props无法取值的BUG。
+* `A` 在默认demo中添加了repeat示例。
+* `F` 修复了使用pug出错时的错误提示。
 
 ## 1.4.5 (2017-03-07)
 * `F` 修复了组件未定义`methods`时，使用`$invoke`报错的BUG。
