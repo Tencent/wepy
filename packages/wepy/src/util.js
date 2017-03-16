@@ -178,7 +178,7 @@ export default {
                         // Never move original objects, clone them
                         target[ name ] = self.$extend( deep, clone, copy );
 
-                    // Don't bring in undefined values
+                    // Don't bring in undefined values => bring undefined values
                     } else {
                         target[ name ] = copy;
                     }

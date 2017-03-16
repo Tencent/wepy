@@ -105,7 +105,7 @@ describe('index.js', () => {
         result = wepy.$extend({x: 'x'}, {a: 'a', x: 2}, {a: 'b'});
         assert.deepEqual(result, {x: 2, a: 'b'}, 'extending from multiple source objects last property trumps');
         result = wepy.$extend({}, {a: void 0, b: null});
-        assert.deepEqual(Object.keys(result), ['b'], 'Don\'t bring in undefined values');
+        assert.deepEqual(Object.keys(result), ['a', 'b'], 'bring in undefined values');
 
 
         var F = function() {};
@@ -153,6 +153,12 @@ describe('index.js', () => {
         changed.a.b[2].c=4;
 
         assert.strictEqual(wepy.$isEqual(changed, original), false, 'copy object with deep');
+
+        original = {a:{b:[1,2,{c:3}, {d: void 0}]}};
+        changed = wepy.$copy(original, true);
+
+        assert.strictEqual(wepy.$isEqual(changed, original), true, 'copy object with undefined with deep');
+
 
     });
 
