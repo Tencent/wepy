@@ -1,7 +1,7 @@
 ## 1.4.7 (2017-03-15)
 * `F` 修复1.4.6版本中只一个`props`生效的BUG。[ISSUE #68](https://github.com/wepyjs/wepy/issues/68)
 * `F` 修复了使用引用类型作为双向绑定不会触发父组件脏检查的BUG。
-* `F` 修复了在`template`中直接写`components`导致编译报错的BUG。[ISSUE #67](https://github.com/wepyjs/wepy/issues/67)
+* `F` 修复了在`template`的`root`元素为自定义组件会导致编译报错的BUG。[ISSUE #67](https://github.com/wepyjs/wepy/issues/67)
 
 
 ## 1.4.6 (2017-03-14)
