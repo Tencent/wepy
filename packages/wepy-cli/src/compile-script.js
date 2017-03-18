@@ -160,7 +160,8 @@ export default {
         }
 
 
-        compiler(code, config.compilers[lang] || {}).then(code => {
+        compiler(code, config.compilers[lang] || {}).then(compileResult => {
+            code = compileResult.code;
             if (type !== 'npm') {
                 if (type === 'page' || type === 'app') {
                     let defaultExport = 'exports.default';
@@ -193,6 +194,13 @@ export default {
                 target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
             }
 
+
+            if (compileResult.map) {
+                compileResult.map.sources = [''];
+                compileResult.map.file = opath.name + '.js';
+            }
+
+
             let plg = new loader.PluginHelper(config.plugins, {
                 type: type,
                 code: code,
@@ -200,9 +208,14 @@ export default {
                 output (p) {
                     util.output(p.action, p.file);
                 },
-                done (rst) {
-                    util.output('写入', rst.file);
-                    util.writeFile(target, rst.code);
+                done (result) {
+                    util.output('写入', result.file);
+                    if (compileResult.map) {
+                        result.code += `\r\n//# sourceMappingURL=${path.parse(target).base}.map`;
+                        util.writeFile(target + '.map', JSON.stringify(compileResult.map));
+                    }
+                    util.writeFile(target, result.code);
+                    util.output('写入', result.file + '.map');
                 }
             });
             // 缓存文件修改时间戳

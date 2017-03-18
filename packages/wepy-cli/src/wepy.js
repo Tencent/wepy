@@ -5,7 +5,6 @@ import {exec} from 'child_process';
 import util from './util';
 import compile from './compile';
 
-
 const templateDir = path.join(util.cliDir, '../template', path.sep);
 const emptyDir = path.join(util.cliDir, '../empty', path.sep);
 
