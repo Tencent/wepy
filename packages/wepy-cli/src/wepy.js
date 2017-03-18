@@ -55,7 +55,8 @@ let generateProject = (name, config) => {
         'babel-plugin-transform-export-extensions',
         'babel-preset-es2015',
         'wepy-compiler-less',
-        'babel-preset-stage-1'
+        'babel-preset-stage-1',
+        'cross-env'
     ];
 
     if (!config.empty) {
