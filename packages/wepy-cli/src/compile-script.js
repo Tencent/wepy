@@ -161,7 +161,13 @@ export default {
 
 
         compiler(code, config.compilers[lang] || {}).then(compileResult => {
-            code = compileResult.code;
+            let sourceMap;
+            if (typeof(compileResult) === 'string') {
+                code = compileResult;
+            } else {
+                sourceMap = compileResult.map;
+                code = compileResult.code;
+            }
             if (type !== 'npm') {
                 if (type === 'page' || type === 'app') {
                     let defaultExport = 'exports.default';
@@ -195,9 +201,9 @@ export default {
             }
 
 
-            if (compileResult.map) {
-                compileResult.map.sources = [''];
-                compileResult.map.file = opath.name + '.js';
+            if (sourceMap) {
+                sourceMap.sources = [''];
+                sourceMap.file = opath.name + '.js';
             }
 
 
@@ -210,9 +216,9 @@ export default {
                 },
                 done (result) {
                     util.output('写入', result.file);
-                    if (compileResult.map) {
+                    if (sourceMap) {
                         result.code += `\r\n//# sourceMappingURL=${path.parse(target).base}.map`;
-                        util.writeFile(target + '.map', JSON.stringify(compileResult.map));
+                        util.writeFile(target + '.map', JSON.stringify(sourceMap));
                     }
                     util.writeFile(target, result.code);
                     util.output('写入', result.file + '.map');
