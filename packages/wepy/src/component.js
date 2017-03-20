@@ -408,6 +408,7 @@ export default class {
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
                     readyToSet[this.$prefix + k] = this[k]; // send to ReadyToSet
+                    this.data[k] = this[k];
                     originData[k] = util.$copy(this[k], true);
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {
