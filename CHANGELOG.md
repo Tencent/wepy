@@ -1,3 +1,8 @@
+## 1.4.9 (waiting) 
+* `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
+* `A` 添加了`wepy-compiler-babel`的sourceMap支持。
+
+
 ## 1.4.8 (2017-03-16)
 * `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
 * `F` 统一修复`$invoke`，`$broadcast`，`$emit`事件在执行完成时会出发`$apply`。
