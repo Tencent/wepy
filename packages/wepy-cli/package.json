@@ -30,6 +30,7 @@
     "babel-preset-stage-1": "^6.16.0"
   },
   "dependencies": {
+    "js-base64": "^2.1.9",
     "chokidar": "^1.6.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
