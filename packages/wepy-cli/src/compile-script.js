@@ -201,8 +201,10 @@ export default {
             }
 
             if (sourceMap) {
-                sourceMap.sources = [''];
+                sourceMap.sources = [opath.name + '.js'];
                 sourceMap.file = opath.name + '.js';
+                var Base64 = require('js-base64').Base64;
+                code += `\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Base64.encode(JSON.stringify(sourceMap))}`;
             }
 
 
@@ -215,10 +217,6 @@ export default {
                 },
                 done (result) {
                     util.output('写入', result.file);
-                    if (sourceMap) {
-                        var Base64 = require('js-base64').Base64;
-                        result.code += `\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Base64.encode(JSON.stringify(sourceMap))}`;
-                    }
                     util.writeFile(target, result.code);
                     util.output('写入', result.file + '.map');
                 }
