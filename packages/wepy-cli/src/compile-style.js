@@ -30,7 +30,7 @@ export default {
         let compiler = loader.loadCompiler(lang);
 
         if (!compiler) {
-            return;
+            throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
         }
 
         compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
