@@ -218,7 +218,6 @@ export default {
                 done (result) {
                     util.output('写入', result.file);
                     util.writeFile(target, result.code);
-                    util.output('写入', result.file + '.map');
                 }
             });
             // 缓存文件修改时间戳
