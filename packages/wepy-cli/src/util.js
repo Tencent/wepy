@@ -253,6 +253,51 @@ const utils = {
             'scrolltolower',
             'scroll'
         ];
+        const knownTags = [
+            // 视图容器
+            'view',
+            'scroll-view',
+            'swiper',
+            'swiper-item',
+
+            // 基础内容
+            'icon',
+            'text',
+            'progress',
+
+            // 表单组件
+            'button',
+            'checkbox-group',
+            'checkbox',
+            'form',
+            'input',
+            'label',
+            'picker',
+            'picker-view',
+            'picker-view-column',
+            'radio-group',
+            'radio',
+            'slider',
+            'switch',
+            'textarea',
+
+            // 导航
+            'navigator',
+
+            // 媒体组件
+            'audio',
+            'image',
+            'video',
+
+            // 地图
+            'map',
+            
+            // 画布
+            'canvas',
+
+            // 客服会话
+            'contact-button'
+        ];
         const configEvents = config.nativeEvents;
         if (configEvents && Array.isArray(configEvents)) {
             // 增加可配置的 nativeEvents
@@ -261,7 +306,14 @@ const utils = {
             // 用户可以通过临时加入 nativeEvents 的方法兼容
             nativeEvents.push.apply(nativeEvents, configEvents);
         }
-        return content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+        const configTags = config.knownTags;
+        if (configTags && Array.isArray(configTags)) {
+            // 增加可配置的 knownTags
+            knownTags.push.apply(knownTags, configTags);
+        }
+        return content.replace(/<([\w-\_]*)\s[^>]*>/ig, (tag, tagName) => {
+            tagName = tagName.toLowerCase();
+            const isKnownTag = knownTags.indexOf(tagName) >= 0;
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                 if (type === '.once' || type === '.sync') {
                 }
@@ -269,7 +321,8 @@ const utils = {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                const isNavtiveEvents = type !== '.user' && nativeEvents.indexOf(name) >= 0;
+                // 对于已知 tag 做原生事件名判断
+                const isNavtiveEvents = type !== '.user' && nativeEvents.indexOf(name) >= 0 && isKnownTag;
                 const prefix = isNavtiveEvents ? type === '.stop' ? 'catch' : 'bind' : 'v-on:';
                 return ` ${prefix}${name}=`;
             });
