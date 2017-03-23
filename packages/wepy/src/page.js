@@ -4,6 +4,9 @@ export default class extends component {
 
     isComponent = false;
 
+
+    $preloadData = {};
+
     init (wxpage, $parent) {
 
         this.$parent = $parent;
@@ -19,5 +22,14 @@ export default class extends component {
         super.onLoad();
     }
 
-
+    $preload(key, data) {
+        if (typeof(key) === 'object' && data) {
+            let k;
+            for (k in key) {
+                this.$preload(k, key[k]);
+            }
+        } else {
+            this.$preloadData[key] = data;
+        }
+    }
 }

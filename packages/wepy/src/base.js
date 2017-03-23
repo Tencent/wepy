@@ -126,6 +126,16 @@ export default {
             page.$name = pageClass.name || 'unnamed';
             page.init(this, self.$instance, self.$instance);
 
+            let prevPage = self.$instance.__prevPage__;
+            if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
+                args.push({
+                    from: prevPage,
+                    data: prevPage.$preloadData
+                });
+                prevPage.$preloadData = {};
+            }
+            self.$instance.__prevPage__ = page;
+
             page.onLoad && page.onLoad.apply(page, args);
 
             page.$mixins.forEach((mix) => {
