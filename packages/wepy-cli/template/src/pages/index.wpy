@@ -53,7 +53,7 @@
 
             <text class="testcounter">计数组件1: </text>
             <view class="counterview">
-                <counter1 />
+                <counter1 @index-emit="counterEmit" />
             </view>
 
             <text class="testcounter">计数组件2: </text>
@@ -195,13 +195,17 @@
                         }
                     });
                 }
+            },
+            counterEmit (...args) {
+                let $event = args[args.length - 1];
+                console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`);
             }
         };
 
         events = {
             'index-emit': (...args) => {
                 let $event = args[args.length - 1];
-                console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`);
+                console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`);
             }
         };
         onLoad() {

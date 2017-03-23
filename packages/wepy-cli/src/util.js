@@ -35,7 +35,7 @@ colors.setTheme({
 });
 
 
-export default {
+const utils = {
 
     seqPromise(promises) {
         return new Promise((resolve, reject) => {
@@ -215,7 +215,105 @@ export default {
      * xml replace
      */
     attrReplace(content) {
-        return content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+        const config = utils.getConfig();
+        const nativeEvents = [
+            // touch tap
+            'touchstart',
+            'touchmove',
+            'touchend',
+            'touchcancel',
+            'tap',
+            'longtap',
+
+            // 表单相关
+            'change',
+            'submit',
+            'reset',
+            'input',
+            'focus',
+            'blur',
+            'confirm',
+            'linechange',
+
+            // 音频 视频 等
+            'load',
+            'error',
+            'play',
+            'pause',
+            'timeupdate',
+            'ended',
+
+            // 地图
+            'markertap',
+            'controltap',
+            'regionchange',
+
+            // scroll 容器类
+            'scrolltoupper',
+            'scrolltolower',
+            'scroll'
+        ];
+        const knownTags = [
+            // 视图容器
+            'view',
+            'scroll-view',
+            'swiper',
+            'swiper-item',
+
+            // 基础内容
+            'icon',
+            'text',
+            'progress',
+
+            // 表单组件
+            'button',
+            'checkbox-group',
+            'checkbox',
+            'form',
+            'input',
+            'label',
+            'picker',
+            'picker-view',
+            'picker-view-column',
+            'radio-group',
+            'radio',
+            'slider',
+            'switch',
+            'textarea',
+
+            // 导航
+            'navigator',
+
+            // 媒体组件
+            'audio',
+            'image',
+            'video',
+
+            // 地图
+            'map',
+            
+            // 画布
+            'canvas',
+
+            // 客服会话
+            'contact-button'
+        ];
+        const configEvents = config.nativeEvents;
+        if (configEvents && Array.isArray(configEvents)) {
+            // 增加可配置的 nativeEvents
+            // 以防止由于小程序升级 上边的默认事件不完全导致的问题
+            // 如果说小程序升级的话 在 wepy 没升级的情况下
+            // 用户可以通过临时加入 nativeEvents 的方法兼容
+            nativeEvents.push.apply(nativeEvents, configEvents);
+        }
+        const configTags = config.knownTags;
+        if (configTags && Array.isArray(configTags)) {
+            // 增加可配置的 knownTags
+            knownTags.push.apply(knownTags, configTags);
+        }
+        return content.replace(/<([\w-\_]*)\s[^>]*>/ig, (tag, tagName) => {
+            tagName = tagName.toLowerCase();
+            const isKnownTag = knownTags.indexOf(tagName) >= 0;
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                 if (type === '.once' || type === '.sync') {
                 }
@@ -223,14 +321,9 @@ export default {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                let prefix = '';
-                if (type === '.stop') {
-                    prefix = 'catch';
-                } else if (type === '.user') {
-                    prefix = 'v-on:'
-                } else {
-                    prefix = 'bind';
-                }
+                // 对于已知 tag 做原生事件名判断
+                const isNavtiveEvents = type !== '.user' && nativeEvents.indexOf(name) >= 0 && isKnownTag;
+                const prefix = isNavtiveEvents ? type === '.stop' ? 'catch' : 'bind' : 'v-on:';
                 return ` ${prefix}${name}=`;
             });
         });
@@ -421,3 +514,5 @@ export default {
         this.log(flag + ': ' + path.relative(this.currentDir, file), type);
     }
 }
+
+export default utils
