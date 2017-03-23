@@ -1,6 +1,7 @@
 ## 1.4.9 (waiting) 
 * `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
 * `A` 添加了`wepy-compiler-babel`的sourceMap支持。
+* `A` 事件绑定不管是自定义事件还是原生事件都可以直接使用 `@eventName` 的方式，如果说 `eventName` 是小程序已知的事件的话就是通过 `bind` 或者 `catch` 绑定原生事件，否则的话就是走自定义事件绑定。对于小程序升级新增了一些原始事件的话，此时用户可以在 `wepy.config.js` 中增加 `nativeEvents: ['xx']` 即可。
 
 
 ## 1.4.8 (2017-03-16)
