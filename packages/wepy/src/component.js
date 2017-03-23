@@ -379,7 +379,7 @@ export default class {
             // 保存 com 块级作用域组件实例
             let comContext = com;
             let fn = getEventsFn(comContext, evtName);
-            fn && fn.$apply(() => {
+            fn && comContext.$apply(() => {
                 fn.apply(comContext, args.concat($evt));
             });
             com = comContext.$parent;
