@@ -103,6 +103,13 @@ describe('component.js', () => {
 
     it('$emit', () => {
         let page = new Index();
+        page.methods.testEmitFn = function (a, b, c, evt) {
+            assert.strictEqual(arguments.length, 4, 'test emit function arguments number');
+            assert.strictEqual(evt.name, 'test-emit-string', 'test emit function');
+            assert.strictEqual(evt.type, 'emit', 'test emit event type');
+            assert.strictEqual(evt.source, com, 'test emit event source');
+            assert.strictEqual(a + b + c, 1 + 2 + 3, 'test emit params');
+        };
         page.events = {
             'test-emit': function (a, b, c, evt) {
                 assert.strictEqual(arguments.length, 4, 'test emit function arguments number');
@@ -110,10 +117,12 @@ describe('component.js', () => {
                 assert.strictEqual(evt.type, 'emit', 'test emit event type');
                 assert.strictEqual(evt.source, com, 'test emit event source');
                 assert.strictEqual(a + b + c, 1 + 2 + 3, 'test emit params');
-            }
+            },
+            'test-emit-string': 'testEmitFn'
         }
         com.$parent = page;
         com.$emit('test-emit', 1, 2, 3);
+        com.$emit('test-emit-string', 1, 2, 3);
 
         page = pageConfig.$page;
 
@@ -138,6 +147,13 @@ describe('component.js', () => {
         childCom.$com = {
             comaaa: childchildCom
         };
+        childCom.methods.testBroastFn = function (a, b, c, evt) {
+            assert.strictEqual(arguments.length, 4, 'test broadcast function arguments number');
+            assert.strictEqual(evt.name, 'test-broadcast-string', 'test broadcast function');
+            assert.strictEqual(evt.type, 'broadcast', 'test broadcast event type');
+            assert.strictEqual(evt.source, com, 'test broadcast event source');
+            assert.strictEqual(a + b + c, 1 + 2 + 3, 'test broadcast params');
+        };
         childCom.events = {
             'test-broadcast': function (a, b, c, evt) {
                 assert.strictEqual(arguments.length, 4, 'test broadcast function arguments number');
@@ -145,11 +161,13 @@ describe('component.js', () => {
                 assert.strictEqual(evt.type, 'broadcast', 'test broadcast event type');
                 assert.strictEqual(evt.source, com, 'test broadcast event source');
                 assert.strictEqual(a + b + c, 1 + 2 + 3, 'test broadcast params');
-            }
+            },
+            'test-broadcast-string': 'testBroastFn'
         }
         childchildCom.events = childCom.events;
         com.$com = {comaa: childCom, comab: childCom};
         com.$broadcast('test-broadcast', 1, 2, 3);
+        com.$broadcast('test-broadcast-string', 1, 2, 3);
     });
 
     it('$invoke', () => {

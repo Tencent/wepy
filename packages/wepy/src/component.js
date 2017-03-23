@@ -340,8 +340,8 @@ export default class {
             for (let c in current.$com) {
                 c = current.$com[c];
                 queue.push(c);
-                let fn = c.events ? c.events[evtName] : undefined;
-                if (typeof(fn) === 'function') {
+                let fn = getEventsFn(c, evtName);
+                if (fn) {
                     c.$apply(() => {
                         fn.apply(c, args.concat($evt));
                     });
@@ -376,13 +376,13 @@ export default class {
             }
         }
         while(com && com.$isComponent !== undefined && $evt.active) {
-            let fn = com.events ? com.events[evtName] : undefined;
-            if (typeof(fn) === 'function') {
-                com.$apply(() => {
-                    fn.apply(com, args.concat($evt));
-                });
-            }
-            com = com.$parent;
+            // 保存 com 块级作用域组件实例
+            let comContext = com;
+            let fn = getEventsFn(comContext, evtName);
+            fn && fn.$apply(() => {
+                fn.apply(comContext, args.concat($evt));
+            });
+            com = comContext.$parent;
         }
     }
 
@@ -444,4 +444,20 @@ export default class {
         }
     }
 
+}
+
+function getEventsFn (comContext, evtName) {
+    let fn = comContext.events ? comContext.events[evtName] : undefined;
+    const typeFn = typeof(fn);
+    let fnFn;
+    if (typeFn === 'string') {
+        // 如果 events[k] 是 string 类型 则认为是调用 methods 上方法
+        const method = comContext.methods && comContext.methods[fn];
+        if (typeof(method) === 'function') {
+            fnFn = method;
+        }
+    } else if (typeFn === 'function') {
+        fnFn = fn;
+    }
+    return fnFn;
 }
