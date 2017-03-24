@@ -114,11 +114,13 @@ export default {
         app.$wxapp = getApp();
         return config;
     },
-    $createPage (pageClass) {
+    $createPage (pageClass, pagePath) {
+        let self = this;
         let config = {}, k;
         let page = new pageClass();
+        if (pagePath)
+            this.$instance.$pages[pagePath] = page;
         page.initMixins();
-        let self = this;
         config.$page = page;
 
         config.onLoad = function (...args) {
@@ -127,15 +129,18 @@ export default {
             page.init(this, self.$instance, self.$instance);
 
             let prevPage = self.$instance.__prevPage__;
+            let secParams = {};
+            secParams.from = prevPage ? prevPage : undefined;
+
             if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
-                args.push({
-                    from: prevPage,
-                    data: prevPage.$preloadData
-                });
+                secParams.preload = prevPage.$preloadData;
                 prevPage.$preloadData = {};
             }
-            self.$instance.__prevPage__ = page;
-
+            if (page.$prefetchData && Object.keys(page.$prefetchData).length > 0) {
+                secParams.prefetch = page.$prefetchData;
+                page.$prefetchData = {};
+            }
+            args.push(secParams);
             page.onLoad && page.onLoad.apply(page, args);
 
             page.$mixins.forEach((mix) => {
@@ -146,6 +151,8 @@ export default {
         };
 
         config.onShow = function (...args) {
+
+            self.$instance.__prevPage__ = page;
 
             page.onShow && page.onShow.apply(page, args);
 

@@ -1,9 +1,26 @@
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
+var native = require('../lib/native.js').default;
 var wxfake = require('./wxfake');
 
+wxfake.resetGlobal();
+
 var Index = require('./fake/page');
+var Page2 = require('./fake/page2');
 var App = require('./fake/app');
+
+
+let appConfig = wepy.$createApp(App);
+wepy.$instance = appConfig.$app;
+
+let pageConfig = wepy.$createPage(Index, 'pages/page1');
+let page2Config = wepy.$createPage(Page2, 'pages/page2');
+
+let page = pageConfig.$page;
+let app = appConfig.$app;
+
+pageConfig.onLoad.call(wxfake.getWxPage());
+pageConfig.onShow.call(wxfake.getWxPage(), {p: 1});
 
 
 describe('page.js', () => {
@@ -18,14 +35,12 @@ describe('page.js', () => {
         assert.strictEqual(inst, null, 'Page can not call as a function');
     });
 
+    it('private params', () => {
+        assert.strictEqual(page.$parent.__route__, 'pages/page1', '__route__');
+        assert.strictEqual(page.$parent.__prevPage__.$name, page.$name, '__prevPage__');
+    });
+
     it('wx instance', () => {
-        let appConfig = wepy.$createApp(App);
-        let pageConfig = wepy.$createPage(Index);
-
-        let page = pageConfig.$page;
-        let app = appConfig.$app;
-
-        pageConfig.onLoad.call(wxfake.getWxPage());
 
         assert.strictEqual(page.$wxapp.app, 'app', 'wxapp equal getApp()');
         assert.strictEqual(page.$wxpage.getCurrentPages(), 'wxpage', 'wxpage equal wxpages');
@@ -123,5 +138,102 @@ describe('page.js', () => {
         assert.strictEqual(page.testValid, 100, 'child prop changed will trigger parent data changed');
 
     });
+
+
+
+    it('$preload', () => {
+
+        
+        wepy.$instance.__prevPage__ = page;
+
+        let page2 = page2Config.$page;
+
+        page.$preload('a', 1);
+
+        page.$preload({b: 2, c: 3});
+
+        assert.strictEqual(Object.keys(page.$preloadData).length, 3, 'page preload testing arguments length');
+        assert.strictEqual(page.$preloadData.a, 1, 'page preload testing params 1');
+        assert.strictEqual(page.$preloadData.b, 2, 'page preload testing params 2');
+        assert.strictEqual(page.$preloadData.c, 3, 'page preload testing params 3');
+        
+
+
+        page2.onPrefetch = function (params, data) {
+            assert.strictEqual(params.a, 1, 'page preload testing params 1');
+            assert.strictEqual(params.b, 2, 'page preload testing params 1');
+            assert.strictEqual(data.from, page, 'page preload data from');
+            assert.strictEqual(data.preload.a, 1, 'page preload data 1');
+            assert.strictEqual(data.preload.b, 2, 'page preload data 2');
+            assert.strictEqual(data.preload.c, 3, 'page preload data 3');
+        };
+
+        page.$redirect('./page2', {a: 1, b: 2});
+
+        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
+        page2Config.onShow.call(wxfake.getWxPage());
+
+        assert.strictEqual(Object.keys(page.$preloadData).length, 0, 'page preload data will be cleared after redirect');
+
+
+        page2.$back();
+
+        pageConfig.onShow.call(wxfake.getWxPage(), {p: 1});
+
+        page.$preload({e: 2, f: 3});
+
+
+        page2.onPrefetch = function (params, data) {
+            assert.strictEqual(data.from, page, 'page preload data from');
+            assert.strictEqual(data.preload.e, 2, 'page preload data 1');
+            assert.strictEqual(data.preload.f, 3, 'page preload data 2');
+        };
+
+
+        page.$navigate({url: './page2?aa=1&bb=2'});
+
+        page2Config.onLoad.call(wxfake.getWxPage(), {aa: 1, bb: 2});
+        page2Config.onShow.call(wxfake.getWxPage());
+
+        page2.$back(5);
+
+        page.$switch('./page2');
+
+    });
+
+
+
+    it('onPrefetch', () => {
+        wepy.$instance.__prevPage__ = page;
+
+        let page2 = page2Config.$page;
+
+        page2.onPrefetch = function () {
+            return {time: 10};
+        };
+
+        page2.onLoad = function (params, data) {
+            assert.strictEqual(params.a, 1, 'page onload testing params 1');
+            assert.strictEqual(params.b, 2, 'page onload testing params 1');
+            assert.strictEqual(data.from, page, 'page onload data from');
+            assert.strictEqual(data.preload.e, 2, 'page onload data 1');
+            assert.strictEqual(data.preload.f, 3, 'page onload data 2');
+            assert.strictEqual(data.prefetch.time, 10, 'page prefetch data');
+        };
+
+        page.$preload({e: 2, f: 3});
+
+        page.$redirect('./page2', {a: 1, b: 2});
+
+        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
+    });
+
+
+    it('onReady', () => {
+        page2Config.onReady.call(wxfake.getWxPage());
+    });
+
+
+
 
 });

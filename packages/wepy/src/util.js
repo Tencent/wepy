@@ -221,6 +221,63 @@ export default {
         Ctor = Object.prototype.hasOwnProperty.call( proto, 'constructor' ) && proto.constructor;
         return typeof Ctor === 'function' && Object.prototype.hasOwnProperty.toString.call( Ctor ) === Object.prototype.hasOwnProperty.toString.call(Object);
     },
+
+    /**
+     * resolve path
+     * @param  {[string]} route ['/page/index']
+     * @param  {[string]} url   ['./page2']
+     * @return {[string]}       ['/page/page2']
+     */
+    $resolvePath (route, url) {
+        if (!url)
+            return route;
+        if (url[0] === '/') { // /index
+            url = url.substr(1);
+            return this.$resolvePath('', url);
+        }
+        if (url[0] !== '.') { // index
+            return this.$resolvePath(route, './' + url);
+        }
+        let current = route.split('/');
+        if (url[0] === '.' && url[1] === '/') { // ./index
+            url = url.substr(2);
+            if (url[0] !== '.') {
+                if (current.length)
+                    current[current.length - 1] = url;
+                else
+                    current = [url];
+                return current.length === 1 ? ('/' + current[0]) : current.join('/');
+            }
+            return this.$resolvePath(current.join('/'), url);
+        }
+        if (url[0] === '.' && url[1] === '.' && url[2] === '/') { // ../index || ....../index || ../../../index
+            url = url.replace(/^\.*/ig, '');
+            current.pop();
+            return this.$resolvePath(current.join('/'), '.' + url);
+        }
+        if (url[0] === '.') {
+            return this.$resolvePath(route, url.substr(1));
+        }
+    },
+    /**
+     * get url params
+     * @param  {String} url index?a=1&b=2
+     * @return {Object}     {a:1,b:2}
+     */
+    $getParams (url) {
+        let rst = {};
+        let quoteIndex = url.indexOf('?');
+
+        if (quoteIndex !== -1) {
+            let str = url.substr(quoteIndex + 1);
+            let tmp;
+            str.split('&').forEach(v => {
+                tmp = v.split('=');
+                rst[tmp[0]] = decodeURIComponent(tmp[1]);
+            });
+       }
+       return rst;
+    }
 };
 
 

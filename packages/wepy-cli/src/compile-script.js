@@ -12,6 +12,8 @@ const dist = cache.getDist();
 const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
 const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
+let appPath;
+
 export default {
 
     getPkgConfig (lib) {
@@ -177,8 +179,10 @@ export default {
                         code = code.replace(/exports\.default\s*=\s*(\w+);/i, '');
 
                         if (type === 'page') {
-                            code += `\nPage(require('wepy').default.$createPage(${defaultExport}));\n`;
+                            let pagePath = path.join(path.relative(appPath.dir, opath.dir), opath.name).replace(/\\/ig, '/');
+                            code += `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
                         } else {
+                            appPath = opath;
                             code += `\nApp(require('wepy').default.$createApp(${defaultExport}));\n`;
                         }
                     }

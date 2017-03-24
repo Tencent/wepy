@@ -36,12 +36,24 @@ module.exports = {
             },
             createCanvasContext: function () {
                 return 'createCanvasContext';
+            },
+            redirectTo: function () {
+                //console.log('redirectTo')
+            },
+            navigateTo: function () {
+                //console.log('navigateTo');
+            },
+            switchTab: function () {
+                //console.log('switchTab');
+            },
+            navigateBack: function () {
+                //console.log('navigateBack');
             }
         };
 
         global.getApp = function () { return {app:'app'}; };
         global.getCurrentPages = function () { 
-            return [{__route__: 'index'}]; 
+            return [{__route__: 'pages/page1'}]; 
         };
     },
     getWxPage: function () {

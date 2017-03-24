@@ -1,3 +1,5 @@
+import native from './native';
+
 let RequestMQ = {
     map: {},
     mq: [],
@@ -51,6 +53,8 @@ export default class {
 
     $interceptors = {};
 
+    $pages = {};
+
 
 
     init (wepy) {
@@ -96,7 +100,7 @@ export default class {
         };
         Object.keys(wx).forEach((key) => {
             if (!noPromiseMethods[key] && key.substr(0, 2) !== 'on' && !(/\w+Sync$/.test(key))) {
-                Object.defineProperty(wepy, key, {
+                Object.defineProperty(native, key, {
                     get () {
                         return (obj) => {
                             obj = obj || {};
@@ -154,10 +158,12 @@ export default class {
                         };
                     }
                 });
+                wepy[key] = native[key];
             } else {
-                Object.defineProperty(wepy, key, {
+                Object.defineProperty(native, key, {
                     get () { return (...args) => wx[key].apply(wx, args) }
                 });
+                wepy[key] = native[key];
             }
         });
 
