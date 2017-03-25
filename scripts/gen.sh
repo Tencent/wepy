@@ -51,12 +51,16 @@ wepy new demo
 
 wepy new emptydemo --empty
 
+wepy new nolintdemo --no-lint
+
 cd demo
 wepy build
 
 cd ../emptydemo
 wepy build
 
+cd ../nolintdemo
+wepy build
 
 # Cleanup
 cleanup
