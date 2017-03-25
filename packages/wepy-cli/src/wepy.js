@@ -5,9 +5,6 @@ import {exec} from 'child_process';
 import util from './util';
 import compile from './compile';
 
-const templateDir = path.join(util.cliDir, '../template', path.sep);
-const emptyDir = path.join(util.cliDir, '../empty', path.sep);
-
 let displayVersion = () => {
     let version = util.getVersion();
     let chars = [
@@ -40,6 +37,11 @@ let generateProject = (name, config) => {
         return;
     }
 
+    const tplDir = config.standard ? '../templates/standard/' : '../templates/normal/';
+    const templateDir = path.join(util.cliDir, tplDir + 'template', path.sep);
+    const emptyDir = path.join(util.cliDir, tplDir + 'empty', path.sep);
+    const confDir = path.join(util.cliDir, tplDir + 'conf', path.sep);
+
     let template = config.empty ? emptyDir : templateDir;
 
     let pkg = path.join(template, 'package.json');
@@ -48,7 +50,9 @@ let generateProject = (name, config) => {
     pkg.name = name;
 
     let dependencies = [
-        'wepy',
+        'wepy'
+    ];
+    const devDependencies = [
         'wepy-compiler-babel',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
@@ -57,31 +61,56 @@ let generateProject = (name, config) => {
         'babel-preset-stage-1',
         'cross-env'
     ];
+    const eslintDeps = [
+        'eslint@3.18.0',
+        'babel-eslint@7.2.1',
+        'eslint-config-standard@7.1.0',
+        'eslint-friendly-formatter@2.0.7',
+        'eslint-plugin-html@2.0.1',
+        'eslint-plugin-promise@2.0.1',
+        'eslint-plugin-standard@2.0.1',
+        'wepy-eslint@0.0.1'
+    ];
 
     if (!config.empty) {
         dependencies.push('wepy-com-toast');
         dependencies.push('wepy-async-function');
     }
 
+    if (config.lint) {
+        devDependencies.push.apply(devDependencies, eslintDeps);
+    }
+
     util.writeFile(packagePath, JSON.stringify(pkg));
     util.log('配置: ' + 'package.json', '写入');
 
     let files = util.getFiles(template);
-
-    files.forEach((file) => {
-        let target = path.join(util.currentDir, file);
-        let opath = path.parse(target);
-
-        util.writeFile(target, util.readFile(path.join(template, file)));
-        util.log('文件: ' + file, '拷贝');
-    });
+    const confFiles = config.lint ? util.getFiles(confDir) : [];
+    const copyFn = function (sourcePath) {
+        return function (file) {
+            let target = path.join(util.currentDir, file);
+            // let opath = path.parse(target);
+            let fileContent = util.readFile(path.join(sourcePath, file));
+            if (file === 'wepy.config.js') {
+                if (config.lint) {
+                    // 去掉 eslint: true,
+                    fileContent = fileContent.replace(/\s*eslint\: true,/ig, '')
+                }
+            }
+            util.writeFile(target, fileContent);
+            util.log('文件: ' + file, '拷贝');
+        }
+    }
+    files.forEach(copyFn(template));
+    confFiles.forEach(copyFn(confDir));
 
     let cmd = 'npm install --save ' + dependencies.join(' ');
+    let cmdDev = 'npm install --save-dev ' + devDependencies.join(' ');
     util.log('执行命令: ' + cmd, '执行');
+    util.log('执行命令: ' + cmdDev, '执行');
     util.log('可能需要几分钟, 请耐心等待...', '信息');
 
-
-    util.exec(cmd).then((d) => {
+    Promise.all(util.exec(cmd), util.exec(cmdDev)).then(d => {
         util.log('安装依赖完成', '完成');
 
         let cmd = 'wepy build';
@@ -187,6 +216,8 @@ commander.option('-t, --target <target>', '生成代码目录');
 commander.option('-f, --file <file>', '待编译wpy文件');
 commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
 commander.option('--empty', '使用new生成项目时，生成空项目内容');
+commander.option('--no-lint', '使用new生成项目时，禁用eslint');
+commander.option('--standard', '使用new生成项目时，使用standard模式生成');
 commander.option('-w, --watch', '监听文件改动');
 /*
 commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is module, used in `new` command', mode => {
