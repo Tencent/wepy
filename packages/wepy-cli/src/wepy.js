@@ -92,7 +92,7 @@ let generateProject = (name, config) => {
             // let opath = path.parse(target);
             let fileContent = util.readFile(path.join(sourcePath, file));
             if (file === 'wepy.config.js') {
-                if (config.lint) {
+                if (!config.lint) {
                     // 去掉 eslint: true,
                     fileContent = fileContent.replace(/\s*eslint\: true,/ig, '')
                 }
