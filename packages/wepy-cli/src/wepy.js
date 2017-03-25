@@ -37,7 +37,7 @@ let generateProject = (name, config) => {
         return;
     }
 
-    const tplDir = config.standard ? '../templates/standard/' : '../templates/normal/';
+    const tplDir = '../templates/';
     const templateDir = path.join(util.cliDir, tplDir + 'template', path.sep);
     const emptyDir = path.join(util.cliDir, tplDir + 'empty', path.sep);
     const confDir = path.join(util.cliDir, tplDir + 'conf', path.sep);
@@ -85,12 +85,15 @@ let generateProject = (name, config) => {
     util.log('配置: ' + 'package.json', '写入');
 
     let files = util.getFiles(template);
-    const confFiles = config.lint ? util.getFiles(confDir) : [];
+
     const copyFn = function (sourcePath) {
         return function (file) {
             let target = path.join(util.currentDir, file);
-            // let opath = path.parse(target);
             let fileContent = util.readFile(path.join(sourcePath, file));
+
+            // --on-lint will not copy eslint config
+            if (['.editorconfig', '.eslintignore', '.eslintrc'].indexOf(file) !== -1 && !config.lint)
+                return;
             if (file === 'wepy.config.js') {
                 if (!config.lint) {
                     // 去掉 eslint: true,
@@ -102,7 +105,6 @@ let generateProject = (name, config) => {
         }
     }
     files.forEach(copyFn(template));
-    confFiles.forEach(copyFn(confDir));
 
     let cmd = 'npm install --save ' + dependencies.join(' ');
     let cmdDev = 'npm install --save-dev ' + devDependencies.join(' ');
@@ -219,15 +221,7 @@ commander.option('-f, --file <file>', '待编译wpy文件');
 commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
 commander.option('--empty', '使用new生成项目时，生成空项目内容');
 commander.option('--no-lint', '使用new生成项目时，禁用eslint');
-commander.option('--standard', '使用new生成项目时，使用standard模式生成');
 commander.option('-w, --watch', '监听文件改动');
-/*
-commander.option('-m, --mode <mode>', 'project mode type(normal, module), default is module, used in `new` command', mode => {
-  if(modeList.indexOf(mode) === -1){
-    console.log('mode value must one of ' + modeList.join(', '));
-    process.exit();
-  }
-});*/
 
 commander.command('build').description('编译项目').action(projectPath => {
     if (!util.isDir(path.join(util.currentDir, 'node_modules'))) {

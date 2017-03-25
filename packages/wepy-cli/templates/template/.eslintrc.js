@@ -18,11 +18,8 @@ module.exports = {
   },
   // add your custom rules here
   'rules': {
-    'indent': ['error', 4],
     // allow paren-less arrow functions
     'arrow-parens': 0,
-    // semi always
-    'semi': ['error', 'always'],
     // allow async-await
     'generator-star-spacing': 0,
     // allow debugger during development
