@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import {DOMParser} from 'xmldom';
+import eslint from './eslint';
 import cache from './cache';
 import util from './util';
 
@@ -288,6 +289,10 @@ export default {
         }
     },
 
+    lint (filepath) {
+        eslint(filepath);
+    },
+
     compile (opath) {
         let filepath = path.join(opath.dir, opath.base);
         let src = cache.getSrc();
@@ -313,6 +318,8 @@ export default {
         } else {
             util.log('Other: ' + relative, '编译');
         }
+
+        this.lint(filepath);
 
         let wpy = this.resolveWpy(opath);
 
