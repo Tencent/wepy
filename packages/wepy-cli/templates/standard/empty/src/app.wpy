@@ -15,7 +15,7 @@ export default class extends wepy.app {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
     }
-  };
+  }
 
   onLaunch() {
     console.log('on launch')

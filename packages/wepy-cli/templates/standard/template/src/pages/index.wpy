@@ -89,7 +89,7 @@
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: 'test'
-    };
+    }
     components = {
       panel: Panel,
       counter1: Counter,
@@ -97,9 +97,9 @@
       list: List,
       group: Group,
       toast: Toast
-    };
+    }
 
-    mixins = [testMixin];
+    mixins = [testMixin]
 
     data = {
       mynum: 20,
@@ -154,13 +154,14 @@
           ]
         }
       ]
-    };
+    }
 
     computed = {
       now () {
         return +new Date()
       }
-    };
+    }
+
     methods = {
       plus () {
         this.mynum++
@@ -204,14 +205,15 @@
         let $event = args[args.length - 1]
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
       }
-    };
+    }
 
     events = {
       'index-emit': (...args) => {
         let $event = args[args.length - 1]
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
       }
-    };
+    }
+
     onLoad() {
       let self = this
       this.$parent.getUserInfo(function (userInfo) {

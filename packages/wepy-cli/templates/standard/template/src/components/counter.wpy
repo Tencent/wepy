@@ -28,16 +28,16 @@
         },
         default: 50
       }
-    };
+    }
 
     data = {
-    };
+    }
     events = {
       'index-broadcast': (...args) => {
         let $event = args[args.length - 1]
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`)
       }
-    };
+    }
 
     methods = {
       plus () {
@@ -50,6 +50,6 @@
         this.num = this.num - 1
         console.log(this.$name + ' minus tap')
       }
-    };
+    }
   }
 </script>

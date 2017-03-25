@@ -24,11 +24,11 @@ export default class extends wepy.app {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
     }
-  };
+  }
 
   globalData = {
     userInfo: null
-  };
+  }
 
   constructor () {
     super()
