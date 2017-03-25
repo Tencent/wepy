@@ -109,8 +109,10 @@ let generateProject = (name, config) => {
     util.log('执行命令: ' + cmd, '执行');
     util.log('执行命令: ' + cmdDev, '执行');
     util.log('可能需要几分钟, 请耐心等待...', '信息');
-
-    Promise.all(util.exec(cmd), util.exec(cmdDev)).then(d => {
+    // 不能并行执行安装依赖
+    util.exec(cmd).then(d => {
+        return util.exec(cmdDev)
+    }).then(d => {
         util.log('安装依赖完成', '完成');
 
         let cmd = 'wepy build';
