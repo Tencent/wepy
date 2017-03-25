@@ -69,7 +69,7 @@ let generateProject = (name, config) => {
         'eslint-plugin-html@2.0.1',
         'eslint-plugin-promise@2.0.1',
         'eslint-plugin-standard@2.0.1',
-        'wepy-eslint@0.0.1'
+        'wepy-eslint'
     ];
 
     if (!config.empty) {
