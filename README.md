@@ -112,14 +112,28 @@ wepy build --watch
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
 
-### 详细文档
+### Contributing
+
+```
+# Clone code
+git clone git@github.com:wepyjs/wepy.git
+
+# Developing
+npm run watch
+
+# Run test case
+npm run test
+```
+
+
+### Documentation
 
 https://wepyjs.github.io/wepy/
 
 
-### 更新日志
+### Changelog
 
-[CHANGELOG](https://wepyjs.github.io/wepy/#/CHANGELOG)
+https://wepyjs.github.io/wepy/#/CHANGELOG
 
 ### License
 
