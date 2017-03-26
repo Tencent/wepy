@@ -51,6 +51,11 @@
 | 方法   | 参数   | 返回值  | 说明    |
 | ---- | ---- | ---- | ----- |
 | init | -    | -    | 页面始化。 |
+| $preload | -    | -    | 页面数据预加载。 |
+| $redirect | -    | -    | 页面跳转，wx.redirectTo 的封装。 |
+| $navigate | -    | -    | 页面跳转，wx.navigateTo 的封装。 |
+| $back | -    | -    | 页面后退，wx.navigateBack 的封装。 |
+| $switch | -    | -    | TAB切换，wx.switchTab 的封装。 |
 
 ### wepy.app
 
