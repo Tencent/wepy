@@ -1,8 +1,15 @@
+## 1.4.9 (coming) 
+* `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
+* `A` 添加了`wepy-compiler-babel`的sourceMap支持。
+* `A` 事件绑定优化，对于非原生事件，添加`.user`后缀也可识别。
+* `A` 添加`page.$preload`方法，扩展`onLoad`的第二个参数为`preloadData`。
+
 ## 1.4.8 (2017-03-16)
 * `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
 * `F` 统一修复`$invoke`，`$broadcast`，`$emit`事件在执行完成时会出发`$apply`。
 * `A` 添加了`@`符号来代替`bind`和`catch`。[ISSUE #71](https://github.com/wepyjs/wepy/issues/71)
 * `A` 添加了组件自定义事件，如`@doSomething="someFunc"`。参考文档[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+* `F` 修复demo默认使用`@`符。
 
 
 ## 1.4.7 (2017-03-15)
