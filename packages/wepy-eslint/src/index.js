@@ -8,5 +8,7 @@ export default function (esConfig, filepath) {
     const engine = new eslint.CLIEngine(esConfig);
     const report = engine.executeOnFiles([filepath]);
     const formatter = engine.getFormatter();
-    console.log(formatter(report.results));
+    let rst = formatter(report.results);
+    if (rst)
+        console.log(rst);
 };
