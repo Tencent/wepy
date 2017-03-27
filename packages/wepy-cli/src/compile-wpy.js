@@ -319,7 +319,11 @@ export default {
             util.log('Other: ' + relative, '编译');
         }
 
-        this.lint(filepath);
+        // Ignore all node modules, avoid eslint warning.
+        // https://github.com/eslint/eslint/blob/75b7ba4113db4d9bc1661a4600c8728cf3bfbf2b/lib/cli-engine.js#L325
+        if (!/^node_modules/.test(path.relative(util.currentDir, filepath))) {
+            this.lint(filepath);
+        }
 
         let wpy = this.resolveWpy(opath);
 
