@@ -150,7 +150,7 @@ export default class extends wepy.app {
     <counter1></counter1>
 </template>
 <script>
-import wepy form 'wepy';
+import wepy from 'wepy';
 import Counter from '../components/counter';
 export default class Index extends wepy.page {
 
@@ -186,7 +186,7 @@ export default class Index extends wepy.page {
     <view>  </view>
 </template>
 <script>
-import wepy form 'wepy';
+import wepy from 'wepy';
 export default class Com extends wepy.component {
 
     components = {};
@@ -292,7 +292,7 @@ $this.$emit('some-event', 1, 2, 3, 4);
 
 组件的事件监听需要写在`events`属性下，如：
 ```javascript
-import wepy form 'wepy';
+import wepy from 'wepy';
 export default class Com extends wepy.component {
 
     components = {};
