@@ -11,6 +11,7 @@ module.exports = {
       outputStyle: 'compressed'
     },*/
     babel: {
+      'sourceMap': true,
       'presets': [
         'es2015',
         'stage-1'
@@ -26,6 +27,7 @@ module.exports = {
 }
 
 if (prod) {
+  delete module.exports.compilers.babel.sourcesMap;
   // 压缩sass
   // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
 
