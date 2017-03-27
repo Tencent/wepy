@@ -1,8 +1,12 @@
 ## 1.4.9 (coming) 
 * `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
 * `A` 添加了`wepy-compiler-babel`的sourceMap支持。
-* `A` 事件绑定优化，对于非原生事件，添加`.user`后缀也可识别。
+* `A` 事件绑定优化，对于非原生事件，添加`.user`后缀也可识别。[PR #76](https://github.com/wepyjs/wepy/pull/76)
 * `A` 添加`page.$preload`方法，扩展`onLoad`的第二个参数为`preloadData`。
+* `A` 添加了`eslint`支持。[PR #80](https://github.com/wepyjs/wepy/pull/80)
+
+**感谢@dolymood的贡献**
+
 
 ## 1.4.8 (2017-03-16)
 * `F` 修复了在data中的数据存在undefined的情况下会出现异常的BUG。
