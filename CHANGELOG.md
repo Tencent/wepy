@@ -1,4 +1,4 @@
-## 1.4.9 (coming) 
+## 1.5.1 (2017-03-27) 
 * `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
 * `A` 添加了`wepy-compiler-babel`的sourceMap支持。
 * `A` 事件绑定优化，对于非原生事件，添加`.user`后缀也可识别。[PR #76](https://github.com/wepyjs/wepy/pull/76)
