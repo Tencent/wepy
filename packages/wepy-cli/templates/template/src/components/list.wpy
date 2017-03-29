@@ -11,7 +11,7 @@
   <view>
     <button @tap="add" size="mini">添加列表</button>
   </view>
-    <block wx:for-items="{{list}}" wx:for-index="index" wx:for-item="item">
+    <block wx:for-items="{{list}}" wx:for-index="index" wx:for-item="item" wx:key="id">
       <view @tap="tap" class="mylist">
         <text>{{item.id}}</text>: {{item.title}}
       </view>
