@@ -30,14 +30,16 @@
     "babel-preset-stage-1": "^6.16.0"
   },
   "dependencies": {
-    "js-base64": "^2.1.9",
     "chokidar": "^1.6.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "mkdirp": "^0.5.1",
+    "compare-versions": "^3.0.0",
     "ignore": "^3.2.0",
+    "js-base64": "^2.1.9",
+    "mkdirp": "^0.5.1",
+    "postcss": "^5.2.16",
+    "postcss-selector-parser": "^2.2.3",
     "update-notifier": "^1.0.2",
-    "xmldom": "^0.1.22",
-    "compare-versions": "^3.0.0"
+    "xmldom": "^0.1.22"
   }
 }
