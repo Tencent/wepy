@@ -472,21 +472,11 @@ const utils = {
         }
         this.log(flag + ': ' + path.relative(this.currentDir, file), type);
     },
-    computedWpyFile (rst, attrs, clear) {
-        if (!attrs) {
-            attrs = ['style', 'template', 'script'];
-        }
-        if (!Array.isArray(attrs)) {
-            attrs = [attrs];
-        }
+    mergeWpy (rst) {
+        const attrs = ['style', 'template', 'script'];
         attrs.forEach((attr) => {
             const typeRst = rst[attr];
             if (typeRst) {
-                if (clear) {
-                    typeRst.code = '';
-                    typeRst.src = '';
-                    typeRst.type = '';
-                }
                 typeRst.blocks.forEach((block) => {
                     typeRst.code += block.code || '';
                     typeRst.src = typeRst.src || block.src || '';

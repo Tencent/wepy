@@ -166,7 +166,7 @@ export default {
             }
         });
 
-        util.computedWpyFile(rst);
+        util.mergeWpy(rst);
 
         /*
         Use components instead
