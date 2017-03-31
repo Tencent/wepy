@@ -34,6 +34,7 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "compare-versions": "^3.0.0",
+    "hash-sum": "^1.0.2",
     "ignore": "^3.2.0",
     "js-base64": "^2.1.9",
     "mkdirp": "^0.5.1",
