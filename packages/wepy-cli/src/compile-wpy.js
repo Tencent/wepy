@@ -104,26 +104,39 @@ export default {
 
         xml = this.createParser().parseFromString(content);
 
-        const moduleId = simpleId(filepath);
+        const moduleId = util.genId(filepath);
 
         let rst = {
             moduleId: moduleId,
             style: {
                 code: '',
-                scoped: ''
+                src: '',
+                type: '',
+                blocks: []
             },
             template: {
-                code: ''
+                code: '',
+                src: '',
+                type: '',
+                blocks: []
             },
             script: {
-                code: ''
+                code: '',
+                src: '',
+                type: '',
+                blocks: []
             }
         };
 
         [].slice.call(xml.childNodes || []).forEach((child) => {
             const nodeName = child.nodeName;
             if (nodeName === 'style' || nodeName === 'template' || nodeName === 'script') {
-                const rstTypeObj = rst[nodeName];
+                const blocks = rst[nodeName].blocks;
+                const rstTypeObj = {
+                    code: ''
+                };
+                blocks.push(rstTypeObj);
+
                 rstTypeObj.src = child.getAttribute('src');
                 rstTypeObj.type = child.getAttribute('lang') || child.getAttribute('type');
                 if (nodeName === 'style') {
@@ -136,9 +149,11 @@ export default {
                 }
 
                 if (rstTypeObj.src && util.isFile(rstTypeObj.src)) {
-                    rstTypeObj.code = util.readFile(rstTypeObj.src, 'utf-8');
-                    if (rstTypeObj.code === null) {
+                    const fileCode = util.readFile(rstTypeObj.src, 'utf-8');
+                    if (fileCode === null) {
                         throw '打开文件失败: ' + rstTypeObj.src;
+                    } else {
+                        rstTypeObj.code += fileCode;
                     }
                 } else {
                     [].slice.call(child.childNodes || []).forEach((c) => {
@@ -150,6 +165,8 @@ export default {
                     rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
             }
         });
+
+        util.computedWpyFile(rst);
 
         /*
         Use components instead
@@ -293,7 +310,7 @@ export default {
         })();
 
         if (rst.style.scoped && rst.template.code) {
-            // scoped 更新 template.code
+            // 存在有 scoped 部分就需要 更新 template.code
             var node = this.createParser().parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
             // 更新 template.code
@@ -371,7 +388,7 @@ export default {
                 // 设置 scoped 无效
                 wpy.style.scoped = '';
             }
-            cStyle.compile(wpy.style.type, wpy.style.code, wpy.style.scoped, requires, opath, wpy.moduleId);
+            cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
         } else {
             this.remove(opath, 'wxss');
         }
@@ -398,13 +415,4 @@ function walkNode (node, moduleId) {
             }
         });
     }
-}
-
-const ID_MAP = {};
-let ID_BASE = 1;
-const simpleId = function (filepath) {
-    if (!ID_MAP[filepath]) {
-        ID_MAP[filepath] = 'wepy-css-' + ID_BASE++;
-    }
-    return ID_MAP[filepath];
 }
