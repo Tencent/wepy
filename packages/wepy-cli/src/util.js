@@ -4,6 +4,7 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
 import {exec} from 'child_process';
+import hash from 'hash-sum';
 import cache from './cache';
 
 colors.enabled = true;
@@ -34,7 +35,7 @@ colors.setTheme({
     '写入': 'green'
 });
 
-
+let ID_CACHE = {};
 const utils = {
 
     seqPromise(promises) {
@@ -470,7 +471,15 @@ const utils = {
             }
         }
         this.log(flag + ': ' + path.relative(this.currentDir, file), type);
+    },
+    genId (filepath) {
+        if (!ID_CACHE[filepath]) {
+            ID_CACHE[filepath] = '_' + hash(filepath).slice(1, 8);
+        }
+        return ID_CACHE[filepath];
     }
 }
-
 export default utils
+
+
+
