@@ -108,40 +108,36 @@ export default {
 
         let rst = {
             moduleId: moduleId,
-            style: {
-                code: '',
-                src: '',
-                type: '',
-                blocks: []
-            },
+            style: [],
             template: {
                 code: '',
                 src: '',
-                type: '',
-                blocks: []
+                type: ''
             },
             script: {
                 code: '',
                 src: '',
-                type: '',
-                blocks: []
+                type: ''
             }
         };
 
         [].slice.call(xml.childNodes || []).forEach((child) => {
             const nodeName = child.nodeName;
             if (nodeName === 'style' || nodeName === 'template' || nodeName === 'script') {
-                const blocks = rst[nodeName].blocks;
-                const rstTypeObj = {
-                    code: ''
-                };
-                blocks.push(rstTypeObj);
+                let rstTypeObj;
+
+                if (nodeName === 'style') {
+                    rstTypeObj = {code: ''};
+                    rst[nodeName].push(rstTypeObj);
+                } else {
+                    rstTypeObj = rst[nodeName];
+                }
 
                 rstTypeObj.src = child.getAttribute('src');
                 rstTypeObj.type = child.getAttribute('lang') || child.getAttribute('type');
                 if (nodeName === 'style') {
                     // 针对于 style 增加是否包含 scoped 属性
-                    rstTypeObj.scoped = child.getAttribute('scoped');
+                    rstTypeObj.scoped = child.getAttribute('scoped') ? true : false;
                 }
 
                 if (rstTypeObj.src) {
@@ -163,10 +159,10 @@ export default {
 
                 if (!rstTypeObj.src)
                     rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
+
             }
         });
-
-        util.mergeWpy(rst);
+        //util.mergeWpy(rst);
 
         /*
         Use components instead
@@ -175,7 +171,6 @@ export default {
         }*/
 
         // default type
-        rst.style.type = rst.style.type || 'css';
         rst.template.type = rst.template.type || 'wxml';
         rst.script.type = rst.script.type || 'babel';
 
@@ -309,7 +304,7 @@ export default {
             }
         })();
 
-        if (rst.style.scoped && rst.template.code) {
+        if (rst.style.some(v => v.scoped) && rst.template.code) {
             // 存在有 scoped 部分就需要 更新 template.code
             var node = this.createParser().parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
@@ -375,7 +370,7 @@ export default {
         } else {
             this.remove(opath, 'json');
         }
-        if (wpy.style.code || Object.keys(wpy.template.components).length) {
+        if (wpy.style.length || Object.keys(wpy.template.components).length) {
             let requires = [];
             let k, tmp;
             for (k in wpy.template.components) {
@@ -385,12 +380,6 @@ export default {
                 } else {
                     requires.push(path.join(opath.dir, wpy.template.components[k]));
                 }
-            }
-            if (type === 'app') {
-                // 如果是 app 没有 wxml 所以这里不能做替换
-                // 强制 scoped = '' 也就是在 app.wpy 中
-                // 设置 scoped 无效
-                wpy.style.scoped = '';
             }
             cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
         } else {

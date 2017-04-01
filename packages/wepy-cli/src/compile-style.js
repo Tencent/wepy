@@ -12,38 +12,28 @@ const LANG_MAP = {
 };
 
 export default {
-    compile (styleRst, requires, opath, moduleId) {
+    compile (styles, requires, opath, moduleId) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
-        const filepath = path.join(opath.dir, opath.base);
 
-        if (typeof styleRst === 'string') {
-            // .compile('less', path) 这种形式
+        if (typeof styles === 'string') {
+            // .compile('less', opath) 这种形式
             opath = requires;
             requires = [];
             moduleId = '';
-            styleRst = {
-                type: styleRst,
-                scoped: '',
-                code: '',
-                blocks: [{
-                    type: styleRst,
-                    scoped: '',
-                    code: util.readFile(filepath) || ''
-                }]
-            };
+            styles = [{
+                type: styles,
+                scoped: false,
+                code: util.readFile(path.join(opath.dir, opath.base)) || ''
+            }];
         }
-        const blocks = styleRst.blocks || [];
-        const allPromises = [];
-        blocks.forEach((block) => {
-            let lang = block.type;
-            const content = block.code;
-            // 全局 scoped
-            // 因为对于 app 而言 scoped 会被设置为 ''
-            const gScoped = styleRst.scoped;
-            const scoped = gScoped && block.scoped;
+        let allPromises = [];
+        styles.forEach((style) => {
+            let lang = style.type;
+            const content = style.code;
+            const scoped = style.scoped;
 
             if (lang === 'scss')
                 lang = 'sass';
@@ -92,17 +82,11 @@ export default {
                     }
                 });
             }
-            write2Target(allContent);
-        }).catch((e) => {
-            console.log(e);
-        });
-
-        function write2Target(cssContent) {
             let target = util.getDistPath(opath, 'wxss', src, dist);
 
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'css',
-                code: cssContent,
+                code: allContent,
                 file: target,
                 output (p) {
                     util.output(p.action, p.file);
@@ -112,6 +96,8 @@ export default {
                     util.writeFile(target, rst.code);
                 }
             });
-        }
+        }).catch((e) => {
+            console.log(e);
+        });
     }
 }
