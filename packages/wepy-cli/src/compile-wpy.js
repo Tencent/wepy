@@ -380,15 +380,17 @@ export default {
             this.remove(opath, 'json');
         }
 
-        if (wpy.style.length || Object.keys(wpy.template.components).length) {
+        if (wpy.style.length || (wpy.template && Object.keys(wpy.template.components).length)) {
             let requires = [];
             let k, tmp;
-            for (k in wpy.template.components) {
-                tmp = wpy.template.components[k];
-                if (tmp.indexOf('.') === -1) {
-                    requires.push(tmp); // 第三方组件
-                } else {
-                    requires.push(path.join(opath.dir, wpy.template.components[k]));
+            if (wpy.template) {
+                for (k in wpy.template.components) {
+                    tmp = wpy.template.components[k];
+                    if (tmp.indexOf('.') === -1) {
+                        requires.push(tmp); // 第三方组件
+                    } else {
+                        requires.push(path.join(opath.dir, wpy.template.components[k]));
+                    }
                 }
             }
             cStyle.compile(wpy.style, requires, opath, wpy.moduleId);

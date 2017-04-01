@@ -30,6 +30,8 @@ export default {
             }];
         }
         let allPromises = [];
+
+        // styles can be an empty array
         styles.forEach((style) => {
             let lang = style.type || 'css';
             const content = style.code;
