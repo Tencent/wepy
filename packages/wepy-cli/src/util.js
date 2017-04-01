@@ -35,7 +35,7 @@ colors.setTheme({
     '写入': 'green'
 });
 
-
+let ID_CACHE = {};
 const utils = {
 
     seqPromise(promises) {
@@ -472,32 +472,14 @@ const utils = {
         }
         this.log(flag + ': ' + path.relative(this.currentDir, file), type);
     },
-    mergeWpy (rst) {
-        const attrs = ['style', 'template', 'script'];
-        attrs.forEach((attr) => {
-            const typeRst = rst[attr];
-            if (typeRst) {
-                typeRst.blocks.forEach((block) => {
-                    typeRst.code += block.code || '';
-                    typeRst.src = typeRst.src || block.src || '';
-                    typeRst.type = typeRst.type || block.type || '';
-                    if (attr === 'style') {
-                        typeRst.scoped = typeRst.scoped || block.scoped || '';
-                    }
-                });
-            }
-        });
-        return rst;
-    },
-    genId
+    genId (filepath) {
+        if (!ID_CACHE[filepath]) {
+            ID_CACHE[filepath] = '_' + hash(filepath).slice(1, 8);
+        }
+        return ID_CACHE[filepath];
+    }
 }
-
 export default utils
 
-const ID_CACHE = {};
-function genId (filepath) {
-    if (!ID_CACHE[filepath]) {
-        ID_CACHE[filepath] = 'wpy-' + hash(filepath).slice(1, 6);
-    }
-    return ID_CACHE[filepath];
-}
+
+
