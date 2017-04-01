@@ -31,7 +31,7 @@ export default {
         }
         let allPromises = [];
         styles.forEach((style) => {
-            let lang = style.type;
+            let lang = style.type || 'css';
             const content = style.code;
             const scoped = style.scoped;
 
