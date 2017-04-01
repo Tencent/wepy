@@ -383,7 +383,10 @@ export default {
                     requires.push(path.join(opath.dir, wpy.template.components[k]));
                 }
             }
-            cStyle.compile(wpy.style, requires, opath, wpy.moduleId, isApp);
+            isApp && wpy.style.forEach((rst) => {
+                rst.scoped = false;
+            });
+            cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
         } else {
             this.remove(opath, 'wxss');
         }
