@@ -79,7 +79,8 @@ cd $currentDirForPosix
 npm install
 
 # Run npm install for every packages
-packages=$(ls -1 ./packages)
+# Change to install wepy-cli only
+packages=$(ls -1 ./packages | grep "wepy-cli")
 for package in ${packages[@]}
 do
     cd "$currentDirForPosix/packages/$package"
