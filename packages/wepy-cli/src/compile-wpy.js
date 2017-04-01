@@ -353,6 +353,8 @@ export default {
             util.log('Other: ' + relative, '编译');
         }
 
+        const isApp = type === 'app';
+
         // Ignore all node modules, avoid eslint warning.
         // https://github.com/eslint/eslint/blob/75b7ba4113db4d9bc1661a4600c8728cf3bfbf2b/lib/cli-engine.js#L325
         if (!/^node_modules/.test(path.relative(util.currentDir, filepath))) {
@@ -361,7 +363,7 @@ export default {
 
         let wpy = this.resolveWpy(opath);
 
-        if (type === 'app') { // 第一个编译
+        if (isApp) { // 第一个编译
             cache.setPages(wpy.config.pages.map(v => path.join(src, v + wpyExt)));
         }
 
@@ -381,12 +383,12 @@ export default {
                     requires.push(path.join(opath.dir, wpy.template.components[k]));
                 }
             }
-            cStyle.compile(wpy.style, requires, opath, wpy.moduleId, type === 'app');
+            cStyle.compile(wpy.style, requires, opath, wpy.moduleId, isApp);
         } else {
             this.remove(opath, 'wxss');
         }
 
-        if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
+        if (wpy.template.code && (!isApp && type !== 'component')) { // App 和 Component 不编译 wxml
             //cTemplate.compile(wpy.template.type, wpy.template.code, opath);
             cTemplate.compile(wpy.template);
         }
