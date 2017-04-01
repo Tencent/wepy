@@ -1,3 +1,7 @@
+## 1.5.2 (waiting)
+* `A` style标签添加了scoped属性的支持。[ISSUE #79](https://github.com/wepyjs/wepy/issues/79)
+
+
 ## 1.5.1 (2017-03-27) 
 * `F` 修复了`onUnload`中直接赋值导致赋值失效的BUG。
 * `A` 添加了`wepy-compiler-babel`的sourceMap支持。

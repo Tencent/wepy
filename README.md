@@ -108,33 +108,25 @@ wepy build --watch
 
 #### 开发者工具使用
 
-1. 使用`微信开发者工具`新建项目，本地开发选择`myproject`目录。
+1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
 2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
 
 ### Contributing
 
-```
-# Clone code
-git clone git@github.com:wepyjs/wepy.git
-
-# Developing
-npm run watch
-
-# Run test case
-npm run test
-```
+[CONTRIBUTING.md](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
 
 ### Documentation
 
 https://wepyjs.github.io/wepy/
 
-
 ### Changelog
 
 https://wepyjs.github.io/wepy/#/CHANGELOG
+
+
 
 ### License
 

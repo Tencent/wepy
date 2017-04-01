@@ -6,6 +6,7 @@
   "scripts": {
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
+    "bootstrap": "sh ./scripts/bootstrap.sh && npm run build",
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
@@ -66,15 +67,5 @@
     }
   },
   "dependencies": {
-    "chokidar": "^1.6.1",
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "compare-versions": "^3.0.0",
-    "hash-sum": "^1.0.2",
-    "ignore": "^3.2.0",
-    "js-base64": "^2.1.9",
-    "mkdirp": "^0.5.1",
-    "update-notifier": "^1.0.2",
-    "xmldom": "^0.1.22"
   }
 }
