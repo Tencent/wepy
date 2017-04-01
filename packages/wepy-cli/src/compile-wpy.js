@@ -381,7 +381,7 @@ export default {
                     requires.push(path.join(opath.dir, wpy.template.components[k]));
                 }
             }
-            cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
+            cStyle.compile(wpy.style, requires, opath, wpy.moduleId, type === 'app');
         } else {
             this.remove(opath, 'wxss');
         }

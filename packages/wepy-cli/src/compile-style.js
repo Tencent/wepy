@@ -12,7 +12,7 @@ const LANG_MAP = {
 };
 
 export default {
-    compile (styles, requires, opath, moduleId) {
+    compile (styles, requires, opath, moduleId, app) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
@@ -33,7 +33,7 @@ export default {
         styles.forEach((style) => {
             let lang = style.type || 'css';
             const content = style.code;
-            const scoped = style.scoped;
+            const scoped = style.scoped && app;
 
             if (lang === 'scss')
                 lang = 'sass';
