@@ -12,31 +12,64 @@ const LANG_MAP = {
 };
 
 export default {
-    compile (lang, content, scoped, requires, opath, moduleId) {
+    compile (styleRst, requires, opath, moduleId) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
         const filepath = path.join(opath.dir, opath.base);
 
-        if (arguments.length === 2) {
+        if (typeof styleRst === 'string') {
+            // .compile('less', path) 这种形式
+            opath = requires;
             requires = [];
-            scoped = '';
             moduleId = '';
-            opath = content;
-            content = util.readFile(filepath);
+            styleRst = {
+                type: styleRst,
+                scoped: '',
+                code: '',
+                blocks: [{
+                    type: styleRst,
+                    scoped: '',
+                    code: util.readFile(filepath) || ''
+                }]
+            };
         }
+        const blocks = styleRst.blocks || [];
+        const allPromises = [];
+        blocks.forEach((block) => {
+            let lang = block.type;
+            const content = block.code;
+            // 全局 scoped
+            // 因为对于 app 而言 scoped 会被设置为 ''
+            const gScoped = styleRst.scoped;
+            const scoped = gScoped && block.scoped;
 
-        if (lang === 'scss')
-            lang = 'sass';
+            if (lang === 'scss')
+                lang = 'sass';
 
-        let compiler = loader.loadCompiler(lang);
+            let compiler = loader.loadCompiler(lang);
 
-        if (!compiler) {
-            throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
-        }
+            if (!compiler) {
+                throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
+            }
 
-        compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
+            const p = compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
+                // 处理 scoped
+                if (scoped) {
+                    // 存在有 scoped 的 style
+                    return scopedHandler(moduleId, css).then((cssContent) => {
+                        return cssContent;
+                    });
+                } else {
+                    return css;
+                }
+            });
+
+            allPromises.push(p);
+        });
+        Promise.all(allPromises).then((rets) => {
+            let allContent = rets.join('');
             if (requires && requires.length) {
                 requires.forEach((r) => {
                     let comsrc = util.findComponent(r);
@@ -54,39 +87,31 @@ export default {
                         let code = util.readFile(comsrc);
                         if (isNPM || /<style/.test(code)) {
                             relative = relative.replace(ext, '.wxss').replace(/\\/ig, '/').replace('../', './');
-                            css = '@import "' + relative + '";\n' + css;
+                            allContent = '@import "' + relative + '";\n' + allContent;
                         }
                     }
                 });
             }
-            // 处理 scoped
-            if (scoped) {
-                return scopedHandler(moduleId, css, function (err, cssContent) {
-                    if (!err) {
-                        write2Target(cssContent);
-                    }
-                });
-            } else {
-                write2Target(css);
-            }
-            function write2Target(cssContent) {
-                let target = util.getDistPath(opath, 'wxss', src, dist);
-
-                let plg = new loader.PluginHelper(config.plugins, {
-                    type: 'css',
-                    code: cssContent,
-                    file: target,
-                    output (p) {
-                        util.output(p.action, p.file);
-                    },
-                    done (rst) {
-                        util.output('写入', rst.file);
-                        util.writeFile(target, rst.code);
-                    }
-                });
-            }
+            write2Target(allContent);
         }).catch((e) => {
             console.log(e);
         });
+
+        function write2Target(cssContent) {
+            let target = util.getDistPath(opath, 'wxss', src, dist);
+
+            let plg = new loader.PluginHelper(config.plugins, {
+                type: 'css',
+                code: cssContent,
+                file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
+                done (rst) {
+                    util.output('写入', rst.file);
+                    util.writeFile(target, rst.code);
+                }
+            });
+        }
     }
 }
