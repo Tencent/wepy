@@ -115,26 +115,18 @@ wepy build --watch
 
 ### Contributing
 
-```
-# Clone code
-git clone git@github.com:wepyjs/wepy.git
-
-# Developing
-npm run watch
-
-# Run test case
-npm run test
-```
+[CONTRIBUTING.md](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
 
 ### Documentation
 
 https://wepyjs.github.io/wepy/
 
-
 ### Changelog
 
 https://wepyjs.github.io/wepy/#/CHANGELOG
+
+
 
 ### License
 
