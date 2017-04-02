@@ -18,7 +18,7 @@ function toWinPath() {
 }
 
 function toPosixPath() {
-    echo "/$1" | sed -e 's/\\/\//g' -e 's/://'
+    echo "/$1" | sed -e 's/\\/\//g' -e 's/://' -e 's/\/\//\//g'
 }
 
 
@@ -29,6 +29,14 @@ currentDirForWin=$(toWinPath $currentDirForPosix)
 globalDirForPosix=$(toPosixPath $globalDirForWin)
 
 
+os="win"
+uname=$(uname)
+
+if [ "$uname"x = "Darwin"x ]; then
+    os="mac"
+    globalDirForPosix="$globalDirForPosix/bin"
+fi
+
 # Generate dev and debug bin file
 array=( dev debug )
 for mod in "${array[@]}"
@@ -37,8 +45,7 @@ do
     if [ "$mod"x = "debug"x ]; then
         params=" --inspect --debug-brk"
     fi
-
-    cat > "$globalDirForPosix\wepy-$mod" <<- EOF
+    cat > "$globalDirForPosix/wepy-$mod" <<- EOF
 #!/bin/sh
 basedir=\$(dirname "\$(echo "\$0" | sed -e 's,\\\\,/,g')")
 
@@ -56,10 +63,14 @@ fi
 exit \$ret
 EOF
 
+chmod +x "$globalDirForPosix/wepy-$mod"
 success "generated: $globalDirForPosix/wepy-$mod"
 
 
-    cat > "$globalDirForPosix\wepy-$mod.cmd" <<- EOF
+    # If it's win then generate cmd file
+    if [ "$os"x = "win"x  ]; then
+
+        cat > "$globalDirForPosix/wepy-$mod.cmd" <<- EOF
 @IF EXIST "%~dp0\node.exe" (
   "%~dp0\node.exe"$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
 ) ELSE (
@@ -70,7 +81,9 @@ success "generated: $globalDirForPosix/wepy-$mod"
 )
 EOF
 
-success "generated: $globalDirForPosix/wepy-$mod.cmd"
+        success "generated: $globalDirForPosix/wepy-$mod.cmd"
+
+    fi
 done
 
 
