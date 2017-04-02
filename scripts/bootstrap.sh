@@ -21,6 +21,14 @@ function toPosixPath() {
     echo "/$1" | sed -e 's/\\/\//g' -e 's/://' -e 's/\/\//\//g'
 }
 
+# Install packages, if yarn is installed then use yarn to install packages.
+function installPackage() {
+    if type yarn >/dev/null 2>&1; then
+        yarn
+    else
+        npm install
+    fi
+}
 
 globalDirForWin=$(npm config get prefix)
 currentDirForPosix=$(pwd)
@@ -89,7 +97,8 @@ done
 
 
 cd $currentDirForPosix
-npm install
+
+installPackage
 
 # Run npm install for every packages
 # Change to install wepy-cli only
@@ -98,5 +107,7 @@ for package in ${packages[@]}
 do
     cd "$currentDirForPosix/packages/$package"
     info "install npm packages for $package"
-    npm install
+
+    installPackage
+
 done
