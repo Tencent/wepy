@@ -36,9 +36,8 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 * 支持ES2015+特性，如Async Functions
 * 支持多种编译器，Less/Sass/Styus、Babel/Typescript、Pug
 * 支持多种插件处理，文件压缩，图片压缩，内容替换等
+* 支持 Sourcemap，ESLint等
 * 小程序细节优化，如请求列队，事件优化等
-* 默认集成 ESLint , 与 Vue 相同的 2 空格、无分号代码规范
-
 
 
 ### Demo
@@ -62,13 +61,11 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
     import mycom from '../components/mycom';
 
     export default class Index extends wepy.page {
-
+        
         components = { mycom };
-
         data = {
             myprop: {}
         };
-
         computed = {
             now () { return +new Date(); }
         };
@@ -76,7 +73,6 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
             await sleep(3);
             console.log('Hello World');
         }
-
         sleep(time) {
             return new Promise((resolve, reject) => setTimeout(() => resolve, time * 1000));
         }
@@ -113,21 +109,12 @@ wepy build --watch
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
 
-### Contributing
+### Links
 
-[CONTRIBUTING.md](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
+[Documentation](https://wepyjs.github.io/wepy/)
 
+[Changelog](https://wepyjs.github.io/wepy/#/CHANGELOG)
 
-### Documentation
+[Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
-https://wepyjs.github.io/wepy/
-
-### Changelog
-
-https://wepyjs.github.io/wepy/#/CHANGELOG
-
-
-
-### License
-
-[MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+[License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
