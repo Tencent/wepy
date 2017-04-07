@@ -11,6 +11,8 @@ import cScript from './compile-script';
 
 import loader from './loader';
 
+import toWeb from './web/index';
+
 
 
 
@@ -181,6 +183,12 @@ export default {
         let dist = config.output || wepyrc.output;
         let ext = config.wpyExt || wepyrc.wpyExt;
 
+        if (config.output === 'web') {
+            wepyrc.web = wepyrc.web || {};
+            dist = wepyrc.web.dist || dist || 'web';
+            src = wepyrc.web.src || src || 'src';
+        }
+
         if (src === undefined)
             src = 'src';
         if (dist === undefined)
@@ -234,21 +242,23 @@ export default {
             files = ig.filter(files);
         }
 
-        files.forEach((f) => {
-            let opath = path.parse(path.join(current, src, f));
-            if (file) {
-                this.compile(opath);
-            } else { // 不指定文件编译时，跳过引用文件编译
-                let refs = this.findReference(f);
-                if (!refs.length)
+        if (config.output === 'web') {
+            toWeb.toWeb(files[0]);
+        } else {
+            files.forEach((f) => {
+                let opath = path.parse(path.join(current, src, f));
+                if (file) {
                     this.compile(opath);
+                } else { // 不指定文件编译时，跳过引用文件编译
+                    let refs = this.findReference(f);
+                    if (!refs.length)
+                        this.compile(opath);
+                }
+            });
+
+            if (config.watch) {
+                this.watch(config);
             }
-        });
-
-
-
-        if (config.watch) {
-            this.watch(config);
         }
     },
     compile(opath) {

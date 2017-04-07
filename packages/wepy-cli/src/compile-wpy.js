@@ -12,6 +12,7 @@ import cCss from './compile-css';*/
 import cStyle from './compile-style';
 import cTemplate from './compile-template';
 import cScript from './compile-script';
+import toWeb from './to-web';
 import loader from './loader';
 
 export default {
@@ -351,6 +352,9 @@ export default {
         } else {
             this.remove(opath, 'wxss');
         }
+
+        toWeb.toWeb(wpy, type, opath);
+        return;
 
         if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
             //cTemplate.compile(wpy.template.type, wpy.template.code, opath);
