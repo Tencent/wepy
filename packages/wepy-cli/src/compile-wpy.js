@@ -69,69 +69,86 @@ export default {
         let config = util.getConfig();
         let filepath;
 
-        if (arguments.length === 1) {
-
-            if (typeof(xml) === 'object' && xml.dir) {
-                opath = xml;
-                filepath = path.join(xml.dir, xml.base);
-            } else {
-                opath = path.parse(xml);
-                filepath = xml;
-            }
-            let content = util.readFile(filepath);
-
-            if (content === null) {
-                util.error('打开文件失败: ' + filepath)
-                return;
-            }
-            let startlen = content.indexOf('<script') + 7;
-            while(content[startlen++] !== '>') {
-                // do nothing;
-            }
-            content = util.encode(content, startlen, content.indexOf('</script>') - 1);
-
-            // replace :attr to v-bind:attr
-            /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
-                return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
-                    if (type === '.once' || type === '.sync') {
-                    }
-                    else
-                        type = '.once';
-                    return ` v-bind:${name}${type}=`;
-                }).replace(/\s+\@([\w-_]*)\s*=/ig, (attr, name) => { // replace @change => v-on:change
-                    return `v-on:${name}`;
-                });
-            })*/
-
-            content = util.attrReplace(content);
-
-            xml = this.createParser().parseFromString(content);
+        if (typeof(xml) === 'object' && xml.dir) {
+            opath = xml;
+            filepath = path.join(xml.dir, xml.base);
+        } else {
+            opath = path.parse(xml);
+            filepath = xml;
         }
+        let content = util.readFile(filepath);
 
-        let rst = {style: {code: ''}, template: {code: ''}, script: {code: ''}};
+        if (content === null) {
+            util.error('打开文件失败: ' + filepath)
+            return;
+        }
+        let startlen = content.indexOf('<script') + 7;
+        while(content[startlen++] !== '>') {
+            // do nothing;
+        }
+        content = util.encode(content, startlen, content.indexOf('</script>') - 1);
+
+        // replace :attr to v-bind:attr
+        /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
+            return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
+                if (type === '.once' || type === '.sync') {
+                }
+                else
+                    type = '.once';
+                return ` v-bind:${name}${type}=`;
+            }).replace(/\s+\@([\w-_]*)\s*=/ig, (attr, name) => { // replace @change => v-on:change
+                return `v-on:${name}`;
+            });
+        })*/
+
+        content = util.attrReplace(content);
+
+        xml = this.createParser().parseFromString(content);
+
+        const moduleId = simpleId(filepath);
+
+        let rst = {
+            moduleId: moduleId,
+            style: {
+                code: '',
+                scoped: ''
+            },
+            template: {
+                code: ''
+            },
+            script: {
+                code: ''
+            }
+        };
 
         [].slice.call(xml.childNodes || []).forEach((child) => {
-            if (child.nodeName === 'style' || child.nodeName === 'template' || child.nodeName === 'script') {
-                rst[child.nodeName].src = child.getAttribute('src');
-                rst[child.nodeName].type = child.getAttribute('lang') || child.getAttribute('type');
-
-                if (rst[child.nodeName].src) {
-                    rst[child.nodeName].src = path.resolve(opath.dir, rst[child.nodeName].src);
+            const nodeName = child.nodeName;
+            if (nodeName === 'style' || nodeName === 'template' || nodeName === 'script') {
+                const rstTypeObj = rst[nodeName];
+                rstTypeObj.src = child.getAttribute('src');
+                rstTypeObj.type = child.getAttribute('lang') || child.getAttribute('type');
+                if (nodeName === 'style') {
+                    // 针对于 style 增加是否包含 scoped 属性
+                    rstTypeObj.scoped = child.getAttribute('scoped');
                 }
 
-                if (rst[child.nodeName].src && util.isFile(rst[child.nodeName].src)) {
-                    rst[child.nodeName].code = util.readFile(rst[child.nodeName].src, 'utf-8');
-                    if (rst[child.nodeName].code === null) {
-                        throw '打开文件失败: ' + rst[child.nodeName].src;
+                if (rstTypeObj.src) {
+                    rstTypeObj.src = path.resolve(opath.dir, rstTypeObj.src);
+                }
+
+                if (rstTypeObj.src && util.isFile(rstTypeObj.src)) {
+                    rstTypeObj.code = util.readFile(rstTypeObj.src, 'utf-8');
+                    if (rstTypeObj.code === null) {
+                        throw '打开文件失败: ' + rstTypeObj.src;
                     }
                 } else {
                     [].slice.call(child.childNodes || []).forEach((c) => {
-                        rst[child.nodeName].code += util.decode(c.toString());
+                        rstTypeObj.code += util.decode(c.toString());
                     });
                 }
 
-                if (!rst[child.nodeName].src)
-                    rst[child.nodeName].src = path.join(opath.dir, opath.name + opath.ext);
+                if (!rstTypeObj.src)
+                    rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
             }
         });
 
@@ -276,6 +293,14 @@ export default {
             }
         })();
 
+        if (rst.style.scoped && rst.template.code) {
+            // scoped 更新 template.code
+            var node = this.createParser().parseFromString(rst.template.code);
+            walkNode(node, rst.moduleId);
+            // 更新 template.code
+            rst.template.code = node.toString();
+        }
+
         return rst;
     },
 
@@ -302,9 +327,6 @@ export default {
         let pages = cache.getPages();
 
         let type = '';
-
-        let rst = {style: {code: ''}, template: {code: ''}, script: {code: ''}};
-
         let relative = path.relative(util.currentDir, filepath);
 
         if (filepath === path.join(util.currentDir, src, 'app' + wpyExt)) {
@@ -348,7 +370,13 @@ export default {
                     requires.push(path.join(opath.dir, wpy.template.components[k]));
                 }
             }
-            cStyle.compile(wpy.style.type, wpy.style.code, requires, opath);
+            if (type === 'app') {
+                // 如果是 app 没有 wxml 所以这里不能做替换
+                // 强制 scoped = '' 也就是在 app.wpy 中
+                // 设置 scoped 无效
+                wpy.style.scoped = '';
+            }
+            cStyle.compile(wpy.style.type, wpy.style.code, wpy.style.scoped, requires, opath, wpy.moduleId);
         } else {
             this.remove(opath, 'wxss');
         }
@@ -366,3 +394,25 @@ export default {
         }
     }
 };
+
+function walkNode (node, moduleId) {
+    if (node.childNodes) {
+        [].slice.call(node.childNodes || []).forEach((child) => {
+            if (child.tagName) {
+                // 是标签 则增加class
+                const cls = child.getAttribute('class');
+                child.setAttribute('class', (cls + ' ' + moduleId).trim());
+                walkNode(child, moduleId);
+            }
+        });
+    }
+}
+
+const ID_MAP = {};
+let ID_BASE = 1;
+const simpleId = function (filepath) {
+    if (!ID_MAP[filepath]) {
+        ID_MAP[filepath] = 'wepy-css-' + ID_BASE++;
+    }
+    return ID_MAP[filepath];
+}

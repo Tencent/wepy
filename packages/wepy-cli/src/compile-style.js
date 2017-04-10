@@ -4,7 +4,7 @@ import util from './util';
 import cache from './cache';
 
 import loader from './loader';
-
+import scopedHandler from './style-compiler/scoped';
 
 const LANG_MAP = {
     'less': '.less',
@@ -12,16 +12,19 @@ const LANG_MAP = {
 };
 
 export default {
-    compile (lang, content, requires, opath) {
+    compile (lang, content, scoped, requires, opath, moduleId) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
+        const filepath = path.join(opath.dir, opath.base);
 
         if (arguments.length === 2) {
             requires = [];
+            scoped = '';
+            moduleId = '';
             opath = content;
-            content = util.readFile(path.join(opath.dir, opath.base));
+            content = util.readFile(filepath);
         }
 
         if (lang === 'scss')
@@ -56,21 +59,32 @@ export default {
                     }
                 });
             }
+            // 处理 scoped
+            if (scoped) {
+                return scopedHandler(moduleId, css, function (err, cssContent) {
+                    if (!err) {
+                        write2Target(cssContent);
+                    }
+                });
+            } else {
+                write2Target(css);
+            }
+            function write2Target(cssContent) {
+                let target = util.getDistPath(opath, 'wxss', src, dist);
 
-            let target = util.getDistPath(opath, 'wxss', src, dist);
-
-            let plg = new loader.PluginHelper(config.plugins, {
-                type: 'css',
-                code: content,
-                file: target,
-                output (p) {
-                    util.output(p.action, p.file);
-                },
-                done (rst) {
-                    util.output('写入', rst.file);
-                    util.writeFile(target, css);
-                }
-            });
+                let plg = new loader.PluginHelper(config.plugins, {
+                    type: 'css',
+                    code: cssContent,
+                    file: target,
+                    output (p) {
+                        util.output(p.action, p.file);
+                    },
+                    done (rst) {
+                        util.output('写入', rst.file);
+                        util.writeFile(target, rst.code);
+                    }
+                });
+            }
         }).catch((e) => {
             console.log(e);
         });
