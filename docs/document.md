@@ -49,7 +49,7 @@ if (prod) {
             }
         },
         'imagemin': {
-            filter: /\.(jpg|png|jpge)$/,
+            filter: /\.(jpg|png|jpeg)$/,
             config: {
                 'jpg': {
                     quality: 80
