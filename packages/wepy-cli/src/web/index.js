@@ -3,12 +3,15 @@ import util from '../util';
 import cache from '../cache';
 import compileWpy from '../compile-wpy';
 
+
+import cScript from './compile-script';
+import cTemplate from './compile-template';
+import cStyle from './compile-style';
+
+
 import loader from '../loader';
 
-import ModuleMap from './moduleMap';
-
-const WEAPP_TAGS = ['view', 'text', 'navigator', 'image'];
-const HTML_TAGS = ['div', 'span', 'a', 'img'];
+import mmap from './modulemap';
 
 
 const currentPath = util.currentDir;
@@ -18,37 +21,116 @@ const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
 const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
 let appPath;
-let map = new ModuleMap();
+
+let pages = {};
 
 export default {
 
-    replaceWXML (str) {
-        WEAPP_TAGS.forEach((v, i) => {
-            let openreg = new RegExp(`<${v}`, 'ig'),
-                closereg = new RegExp(`<\\${v}`, 'ig');
-            str = str.replace(openreg, `<${HTML_TAGS[i]}`).replace(closereg, `<\\${HTML_TAGS[i]}`);
-        });
-        return str.replace(/[\r\n]/ig, '');
+    addPage (k, v) {
+        pages[k] = v;
     },
-
     toWeb (file) {
         let src = cache.getSrc();
         let ext = cache.getExt();
-        let apppath = path.parse(path.join(util.currentDir, src, file));
-        let appWpy = compileWpy.resolveWpy(apppath);
-        let pages = [];
+        let appWpy, apppath;
+        if (typeof(file) === 'object') {
+            appWpy = file;
+            apppath = appWpy.script.src;
+        } else {
+            apppath = path.parse(path.join(util.currentDir, src, file));
+            appWpy = compileWpy.resolveWpy(apppath);
+        }
+        let wpypages = [];
 
+        this.app = appWpy;
         if (appWpy.config.pages && appWpy.config.pages.length) {
             appWpy.config.pages.forEach(v => {
-                pages.push(compileWpy.resolveWpy(path.parse(path.join(util.currentDir, src, v + ext))));
+                wpypages.push(compileWpy.resolveWpy(path.parse(path.join(util.currentDir, src, v + ext))));
             });
         } else {
             util.error('未检测到配置的页面文件。请检查' + util.getRelative(apppath));
             return;
         }
-        debugger;
 
-        this.compile([appWpy].concat(pages));
+        this.compile([appWpy].concat(wpypages)).then(rst => {
+            debugger;
+            let mapArr = mmap.getArray();
+            let code = '';
+
+            let style = '';
+
+            mapArr.forEach((v, i) => {
+                let p = path.relative(util.currentDir, v.source.script.src);
+
+                code += '/***** module ' + i + ' start *****/\n';
+                code += '/***** ' + p + ' *****/\n';
+                code += 'function(module, exports, __wepy_require) {'
+                if (v.type === 'script') {
+                    code += v.source.script.code + '\n';
+                    if (v.source.template && v.source.template.id !== undefined) {
+                        code += '\nexports.template=__wepy_require(' + v.source.template.id + ');\n'
+                    }
+                } else if (v.type === 'template') {
+                    code += 'module.exports = "' + v.source.template.code.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
+                } else if (v.type === 'style') {
+                    style += v.source.style.code;
+                }
+                code += '}';
+                if (i !== mapArr.length - 1) {
+                    code += ',';
+                }
+                code += '/***** module ' + i + ' end *****/\n\n\n';
+            });
+
+code = `
+(function(modules) { 
+   // The module cache
+   var installedModules = {};
+   // The require function
+   function __webpack_require__(moduleId) {
+       // Check if module is in cache
+       if(installedModules[moduleId])
+           return installedModules[moduleId].exports;
+       // Create a new module (and put it into the cache)
+       var module = installedModules[moduleId] = {
+           exports: {},
+           id: moduleId,
+           loaded: false
+       };
+       // Execute the module function
+       modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+       // Flag the module as loaded
+       module.loaded = true;
+       // Return the exports of the module
+       return module.exports;
+   }
+   // expose the modules object (__webpack_modules__)
+   __webpack_require__.m = modules;
+   // expose the module cache
+   __webpack_require__.c = installedModules;
+   // __webpack_public_path__
+   __webpack_require__.p = "/";
+   // Load entry module and return exports
+   return __webpack_require__(${appWpy.script.id});
+})([
+${code}
+]);
+`
+            let config = {}, routes = {}, k;
+
+            for (k in pages) {
+                routes[k] = mmap.get(pages[k].script.src);
+            }
+
+            config.routes = routes;
+            config.style = style;
+
+            code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
+
+            util.writeFile(util.currentDir + '/web/dist.js', code);
+        }).catch(e => {
+            console.error(e);
+        });
     },
 
     compile (wpys) {
@@ -62,8 +144,10 @@ export default {
 
         if (typeof(wpys) === 'string') {
             
-            if (map.get(wpys) !== undefined)
-                return;
+            let wpy = mmap.getObject(wpys);
+            if (wpy) {
+                return Promise.resolve(wpy);
+            }
 
             if (path.parse(wpys).ext === wpyExt) {
                 wpys = [compileWpy.resolveWpy(wpys)];
@@ -72,170 +156,51 @@ export default {
                     script: {
                         code: util.readFile(wpys),
                         src: wpys,
-                        type: 'js'
+                        type: 'babel'
                     }
                 }];
             }
             singleFile = true;
         }
         wpys.forEach((wpy, i) => {
-            let compiler = loader.loadCompiler(wpy.script.type);
-            if (!compiler) {
-                return;
+            let tmp;
+            wpy.type = singleFile ? 'require' : ((i === 0) ? 'app' : 'page');
+
+            tmp = cScript.compile(wpy);
+
+            if (!tmp) {
+                throw 'error';
             }
-            tasks.push(
-                compiler(wpy.script.code, config.compilers[wpy.script.type] || {}).then(rst => {
-                    if (rst.code) {
-                        wpy.script.code = rst.code;
-                        wpy.script.map = rst.map;
-                    } else {
-                        wpy.script.code = rst;
-                    }
-                    wpy.type = singleFile ? 'require' : ((i === 0) ? 'app' : 'page');
-                    return wpy;
-                })
-            );
+
+            tasks.push(tmp);
+
+            if (wpy.template && wpy.template.code && !wpy.template.id) {
+                tmp = cTemplate.compile(wpy);
+
+                if (!tmp) {
+                    throw 'error';
+                }
+
+                tasks.push(tmp);
+            }
+
+            if (wpy.style && wpy.style.code && !wpy.style.id) {
+                tmp = cStyle.compile(wpy);
+
+                if (!tmp) {
+                    throw 'error';
+                }
+                tasks.push(tmp);
+            }
         });
 
-        Promise.all(tasks).then((compiled) => {
-            compiled.forEach(wpy => {
-                this.resolveMap(wpy);
-            });
-        }).catch(e => {
-            console.log(e);
-        });
-    },
-
-    resolveMap (wpy) {
-
-        let opath = path.parse(wpy.script.src);
-
-        map.add(wpy.script.src);
-
-        console.log(map);
-
-        let params = cache.getParams();
-        let wpyExt = params.wpyExt;
-
-        if (!wpy.code)
-
-
-        wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
-
-            console.log(match, lib);
-
-            let resolved = lib;
-
-            let target = '', source = '', ext = '', needCopy = false;
-
-
-            let isNPM = /^node_modules/.test(path.relative(util.currentDir, wpy.script.src));
-
-            if (lib[0] === '.') { // require('./something'');
-                source = path.join(opath.dir, lib);  // e:/src/util
-                if (isNPM) {
-                    target = path.join(npmPath, path.relative(modulesPath, source));
-                    needCopy = true;
-                } else {
-                    target = source.replace(path.sep + 'src' + path.sep, path.sep + 'dist' + path.sep);   // e:/dist/util
-                    needCopy = false;
-                }
-            } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
-                let pkg = this.getPkgConfig(lib);
-                if (!pkg) {
-                    throw Error('找不到模块: ' + lib);
-                }
-                let main = pkg.main || 'index.js';
-                if (pkg.browser && typeof pkg.browser === 'string') {
-                    main = pkg.browser;
-                }
-                source = path.join(modulesPath, lib, main);
-                target = path.join(npmPath, lib, main);
-                lib += path.sep + main;
-                ext = '';
-                needCopy = true;
-            } else { // require('babel-runtime/regenerator')
-                //console.log('3: ' + lib);
-                source = path.join(modulesPath, lib);
-                target = path.join(npmPath, lib);
-                ext = '';
-                needCopy = true;
-            }
-
-            if (util.isFile(source + wpyExt)) {
-                ext = wpyExt;
-            } else if (util.isFile(source + '.js')) {
-                ext = '.js';
-            } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
-                ext = path.sep + 'index.js';
-            }else if (util.isFile(source)) {
-                ext = '';
-            } else {
-                throw ('找不到文件: ' + source);
-            }
-            source += ext;
-            target += ext;
-            lib += ext;
-            resolved = lib;
-
-            // 第三方组件
-            if (/\.wpy$/.test(resolved)) {
-                target = target.replace(/\.wpy$/, '') + '.js';
-                resolved = resolved.replace(/\.wpy$/, '') + '.js';
-                lib = resolved;
-            }
-
-                console.log(source);
-                this.compile(source);
-                return;
-
-            if (needCopy) {
-                return;
-                if (!cache.checkBuildCache(source)) {
-                    cache.setBuildCache(source);
-                    util.log('依赖: ' + path.relative(process.cwd(), target), '拷贝');
-                    /*let dirname = path.dirname(target);
-                    mkdirp.sync(dirname);*/
-
-                    this.compile('js', null, 'npm', path.parse(source));
-
-                }
-                /*if (!buildCache[source] || buildCache[source] !== getModifiedTime(source)) {
-                    buildCache[source] = getModifiedTime(source);
-                    console.log('copying........' + target + ' ===== ' + source);
-                    let dirname = path.dirname(target);
-                    buildCache[source] = getModifiedTime(source);
-                    mkdirp.sync(dirname);
-                    gulp.src(source).pipe(change(compileJS)).pipe(gulp.dest(dirname));
-                }*/
-            }
-            return;
-            if (isNPM) {
-                if (lib[0] !== '.') {
-                    resolved = path.join('..' + path.sep, path.relative(opath.dir, modulesPath), lib);
-                } else {
-                    if (lib[0] === '.' && lib[1] === '.')
-                        resolved = './' + resolved;
-                }
-
-            } else {
-                resolved = path.relative(util.getDistPath(opath, opath.ext, src, dist), target);
-            }
-            resolved = resolved.replace(/\\/g, '/').replace(/^\.\.\//, './');
-            return `require('${resolved}')`;
-        });
-
-        debugger;
-    },
-    getPkgConfig (lib) {
-        let pkg = util.readFile(path.join(modulesPath, lib, 'package.json'));
-        try {
-            pkg = JSON.parse(pkg);
-        } catch (e) {
-            pkg = null;
+        if (singleFile) {
+            return Promise.resolve(tasks[0]);
+        } else {
+            return Promise.all(tasks);
         }
-        return pkg;
     },
+
 
 
 

@@ -96,25 +96,56 @@ let $bindEvt = (config, com, prefix) => {
 };
 
 
+const addStyle = (css) => {
+    let styleElement = document.createElement("style");
+    let head = document.head || document.getElementsByTagName("head")[0];
+    
+    if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText = replaceText(index, css);
+    } else {
+        let cssNode = document.createTextNode(css);
+        styleElement.appendChild(cssNode);
+    }
+    head.appendChild(styleElement);
+    styleElement.type = "text/css";
+    return styleElement;
+};
+
 export default {
-    $createApp (appClass) {
-        let config = {};
-        let app = new appClass();
+    $createApp (appClass, config) {
+        let k, routes = [];
 
-        if (!this.$instance) {
-            app.init(this);
-            this.$instance = app;
+        for (k in config.routes) {
+            routes.push({
+                path: '/' + k,
+                component: this.$createPage(__wepy_require(config.routes[k]))
+            })
         }
-        Object.getOwnPropertyNames(app.constructor.prototype).forEach((name) => {
-            if(name !== 'constructor')
-                config[name] = app.constructor.prototype[name];
-        });
 
-        config.$app = app;
-        app.$wxapp = getApp();
-        return config;
+        addStyle(config.style);
+
+        const router = new VueRouter({ routes: routes });
+        const app = new Vue({
+            router
+        }).$mount('#app');
     },
-    $createPage (pageClass, pagePath) {
+    $createPage (pageClass) {
+        
+        let page = new pageClass.default();
+        let template = pageClass.template;
+        let obj = {};
+
+        obj.template = template;
+        obj.data = function () {
+            return page.data;
+        };
+
+        obj.methods = page.methods;
+        obj.computed = page.computed;
+
+        return obj;
+
+        /*
         let self = this;
         let config = {}, k;
         let page = new pageClass();
@@ -201,6 +232,6 @@ export default {
             delete config.onShareAppMessage;
         }
 
-        return $bindEvt(config, page, '');
+        return $bindEvt(config, page, '');*/
     },
 }
