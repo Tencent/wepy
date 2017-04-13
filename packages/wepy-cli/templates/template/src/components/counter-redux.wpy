@@ -1,0 +1,74 @@
+<style lang="less">
+  .counter {
+    text-align: left;
+    font-size: 12px;
+  }
+  .count {
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
+<template>
+  <view class="counter {{style}}">
+    <button @tap="plus" size="mini">  +  </button>
+    <button @tap="minus" size="mini">  -  </button>
+    <button @tap="incNum" size="mini">  INCREMENT  </button>
+    <button @tap="decNum" size="mini">  DECREMENT  </button>
+    <button @tap="asyncInc" size="mini">  ASYNC INCREMENT  </button>
+    <text class="count"> {{num}} </text>
+    <text class="count"> {{stateNum}} </text>
+    <text class="count"> {{asyncNum}} </text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+  import { INCREMENT, DECREMENT } from '../store/types/counter'
+  import { asyncInc } from '../store/actions'
+
+  @connect({
+    stateNum (state) {
+      return state.counter.num
+    },
+    asyncNum (state) {
+      return state.counter.asyncNum
+    }
+  }, {
+    incNum: INCREMENT,
+    decNum: DECREMENT,
+    asyncInc
+  })
+  export default class Counter extends wepy.component {
+    props = {
+      num: {
+        type: [Number, String],
+        coerce: function (v) {
+          return +v
+        },
+        default: 50
+      }
+    }
+
+    data = {
+    }
+    events = {
+      'index-broadcast': (...args) => {
+        let $event = args[args.length - 1]
+        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      }
+    }
+
+    methods = {
+      plus () {
+        this.num = this.num + 1
+        console.log(this.$name + ' plus tap')
+
+        this.$emit('index-emit', 1, 2, 3)
+      },
+      minus () {
+        this.num = this.num - 1
+        console.log(this.$name + ' minus tap')
+      }
+    }
+  }
+</script>
