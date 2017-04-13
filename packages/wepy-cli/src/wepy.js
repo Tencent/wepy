@@ -44,6 +44,8 @@ let generateProject = (name, config) => {
 
     let template = config.empty ? emptyDir : templateDir;
 
+    const useRedux = !config.empty && config.redux;
+
     let pkg = path.join(template, 'package.json');
     pkg = util.readFile(pkg);
     pkg = JSON.parse(pkg);
@@ -54,6 +56,7 @@ let generateProject = (name, config) => {
     ];
     const devDependencies = [
         'wepy-compiler-babel',
+        'babel-plugin-transform-decorators-legacy',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
         'babel-preset-es2015',
@@ -67,14 +70,23 @@ let generateProject = (name, config) => {
         'eslint-config-standard@7.1.0',
         'eslint-friendly-formatter@2.0.7',
         'eslint-plugin-html@2.0.1',
-        'eslint-plugin-promise@2.0.1',
+        'eslint-plugin-promise@3.5.0',
         'eslint-plugin-standard@2.0.1',
         'wepy-eslint'
+    ];
+    const reduxDeps = [
+        'redux',
+        'wepy-redux',
+        'redux-promise',
+        'redux-actions'
     ];
 
     if (!config.empty) {
         dependencies.push('wepy-com-toast');
         dependencies.push('wepy-async-function');
+    }
+    if (useRedux) {
+        dependencies.push.apply(dependencies, reduxDeps);
     }
 
     if (config.lint) {
@@ -94,6 +106,21 @@ let generateProject = (name, config) => {
             // --on-lint will not copy eslint config
             if (['.editorconfig', '.eslintignore', '.eslintrc'].indexOf(file) !== -1 && !config.lint)
                 return;
+            // 只有 redux 的项目拷贝 redux 相关内容 且做替换
+            const unReduxFiles = ['src/app.wpy', 'src/components/counter.wpy'];
+            const reduxFiles = ['src/app-redux.wpy', 'src/components/counter-redux.wpy'];
+            const index = reduxFiles.indexOf(file);
+            if (useRedux) {
+                if (unReduxFiles.indexOf(file) !== -1) {
+                    return;
+                }
+                // 将 reduxFiles 的文件重新命名
+                if (index >= 0) {
+                    target = path.join(util.currentDir, unReduxFiles[index]);
+                }
+            } else if (index !== -1 || file.indexOf('src/store/') === 0) {
+                return;
+            }
             if (file === 'wepy.config.js') {
                 if (!config.lint) {
                     // 去掉 eslint: true,
@@ -221,6 +248,7 @@ commander.option('-f, --file <file>', '待编译wpy文件');
 commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
 commander.option('--empty', '使用new生成项目时，生成空项目内容');
 commander.option('--no-lint', '使用new生成项目时，禁用eslint');
+commander.option('--redux', '使用new生成项目时，增加redux相关内容');
 commander.option('-w, --watch', '监听文件改动');
 
 commander.command('build').description('编译项目').action(projectPath => {
