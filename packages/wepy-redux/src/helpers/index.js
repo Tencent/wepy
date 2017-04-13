@@ -33,7 +33,7 @@ export const mapActions = function (actions) {
             } else {
                 // 如果说是函数 则先调用执行
                 // 否则直接 dispatch 该值 例如说是个 promise
-                dispatchParam = typeof val === 'function' ? val.apply(this, args) : val
+                dispatchParam = typeof val === 'function' ? val.apply(store, args) : val
             }
             return store.dispatch.call(store, dispatchParam);
         }
