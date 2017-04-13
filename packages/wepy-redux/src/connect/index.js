@@ -10,10 +10,9 @@ export default function connect (states, actions) {
         const onLoad = Component.prototype.onLoad;
         const onUnload = Component.prototype.onUnload;
 
-        let _stateProps = {};
         const onStateChange = function () {
             const store = getStore();
-            var hasChanged = false;
+            let hasChanged = false;
             Object.keys(states).forEach((k) => {
                 const newV = states[k]();
                 if (this[k] !== newV) {
@@ -29,7 +28,7 @@ export default function connect (states, actions) {
                 super();
                 this.computed = Object.assign(this.computed || {}, states, mapState({
                     $state(state) {
-                        return state
+                        return state;
                     }
                 }));
                 this.methods = Object.assign(this.methods || {}, actions);
