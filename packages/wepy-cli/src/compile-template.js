@@ -113,7 +113,7 @@ export default {
             return matchs.replace(/[^\.\w'"]([a-z_\$][\w\d\._\$]*)/ig, (match, word, n) => {
                 //console.log(matchs + '------' + match + '--' + word + '--' + n);
                 let char = match[0];
-                let tmp = word.match(/^(\w+)(.*)/);
+                let tmp = word.match(/^([\w$]+)(.*)/);
                 let w = tmp[1];
                 let rest = tmp[2];
                 if (ignores[w] || this.isInQuote(matchs, n)) {
