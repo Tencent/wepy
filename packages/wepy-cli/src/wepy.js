@@ -120,6 +120,7 @@ let generateProject = (name, config) => {
                     target = path.join(util.currentDir, unReduxFiles[index]);
                 }
             } else if (index !== -1 || file.indexOf('src/store/') === 0) {
+                // 同样排除 store 内容
                 return;
             }
             if (file === 'wepy.config.js') {
