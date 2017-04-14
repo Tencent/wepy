@@ -110,10 +110,12 @@ let generateProject = (name, config) => {
             // 只有 redux 的项目拷贝 redux 相关内容 且做替换
             const unReduxFiles = [
                 path.join('src', 'app.wpy'),
+                path.join('src', 'pages', 'index.wpy'),
                 path.join('src' , 'components', 'counter.wpy')
             ];
             const reduxFiles = [
                 path.join('src', 'app-redux.wpy'),
+                path.join('src', 'pages', 'index-redux.wpy'),
                 path.join('src', 'components', 'counter-redux.wpy')
             ];
             const index = reduxFiles.indexOf(file);
