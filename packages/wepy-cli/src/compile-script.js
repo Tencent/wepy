@@ -128,6 +128,8 @@ export default {
     },
 
     npmHack (filename, code) {
+        // 一些库（redux等） 可能会依赖 process.env.NODE_ENV 进行逻辑判断
+        // 这里在编译这一步直接做替换 否则报错
         code = code.replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV));
         switch(filename) {
             case 'lodash.js':
