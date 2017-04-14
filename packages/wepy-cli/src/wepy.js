@@ -54,7 +54,7 @@ let generateProject = (name, config) => {
     let dependencies = [
         'wepy'
     ];
-    const devDependencies = [
+    let devDependencies = [
         'wepy-compiler-babel',
         'babel-plugin-transform-decorators-legacy',
         'babel-plugin-syntax-export-extensions',
@@ -86,11 +86,12 @@ let generateProject = (name, config) => {
         dependencies.push('wepy-async-function');
     }
     if (useRedux) {
-        dependencies.push.apply(dependencies, reduxDeps);
+        // concat more faster than push.apply
+        dependencies = dependencies.concat(reduxDeps);
     }
 
     if (config.lint) {
-        devDependencies.push.apply(devDependencies, eslintDeps);
+        devDependencies = devDependencies.concat(eslintDeps);
     }
 
     util.writeFile(packagePath, JSON.stringify(pkg));
