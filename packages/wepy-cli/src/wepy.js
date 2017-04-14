@@ -108,8 +108,14 @@ let generateProject = (name, config) => {
             if (['.editorconfig', '.eslintignore', '.eslintrc'].indexOf(file) !== -1 && !config.lint)
                 return;
             // 只有 redux 的项目拷贝 redux 相关内容 且做替换
-            const unReduxFiles = ['src/app.wpy', 'src/components/counter.wpy'];
-            const reduxFiles = ['src/app-redux.wpy', 'src/components/counter-redux.wpy'];
+            const unReduxFiles = [
+                path.join('src', path.sep, 'app.wpy'),
+                path.join('src' , path.sep, 'components', path.sep, 'counter.wpy')
+            ];
+            const reduxFiles = [
+                path.join('src', path.sep, 'app-redux.wpy'),
+                path.join('src', path.sep, 'components', path.sep, 'counter-redux.wpy')
+            ];
             const index = reduxFiles.indexOf(file);
             if (useRedux) {
                 if (unReduxFiles.indexOf(file) !== -1) {
