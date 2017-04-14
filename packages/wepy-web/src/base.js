@@ -7,93 +7,7 @@ let prefixList = {};
 let comCount = 0;
 
 
-let $getPrefix = (prefix) => {
-    return prefix;
-    /*if (!prefix)
-        return '';
-    if (prefixList[prefix])
-        return prefixList[prefix];
-    prefixList[prefix] = `${PREFIX}${(comCount++)}${JOIN}`;
-    return prefixList[prefix];*/
-}
-
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
-
-
-let $bindEvt = (config, com, prefix) => {
-    com.$prefix = $getPrefix(prefix);
-    Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
-        let cClass = com.components[name];
-        let child = new cClass();
-        child.initMixins();
-        child.$name = name;
-        let comPrefix = prefix ? (prefix + child.$name + '$') : ('$' + child.$name + '$');
-
-        $getPrefix(comPrefix);
-
-        com.$com[name] = child;
-
-        $bindEvt(config, child, comPrefix);
-    });
-    Object.getOwnPropertyNames(com.constructor.prototype || []).forEach((prop) => {
-        if(prop !== 'constructor' && pageEvent.indexOf(prop) === -1) {
-            config[prop] = function () {
-                com.constructor.prototype[prop].apply(com, arguments);
-                com.$apply();
-            }
-        }
-    });
-
-    let allMethods = Object.getOwnPropertyNames(com.methods || []);
-
-    com.$mixins.forEach((mix) => {
-        allMethods = allMethods.concat(Object.getOwnPropertyNames(mix.methods || []));
-    });
-
-    allMethods.forEach((method, i) => {
-        config[com.$prefix + method] = function (e, ...args) {
-            let evt = new event('system', this, e.type);
-            evt.$transfor(e);
-            let wepyParams = [], paramsLength = 0, tmp, p, comIndex;
-            if (e.currentTarget && e.currentTarget.dataset) {
-                tmp = e.currentTarget.dataset;
-                while(tmp['wepyParams' + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
-                    wepyParams.push(tmp['wepyParams' + p]);
-                }
-                if (tmp.comIndex !== undefined) {
-                    comIndex = tmp.comIndex;
-                }
-            }
-
-            // Update repeat components data.
-            if (comIndex !== undefined) {
-                comIndex = ('' + comIndex).split('-');
-                let level = comIndex.length, tmp = level;
-                while(level-- > 0) {
-                    tmp = level;
-                    let tmpcom = com;
-                    while (tmp-- > 0) {
-                        tmpcom = tmpcom.$parent;
-                    }
-                    tmpcom.$setIndex(comIndex.shift());
-                }
-            }
-
-            args = args.concat(wepyParams);
-            let rst, mixRst;
-            let comfn = com.methods[method];
-            if (comfn) {
-                rst = comfn.apply(com, args.concat(evt));
-            }
-            com.$mixins.forEach((mix) => {
-                mix.methods[method] && (mixRst = mix.methods[method].apply(com, args.concat(evt)));
-            });
-            com.$apply();
-            return comfn ? rst : mixRst;
-        }
-    });
-    return config;
-};
 
 
 const addStyle = (css) => {
@@ -111,39 +25,128 @@ const addStyle = (css) => {
     return styleElement;
 };
 
+
+const $createMixin = (mixinClass) => {
+    let obj = {};
+    let mixin = new mixinClass;
+    for (let k in mixin) {
+        if (k === 'data') {
+            obj.data = function () {
+                return mixin.data;
+            }
+        } else {
+            obj[k] = mixin[k];
+        }
+    }
+    return obj;
+};
+
+const $createComponent = (com, template) => {
+
+    let k, vueObject = {};
+
+    vueObject.template = template;
+    vueObject.data = function () {
+        return com.data;
+    };
+
+    vueObject.components = {};
+    vueObject.methods = {};
+
+    Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
+        let cClass = com.components[name];
+        let child = new cClass();
+        //child.initMixins();
+        child.$name = name;
+
+        com.$com[name] = child;
+        vueObject.components[name] = $createComponent(child, cClass.template);
+    });
+
+    Object.getOwnPropertyNames(com.methods || {}).forEach((method) => {
+        let fn = com.methods[method];
+        vueObject.methods[method] = (...arg) => {
+            let e = arg[arg.length - 1];
+            let evt = new event('system', com, e.type);
+            evt.$transfor(e);
+            arg[arg.length - 1] = evt;
+            fn.apply(com, arg);
+        }
+    });
+
+
+    if (typeof com.mixins === 'object' && com.mixins.constructor === Array) {
+        vueObject.mixins = com.mixins.map(mixin => {
+            return $createMixin(mixin);
+        });
+    } else if (typeof com.mixins === 'function') {
+        vueObject.mixins = [$createMixin(mixin)];
+    }
+
+    vueObject.props = com.props;
+    vueObject.computed = com.computed;
+    vueObject.events = com.events;
+
+    vueObject.created = function () {
+        com.$wxpage = this;
+        com.$vm = this;
+
+        if (typeof com.onLoad === 'function') {
+            com.onLoad.call(com);
+        }
+    };
+
+    [].concat(Object.getOwnPropertyNames(com.props || {})).
+        concat(Object.getOwnPropertyNames(com.computed || {})).
+        concat(Object.getOwnPropertyNames(com.data || {})).
+        forEach(v => {
+            Object.defineProperty(com, v, { 
+                get: function () {
+                    return com.$vm[v];
+                },
+                set: function (val) {
+                    com.$vm[v] = val;
+                }
+            });
+        });
+    return vueObject;
+}
+
+
+
+
 export default {
     $createApp (appClass, config) {
         let k, routes = [];
 
+
+        let app = new appClass;
+
+        if (!this.$instance) {
+            app.init(this);
+            this.$instance = app;
+        }
+
         for (k in config.routes) {
             routes.push({
                 path: '/' + k,
-                component: this.$createPage(__wepy_require(config.routes[k]))
-            })
+                component: this.$createPage(__wepy_require(config.routes[k]).default)
+            }, { path: '*', redirect: '/' + k })
         }
 
         addStyle(config.style);
 
         const router = new VueRouter({ routes: routes });
-        const app = new Vue({
+        const vueApp = new Vue({
             router
         }).$mount('#app');
+
     },
     $createPage (pageClass) {
-        
-        let page = new pageClass.default();
-        let template = pageClass.template;
-        let obj = {};
+        let page = new pageClass();
+        page.init(Vue, this.$instance, this.$instance);
 
-        obj.template = template;
-        obj.data = function () {
-            return page.data;
-        };
-
-        obj.methods = page.methods;
-        obj.computed = page.computed;
-
-        return obj;
+        return $createComponent(page, pageClass.template);
 
         /*
         let self = this;

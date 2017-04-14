@@ -87,6 +87,16 @@ export default class {
     init ($wxpage, $root, $parent) {
         let self = this;
 
+
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                this.$com[name].init($wxpage, $root, this);
+            });
+        }
+
+        return;
+        /*
         this.$wxpage = $wxpage;
         if (this.$isComponent) {
             this.$root = $root || this.$root;
@@ -183,7 +193,7 @@ export default class {
                 this.$com[name].onLoad && this.$com[name].onLoad();
                 this.$com[name].$apply();
             });
-        }
+        }*/
     }
 
     initMixins () {

@@ -11,13 +11,13 @@ export default {
         if (!compiler) {
             return;
         }
-
         return compiler(wpy.style.code, config.compilers[wpy.style.type] || {}, wpy.style.src).then(rst => {
             let styleId = mmap.add(wpy.style.src + '-style', {
                 type: 'style',
                 source: wpy
             });
             wpy.style.id = styleId;
+            wpy.style.code = rst.replace(/([\.\d]+)\s*rpx\s*(;{0,1})/ig, '$1px$2')
         });
     }
 }

@@ -68,7 +68,7 @@ export default {
                 if (v.type === 'script') {
                     code += v.source.script.code + '\n';
                     if (v.source.template && v.source.template.id !== undefined) {
-                        code += '\nexports.template=__wepy_require(' + v.source.template.id + ');\n'
+                        code += '\nexports.default.template=__wepy_require(' + v.source.template.id + ');\n'
                     }
                 } else if (v.type === 'template') {
                     code += 'module.exports = "' + v.source.template.code.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';

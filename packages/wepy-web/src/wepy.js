@@ -7,6 +7,21 @@ import util from './util';
 import mixin from './mixin';
 
 
+window.getApp = () => {
+    return Vue;
+};
+
+window.wx = {};
+
+window.wx.request = (options) => {
+
+};
+
+wx.getUserInfo = () => {
+    throw 'getUserInfo is not supported in browser.';
+};
+
+
 export default {
     event: event,
     app: app,

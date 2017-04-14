@@ -11,6 +11,7 @@ const HTML_TAGS = ['div', 'span', 'a', 'img'];
 
 
 const TAGS_MAP = {
+    'block': 'div',
     'view': 'div',
     'text': 'span',
     'navigator': 'a',
@@ -41,9 +42,42 @@ export default {
         return doc;
     },
 
+    getFunctionInfo (str) {
+        let rst = {name: '', params: []}, char = '', tmp = '', stack = [];
+        for (let i = 0, len = str.length; i < len; i++) {
+            char = str[i];
+            if (!rst.name) {
+                if (char === '(') {
+                    rst.name = tmp;
+                    tmp = '';
+                    continue;
+                }
+            }
+            if ((char === ',' || char === ')') && stack.length === 0) {
+                let p = tmp.replace(/^\s*/ig, '').replace(/\s*$/ig, '');
+                if (p && (p[0] === '"' || p[0] === '\'') && p[0] === p[p.length - 1]) {
+                    p = p.substring(1, p.length - 1);
+                }
+                rst.params.push(p);
+                tmp = '';
+                continue;
+            }
+            if (char === '\'' || char === '"') {
+                if (stack.length && stack[stack.length - 1] === char)
+                    stack.pop();
+                else
+                    stack.push(char);
+            }
+            tmp += char;
+        }
+        if (!rst.name)
+            rst.name = tmp;
+        return rst;
+    },
+
     changeExp (str) {
         let c, i = 0, l = str.length, flag = [], 
-            normalWord = '', expWord = [],
+            normalWord = '', expWord = '',
             rst = [];
 
         for (i = 0; i < l; i++) {
@@ -64,7 +98,7 @@ export default {
                         flag.pop();
                         i++;
                         if (expWord) {
-                            rst.push(expWord);
+                            rst.push(`(${expWord})`);
                             expWord = '';
                         }
                         continue;
@@ -90,7 +124,7 @@ export default {
             rst.push(`'${normalWord}'`);
         }
         if (expWord) {
-            rst.push(expWord);
+            rst.push(`(${expWord})`);
         }
         return rst.join(' + ');
     },
@@ -111,10 +145,45 @@ export default {
                         child.tagName = TAGS_MAP[child.tagName];
                     }
 
+                    if (child.tagName === 'repeat') {
+                        let vfor = this.changeExp(child.getAttribute('for'));
+                        let vkey = child.getAttribute('key') || 'key';
+                        let vitem = child.getAttribute('item') || 'item';
+                        let vindex = child.getAttribute('index') || 'index';
+                        child.tagName = 'div';
+                        child.removeAttribute('for');
+                        child.removeAttribute('item');
+                        child.removeAttribute('index');
+
+                        child.setAttribute('v-for', `(${vitem}, ${vkey}, ${vindex}) in ${vfor}`);
+                    }
                     [].slice.call(child.attributes || []).forEach(attr => {
-                        if (ATTRS_MAP[attr.name]) {
-                            child.setAttribute(ATTRS_MAP[attr.name], attr.value);
+                        if (attr.name === 'xmlns:wx') {
                             child.removeAttribute(attr.name);
+                        } else if (/^(@|bind|catch)/.test(attr.name)) { // 事件
+                            let func = this.getFunctionInfo(attr.value);
+                            attr.value = func.name + '(';
+
+                            func.params = func.params.map(p => {
+                                return this.changeExp(p).replace(/\'/ig, '\\\'');
+                            }).concat('$event');
+
+                            attr.value = `${func.name}(${func.params.join(',')})`;
+
+                            if (ATTRS_MAP[attr.name]) {
+                                attr.name = ATTRS_MAP[attr.name];
+                            }
+                        } else if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
+                            // <block xmlns:wx="" wx:for-index="index" wx:for-item="item" wx:key="id" :wx:for-items="list">
+                            let vfor = this.changeExp(attr.value);
+                            let vkey = child.getAttribute('wx:key') || 'key';
+                            let vitem = child.getAttribute('wx:for-item') || 'item';
+                            let vindex = child.getAttribute('wx:for-index') || 'index';
+                            child.removeAttribute('wx:key');
+                            child.removeAttribute('wx:for-item');
+                            child.removeAttribute('wx:for-index');
+                            child.removeAttribute(attr.name);
+                            child.setAttribute('v-for', `(${vitem}, ${vkey}, ${vindex}) in ${vfor}`);
                         } else if (attr.value.indexOf('{{') > -1 && attr.value.indexOf('}}') > -1) {
                             child.setAttribute(':' + attr.name, this.changeExp(attr.value));
                             child.removeAttribute(attr.name);
