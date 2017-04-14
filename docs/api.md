@@ -46,12 +46,12 @@ this.$interceptors = {
 * `use(middleWare:String|Function)`：使用中间件。
 当前内置两个中间件：
 `requestfix`: 修复小程序请求并发问题。
-`promisefy`：使用`wepy.xxx`的方式请求小程序原生API都将Promise化。
+`promisify`：使用`wepy.xxx`的方式请求小程序原生API都将Promise化。
 使用方法如下:
 
 ```
 this.use('requestfix');
-this.use('promisefy');
+this.use('promisify');
 ```
 
 * `intercept(api:String, provider:Object)`：使用拦截器对原生API请求进行拦截。
