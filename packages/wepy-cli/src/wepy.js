@@ -116,6 +116,7 @@ let generateProject = (name, config) => {
                 path.join('src', path.sep, 'app-redux.wpy'),
                 path.join('src', path.sep, 'components', path.sep, 'counter-redux.wpy')
             ];
+            const storePath = path.join('src', path.sep, 'store', path.sep);
             const index = reduxFiles.indexOf(file);
             if (useRedux) {
                 if (unReduxFiles.indexOf(file) !== -1) {
@@ -125,7 +126,7 @@ let generateProject = (name, config) => {
                 if (index >= 0) {
                     target = path.join(util.currentDir, unReduxFiles[index]);
                 }
-            } else if (index !== -1 || file.indexOf('src/store/') === 0) {
+            } else if (index !== -1 || file.indexOf(storePath) === 0) {
                 // 同样排除 store 内容
                 return;
             }
