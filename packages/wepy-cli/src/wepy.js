@@ -102,21 +102,20 @@ let generateProject = (name, config) => {
     const copyFn = function (sourcePath) {
         return function (file) {
             let target = path.join(util.currentDir, file);
-            let fileContent = util.readFile(path.join(sourcePath, file));
 
             // --on-lint will not copy eslint config
             if (['.editorconfig', '.eslintignore', '.eslintrc'].indexOf(file) !== -1 && !config.lint)
                 return;
+
             // 只有 redux 的项目拷贝 redux 相关内容 且做替换
             const unReduxFiles = [
-                path.join('src', path.sep, 'app.wpy'),
-                path.join('src' , path.sep, 'components', path.sep, 'counter.wpy')
+                path.join('src', 'app.wpy'),
+                path.join('src' , 'components', 'counter.wpy')
             ];
             const reduxFiles = [
-                path.join('src', path.sep, 'app-redux.wpy'),
-                path.join('src', path.sep, 'components', path.sep, 'counter-redux.wpy')
+                path.join('src', 'app-redux.wpy'),
+                path.join('src', 'components', 'counter-redux.wpy')
             ];
-            const storePath = path.join('src', path.sep, 'store', path.sep);
             const index = reduxFiles.indexOf(file);
             if (useRedux) {
                 if (unReduxFiles.indexOf(file) !== -1) {
@@ -126,10 +125,12 @@ let generateProject = (name, config) => {
                 if (index >= 0) {
                     target = path.join(util.currentDir, unReduxFiles[index]);
                 }
-            } else if (index !== -1 || file.indexOf(storePath) === 0) {
+            } else if (index !== -1 || file.indexOf(path.join('src', 'store')) === 0) {
                 // 同样排除 store 内容
                 return;
             }
+
+            let fileContent = util.readFile(path.join(sourcePath, file));
             if (file === 'wepy.config.js') {
                 if (!config.lint) {
                     // 去掉 eslint: true,
