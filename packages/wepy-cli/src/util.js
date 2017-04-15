@@ -353,8 +353,8 @@ const utils = {
             dir = opath.dir.replace('node_modules', `${dist}${path.sep}npm`) + path.sep;
         } else {
             let currentPath = path.relative(this.currentDir + path.sep + src, opath.dir);
-            dir = path.join(this.currentDir, dist, currentPath);
-            //dir = (opath.dir + path.sep).replace(path.sep + src + path.sep, path.sep + dist + path.sep);
+            dir = path.join(this.currentDir, dist, currentPath, path.sep);
+            // dir = (opath.dir + path.sep).replace(path.sep + src + path.sep, path.sep + dist + path.sep);
         }
         return dir + opath.name + ext;
     },

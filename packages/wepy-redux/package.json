@@ -1,0 +1,20 @@
+{
+  "name": "wepy-redux",
+  "version": "0.0.4",
+  "description": "WePY bindings for Redux",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy-redux",
+    "wepy",
+    "redux",
+    "connect"
+  ],
+  "author": "dolymood",
+  "license": "MIT",
+  "peerDependencies": {
+    "redux": "^2.0.0 || ^3.0.0"
+  }
+}
