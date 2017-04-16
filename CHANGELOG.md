@@ -1,6 +1,7 @@
 ## 1.5.2 (waiting)
 * `A` style标签添加了scoped属性的支持。[ISSUE #79](https://github.com/wepyjs/wepy/issues/79)
 * `F` 修改了项目外层有`src`目录会导致编译文件目录错乱的BUG。[ISSUE #91](https://github.com/wepyjs/wepy/issues/91)
+* `A` 添加了redux支持，使用`wepy new demo --redux`生成带有redux示例的DEMO。[PR #93](https://github.com/wepyjs/wepy/pull/93)
 
 
 ## 1.5.1 (2017-03-27) 
