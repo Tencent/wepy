@@ -1,6 +1,6 @@
 {
   "name": "wepy-redux",
-  "version": "0.0.4",
+  "version": "1.5.2",
   "description": "WePY bindings for Redux",
   "main": "lib/index.js",
   "scripts": {
