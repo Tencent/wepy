@@ -344,19 +344,18 @@ const utils = {
         return path.relative(this.currentDir, path.join(opath.dir, opath.base));
     },
     getDistPath(opath, ext, src, dist) {
-        let dir = '';
+        let relative;
         src = src || cache.getSrc();
         dist = dist || cache.getDist();
         ext = (ext ? ('.' + ext) : opath.ext);
         // 第三组件
         if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
-            dir = opath.dir.replace('node_modules', `${dist}${path.sep}npm`) + path.sep;
+            relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);
+            relative = path.join('npm', relative);
         } else {
-            let currentPath = path.relative(this.currentDir + path.sep + src, opath.dir);
-            dir = path.join(this.currentDir, dist, currentPath, path.sep);
-            // dir = (opath.dir + path.sep).replace(path.sep + src + path.sep, path.sep + dist + path.sep);
+            relative = path.relative(path.join(this.currentDir, src), opath.dir);
         }
-        return dir + opath.name + ext;
+        return path.join(this.currentDir, dist, relative, opath.name + ext);
     },
     getModifiedTime (p) {
         return this.isFile(p) ? +fs.statSync(p).mtime : false;
