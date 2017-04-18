@@ -13,9 +13,6 @@ import loader from './loader';
 
 import toWeb from './web/index';
 
-
-
-
 let watchReady = false;
 let preventDup = {};
 
@@ -122,7 +119,9 @@ export default {
             }
         }
         return true;
-
+    },
+    checkDependence (dep) {
+        return util.isDir(util.currentDir, 'node_modules', dep);
     },
     checkPlugin (plugins = {}) {
         return loader.loadPlugin(plugins);
@@ -185,6 +184,18 @@ export default {
             wepyrc.web = wepyrc.web || {};
             dist = wepyrc.web.dist || dist || 'web';
             src = wepyrc.web.src || src || 'src';
+
+            if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-web'))) {
+                util.log('正在尝试安装缺失资源 wepy-web，请稍等。', '信息');
+                util.exec(`npm install wepy-web --save`).then(d => {
+                    util.log(`已完成安装 wepy-web，重新启动编译。`, '完成');
+                    this.build(config);
+                }).catch(e => {
+                    util.log(`安装插件失败：wepy-web，请尝试运行命令 "npm install wepy-web --save" 进行安装。`, '错误');
+                    console.log(e);
+                });
+                return;
+            }
         }
 
         if (src === undefined)
@@ -242,7 +253,13 @@ export default {
         }
 
         if (config.output === 'web') {
-            toWeb.toWeb(files[0]);
+            files.forEach((f, i) => {
+                if (i === 0) {
+                    toWeb.toWeb(f);
+                } else {
+                    toWeb.copy(path.join(util.currentDir, src, f));
+                }
+            })
         } else {
             files.forEach((f) => {
                 let opath = path.parse(path.join(current, src, f));

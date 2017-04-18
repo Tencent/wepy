@@ -104,104 +104,6 @@ export default class {
         }
 
         return;
-        /*
-        this.$wxpage = $wxpage;
-        if (this.$isComponent) {
-            this.$root = $root || this.$root;
-            this.$parent = $parent || this.$parent;
-            this.$wxapp = this.$root.$parent.$wxapp;
-        }
-
-        if (this.props) {
-            this.props = Props.build(this.props);
-        }
-
-        let k, defaultData = {};
-
-
-        let props = this.props;
-        let key, val, binded;
-        let inRepeat = false, repeatKey;
-
-        if (this.$props) { // generate mapping Props
-            for (key in this.$props) {
-                for (binded in this.$props[key]) {
-                    if (/\.sync$/.test(binded)) { // sync goes to mapping
-                        if (!this.$mappingProps[this.$props[key][binded]])
-                            this.$mappingProps[this.$props[key][binded]] = {};
-                        this.$mappingProps[this.$props[key][binded]][key] = binded.substring(7, binded.length - 5);
-                    }
-                }
-            }
-        }
-
-        if (props) {
-            for (key in props) {
-                val = undefined;
-                if ($parent && $parent.$props && $parent.$props[this.$name]) {
-                    val = $parent.$props[this.$name][key];
-                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
-                    if (binded) {
-                        if (typeof(binded) === 'object') {
-                            props[key].repeat = binded.for;
-                            
-                            inRepeat = true;
-
-                            let bindfor = binded.for, binddata = $parent;
-                            bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
-                            });
-                            repeatKey = Object.keys(binddata)[0];
-
-
-                            if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                            this.$mappingProps[key]['parent'] = {
-                                mapping: binded.for,
-                                from: key
-                            };
-                        } else {
-                            val = $parent[binded];
-                            if (props[key].twoWay) {
-                                if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                                this.$mappingProps[key]['parent'] = binded;
-                            }
-                        }
-                    }
-                }
-                if (!this.data[key] && !props[key].repeat) {
-                    val = Props.getValue(props, key, val);
-                    this.data[key] = val;
-                }
-            }
-        }
-
-        for (k in this.data) {
-            defaultData[`${this.$prefix}${k}`] = this.data[k];
-            this[k] = this.data[k];
-            //this[k] = util.$copy(this.data[k], true);
-        }
-
-        this.$data = util.$copy(this.data, true);
-        if (inRepeat)
-            this.$setIndex(repeatKey);
-
-        if (this.computed) {
-            for (k in this.computed) {
-                let fn = this.computed[k];
-                defaultData[`${this.$prefix}${k}`] = fn.call(this);
-                this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
-            }
-        }
-        this.setData(defaultData);
-
-        let coms = Object.getOwnPropertyNames(this.$com);
-        if (coms.length) {
-            coms.forEach((name) => {
-                this.$com[name].init(this.getWxPage(), $root, this);
-                this.$com[name].onLoad && this.$com[name].onLoad();
-                this.$com[name].$apply();
-            });
-        }*/
     }
 
     initMixins () {
@@ -249,48 +151,6 @@ export default class {
 
     getCurrentPages () {
         return this.$wxpage.getCurrentPages();
-    }
-
-    /**
-     * 对于在repeat中的组件，index改变时需要修改对应的数据
-     */
-    $setIndex (index) {
-        if (this.$index === index)
-            return;
-
-        this.$index = index;
-
-        let props = this.props,
-            $parent = this.$parent;
-        let key, val, binded;
-        if (props) {
-            for (key in props) {
-                val = undefined;
-                if ($parent && $parent.$props && $parent.$props[this.$name]) {
-                    val = $parent.$props[this.$name][key];
-                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
-                    if (binded) {
-                        if (typeof(binded) === 'object') {
-                            let bindfor = binded.for, binddata = $parent;
-                            bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
-                            });
-
-                            val = binddata[index];
-                            this.$index = index;
-                            this.data[key] = val;
-                            this[key] = val;
-                            this.$data[key] = util.$copy(this[key], true);
-                        }
-                    }
-                }
-            }
-            // Clear all childrens index;
-            for (key in this.$com) {
-                this.$com[key].$index = undefined;
-            }
-        }
-
     }
 
     $getComponent(com) {
@@ -409,6 +269,7 @@ export default class {
             fn.call(this);
             this.$apply();
         } else {
+            return true;
             if (this.$$phase) {
                 this.$$phase = '$apply';
             } else {

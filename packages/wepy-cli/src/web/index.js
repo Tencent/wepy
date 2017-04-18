@@ -246,16 +246,43 @@ ${code}
             }
         });
 
-        if (singleFile) {
-            return Promise.resolve(tasks[0]);
-        } else {
-            return Promise.all(tasks);
-        }
+        return Promise.all(tasks);
     },
 
+    copy (file) {
+        let src = cache.getSrc();
+        let dist = cache.getDist();
+        let ext = cache.getExt();
+        let config = util.getConfig();
 
+        let opath = path.parse(file);
 
+        switch (opath.ext) {
+            case ext:
+                break;
+            case '.js':
+                break;
+            case '.html':
+                break;
+            default:
+                util.output('拷贝', path.join(opath.dir, opath.base));
 
+                let plg = new loader.PluginHelper(config.plugins, {
+                    type: opath.ext.substr(1),
+                    code: null,
+                    file: path.join(opath.dir, opath.base),
+                    output (p) {
+                        util.output(p.action, p.file);
+                    },
+                    done (rst) {
+                        util.copy(path.parse(rst.file));
+                    },
+                    error (rst) {
+                        util.warning(rst.err);
+                        util.copy(path.parse(rst.file));
+                    }
+                });
 
-
+        }
+    }
 }

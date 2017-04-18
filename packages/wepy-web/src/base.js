@@ -2,15 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import event from './event';
 
-const PREFIX = '$';
-const JOIN = '$';
-
-let prefixList = {};
-let comCount = 0;
-
 
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
-
 
 const addStyle = (css) => {
     let styleElement = document.createElement("style");
@@ -71,6 +64,10 @@ const $createComponent = (com, template) => {
             let e = arg[arg.length - 1];
             let evt = new event('system', com, e.type);
             evt.$transfor(e);
+            if (evt.type === 'input') {
+                evt.detail = {};
+                evt.detail.value = evt.srcElement.value;
+            }
             arg[arg.length - 1] = evt;
 
             // this !== $vm in repeats.
@@ -103,7 +100,17 @@ const $createComponent = (com, template) => {
         com.$vm = this;
 
         if (typeof com.onLoad === 'function') {
-            com.onLoad.call(com);
+            com.onLoad.call(com, com.$vm.$route.query);
+        }
+    };
+
+    vueObject.ready = function () {
+        console.log(`${com.$name} is ready`);
+        com.$wxpage = this;
+        com.$vm = this;
+
+        if (typeof com.onShow === 'function') {
+            com.onShow.call(com);
         }
     };
 
@@ -122,9 +129,6 @@ const $createComponent = (com, template) => {
         });
     return vueObject;
 }
-
-
-
 
 export default {
     $createApp (appClass, config) {
@@ -162,7 +166,7 @@ export default {
             if (!index)
                 index = k;
             tmp['/' + k] = {
-                component: this.$createPage(__wepy_require(config.routes[k]).default)
+                component: this.$createPage(__wepy_require(config.routes[k]).default, '/' + k)
             }
             router.map(tmp);
         }
@@ -170,10 +174,14 @@ export default {
             '*': '/' + index
         });
         router.start({}, '#app');
+        window.$router = router;
     },
-    $createPage (pageClass) {
+    $createPage (pageClass, pagePath) {
+
         let page = new pageClass();
-        
+
+        if (pagePath)
+            this.$instance.$pages[pagePath] = page;
 
         page.$name = pageClass.name || 'unnamed';
 
@@ -182,94 +190,5 @@ export default {
         page.$init(Vue, this.$instance, this.$instance);
 
         return vueObject;
-
-        /*
-        let self = this;
-        let config = {}, k;
-        let page = new pageClass();
-        if (pagePath)
-            this.$instance.$pages[pagePath] = page;
-        page.initMixins();
-        config.$page = page;
-
-        config.onLoad = function (...args) {
-
-            page.$name = pageClass.name || 'unnamed';
-            page.init(this, self.$instance, self.$instance);
-
-            let prevPage = self.$instance.__prevPage__;
-            let secParams = {};
-            secParams.from = prevPage ? prevPage : undefined;
-
-            if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
-                secParams.preload = prevPage.$preloadData;
-                prevPage.$preloadData = {};
-            }
-            if (page.$prefetchData && Object.keys(page.$prefetchData).length > 0) {
-                secParams.prefetch = page.$prefetchData;
-                page.$prefetchData = {};
-            }
-            args.push(secParams);
-            page.onLoad && page.onLoad.apply(page, args);
-
-            page.$mixins.forEach((mix) => {
-                mix['onLoad'] && mix['onLoad'].apply(page, args);
-            });
-
-            page.$apply();
-        };
-
-        config.onShow = function (...args) {
-
-            self.$instance.__prevPage__ = page;
-
-            page.onShow && page.onShow.apply(page, args);
-
-            page.$mixins.forEach((mix) => {
-                mix['onShow'] && mix['onShow'].apply(page, args);
-            });
-
-            let pages = getCurrentPages();
-            let pageId = pages[pages.length - 1].__route__;
-
-            if (self.$instance.__route__ !== pageId) {
-
-                self.$instance.__route__ = pageId;
-
-                page.onRoute && page.onRoute.apply(page, args);
-
-                page.$mixins.forEach((mix) => {
-                    mix['onRoute'] && mix['onRoute'].apply(page, args);
-                });
-            }
-
-            page.$apply();
-        };
-
-        pageEvent.forEach((v) => {
-            if (v !== 'onLoad' && v !== 'onShow') {
-                config[v] = (...args) => {
-                    let rst;
-                    page[v] && (rst = page[v].apply(page, args));
-
-                    if (v === 'onShareAppMessage')
-                        return rst;
-
-                    page.$mixins.forEach((mix) => {
-                        mix[v] && mix[v].apply(page, args);
-                    });
-
-                    page.$apply();
-
-                    return rst;
-                };
-            }
-        });
-
-        if (!page.onShareAppMessage) {
-            delete config.onShareAppMessage;
-        }
-
-        return $bindEvt(config, page, '');*/
     },
 }

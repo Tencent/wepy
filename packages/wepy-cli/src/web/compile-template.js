@@ -1,12 +1,18 @@
+import path from 'path';
 import {DOMParser, DOMImplementation} from 'xmldom';
 
 import util from '../util';
+import cache from '../cache';
 import loader from '../loader';
 
 import { getInstance } from './modulemap';
 
 let mmap;
 
+const currentPath = util.currentDir;
+const src = cache.getSrc();
+const dist = cache.getDist();
+const srcPath = path.join(currentPath, src);
 
 const WEAPP_TAGS = ['view', 'text', 'navigator', 'image'];
 const HTML_TAGS = ['div', 'span', 'a', 'img'];
@@ -131,8 +137,8 @@ export default {
         return rst.join(' + ');
     },
 
-    replaceWXML (content) {
-
+    replaceWXML (content, file) {
+        debugger;
         let node = typeof(content) === 'string' ? this.getTemplate(content) : content;
 
         if (!node || !node.childNodes || node.childNodes.length === 0)
@@ -161,7 +167,7 @@ export default {
                         child.setAttribute('v-for', `(${vindex}, ${vitem}) in ${vfor}`);
                     }
                     [].slice.call(child.attributes || []).forEach(attr => {
-                        if (attr.name === 'xmlns:wx') {
+                        if (attr.name.indexOf('xmlns:') === 0) {
                             child.removeAttribute(attr.name);
                         } else if (/^(@|bind|catch)/.test(attr.name)) { // 事件
                             let func = this.getFunctionInfo(attr.value);
@@ -172,9 +178,10 @@ export default {
                             }).concat('$event');
 
                             attr.value = `${func.name}(${func.params.join(',')})`;
-
                             if (ATTRS_MAP[attr.name]) {
                                 attr.name = ATTRS_MAP[attr.name];
+                            } else {
+                                attr.name = attr.name.replace('bind', '@').replace('catch', '@');
                             }
                         } else if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
                             // <block xmlns:wx="" wx:for-index="index" wx:for-item="item" wx:key="id" :wx:for-items="list">
@@ -192,9 +199,19 @@ export default {
                             child.setAttribute(':' + attr.name, this.changeExp(attr.value));
                             child.removeAttribute(attr.name);
                         }
+
+                        // 修复打包后的组件的相对路径问题
+                        if (attr.name === 'src') {
+                            // 如果路径直接是参数形式，则不做修改
+                            if (this.changeExp(attr.value)[0] === '\'') {
+                                let src = path.join(path.parse(file).dir, attr.value);
+                                attr.value = path.relative(srcPath, src).replace(/\\/ig, '/');
+                                child.setAttribute(attr.name, attr.value);
+                            }
+                        }
                     });
                 }
-                this.replaceWXML(child);
+                this.replaceWXML(child, file);
             });
         }
 
@@ -226,7 +243,7 @@ export default {
         return compiler(wpy.template.code, config.compilers[wpy.template.type] || {}).then(rst => {
 
             let node = this.getTemplate(rst);
-            this.replaceWXML(node);
+            this.replaceWXML(node, wpy.template.src);
             wpy.template.code = node.toString();
             let templateId = mmap.add(wpy.template.src + '-template', {
                 type: 'template',
