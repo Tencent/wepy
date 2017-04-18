@@ -11,7 +11,7 @@ export default class extends component {
 
     $prefetchData = {};
 
-    init (wxpage, $parent) {
+    $init (wxpage, $parent) {
 
         this.$parent = $parent;
         this.$root = this;
@@ -19,7 +19,7 @@ export default class extends component {
             $parent.$wxapp = getApp();
         }
         this.$wxapp = $parent.$wxapp;
-        super.init(wxpage, this);
+        super.$init(wxpage, this);
     }
 
     onLoad () {

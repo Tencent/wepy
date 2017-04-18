@@ -8,7 +8,7 @@ export default class {
 
     events = {};
 
-    init (parent) {
+    $init (parent) {
         let k;
 
         // 自定义属性覆盖

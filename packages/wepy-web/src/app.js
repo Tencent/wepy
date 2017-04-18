@@ -10,7 +10,7 @@ export default class {
 
 
 
-    init (wepy) {
+    $init (wepy) {
         this.initAPI(wepy);
         this.$wxapp = getApp();
     }
@@ -33,7 +33,9 @@ export default class {
     }
 
     requestfix () {
+        // do nothing
     }
+
     initAPI (wepy) {
         var self = this;
         let noPromiseMethods = {
@@ -86,10 +88,7 @@ export default class {
                                                 reject(res);
                                         };
                                     });
-                                    if (self.$addons.requestfix && key === 'request') {
-                                        RequestMQ.request(obj);
-                                    } else
-                                        wx[key](obj);
+                                    wx[key](obj);
                                 });
                             } else {
                                 let bak = {};
@@ -102,10 +101,7 @@ export default class {
                                         bak[k] && bak[k].call(self, res);
                                     };
                                 });
-                                if (self.$addons.requestfix && key === 'request') {
-                                    RequestMQ.request(obj);
-                                } else
-                                    wx[key](obj);
+                                wx[key](obj);
                             }
                         };
                     }

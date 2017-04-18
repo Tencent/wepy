@@ -155,7 +155,8 @@ export default {
                         child.removeAttribute('item');
                         child.removeAttribute('index');
 
-                        child.setAttribute('v-for', `(${vitem}, ${vkey}, ${vindex}) in ${vfor}`);
+                        // Vue 1 does not support $key
+                        child.setAttribute('v-for', `(${vindex}, ${vitem}) in ${vfor}`);
                     }
                     [].slice.call(child.attributes || []).forEach(attr => {
                         if (attr.name === 'xmlns:wx') {
@@ -183,7 +184,8 @@ export default {
                             child.removeAttribute('wx:for-item');
                             child.removeAttribute('wx:for-index');
                             child.removeAttribute(attr.name);
-                            child.setAttribute('v-for', `(${vitem}, ${vkey}, ${vindex}) in ${vfor}`);
+                            // Vue 1 does not support $key
+                            child.setAttribute('v-for', `(${vindex}, ${vitem}) in ${vfor}`);
                         } else if (attr.value.indexOf('{{') > -1 && attr.value.indexOf('}}') > -1) {
                             child.setAttribute(':' + attr.name, this.changeExp(attr.value));
                             child.removeAttribute(attr.name);

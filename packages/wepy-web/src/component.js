@@ -84,14 +84,22 @@ export default class {
     data = {};
     methods = {};
 
-    init ($wxpage, $root, $parent) {
+    $init ($wxpage, $root, $parent) {
         let self = this;
+
+
+        this.$wxpage = $wxpage;
+        if (this.$isComponent) {
+            this.$root = $root || this.$root;
+            this.$parent = $parent || this.$parent;
+            this.$wxapp = this.$root.$parent.$wxapp;
+        }
 
 
         let coms = Object.getOwnPropertyNames(this.$com);
         if (coms.length) {
             coms.forEach((name) => {
-                this.$com[name].init($wxpage, $root, this);
+                this.$com[name].$init($wxpage, $root, this);
             });
         }
 

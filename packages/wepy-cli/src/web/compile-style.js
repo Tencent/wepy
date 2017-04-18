@@ -1,7 +1,10 @@
 import util from '../util';
 import loader from '../loader';
 
+import rpxConvert from '../style-compiler/rpx-convert';
+
 import mmap from './modulemap';
+
 
 export default {
     compile (wpy) {
@@ -17,7 +20,7 @@ export default {
                 source: wpy
             });
             wpy.style.id = styleId;
-            wpy.style.code = rst.replace(/([\.\d]+)\s*rpx\s*(;{0,1})/ig, '$1px$2')
+            wpy.style.code = rpxConvert(rst);
         });
     }
 }

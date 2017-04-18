@@ -65,11 +65,20 @@ const $createComponent = (com, template) => {
 
     Object.getOwnPropertyNames(com.methods || {}).forEach((method) => {
         let fn = com.methods[method];
-        vueObject.methods[method] = (...arg) => {
+        vueObject.methods[method] = function (...arg) {
             let e = arg[arg.length - 1];
             let evt = new event('system', com, e.type);
             evt.$transfor(e);
             arg[arg.length - 1] = evt;
+
+            // this !== $vm in repeats.
+            if (com.$vm !== this) {
+                com.$vm = this;
+                com.$index = this.$parent.$children.indexOf(this);
+                if (this.$parent && this.$parent.$parent && this.$parent.$parent.$children) {
+                    com.$parent.$index = this.$parent.$parent.$children.indexOf(this.$parent);
+                }
+            }
             fn.apply(com, arg);
         }
     });
@@ -119,34 +128,55 @@ export default {
     $createApp (appClass, config) {
         let k, routes = [];
 
-
         let app = new appClass;
 
         if (!this.$instance) {
-            app.init(this);
+            app.$init(this);
             this.$instance = app;
         }
 
-        for (k in config.routes) {
+        // Vue2
+        /*for (k in config.routes) {
             routes.push({
                 path: '/' + k,
                 component: this.$createPage(__wepy_require(config.routes[k]).default)
             }, { path: '*', redirect: '/' + k })
         }
-
-        addStyle(config.style);
-
         const router = new VueRouter({ routes: routes });
         const vueApp = new Vue({
             router
-        }).$mount('#app');
+        }).$mount('#app');*/
 
+        addStyle(config.style);
+
+        let router = new VueRouter();
+        let index = '';
+
+        for (k in config.routes) {
+            let tmp = {};
+            if (!index)
+                index = k;
+            tmp['/' + k] = {
+                component: this.$createPage(__wepy_require(config.routes[k]).default)
+            }
+            router.map(tmp);
+        }
+        router.redirect({
+            '*': '/' + index
+        });
+        router.start({}, '#app');
     },
     $createPage (pageClass) {
         let page = new pageClass();
-        page.init(Vue, this.$instance, this.$instance);
+        
 
-        return $createComponent(page, pageClass.template);
+        page.$name = pageClass.name || 'unnamed';
+
+        let vueObject = $createComponent(page, pageClass.template);
+
+        page.$init(Vue, this.$instance, this.$instance);
+
+        return vueObject;
 
         /*
         let self = this;
