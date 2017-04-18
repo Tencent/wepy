@@ -4,7 +4,7 @@ import util from '../util';
 import loader from '../loader';
 import cache from '../cache';
 
-import mmap from './modulemap';
+import { getInstance } from './modulemap';
 
 import main from './index';
 
@@ -16,12 +16,13 @@ const dist = cache.getDist();
 const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
 const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
+let mmap
+
 export default {
     resolveMap (wpy) {
 
         let opath = path.parse(wpy.script.src);
 
-        
         let id = mmap.add(wpy.script.src, {type: 'script', source: wpy});
         wpy.script.id = id;
 
@@ -57,9 +58,16 @@ export default {
             } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
                 let pkg = this.getPkgConfig(lib);
                 if (!pkg) {
-                    throw Error('找不到模块: ' + lib);
+                    let relative = path.relative(util.currentDir, wpy.script.src);
+                    throw Error(`文件${relative}中，找不到模块: ${lib}`);
                 }
                 let main = pkg.main || 'index.js';
+                if (lib === 'axios') {
+                    debugger;
+                    main = path.join('dist', 'axios.js');
+                } else if (lib === 'vue') {
+                    main = path.join('dist', 'vue.js');
+                }
                 if (pkg.browser && typeof pkg.browser === 'string') {
                     main = pkg.browser;
                 }
@@ -154,12 +162,18 @@ export default {
     },
 
     compile (wpy) {
+        mmap = getInstance();
         let config = util.getConfig();
         let compiler = loader.loadCompiler(wpy.script.type);
         if (!compiler) {
             return;
         }
-
+        mmap.setPending(wpy.script.src);
+        if (wpy.script.type === 'js') {
+            util.output('依赖', wpy.script.src);
+        } else {
+            util.output('编译', wpy.script.src);
+        }
         return compiler(wpy.script.code, config.compilers[wpy.script.type] || {}).then(rst => {
             if (rst.code) {
                 wpy.script.code = rst.code;

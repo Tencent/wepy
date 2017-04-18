@@ -3,11 +3,11 @@ import loader from '../loader';
 
 import rpxConvert from '../style-compiler/rpx-convert';
 
-import mmap from './modulemap';
-
+import { getInstance } from './modulemap';
 
 export default {
     compile (wpy) {
+        let mmap = getInstance();
         let config = util.getConfig();
         let compiler = loader.loadCompiler(wpy.style.type);
 

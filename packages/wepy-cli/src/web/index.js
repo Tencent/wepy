@@ -11,7 +11,7 @@ import cStyle from './compile-style';
 
 import loader from '../loader';
 
-import mmap from './modulemap';
+import {getInstance, createInstance} from './modulemap';
 
 
 const currentPath = util.currentDir;
@@ -24,15 +24,46 @@ let appPath;
 
 let pages = {};
 
+let mmap;
+
 export default {
 
     addPage (k, v) {
         pages[k] = v;
     },
+    buildHtml (webConfig) {
+        let config = util.getConfig();
+
+        if (webConfig.htmlTemplate) {
+            let template = util.readFile(webConfig.htmlTemplate);
+            if (!template) {
+                util.error('找不到文件：' + webConfig.htmlTemplate);
+                return;
+            }
+            util.output('写入', webConfig.htmlOutput);
+            util.writeFile(webConfig.htmlOutput, template);
+        }
+    },
     toWeb (file) {
         let src = cache.getSrc();
         let ext = cache.getExt();
+        let config = util.getConfig();
         let appWpy, apppath;
+
+
+        let webConfig = config.build ? config.build.web : null;
+        if (!webConfig){
+            util.error('请检查 build.web 的配置');
+            return;
+        }
+
+        mmap = createInstance();
+
+        util.log('编译 WEB');
+
+        this.buildHtml(webConfig);
+
+        util.log('入口: ' + file, '编译');
         if (typeof(file) === 'object') {
             appWpy = file;
             apppath = appWpy.script.src;
@@ -53,7 +84,6 @@ export default {
         }
 
         this.compile([appWpy].concat(wpypages)).then(rst => {
-            debugger;
             let mapArr = mmap.getArray();
             let code = '';
 
@@ -127,7 +157,20 @@ ${code}
 
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 
-            util.writeFile(util.currentDir + '/web/dist.js', code);
+            webConfig.jsOutput = webConfig.jsOutput || path.join(dist, 'dist.js');
+            let target = path.join(util.currentDir, webConfig.jsOutput);
+            let plg = new loader.PluginHelper(config.plugins, {
+                type: 'dist',
+                code: code,
+                file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
+                done (result) {
+                    util.output('写入', result.file);
+                    util.writeFile(target, result.code);
+                }
+            });
         }).catch(e => {
             console.error(e);
         });
@@ -144,19 +187,28 @@ ${code}
 
         if (typeof(wpys) === 'string') {
             
+            if (mmap.getPending(wpys))
+                return Promise.resolve(0);
+
             let wpy = mmap.getObject(wpys);
             if (wpy) {
                 return Promise.resolve(wpy);
             }
+            let opath = path.parse(wpys);
 
-            if (path.parse(wpys).ext === wpyExt) {
+            if (opath.ext === wpyExt) {
                 wpys = [compileWpy.resolveWpy(wpys)];
             } else {
+                let compileType = 'babel';
+                // 如果是node_modules, 而且后缀不为 .wpy，那么不进行babel编译
+                if (opath.ext !== wpyExt && path.relative(modulesPath, wpys)[0] !== '.') {
+                    compileType = 'js';
+                }
                 wpys = [{
                     script: {
                         code: util.readFile(wpys),
                         src: wpys,
-                        type: 'babel'
+                        type: compileType
                     }
                 }];
             }

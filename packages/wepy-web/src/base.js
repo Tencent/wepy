@@ -1,3 +1,5 @@
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 import event from './event';
 
 const PREFIX = '$';
@@ -147,7 +149,10 @@ export default {
             router
         }).$mount('#app');*/
 
+
         addStyle(config.style);
+        
+        Vue.use(VueRouter);
 
         let router = new VueRouter();
         let index = '';

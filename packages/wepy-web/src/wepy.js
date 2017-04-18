@@ -1,3 +1,5 @@
+import Vue from 'vue';
+import axios from 'axios';
 import app from './app';
 import page from './page';
 import component from './component';

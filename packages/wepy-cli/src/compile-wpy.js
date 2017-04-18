@@ -380,10 +380,6 @@ export default {
         } else {
             this.remove(opath, 'wxss');
         }
-        if (type === 'app') {
-            toWeb.toWeb(wpy, type, opath);
-        }
-        return;
 
         if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
             //cTemplate.compile(wpy.template.type, wpy.template.code, opath);

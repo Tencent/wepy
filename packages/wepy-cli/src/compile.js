@@ -93,8 +93,6 @@ export default {
         let src = config.source || wepyrc.src || 'src';
         let dist = config.output || wepyrc.output || 'dist';
 
-
-
         chokidar.watch(`.${path.sep}${src}`, {
             depth: 99
         }).on('all', (evt, filepath) => {
@@ -203,7 +201,8 @@ export default {
         if (ext.indexOf('.') === -1)
             ext = '.' + ext;
 
-        let file = config.file;
+        // WEB 模式下，不能指定文件编译
+        let file = (config.output !== 'web') ? config.file : '';
 
         let current = process.cwd();
         let files = file ? [file] : util.getFiles(src);
@@ -255,10 +254,10 @@ export default {
                         this.compile(opath);
                 }
             });
+        }
 
-            if (config.watch) {
-                this.watch(config);
-            }
+        if (config.watch) {
+            this.watch(config);
         }
     },
     compile(opath) {

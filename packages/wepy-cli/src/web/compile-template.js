@@ -3,7 +3,9 @@ import {DOMParser, DOMImplementation} from 'xmldom';
 import util from '../util';
 import loader from '../loader';
 
-import mmap from './modulemap';
+import { getInstance } from './modulemap';
+
+let mmap;
 
 
 const WEAPP_TAGS = ['view', 'text', 'navigator', 'image'];
@@ -211,12 +213,15 @@ export default {
     },
 
     compile (wpy) {
+
         let config = util.getConfig();
         let compiler = loader.loadCompiler(wpy.template.type);
 
         if (!compiler) {
             return;
         }
+
+        mmap = getInstance();
 
         return compiler(wpy.template.code, config.compilers[wpy.template.type] || {}).then(rst => {
 
