@@ -133,6 +133,77 @@ export default {
         });
     },
 
+    /**
+     * Get :class expression
+     * e.g. getClassExp('{"abc": num < 1}');
+     */
+    parseClassExp (exp) {
+        exp = exp.replace(/^\s/ig, '').replace(/\s$/ig, '');
+        if (exp[0] === '{' && exp[exp.length - 1] === '}') {
+            exp = exp.substring(1, exp.length - 1);
+            let i = 0, len = exp.length;
+            let flagStack = [], flag = 'start';
+            let classNames = [], result = {}, str = '';
+            for (i = 0; i < len; i++) {
+                if ((exp[i] === '\'' || exp[i] === '"')) {
+                    if (flagStack.length && flagStack[0] === exp[i]) {
+                        flagStack.pop();
+                        if (flag === 'class') {
+                            flag = ":";
+                            continue;
+                        } else if (flag === 'expression') {
+                            str += exp[i];
+                            continue;
+                        }
+                    } else {
+                        if (flagStack.length === 0) {
+                            flagStack.push(exp[i]);
+                            if (flag === 'start') {
+                                flag = 'class';
+                                continue;
+                            } else if (flag === "expression") {
+                                str += exp[i];
+                                continue;
+                            }
+                        }
+                    }
+                }
+                // {abc: num < 1} or {'abc': num <１}
+                if (exp[i] === ':' && (flag === ':' || flag === 'class') && flagStack.length === 0) {
+                    flag = "expression";
+                    classNames.push(str);
+                    str = '';
+                    continue;
+                }
+                if (exp[i] === ',' && flag === 'expression' && flagStack.length === 0) {
+                    result[classNames[classNames.length - 1]] = str.replace(/^\s/ig, '').replace(/\s$/ig, '');;
+                    str = '';
+                    flag = 'start';
+                    continue;
+                }
+                // get rid of the begining space
+                if (!str.length && exp[i] === ' ')
+                    continue;
+     
+                // not started with '', like {abc: num < 1}
+                if (flag === 'start') {
+                    flag = 'class';
+                }
+     
+                if (flag === 'class' || flag === 'expression') {
+                    str += exp[i];
+                }
+            }
+            if (str.length) {
+                result[classNames[classNames.length - 1]] = str.replace(/^\s/ig, '').replace(/\s$/ig, '');
+            }
+            return result;
+        } else {
+            throw ':class expression is not correct, it has to be {\'className\': mycondition}';
+        }
+    },
+
+
     // 通过mapping一层层映射，反应到属性上
     getMappingIndex (mapping, arr) {
         if (!arr)
@@ -157,6 +228,25 @@ export default {
             }
         } else {
             [].slice.call(node.attributes || []).forEach((attr) => {
+                if (attr.name === 'v-bind:class.once') {
+                    debugger;
+                    let classObject = this.parseClassExp(attr.value);
+                    let classArray = (node.getAttribute('class') || '').split(' ').map(v => v.replace(/^\s/ig, '').replace(/\s$/ig, ''));
+                    if (classArray.length === 1 && classArray[0] === '')
+                        classArray = [];
+                    for (let k in classObject) {
+                        let exp = classObject[k].replace(/\'/ig, '\\\'').replace(/\"/ig, '\\"');
+                        let name = k.replace(/\'/ig, '\\\'').replace(/\"/ig, '\\"');
+                        let index = classArray.indexOf(name);
+                        if (index !== -1) {
+                            classArray.splice(index, 1);
+                        }
+                        exp = `{{${exp} ? '${name}' : ''}}`;
+                        classArray.push(this.parseExp(exp, prefix, ignores, mapping));
+                    }
+                    node.setAttribute('class', classArray.join(' '));
+                    node.removeAttribute(attr.name);
+                }
                 if (prefix) {
                     if (attr.value.indexOf('{{') > -1) {
                         attr.value = this.parseExp(attr.value, prefix, ignores, mapping);
