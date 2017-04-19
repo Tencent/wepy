@@ -138,7 +138,6 @@ export default {
     },
 
     replaceWXML (content, file) {
-        debugger;
         let node = typeof(content) === 'string' ? this.getTemplate(content) : content;
 
         if (!node || !node.childNodes || node.childNodes.length === 0)
@@ -244,7 +243,9 @@ export default {
 
             let node = this.getTemplate(rst);
             this.replaceWXML(node, wpy.template.src);
-            wpy.template.code = node.toString();
+            // Will replace custom <tag /> to <tag></tag>
+            // https://github.com/jindw/xmldom/blob/56eb39f82dd2052a683b1870fb1f4a105e184f66/dom.js#L113
+            wpy.template.code = node.toString(true);
             let templateId = mmap.add(wpy.template.src + '-template', {
                 type: 'template',
                 source: wpy
