@@ -6,13 +6,19 @@
   .count {
     font-size: 18px;
     font-weight: bold;
+    &.red {
+      color: red;
+    }
+    &.green {
+      color: green;
+    }
   }
 </style>
 <template>
   <view class="counter {{style}}">
     <button @tap="plus" size="mini">  +  </button>
     <button @tap="minus" size="mini">  -  </button>
-    <text class="count"> {{num}} </text>
+    <text class="count" :class="{red: num > 55, green: num < 45}"> {{num}} </text>
   </view>
 </template>
 <script>
