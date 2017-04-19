@@ -89,7 +89,7 @@ let wx = {
 };
 
 ['getUserInfo', 'login', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation'].forEach(k => {
-  wx[k] = (o) => {
+  wx[k] = (o = {}) => {
     console.error(`wx.${k} is not supported in brower`);
     callback('fail', o, k, null);
     callback('complete', o, k, null);
