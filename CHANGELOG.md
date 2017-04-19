@@ -1,3 +1,6 @@
+## 1.5.3 (waiting)
+* `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
+
 ## 1.5.2 (2017-04-17)
 * `A` style标签添加了scoped属性的支持。[ISSUE #79](https://github.com/wepyjs/wepy/issues/79)
 * `F` 修改了项目外层有`src`目录会导致编译文件目录错乱的BUG。[ISSUE #91](https://github.com/wepyjs/wepy/issues/91)
