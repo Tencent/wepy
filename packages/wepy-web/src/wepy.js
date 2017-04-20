@@ -1,5 +1,3 @@
-import Vue from 'vue';
-import axios from 'axios';
 import app from './app';
 import page from './page';
 import component from './component';
@@ -11,10 +9,6 @@ import mixin from './mixin';
 // wx polyfill
 import wx from './wx';
 
-
-window.getApp = () => {
-    return Vue;
-};
 
 
 

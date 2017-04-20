@@ -5,16 +5,17 @@ import event from './event';
 
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
-const addStyle = (css) => {
+const addStyle = (stylelist) => {
     let styleElement = document.createElement("style");
     let head = document.head || document.getElementsByTagName("head")[0];
+
+    let css = '';
+    stylelist.forEach(id => {
+        css += __wepy_require(id) + '\r\n';
+    });
     
-    if (styleElement.styleSheet) {
-        styleElement.styleSheet.cssText = replaceText(index, css);
-    } else {
-        let cssNode = document.createTextNode(css);
-        styleElement.appendChild(cssNode);
-    }
+    let cssNode = document.createTextNode(css);
+    styleElement.appendChild(cssNode);
     head.appendChild(styleElement);
     styleElement.type = "text/css";
     return styleElement;
@@ -98,6 +99,13 @@ const $createComponent = (com, template) => {
     vueObject.created = function () {
         com.$wxpage = this;
         com.$vm = this;
+        this.$wepy = com;
+
+        if (!com.$isComponent) {
+            wx._currentPage = com;
+            wx._currentPage.__route__ = this.$vm.$route.path;
+            wx._currentPage.__wxWebviewId__ = 0;
+        }
 
         if (typeof com.onLoad === 'function') {
             com.onLoad.call(com, com.$vm.$route.query);
@@ -136,6 +144,8 @@ export default {
 
         let app = new appClass;
 
+        app.$components = [];
+
         if (!this.$instance) {
             app.$init(this);
             this.$instance = app;
@@ -155,6 +165,23 @@ export default {
 
 
         addStyle(config.style);
+
+        
+        if (typeof app.onLaunch === 'function') {
+            app.onLaunch();
+        }
+        if (typeof app.onShow === 'function') {
+            console.warn('onShow is not implemented in web');
+        }
+        if (typeof app.onHide === 'function') {
+            console.warn('onHide is not implemented in web');
+        }
+
+        // 注入组件
+        for (k in config.components) {
+            app.$components.push(k);
+            __wepy_require(config.components[k]);
+        }
         
         Vue.use(VueRouter);
 
@@ -174,6 +201,7 @@ export default {
             '*': '/' + index
         });
         router.start({}, '#app');
+
         window.$router = router;
     },
     $createPage (pageClass, pagePath) {
@@ -189,6 +217,11 @@ export default {
 
         page.$init(Vue, this.$instance, this.$instance);
 
+        wx._currentPages = wx._currentPages || [];
+        wx._currentPages.push(page);
+        page.__route__ = pagePath;
+        page.__wxWebviewId__ = 0;
+        
         return vueObject;
     },
 }

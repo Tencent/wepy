@@ -63,7 +63,6 @@ export default {
                 }
                 let main = pkg.main || 'index.js';
                 if (lib === 'axios') {
-                    debugger;
                     main = path.join('dist', 'axios.js');
                 } else if (lib === 'vue') {
                     main = path.join('dist', 'vue.js');

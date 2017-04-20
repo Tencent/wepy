@@ -83,12 +83,24 @@ export default {
             return;
         }
 
-        this.compile([appWpy].concat(wpypages)).then(rst => {
+        let tasks = [], components = {};
+
+        tasks.push(this.compile([appWpy].concat(wpypages)));
+
+        // 如果存在引入的components，则将components编译至代码中。
+        if (webConfig.components && webConfig.components.length) {
+            webConfig.components.forEach(k => {
+                let componentFile = path.join(modulesPath, 'wepy-web', 'lib', 'components', k + '.js');
+                components[k] = mmap.add(componentFile);
+                tasks.push(this.compile(componentFile));
+            });
+        }
+
+        Promise.all(tasks).then(rst => {
             let mapArr = mmap.getArray();
             let code = '';
 
-            let style = '';
-
+            let styleList = [];
             mapArr.forEach((v, i) => {
                 let p = path.relative(util.currentDir, v.source.script.src);
 
@@ -103,7 +115,12 @@ export default {
                 } else if (v.type === 'template') {
                     code += 'module.exports = "' + v.source.template.code.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
                 } else if (v.type === 'style') {
-                    style += v.source.style.code;
+                    let styleCode = '';
+                    v.source.style.forEach(s => {
+                        styleCode += s.code + '\r\n';
+                    });
+                    styleList.push(v.source.style.id);
+                    code += 'module.exports = "' + styleCode.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
                 }
                 code += '}';
                 if (i !== mapArr.length - 1) {
@@ -153,7 +170,8 @@ ${code}
             }
 
             config.routes = routes;
-            config.style = style;
+            config.style = styleList;
+            config.components = components;
 
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 
@@ -236,7 +254,7 @@ ${code}
                 tasks.push(tmp);
             }
 
-            if (wpy.style && wpy.style.code && !wpy.style.id) {
+            if (wpy.style && wpy.style.length) {
                 tmp = cStyle.compile(wpy);
 
                 if (!tmp) {

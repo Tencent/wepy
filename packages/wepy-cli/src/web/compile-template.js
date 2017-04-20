@@ -19,6 +19,7 @@ const HTML_TAGS = ['div', 'span', 'a', 'img'];
 
 
 const TAGS_MAP = {
+    //'scroll-view': 'div',
     'block': 'div',
     'view': 'div',
     'text': 'span',
@@ -182,6 +183,9 @@ export default {
                             } else {
                                 attr.name = attr.name.replace('bind', '@').replace('catch', '@');
                             }
+                        } else if (attr.name === 'wx:if') {
+                            child.setAttribute('v-if', this.changeExp(attr.value));
+                            child.removeAttribute(attr.name);
                         } else if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
                             // <block xmlns:wx="" wx:for-index="index" wx:for-item="item" wx:key="id" :wx:for-items="list">
                             let vfor = this.changeExp(attr.value);
