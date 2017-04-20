@@ -105,31 +105,40 @@ export default {
 
         xml = this.createParser().parseFromString(content);
 
-        const moduleId = simpleId(filepath);
+        const moduleId = util.genId(filepath);
 
         let rst = {
             moduleId: moduleId,
-            style: {
-                code: '',
-                scoped: ''
-            },
+            style: [],
             template: {
-                code: ''
+                code: '',
+                src: '',
+                type: ''
             },
             script: {
-                code: ''
+                code: '',
+                src: '',
+                type: ''
             }
         };
 
         [].slice.call(xml.childNodes || []).forEach((child) => {
             const nodeName = child.nodeName;
             if (nodeName === 'style' || nodeName === 'template' || nodeName === 'script') {
-                const rstTypeObj = rst[nodeName];
+                let rstTypeObj;
+
+                if (nodeName === 'style') {
+                    rstTypeObj = {code: ''};
+                    rst[nodeName].push(rstTypeObj);
+                } else {
+                    rstTypeObj = rst[nodeName];
+                }
+
                 rstTypeObj.src = child.getAttribute('src');
                 rstTypeObj.type = child.getAttribute('lang') || child.getAttribute('type');
                 if (nodeName === 'style') {
                     // 针对于 style 增加是否包含 scoped 属性
-                    rstTypeObj.scoped = child.getAttribute('scoped');
+                    rstTypeObj.scoped = child.getAttribute('scoped') ? true : false;
                 }
 
                 if (rstTypeObj.src) {
@@ -137,9 +146,11 @@ export default {
                 }
 
                 if (rstTypeObj.src && util.isFile(rstTypeObj.src)) {
-                    rstTypeObj.code = util.readFile(rstTypeObj.src, 'utf-8');
-                    if (rstTypeObj.code === null) {
+                    const fileCode = util.readFile(rstTypeObj.src, 'utf-8');
+                    if (fileCode === null) {
                         throw '打开文件失败: ' + rstTypeObj.src;
+                    } else {
+                        rstTypeObj.code += fileCode;
                     }
                 } else {
                     [].slice.call(child.childNodes || []).forEach((c) => {
@@ -151,6 +162,7 @@ export default {
                     rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
             }
         });
+        //util.mergeWpy(rst);
 
         /*
         Use components instead
@@ -159,7 +171,6 @@ export default {
         }*/
 
         // default type
-        rst.style.type = rst.style.type || 'css';
         rst.template.type = rst.template.type || 'wxml';
         rst.script.type = rst.script.type || 'babel';
 
@@ -293,8 +304,8 @@ export default {
             }
         })();
 
-        if (rst.style.scoped && rst.template.code) {
-            // scoped 更新 template.code
+        if (rst.style.some(v => v.scoped) && rst.template.code) {
+            // 存在有 scoped 部分就需要 更新 template.code
             var node = this.createParser().parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
             // 更新 template.code
@@ -352,6 +363,15 @@ export default {
 
         if (type === 'app') { // 第一个编译
             cache.setPages(wpy.config.pages.map(v => path.join(src, v + wpyExt)));
+
+            // scoped 设置无效
+            wpy.style.forEach(rst => rst.scoped = false);
+
+            // 无template
+            delete wpy.template;
+
+        } else if (type === 'component') {
+            delete wpy.config;
         }
 
         if (wpy.config) {
@@ -359,29 +379,26 @@ export default {
         } else {
             this.remove(opath, 'json');
         }
-        if (wpy.style.code || Object.keys(wpy.template.components).length) {
+
+        if (wpy.style.length || (wpy.template && Object.keys(wpy.template.components).length)) {
             let requires = [];
             let k, tmp;
-            for (k in wpy.template.components) {
-                tmp = wpy.template.components[k];
-                if (tmp.indexOf('.') === -1) {
-                    requires.push(tmp); // 第三方组件
-                } else {
-                    requires.push(path.join(opath.dir, wpy.template.components[k]));
+            if (wpy.template) {
+                for (k in wpy.template.components) {
+                    tmp = wpy.template.components[k];
+                    if (tmp.indexOf('.') === -1) {
+                        requires.push(tmp); // 第三方组件
+                    } else {
+                        requires.push(path.join(opath.dir, wpy.template.components[k]));
+                    }
                 }
             }
-            if (type === 'app') {
-                // 如果是 app 没有 wxml 所以这里不能做替换
-                // 强制 scoped = '' 也就是在 app.wpy 中
-                // 设置 scoped 无效
-                wpy.style.scoped = '';
-            }
-            cStyle.compile(wpy.style.type, wpy.style.code, wpy.style.scoped, requires, opath, wpy.moduleId);
+            cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
         } else {
             this.remove(opath, 'wxss');
         }
 
-        if (wpy.template.code && (type !== 'app' && type !== 'component')) { // App 和 Component 不编译 wxml
+        if (wpy.template && wpy.template.code && type !== 'component') { // App 和 Component 不编译 wxml
             //cTemplate.compile(wpy.template.type, wpy.template.code, opath);
             cTemplate.compile(wpy.template);
         }
@@ -403,13 +420,4 @@ function walkNode (node, moduleId) {
             }
         });
     }
-}
-
-const ID_MAP = {};
-let ID_BASE = 1;
-const simpleId = function (filepath) {
-    if (!ID_MAP[filepath]) {
-        ID_MAP[filepath] = 'wepy-css-' + ID_BASE++;
-    }
-    return ID_MAP[filepath];
 }

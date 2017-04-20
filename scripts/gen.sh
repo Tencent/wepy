@@ -51,6 +51,8 @@ wepy new demo
 
 wepy new emptydemo --empty
 
+wepy new reduxdemo --redux
+
 wepy new nolintdemo --no-lint
 
 cd demo
@@ -60,6 +62,9 @@ cd ../emptydemo
 wepy build
 
 cd ../nolintdemo
+wepy build
+
+cd ../reduxdemo
 wepy build
 
 # Cleanup

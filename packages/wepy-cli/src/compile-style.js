@@ -12,31 +12,57 @@ const LANG_MAP = {
 };
 
 export default {
-    compile (lang, content, scoped, requires, opath, moduleId) {
+    compile (styles, requires, opath, moduleId) {
         let config = util.getConfig();
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
         const filepath = path.join(opath.dir, opath.base);
 
-        if (arguments.length === 2) {
+        if (typeof styles === 'string') {
+            // .compile('less', opath) 这种形式
+            opath = requires;
             requires = [];
-            scoped = '';
             moduleId = '';
-            opath = content;
-            content = util.readFile(filepath);
+            styles = [{
+                type: styles,
+                scoped: false,
+                code: util.readFile(path.join(opath.dir, opath.base)) || ''
+            }];
         }
+        let allPromises = [];
 
-        if (lang === 'scss')
-            lang = 'sass';
+        // styles can be an empty array
+        styles.forEach((style) => {
+            let lang = style.type || 'css';
+            const content = style.code;
+            const scoped = style.scoped;
 
-        let compiler = loader.loadCompiler(lang);
+            if (lang === 'scss')
+                lang = 'sass';
 
-        if (!compiler) {
-            throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
-        }
+            let compiler = loader.loadCompiler(lang);
 
-        compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
+            if (!compiler) {
+                throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
+            }
+
+            const p = compiler(content, config.compilers[lang] || {}, path.join(opath.dir, opath.base)).then((css) => {
+                // 处理 scoped
+                if (scoped) {
+                    // 存在有 scoped 的 style
+                    return scopedHandler(moduleId, css).then((cssContent) => {
+                        return cssContent;
+                    });
+                } else {
+                    return css;
+                }
+            });
+
+            allPromises.push(p);
+        });
+        Promise.all(allPromises).then((rets) => {
+            let allContent = rets.join('');
             if (requires && requires.length) {
                 requires.forEach((r) => {
                     let comsrc = util.findComponent(r);
@@ -54,37 +80,25 @@ export default {
                         let code = util.readFile(comsrc);
                         if (isNPM || /<style/.test(code)) {
                             relative = relative.replace(ext, '.wxss').replace(/\\/ig, '/').replace('../', './');
-                            css = '@import "' + relative + '";\n' + css;
+                            allContent = '@import "' + relative + '";\n' + allContent;
                         }
                     }
                 });
             }
-            // 处理 scoped
-            if (scoped) {
-                return scopedHandler(moduleId, css, function (err, cssContent) {
-                    if (!err) {
-                        write2Target(cssContent);
-                    }
-                });
-            } else {
-                write2Target(css);
-            }
-            function write2Target(cssContent) {
-                let target = util.getDistPath(opath, 'wxss', src, dist);
+            let target = util.getDistPath(opath, 'wxss', src, dist);
 
-                let plg = new loader.PluginHelper(config.plugins, {
-                    type: 'css',
-                    code: cssContent,
-                    file: target,
-                    output (p) {
-                        util.output(p.action, p.file);
-                    },
-                    done (rst) {
-                        util.output('写入', rst.file);
-                        util.writeFile(target, rst.code);
-                    }
-                });
-            }
+            let plg = new loader.PluginHelper(config.plugins, {
+                type: 'css',
+                code: allContent,
+                file: target,
+                output (p) {
+                    util.output(p.action, p.file);
+                },
+                done (rst) {
+                    util.output('写入', rst.file);
+                    util.writeFile(target, rst.code);
+                }
+            });
         }).catch((e) => {
             console.log(e);
         });

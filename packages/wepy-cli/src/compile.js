@@ -143,7 +143,6 @@ export default {
             util.error('没有检测到wepy.config.js文件, 请执行`wepy new demo`创建');
             return;
         }
-        config.noCache = config.rawArgs.indexOf('--no-cache') !== -1;
 
         if (this.wepyUpdate()) { // 需要更新wepy版本
             util.log('检测到wepy版本不符合要求，正在尝试更新，请稍等。', '信息');
@@ -156,9 +155,7 @@ export default {
             });
             return;
         }
-        if (config.noCache) {
-            cache.clearBuildCache();
-        }
+
         if (!this.checkCompiler(wepyrc.compilers) || !this.checkPlugin(wepyrc.plugins)) {
             util.exec(`npm info ${loader.missingNPM}`, true).then(d => {
                 util.log('检测到有效NPM包资源，正在尝试安装，请稍等。', '信息');
@@ -222,6 +219,15 @@ export default {
         cache.setSrc(src);
         cache.setDist(dist);
         cache.setExt(ext);
+
+
+        // If dist/npm/wepy is not exsit, then clear the build cache.
+        if (!util.isDir(path.join(util.currentDir, dist, 'npm', 'wepy'))) {
+            config.cache = false;
+        }
+        if (!config.cache) {
+            cache.clearBuildCache();
+        }
 
         if (file) { // 指定文件编译时
             if (file.indexOf(ext) === -1) { // 是wpy文件，则直接编译，否则检查引用源

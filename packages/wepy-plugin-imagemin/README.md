@@ -12,7 +12,7 @@ npm install wepy-plugin-imagemin --save-dev
 ```
 module.exports.plugins = {
     'imagemin': {
-        filter: /\.(jpg|png|jpge)$/,
+        filter: /\.(jpg|png|jpeg)$/,
         config: {
             'jpg': {
                 quality: 80

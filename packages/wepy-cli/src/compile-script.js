@@ -128,6 +128,9 @@ export default {
     },
 
     npmHack (filename, code) {
+        // 一些库（redux等） 可能会依赖 process.env.NODE_ENV 进行逻辑判断
+        // 这里在编译这一步直接做替换 否则报错
+        code = code.replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV));
         switch(filename) {
             case 'lodash.js':
             case '_global.js':
@@ -141,6 +144,8 @@ export default {
                 // IOS 1.10.2 Promise BUG
                 code = code.replace('Promise && Promise.resolve', 'false && Promise && Promise.resolve');
                 break;
+            case '_freeGlobal.js':
+                code = code.replace('module.exports = freeGlobal;', 'module.exports = freeGlobal || this;')
         }
         return code;
     },
@@ -172,20 +177,19 @@ export default {
             }
             if (type !== 'npm') {
                 if (type === 'page' || type === 'app') {
-                    let defaultExport = 'exports.default';
-                    let matchs = code.match(/exports\.default\s*=\s*(\w+);/i);
-                    if (matchs) {
-                        defaultExport = matchs[1];
-                        code = code.replace(/exports\.default\s*=\s*(\w+);/i, '');
+                    code = code.replace(/exports\.default\s*=\s*(\w+);/ig, function (m, defaultExport) {
+                        if (defaultExport === 'undefined') {
+                            return '';
+                        }
 
                         if (type === 'page') {
                             let pagePath = path.join(path.relative(appPath.dir, opath.dir), opath.name).replace(/\\/ig, '/');
-                            code += `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
+                            return `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
                         } else {
                             appPath = opath;
-                            code += `\nApp(require('wepy').default.$createApp(${defaultExport}));\n`;
+                            return `\nApp(require('wepy').default.$createApp(${defaultExport}));\n`;
                         }
-                    }
+                    });
                 }
             }
 

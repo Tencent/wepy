@@ -17,6 +17,7 @@ module.exports = {
         'stage-1'
       ],
       plugins: [
+        'transform-decorators-legacy',
         'transform-export-extensions',
         'syntax-export-extensions'
       ]
@@ -43,7 +44,7 @@ if (prod) {
       }
     },
     imagemin: {
-      filter: /\.(jpg|png|jpge)$/,
+      filter: /\.(jpg|png|jpeg)$/,
       config: {
         jpg: {
           quality: 80

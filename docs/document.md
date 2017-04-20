@@ -49,7 +49,7 @@ if (prod) {
             }
         },
         'imagemin': {
-            filter: /\.(jpg|png|jpge)$/,
+            filter: /\.(jpg|png|jpeg)$/,
             config: {
                 'jpg': {
                     quality: 80
@@ -214,6 +214,28 @@ wepy编译组件的过程如下：
 
 #### 组件引用
 当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签，如[index.wpy](#)。
+
+需要注意的是，组件ID必须是唯一的，如果需要多次引入同一组件，那么需要声明该组件多次。如下：
+
+```
+<template>
+    <view>
+        <child1 />
+        <child2 />
+    </view>
+</template>
+<sciprt>
+    import wepy from 'wepy';
+    import Child form './child';
+
+    export Parent from wepy.page {
+        components = {
+            child1: Child,
+            child2: Child
+        }
+    }
+</sciprt>
+```
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
 

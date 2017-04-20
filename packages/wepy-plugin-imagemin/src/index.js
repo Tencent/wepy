@@ -9,7 +9,7 @@ export default class {
 
     constructor(c = {}) {
         const def = {
-            filter: new RegExp('\.(jpg|png|jpge)$'),
+            filter: new RegExp('\.(jpg|png|jpeg)$'),
             config: {
                 jpg: {},
                 png: {quality: '65-80'}

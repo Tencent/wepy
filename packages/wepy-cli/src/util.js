@@ -4,6 +4,7 @@ import fs from 'fs';
 import mkdirp from 'mkdirp';
 import path from 'path';
 import {exec} from 'child_process';
+import hash from 'hash-sum';
 import cache from './cache';
 
 colors.enabled = true;
@@ -35,7 +36,7 @@ colors.setTheme({
     '写入': 'green'
 });
 
-
+let ID_CACHE = {};
 const utils = {
 
     seqPromise(promises) {
@@ -344,16 +345,18 @@ const utils = {
         return path.relative(this.currentDir, path.join(opath.dir, opath.base));
     },
     getDistPath(opath, ext, src, dist) {
-        let dir = '';
+        let relative;
         src = src || cache.getSrc();
         dist = dist || cache.getDist();
         ext = (ext ? ('.' + ext) : opath.ext);
         // 第三组件
         if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
-            dir = opath.dir.replace('node_modules', `${dist}${path.sep}npm`) + path.sep;
-        } else
-            dir = (opath.dir + path.sep).replace(path.sep + src + path.sep, path.sep + dist + path.sep);
-        return dir + opath.name + ext;
+            relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);
+            relative = path.join('npm', relative);
+        } else {
+            relative = path.relative(path.join(this.currentDir, src), opath.dir);
+        }
+        return path.join(this.currentDir, dist, relative, opath.name + ext);
     },
     getModifiedTime (p) {
         return this.isFile(p) ? +fs.statSync(p).mtime : false;
@@ -471,7 +474,15 @@ const utils = {
             }
         }
         this.log(flag + ': ' + path.relative(this.currentDir, file), type);
+    },
+    genId (filepath) {
+        if (!ID_CACHE[filepath]) {
+            ID_CACHE[filepath] = '_' + hash(filepath).slice(1, 8);
+        }
+        return ID_CACHE[filepath];
     }
 }
-
 export default utils
+
+
+
