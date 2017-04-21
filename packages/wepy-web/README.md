@@ -22,35 +22,36 @@
 
 | API | WEB中可实现 | 已实现 |
 | --- | --- | --- |
-| wx.request | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.setStorage | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.setStorageSync | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.getStorage | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.getStorageSync | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.getStorageInfo | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.getStorageInfoSync | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.removeStorage | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.removeStorageSync | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.removeStorage | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.clearStorage | <b style="color:green">√</b> | <b style="color:red">×</b> |
-| wx.clearStorageSync | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.getLocation | jsapi | <b style="color:red">×</b> |
-| wx.navigateTo | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.redirectTo | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.switchTab | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.navigateBack | <b style="color:green">√</b> | <b style="color:green">√</b> |
-| wx.reLaunch | <b style="color:green">√</b> | <b style="color:red">×</b> |
+| wx.request | √ | √ |
+| wx.setStorage | √ | √ |
+| wx.setStorageSync | √ | √ |
+| wx.getStorage | √ | √ |
+| wx.getStorageSync | √ | √ |
+| wx.getStorageInfo | √ | × |
+| wx.getStorageInfoSync | √ | × |
+| wx.removeStorage | √ | × |
+| wx.removeStorageSync | √ | × |
+| wx.removeStorage | √ | × |
+| wx.clearStorage | √ | × |
+| wx.clearStorageSync | √ | √ |
+| wx.getLocation | jsapi | × |
+| wx.navigateTo | √ | √ |
+| wx.redirectTo | √ | √ |
+| wx.switchTab | √ | √ |
+| wx.navigateBack | √ | √ |
+| wx.reLaunch | √ | × |
 | wx.login | jsapi | wx |
 
 
 ### 组件实现进度
 
 | 组件 | WEB中需要重新实现 | 已实现 |
-| view | <b style="color:red">×</b> | div |
-| text | <b style="color:red">×</b> | span |
-| button | <b style="color:red">×</b> | button |
-| input | <b style="color:red">×</b> | input |
-| scroll-view | <b style="color:green">√</b> | <b style="color:green">√</b> |
+| --- | --- | --- |
+| view | × | div |
+| text | × | span |
+| button | × | button |
+| input | × | input |
+| scroll-view | √ | √ |
 
 
 
