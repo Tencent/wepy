@@ -295,7 +295,7 @@ export default {
             slots = {};
         else {
             [].slice.call(childNodes || []).forEach((child) => {
-                let name = (child.nodeName === '#text') ? '' : child.getAttribute('slot');
+                let name = (child.nodeName === '#text' || child.nodeName === '#comment') ? '' : child.getAttribute('slot');
 
                 if (!name) {
                     name = '$$default';
@@ -319,7 +319,7 @@ export default {
 
             let doc = new DOMImplementation().createDocument();
             replacements.forEach((n) => {
-                if (name !== '$$default' && n.nodeName !== '#text')
+                if (name !== '$$default' && n.nodeName !== '#text' && n.nodeName !== '#comment')
                     n.removeAttribute('slot');
                 doc.appendChild(n);
             });
