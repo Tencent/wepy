@@ -22,13 +22,18 @@ const addStyle = (stylelist) => {
 };
 
 
-const $createMixin = (mixinClass) => {
+const $createMixin = (com, mixinClass) => {
     let obj = {};
     let mixin = new mixinClass;
     for (let k in mixin) {
         if (k === 'data') {
             obj.data = function () {
                 return mixin.data;
+            }
+        } else if (k === 'methods') {
+            obj[k] = {};
+            for (let method in mixin[k]) {
+                obj[k][method] = mixin[k][method].bind(com);
             }
         } else {
             obj[k] = mixin[k];
@@ -86,10 +91,10 @@ const $createComponent = (com, template) => {
 
     if (typeof com.mixins === 'object' && com.mixins.constructor === Array) {
         vueObject.mixins = com.mixins.map(mixin => {
-            return $createMixin(mixin);
+            return $createMixin(com, mixin);
         });
     } else if (typeof com.mixins === 'function') {
-        vueObject.mixins = [$createMixin(mixin)];
+        vueObject.mixins = [$createMixin(com, mixin)];
     }
 
     vueObject.props = com.props;
@@ -108,7 +113,7 @@ const $createComponent = (com, template) => {
         }
 
         if (typeof com.onLoad === 'function') {
-            com.onLoad.call(com, com.$vm.$route.query);
+            com.onLoad.call(com, com.$vm.$route.query, {preload: {}, prefetch: {}});
         }
     };
 
@@ -212,6 +217,7 @@ export default {
             this.$instance.$pages[pagePath] = page;
 
         page.$name = pageClass.name || 'unnamed';
+        page.$app = this.$instance;
 
         let vueObject = $createComponent(page, pageClass.template);
 
