@@ -174,7 +174,7 @@ export default {
                             attr.value = func.name + '(';
 
                             func.params = func.params.map(p => {
-                                return this.changeExp(p).replace(/\'/ig, '\\\'');
+                                return this.changeExp(p);
                             }).concat('$event');
 
                             attr.value = `${func.name}(${func.params.join(',')})`;
@@ -183,6 +183,9 @@ export default {
                             } else {
                                 attr.name = attr.name.replace('bind', '@').replace('catch', '@');
                             }
+                        } else if (attr.name === 'hidden') {
+                            child.setAttribute('v-show', `!(${this.changeExp(attr.value)})`);
+                            child.removeAttribute(attr.name);
                         } else if (attr.name === 'wx:if') {
                             child.setAttribute('v-if', this.changeExp(attr.value));
                             child.removeAttribute(attr.name);

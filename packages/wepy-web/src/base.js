@@ -113,7 +113,7 @@ const $createComponent = (com, template) => {
         }
 
         if (typeof com.onLoad === 'function') {
-            com.onLoad.call(com, com.$vm.$route.query, {preload: {}, prefetch: {}});
+            com.onLoad.call(com, com.$vm.$route.query, {});
         }
     };
 

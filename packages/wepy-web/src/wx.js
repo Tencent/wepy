@@ -38,6 +38,8 @@ let wx = {
                 '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
         } else {
             console.error('wx.login is only implemented in wechat browser');
+            callback('fail', o, 'login', '');
+            callback('complete', o, 'login', '');
         }
     },
     /*** Storage ***/
