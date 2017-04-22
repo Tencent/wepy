@@ -1,3 +1,4 @@
+var fs      = require('fs');
 var path    = require("path");
 var watch = require("gulp-watch");
 var newer = require('gulp-newer');
@@ -8,8 +9,9 @@ var gutil   = require("gulp-util");
 var through = require("through2");
 var gulp    = require("gulp");
 var chalk   = require("chalk");
+var gulpif = require('gulp-if');
 
-var scripts = "./packages/*/src/**/*.js";
+var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue'];
 var bins = "./packages/*/bin/**/*";
 var srcEx, libFragment;
 
@@ -32,6 +34,11 @@ gulp.task('lec', function () {
     return gulp.src(bins, { base: "./" }).pipe(lec({eolc: 'LF', encoding:'utf8'})).pipe(gulp.dest('.'));
 });
 
+var condition = function (file) {
+    console.log(file.file);
+    return false;
+}
+
 gulp.task("build", ['lec'], function () {
   return gulp.src(scripts)
     .pipe(plumber({
@@ -48,6 +55,9 @@ gulp.task("build", ['lec'], function () {
     .pipe(through.obj(function (file, enc, callback) {
         file._path = file.path;
         file.path = mapToDest(file.path);
+        if (path.parse(file.path).ext === '.vue') {
+            fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));    
+        }
         callback(null, file);
     }))
     .pipe(gulp.dest(dest));
@@ -62,6 +72,9 @@ gulp.task("build-watch", function () {
         .pipe(through.obj(function (file, enc, callback) {
             file._path = file.path;
             file.path = file.path.replace(srcEx, libFragment);
+            if (path.parse(file.path).ext === '.vue') {
+                fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));    
+            }
             callback(null, file);
         }))
         .pipe(newer(dest))

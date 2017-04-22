@@ -34,6 +34,7 @@
     "eslint": "^3.11.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-if": "^2.0.2",
     "gulp-line-ending-corrector": "^1.0.1",
     "gulp-newer": "^1.3.0",
     "gulp-plumber": "^1.1.0",
@@ -57,6 +58,9 @@
       "stage-1"
     ],
     "plugins": [],
+    "ignore": [
+      "./packages/wepy-web/src/components/*.vue"
+    ],
     "env": {
       "test": {
         "auxiliaryCommentBefore": "istanbul ignore next",
@@ -66,6 +70,5 @@
       }
     }
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

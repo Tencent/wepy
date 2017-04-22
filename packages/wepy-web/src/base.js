@@ -185,7 +185,7 @@ export default {
         // 注入组件
         for (k in config.components) {
             app.$components.push(k);
-            __wepy_require(config.components[k]);
+            Vue.component(k, __wepy_require(config.components[k]).default);
         }
         
         Vue.use(VueRouter);

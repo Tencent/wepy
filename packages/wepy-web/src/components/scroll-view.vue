@@ -1,4 +1,7 @@
-import Vue from 'vue';
+<template>
+    <div class="wepy_scroll-view" @scroll="scroll($event)"><slot></slot></div>
+</template>
+<script>
 import event from '../event';
 import helper from '../helper';
 
@@ -45,9 +48,9 @@ let TABLE_EVENT = {
     scrolltolower: null,
     scroll: null,
 };
-let Com = {
+
+export default {
     name: 'scroll-view',
-    template: '<div class="wepycom_scroll-view" @scroll="scroll($event)"><slot></slot></div>',
     methods: {
         scroll (e) {
             let elem = e.srcElement || e.currentTarget;
@@ -70,8 +73,5 @@ let Com = {
             }
         }
     }
-};
-
-Vue.component('scroll-view', Com);
-
-export default Com;
+}
+</script>
