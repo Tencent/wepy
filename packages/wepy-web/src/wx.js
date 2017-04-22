@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import {resolveQuery} from './helper/query';
+import {browser, system} from './helper/device';
 
 const callback = (type, o, name, data) => {
     if (typeof o[type] === 'function') {
@@ -36,7 +37,7 @@ let wx = {
             window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + o.appId + 
                 '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
         } else {
-            console.error('wx.login is only implemented in wechat brower');
+            console.error('wx.login is only implemented in wechat browser');
         }
     },
     /*** Storage ***/
@@ -68,6 +69,20 @@ let wx = {
             callback('fail', o, 'getStorage', rst);
         }
         callback('complete', o, 'getStorage', rst);
+    },
+    getStorageInfoSync () {
+        let MAX_SIZE = 5 * 1024;
+        let keys = Object.keys(window.localStorage);
+        return {
+            currentSize: 1,
+            keys: keys,
+            limitSize: MAX_SIZE
+        };
+    },
+    getStorageInfo (o) {
+        let rst = this.getStorageInfoSync();
+        callback('success', o, 'getStorageInfo', rst);
+        callback('complete', o, 'getStorageInfo', rst);
     },
     removeStorageSync (k) {
         window.localStorage.removeItem(k);
@@ -112,8 +127,35 @@ let wx = {
         window.$router.go(o.delta);
     },
 
+    /***** System ******/
+    getSystemInfoSync () {
+        return {
+            SDKVersion: "0.0.0",
+            language: "-",
+            model: browser(),
+            pixelRatio: 0,
+            platform: system(),
+            screenHeight: window.screen.height,
+            screenWidth: window.screen.width,
+            system: system(),
+            version: "0.0.0",
+            windowHeight: window.innerHeight,
+            windowWidth: window.innerWidth
+        }
+    },
+    getSystemInfo (o) {
+        let rst = this.getSystemInfoSync();
+        callback('success', o, 'getStorageInfo', rst);
+        callback('complete', o, 'getStorageInfo', rst);
+    },
+    canIUse () {
+        return true;
+    },
 
-
+    /****** Network ***********/
+    getNetworkType () {
+        return 'unkown';
+    },
 
     /****** NavigationBar *******/
     setNavigationBarTitle (o) {
@@ -144,9 +186,9 @@ let wx = {
     }
 };
 
-['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation'].forEach(k => {
+['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment'].forEach(k => {
     wx[k] = (o = {}) => {
-        console.error(`wx.${k} is not supported in brower`);
+        console.error(`wx.${k} is not supported in browser`);
         callback('fail', o, k, null);
         callback('complete', o, k, null);
     };
