@@ -149,7 +149,7 @@ export default {
                     if (flagStack.length && flagStack[0] === exp[i]) {
                         flagStack.pop();
                         if (flag === 'class') {
-                            flag = ":";
+                            flag = ':';
                             continue;
                         } else if (flag === 'expression') {
                             str += exp[i];
@@ -161,7 +161,7 @@ export default {
                             if (flag === 'start') {
                                 flag = 'class';
                                 continue;
-                            } else if (flag === "expression") {
+                            } else if (flag === 'expression') {
                                 str += exp[i];
                                 continue;
                             }
@@ -170,7 +170,7 @@ export default {
                 }
                 // {abc: num < 1} or {'abc': num <１}
                 if (exp[i] === ':' && (flag === ':' || flag === 'class') && flagStack.length === 0) {
-                    flag = "expression";
+                    flag = 'expression';
                     classNames.push(str);
                     str = '';
                     continue;
