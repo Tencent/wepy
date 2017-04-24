@@ -90,7 +90,7 @@ export default {
         // 如果存在引入的components，则将components编译至代码中。
         if (webConfig.components && webConfig.components.length) {
             webConfig.components.forEach(k => {
-                let componentFile = path.join(modulesPath, 'wepy-web', 'lib', 'components', k + '.js');
+                let componentFile = path.join(modulesPath, 'wepy-web', 'lib', 'components', k + '.vue');
                 components[k] = mmap.add(componentFile);
                 tasks.push(this.compile(componentFile));
             });
@@ -113,14 +113,14 @@ export default {
                         code += '\nexports.default.template=__wepy_require(' + v.source.template.id + ');\n'
                     }
                 } else if (v.type === 'template') {
-                    code += 'module.exports = "' + v.source.template.code.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
+                    code += 'module.exports = "' + v.source.template.code.replace(/\\/ig, '\\\\').replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
                 } else if (v.type === 'style') {
                     let styleCode = '';
                     v.source.style.forEach(s => {
                         styleCode += s.code + '\r\n';
                     });
                     styleList.push(v.source.style.id);
-                    code += 'module.exports = "' + styleCode.replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
+                    code += 'module.exports = "' + styleCode.replace(/\\/ig, '\\\\').replace(/\r/ig, '').replace(/\n/ig, '\\n').replace(/"/ig, '\\"') + '"';
                 }
                 code += '}';
                 if (i !== mapArr.length - 1) {
@@ -214,7 +214,7 @@ ${code}
             }
             let opath = path.parse(wpys);
 
-            if (opath.ext === wpyExt) {
+            if (opath.ext === wpyExt || opath.ext === '.vue') {
                 wpys = [compileWpy.resolveWpy(wpys)];
             } else {
                 let compileType = 'babel';
