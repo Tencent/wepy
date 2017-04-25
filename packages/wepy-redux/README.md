@@ -66,7 +66,20 @@ const store = createStore(rootReducer)
 setStore(store)
 ```
 
-2. 连接组件，就以上边的示例来说明
+2. 得到 store
+
+```js
+import { getStore } from 'wepy-redux'
+
+const store = getStore()
+// 可以直接使用 store 实例了
+// dispatch
+store.dispatch({type: 'xx'})
+// state
+const state = store.getState()
+```
+
+3. 连接组件，就以上边的示例来说明
 
 ```js
 // ...
