@@ -23,5 +23,5 @@ export default {
             o[k] = val ? val : defaultOptions[k].default;
         }
         return o;
-    }   
+    }
 }
