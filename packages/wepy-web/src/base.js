@@ -13,7 +13,6 @@ const addStyle = (stylelist) => {
     stylelist.forEach(id => {
         css += __wepy_require(id) + '\r\n';
     });
-
     let cssNode = document.createTextNode(css);
     styleElement.appendChild(cssNode);
     head.appendChild(styleElement);
