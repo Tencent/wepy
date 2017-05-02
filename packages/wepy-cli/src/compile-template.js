@@ -37,7 +37,7 @@ export default {
         });
         */
         let doc = new DOMImplementation().createDocument();
-        let node = new DOMParser().parseFromString(content);
+        let node = cWpy.createParser().parseFromString(content);
         let template = [].slice.call(node.childNodes || []).filter((n) => n.nodeName === 'template');
 
         [].slice.call(template[0].childNodes || []).forEach((n) => {
@@ -474,7 +474,7 @@ export default {
 
     compile (template) {
         let lang = template.type;
-        let content = template.code;
+        let content = util.attrReplace(template.code);
 
         let config = util.getConfig();
         let src = cache.getSrc();
@@ -490,7 +490,7 @@ export default {
 
 
         compiler(content, config.compilers[lang] || {}).then(content => {
-            let node = new DOMParser().parseFromString(content);
+            let node = cWpy.createParser().parseFromString(content);
             node = this.compileXML(node, template);
             let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 

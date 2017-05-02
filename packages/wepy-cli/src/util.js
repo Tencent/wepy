@@ -270,7 +270,8 @@ const utils = {
             // 用户可以通过临时加入 knownTags 的方法兼容
             knownTags.push.apply(knownTags, configTags);
         }
-        return content.replace(/<([\w-\_]*)\s[^>]*>/ig, (tag, tagName) => {
+        // Exp error when using this code: <input focus wx:if="{{test >   
+        return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
             const isKnownTag = knownTags.indexOf(tagName) >= 0;
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
