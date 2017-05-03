@@ -187,7 +187,7 @@ export default {
                 defaultExport = matchs[1];
 
                 if (wpy.type === 'page') {
-                    main.addPage(defaultExport.toLowerCase(), wpy);
+                    main.addPage(wpy.path, wpy);
                 } else if (wpy.type === 'app') {
                     if (matchs) {
                         wpy.script.code = wpy.script.code.replace(/exports\.default\s*=\s*(\w+);/i, '');

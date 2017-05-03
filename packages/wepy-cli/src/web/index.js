@@ -76,14 +76,16 @@ export default {
         this.app = appWpy;
         if (appWpy.config.pages && appWpy.config.pages.length) {
             appWpy.config.pages.forEach(v => {
-                wpypages.push(compileWpy.resolveWpy(path.parse(path.join(util.currentDir, src, v + ext))));
+                let wpypage = compileWpy.resolveWpy(path.parse(path.join(util.currentDir, src, v + ext)));
+                wpypage.path = v;
+                wpypages.push(wpypage);
             });
         } else {
             util.error('未检测到配置的页面文件。请检查' + util.getRelative(apppath));
             return;
         }
 
-        let tasks = [], components = {};
+        let tasks = [], components = {}, apis = {};
 
         tasks.push(this.compile([appWpy].concat(wpypages)));
 
@@ -93,6 +95,14 @@ export default {
                 let componentFile = path.join(modulesPath, 'wepy-web', 'lib', 'components', k + '.vue');
                 components[k] = mmap.add(componentFile);
                 tasks.push(this.compile(componentFile));
+            });
+        }
+        // 如果存在引入的apis，则将apis编译至代码中。
+        if (webConfig.apis && webConfig.apis.length) {
+            webConfig.apis.forEach(k => {
+                let apiFile = path.join(modulesPath, 'wepy-web', 'lib', 'apis', k + '.vue');
+                apis[k] = mmap.add(apiFile);
+                tasks.push(this.compile(apiFile));
             });
         }
 
@@ -172,6 +182,7 @@ ${code}
             config.routes = routes;
             config.style = styleList;
             config.components = components;
+            config.apis = apis;
 
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 

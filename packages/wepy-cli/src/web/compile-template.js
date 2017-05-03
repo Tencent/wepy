@@ -141,6 +141,10 @@ export default {
     replaceWXML (content, file) {
         let node = typeof(content) === 'string' ? this.getTemplate(content) : content;
 
+        let config = util.getConfig();
+        let webConfig = config.build ? config.build.web : {};
+        let components = webConfig.components || [];
+
         if (!node || !node.childNodes || node.childNodes.length === 0)
             return;
         else {
@@ -149,7 +153,9 @@ export default {
 
                 } else {
                     // replace tag name.
-                    if (TAGS_MAP[child.tagName]) { 
+                    if (components.indexOf(child.tagName) !== -1) {
+                        // no nothing 
+                    } else if (TAGS_MAP[child.tagName]) { 
                         child.tagName = TAGS_MAP[child.tagName];
                     }
 
@@ -252,7 +258,9 @@ export default {
             this.replaceWXML(node, wpy.template.src);
             // Will replace custom <tag /> to <tag></tag>
             // https://github.com/jindw/xmldom/blob/56eb39f82dd2052a683b1870fb1f4a105e184f66/dom.js#L113
-            wpy.template.code = node.toString(true);
+            
+            // replace xmlns:wx
+            wpy.template.code = node.toString(true).replace(/xmlns[^\s]*/ig, '');
             let templateId = mmap.add(wpy.template.src + '-template', {
                 type: 'template',
                 source: wpy

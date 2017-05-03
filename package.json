@@ -42,6 +42,7 @@
     "gulp-watch": "^4.3.11",
     "istanbul": "^0.4.5",
     "lerna": "2.0.0-beta.31",
+    "mkpath": "^1.0.0",
     "mocha": "^3.2.0",
     "serve-static": "^1.11.1",
     "through2": "^2.0.3"

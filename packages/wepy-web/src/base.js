@@ -150,6 +150,7 @@ export default {
         let app = new appClass;
 
         app.$components = [];
+        app.$apis = [];
 
         if (!this.$instance) {
             app.$init(this);
@@ -186,6 +187,17 @@ export default {
         for (k in config.components) {
             app.$components.push(k);
             Vue.component(k, __wepy_require(config.components[k]).default);
+        }
+        
+        // 注入API
+        for (k in config.apis) {
+            app.$apis.push(k);
+            let apiMod = __wepy_require(1);
+            Object.defineProperty(wx, k, {
+                get () {
+                    return apiMod.getter(Vue.extend(apiMod.default));
+                }
+            });
         }
         
         Vue.use(VueRouter);
