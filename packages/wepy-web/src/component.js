@@ -126,24 +126,12 @@ export default class {
     }
 
     setData (k, v) {
-        if (typeof(k) === 'string') {
-            if (v) {
-                let tmp = {};
-                tmp[k] = v;
-                k = tmp;
-            } else {
-                let tmp = {};
-                tmp[k] = this.data[`${k}`];
-                k = tmp;
-            }
-            return this.$wxpage.setData(k);
+        if (typeof k === 'string') {
+            this.$vm[k] = v;
         }
-        let t = null, reg = new RegExp('^' + this.$prefix.replace(/\$/g, '\\$'), 'ig');
-        for (t in k) {
-            let noPrefix = t.replace(reg, '');
-            this.$data[noPrefix] = util.$copy(k[t], true);
+        for (let t in k) {
+            this.$vm[t] = k[t];
         }
-        return this.$wxpage.setData(k);
     }
 
     getWxPage () {
