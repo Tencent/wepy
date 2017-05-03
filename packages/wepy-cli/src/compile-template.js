@@ -37,7 +37,7 @@ export default {
         });
         */
         let doc = new DOMImplementation().createDocument();
-        let node = new DOMParser().parseFromString(content);
+        let node = cWpy.createParser().parseFromString(content);
         let template = [].slice.call(node.childNodes || []).filter((n) => n.nodeName === 'template');
 
         [].slice.call(template[0].childNodes || []).forEach((n) => {
@@ -149,7 +149,7 @@ export default {
                     if (flagStack.length && flagStack[0] === exp[i]) {
                         flagStack.pop();
                         if (flag === 'class') {
-                            flag = ":";
+                            flag = ':';
                             continue;
                         } else if (flag === 'expression') {
                             str += exp[i];
@@ -161,7 +161,7 @@ export default {
                             if (flag === 'start') {
                                 flag = 'class';
                                 continue;
-                            } else if (flag === "expression") {
+                            } else if (flag === 'expression') {
                                 str += exp[i];
                                 continue;
                             }
@@ -170,7 +170,7 @@ export default {
                 }
                 // {abc: num < 1} or {'abc': num <１}
                 if (exp[i] === ':' && (flag === ':' || flag === 'class') && flagStack.length === 0) {
-                    flag = "expression";
+                    flag = 'expression';
                     classNames.push(str);
                     str = '';
                     continue;
@@ -295,7 +295,7 @@ export default {
             slots = {};
         else {
             [].slice.call(childNodes || []).forEach((child) => {
-                let name = (child.nodeName === '#text') ? '' : child.getAttribute('slot');
+                let name = (child.nodeName === '#text' || child.nodeName === '#comment') ? '' : child.getAttribute('slot');
 
                 if (!name) {
                     name = '$$default';
@@ -319,7 +319,7 @@ export default {
 
             let doc = new DOMImplementation().createDocument();
             replacements.forEach((n) => {
-                if (name !== '$$default' && n.nodeName !== '#text')
+                if (name !== '$$default' && n.nodeName !== '#text' && n.nodeName !== '#comment')
                     n.removeAttribute('slot');
                 doc.appendChild(n);
             });
@@ -474,7 +474,7 @@ export default {
 
     compile (template) {
         let lang = template.type;
-        let content = template.code;
+        let content = util.attrReplace(template.code);
 
         let config = util.getConfig();
         let src = cache.getSrc();
@@ -490,7 +490,7 @@ export default {
 
 
         compiler(content, config.compilers[lang] || {}).then(content => {
-            let node = new DOMParser().parseFromString(content);
+            let node = cWpy.createParser().parseFromString(content);
             node = this.compileXML(node, template);
             let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 
