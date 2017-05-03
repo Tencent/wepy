@@ -22,14 +22,21 @@ reLaunch    对应 wx.reLaunch 的功能  1.1.0
 navigateBack    对应 wx.navigateBack 的功能  1.1.0
 -->
 <template>
-    <a :href="url"></a>
+    <a href="javascript:;" class="wepy_navigator" :class="hover ? hoverClass : ''" @touchstart="touchstart" @touchend="touchend" @click="click"><slot></slot></a>
 </template>
 <script>
+import util from '../util';
 
 const OPEN_TYPES = ['navigate', 'redirect', 'switchTab', 'reLaunch', 'navigateBack'];
 
 export default {
-    name: 'icon',
+    name: 'navigator',
+
+    data () {
+        return {
+            hover: false
+        }
+    },
 
     props: {
         'url': {
@@ -59,9 +66,31 @@ export default {
             type: [Number, String],
             default: 600
         }
+    },
+
+    methods: {
+        click () {
+            let hash = util.$resolvePath(this.$route.path, this.url);
+            window.location.hash = '#!' + hash;
+        },
+        touchstart () {
+            this.hover = true;
+        },
+        touchend () {
+            this.hover = false;
+        }
     }
 }
 </script>
-
+<style>
+.navigator-hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    opacity: 0.1;
+}
+</style>
 <style lang="less" scoped>
+.wepy_navigator {
+    text-decoration: none;
+    display: block;
+}
 </style>
