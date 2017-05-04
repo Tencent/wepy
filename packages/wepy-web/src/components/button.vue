@@ -1,6 +1,6 @@
 <!--
 @author: gcaufy
-@description: 小程序基础组件button
+@description: 小程序表单组件button
 @link: https://mp.weixin.qq.com/debug/wxadoc/dev/component/button.html
 
 @properties:
@@ -112,14 +112,14 @@ export default {
             if (!this.stayInterval) {
                 this.stayInterval = setInterval(() => {
                     this.hover = false;
-                }, this.hoverStayTime);
+                }, this.hoverStartTime + this.hoverStayTime);
             }
         }
     }
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .wepy_button {
     position:relative;
     display:block;
