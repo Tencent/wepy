@@ -73,6 +73,12 @@ export default {
         [].slice.call(template[0].childNodes || []).forEach((n) => {
             doc.appendChild(n);
         });
+        // https://github.com/jindw/xmldom/blob/master/dom.js#L585
+        // https://github.com/jindw/xmldom/blob/master/dom.js#L919
+        // if childNode is only one Text, then will get an error in doc.toString
+        if (doc.documentElement === null && doc.nodeType === 9) { // DOCUMENT_NODE
+            doc.nodeType = 11; // change to DOCUMENT_FRAGMENT_NODE
+        }
         return doc;
     },
 
@@ -288,7 +294,6 @@ export default {
             this.replaceWXML(node, wpy.template.src);
             // Will replace custom <tag /> to <tag></tag>
             // https://github.com/jindw/xmldom/blob/56eb39f82dd2052a683b1870fb1f4a105e184f66/dom.js#L113
-            
             // replace xmlns:wx
             wpy.template.code = node.toString(true).replace(/xmlns[^\s]*/ig, '');
             let templateId = mmap.add(wpy.template.src + '-template', {
