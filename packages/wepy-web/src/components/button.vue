@@ -44,7 +44,7 @@ contact 打开客服会话  1.1.0
 const BUTTON_TYPES = ['default', 'primary', 'warn'];
 
 export default {
-    name: 'progress',
+    name: 'button',
 
     props: {
         'size': {
