@@ -229,7 +229,6 @@ export default {
         } else {
             [].slice.call(node.attributes || []).forEach((attr) => {
                 if (attr.name === 'v-bind:class.once') {
-                    debugger;
                     let classObject = this.parseClassExp(attr.value);
                     let classArray = (node.getAttribute('class') || '').split(' ').map(v => v.replace(/^\s/ig, '').replace(/\s$/ig, ''));
                     if (classArray.length === 1 && classArray[0] === '')
