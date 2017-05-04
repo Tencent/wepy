@@ -4,6 +4,7 @@
 * `F` 修复了属性值中使用`>`会导致属性编译出错的BUG。[ISSUE #118](https://github.com/wepyjs/wepy/issues/118)
 * `F` 修复了在`onLoad`中使用`this.$redirect`报错的BUG。
 * `F` 修复了外链样式时，import路径错乱的BUG。
+* `F` 修复了空`<template>`节点编译报错的BUG。
 
 ## 1.5.2 (2017-04-17)
 * `A` style标签添加了scoped属性的支持。[ISSUE #79](https://github.com/wepyjs/wepy/issues/79)
