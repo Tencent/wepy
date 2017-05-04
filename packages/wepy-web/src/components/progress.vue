@@ -77,7 +77,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .wepy_progress{
     display: -webkit-box;
     display: -webkit-flex;

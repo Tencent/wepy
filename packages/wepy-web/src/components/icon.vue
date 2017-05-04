@@ -47,7 +47,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @font-face {
     font-weight: normal;
     font-style: normal;
