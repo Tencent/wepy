@@ -556,6 +556,27 @@ project
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
 
+#### computed 计算属性
+
+* **类型**: `{ [key: string]: Function | { get: Function, set: Function } }`
+
+* **详细**：
+计算属性可以直接当作绑定数据，在每次脏检查周期中。在每次脏检查流程中，只要有脏数据，那么`computed` 属性就会重新计算。
+
+* **示例**：
+
+```
+data = {
+    a: 1
+};
+
+computed = {
+    aPlus () {
+        return this.a + 1;
+    }
+}
+```
+
 #### Props 传值
 
 **静态传值**
