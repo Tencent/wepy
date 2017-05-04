@@ -24,18 +24,6 @@ export default {
     getTemplate (content) {
         content = `<template>${content}</template>`;
         content = util.attrReplace(content);
-        /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
-            return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
-                if (type === '.once' || type === '.sync') {
-                }
-                else
-                    type = '.once';
-                return ` v-bind:${name}${type}=`;
-            }).replace(/\s+\@([\w-_]*)\s*=/ig, (attr, name) => { // replace @change => v-on:change
-                return `v-on:${name}`;
-            });
-        });
-        */
         let doc = new DOMImplementation().createDocument();
         let node = cWpy.createParser().parseFromString(content);
         let template = [].slice.call(node.childNodes || []).filter((n) => n.nodeName === 'template');
@@ -43,12 +31,6 @@ export default {
         [].slice.call(template[0].childNodes || []).forEach((n) => {
             doc.appendChild(n);
         });
-        // https://github.com/jindw/xmldom/blob/master/dom.js#L585
-        // https://github.com/jindw/xmldom/blob/master/dom.js#L919
-        // if childNode is only one Text, then will get an error in doc.toString
-        if (doc.documentElement === null && doc.nodeType === 9) { // DOCUMENT_NODE
-            doc.nodeType = 11; // change to DOCUMENT_FRAGMENT_NODE
-        }
         return doc;
     },
 
@@ -423,11 +405,7 @@ export default {
                 } else {
                     let wpy = cWpy.resolveWpy(src);
                     let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
-                    // 如果最顶层就是components
-                    if (node.documentElement === com)
-                        node = newnode;
-                    else
-                        node.replaceChild(newnode, com);
+                    node.replaceChild(newnode, com);
                 }
             });
         });
@@ -467,12 +445,7 @@ export default {
                 let wpy = cWpy.resolveWpy(src);
                 let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes);
                 
-                // 如果最顶层就是components
-                if (node.documentElement === com)
-                    node = newnode;
-                else
-                    node.replaceChild(newnode, com);
-                //node.replaceChild(this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes), com);
+                node.replaceChild(newnode, com);
             }
         });
         return node;
@@ -500,12 +473,19 @@ export default {
             node = this.compileXML(node, template);
             let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
 
-            // empty node tostring will cause an error.
-            // xmldom will auto generate something like xmlns:wx.
-            node = node.childNodes.length === 0 ? '' : 
-                    node.toString().replace(/\sxmlns\:wx\=\"\"/ig, '')
-                        .replace(/\sxmlns\:v\-bind\=\"\"/ig, '')
-
+            if (node.childNodes.length === 0) {
+                // empty node tostring will cause an error.
+                node = '';
+            } else {
+                // https://github.com/jindw/xmldom/blob/master/dom.js#L585
+                // https://github.com/jindw/xmldom/blob/master/dom.js#L919
+                // if childNode is only one Text, then will get an error in doc.toString
+                if (node.documentElement === null && node.nodeType === 9) {
+                    node.nodeType = 11;
+                }
+                // xmldom will auto generate something like xmlns:wx.
+                node = node.toString().replace(/xmlns[^\s]*/g, '');
+            }
 
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'wxml',
