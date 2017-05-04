@@ -100,7 +100,12 @@ export default {
         // 如果存在引入的apis，则将apis编译至代码中。
         if (webConfig.apis && webConfig.apis.length) {
             webConfig.apis.forEach(k => {
-                let apiFile = path.join(modulesPath, 'wepy-web', 'lib', 'apis', k + '.vue');
+                let apiFile = path.join(modulesPath, 'wepy-web', 'lib', 'apis', k);
+                if (util.isFile(apiFile + '.vue')) {
+                    apiFile = apiFile + '.vue';
+                } else {
+                    apiFile = apiFile + '.js';
+                }
                 apis[k] = mmap.add(apiFile);
                 tasks.push(this.compile(apiFile));
             });

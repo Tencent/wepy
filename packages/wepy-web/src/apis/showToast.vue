@@ -59,6 +59,7 @@ export function getter (constructor) {
             });
             this.instance.$appendTo(document.body);
         }
+        wx.$toast = this.instance;
         Object.assign(this.instance, config);
         this.instance.show = true;
         setTimeout(() => {

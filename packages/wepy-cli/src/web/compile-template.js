@@ -13,9 +13,32 @@ const currentPath = util.currentDir;
 const src = cache.getSrc();
 const dist = cache.getDist();
 const srcPath = path.join(currentPath, src);
+const libCompoents = path.join(currentPath, 'node_modules', 'wepy-web', 'lib');
 
 const WEAPP_TAGS = ['view', 'text', 'navigator', 'image'];
-const HTML_TAGS = ['div', 'span', 'a', 'img'];
+
+const makeMap = (arr) => {
+    let rst = {};
+    arr.split(',').forEach(v => rst[v] = 1);
+    return rst;
+};
+const HTML_TAGS = makeMap(
+    'html,body,base,head,link,meta,style,title,' +
+    'address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,' +
+    'div,dd,dl,dt,figcaption,figure,hr,img,li,main,ol,p,pre,ul,' +
+    'a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,' +
+    's,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,' +
+    'embed,object,param,source,canvas,script,noscript,del,ins,' +
+    'caption,col,colgroup,table,thead,tbody,td,th,tr,' +
+    'button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,' +
+    'output,progress,select,textarea,' +
+    'details,dialog,menu,menuitem,summary,' +
+    'content,element,shadow,template');
+
+const SVG_TAGS = makeMap(
+    'svg,animate,circle,clippath,cursor,defs,desc,ellipse,filter,font-face,' +
+    'foreignObject,g,glyph,image,line,marker,mask,missing-glyph,path,pattern,' +
+    'polygon,polyline,rect,switch,symbol,text,textpath,tspan,use,view');
 
 
 const TAGS_MAP = {
@@ -38,7 +61,9 @@ const ATTRS_MAP = {
 export default {
 
 
-
+    isReservedTag (tag) {
+        return HTML_TAGS[tag] || SVG_TAGS[tag];
+    },
     getTemplate (content) {
         content = `<template>${content}</template>`;
         let doc = new DOMImplementation().createDocument();
@@ -152,8 +177,13 @@ export default {
                 if (child.nodeName === '#text') {
 
                 } else {
+                    
                     // replace tag name.
                     if (components.indexOf(child.tagName) !== -1) {
+                        // 如果不是wepy-web/lib/components下的组件，那么给组件加个前缀，防止和HTML原生冲突
+                        if (path.relative(libCompoents, file)[0] === '.') {
+                            child.tagName = 'wepy-' + child.tagName;
+                        }
                         // no nothing 
                     } else if (TAGS_MAP[child.tagName]) { 
                         child.tagName = TAGS_MAP[child.tagName];

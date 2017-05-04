@@ -12,7 +12,7 @@ var chalk   = require("chalk");
 var gulpif = require('gulp-if');
 var mkdirp = require('mkpath');
 
-var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue'];
+var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue', './packages/wepy-web/src/apis/*.js'];
 var bins = "./packages/*/bin/**/*";
 var srcEx, libFragment;
 

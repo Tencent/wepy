@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import event from './event';
 
+import {camelize, hyphenate} from './helper/word';
+
 
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
@@ -131,6 +133,7 @@ const $createComponent = (com, template) => {
         concat(Object.getOwnPropertyNames(com.computed || {})).
         concat(Object.getOwnPropertyNames(com.data || {})).
         forEach(v => {
+            v = camelize(v);
             Object.defineProperty(com, v, { 
                 get: function () {
                     return com.$vm[v];
@@ -186,18 +189,26 @@ export default {
         // 注入组件
         for (k in config.components) {
             app.$components.push(k);
-            Vue.component(k, __wepy_require(config.components[k]).default);
+            Vue.component('wepy-' + k, __wepy_require(config.components[k]).default);
         }
         
         // 注入API
         for (k in config.apis) {
             app.$apis.push(k);
-            let apiMod = __wepy_require(1);
-            Object.defineProperty(wx, k, {
-                get () {
-                    return apiMod.getter(Vue.extend(apiMod.default));
-                }
-            });
+            let apiMod = __wepy_require(config.apis[k]);
+            if (apiMod.default) {
+                Object.defineProperty(wx, k, {
+                    get () {
+                        return apiMod.getter(Vue.extend(apiMod.default));
+                    }
+                });
+            } else {
+                Object.defineProperty(wx, k, {
+                    get () {
+                        return apiMod.getter();
+                    }
+                });
+            }
         }
         
         Vue.use(VueRouter);
