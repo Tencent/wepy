@@ -52,7 +52,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 <template lang="pug">
     view(class='container')
         view(class='userinfo' @tap='tap')
-            mycom(:prop.sync='myprop' @fn='myevent')
+            mycom(:prop.sync='myprop' @fn.user='myevent')
             text {{now}}
 </template>
 

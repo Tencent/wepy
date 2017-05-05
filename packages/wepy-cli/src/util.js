@@ -273,7 +273,6 @@ const utils = {
         // Exp error when using this code: <input focus wx:if="{{test >   
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
-            const isKnownTag = knownTags.indexOf(tagName) >= 0;
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                 if (type === '.once' || type === '.sync') {
                 }
@@ -281,9 +280,7 @@ const utils = {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                // 对于已知 tag 做原生事件名判断
-                const isNavtiveEvents = type !== '.user' && isKnownTag;
-                const prefix = isNavtiveEvents ? type === '.stop' ? 'catch' : 'bind' : 'v-on:';
+                const prefix = type !== '.user' ? (type === '.stop' ? 'catch' : 'bind') : 'v-on:';
                 return ` ${prefix}${name}=`;
             });
         });
