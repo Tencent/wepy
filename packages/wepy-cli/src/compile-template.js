@@ -484,7 +484,7 @@ export default {
                     node.nodeType = 11;
                 }
                 // xmldom will auto generate something like xmlns:wx.
-                node = node.toString().replace(/xmlns[^\s]*/g, '');
+                node = node.toString().replace(/xmlns[^\s>]*/g, '');
             }
 
             let plg = new loader.PluginHelper(config.plugins, {
