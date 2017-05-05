@@ -40,6 +40,24 @@ export default {
         }
         return str;
     },
+    injectScript (html, scripts) {
+
+        if (!scripts || !scripts.length)
+            return;
+
+        let head = html.getElementsByTagName('head')[0];
+        let body = html.getElementsByTagName('body')[0];
+        let doc = new DOMImplementation().createDocument();
+        scripts.forEach(v => {
+            let script = doc.createElement('script');
+            script.setAttribute('src', v.src);
+            if (v.pos === 'body') {
+                body.appendChild(script);
+            } else {
+                head.appendChild(script);
+            }
+        });
+    },
     buildHtml (webConfig, platform) {
         let config = util.getConfig();
 
@@ -63,11 +81,20 @@ export default {
             }});
 
             let node = domParser.parseFromString(template);
-            let script = new DOMImplementation().createDocument().createElement('script');
-            script.setAttribute('src', '//open.mobile.qq.com/sdk/qqapi.js?_bid=152');
-            node.getElementsByTagName('head')[0].appendChild(script);
 
             let target = this.replaceParams(webConfig.htmlOutput, {platform: platform});
+
+            this.injectScript(node, [/*{
+                pos: 'head',
+                src: '//i.gtimg.cn/channel/lib/components/adapt/adapt-3.0.js?_bid=2106&max_age=86400000'
+            }, */{
+                pos: 'head',
+                src: '//open.mobile.qq.com/sdk/qqapi.js?_bid=152'
+            }, {
+                pos: 'body',
+                src: this.replaceParams(path.relative(path.parse(target).dir, webConfig.jsOutput), {platform: platform})
+            }]);
+
 
             util.output('写入', target);
             util.writeFile(target, node.toString(true));
@@ -77,7 +104,7 @@ export default {
         let src = cache.getSrc();
         let ext = cache.getExt();
         let config = util.getConfig();
-        let appWpy, apppath;
+        let appWpy, apppath, platformId;
 
 
         let webConfig = config.build ? config.build.web : null;
@@ -117,6 +144,17 @@ export default {
         let tasks = [], components = {}, apis = {};
 
         tasks.push(this.compile([appWpy].concat(wpypages)));
+
+        // 注入平台wx hack 代码
+        if (platform !== 'browser') {
+            if (['wechat', 'qq'].indexOf(platform) > -1) {
+                let platformFile = path.join(modulesPath, 'wepy-web', 'lib', 'platform', platform + '.js');
+                platformId = mmap.add(platformFile);
+                tasks.push(this.compile(platformFile));
+            } else {
+                util.warning('platform参数目前只支持 wechat 和 qq');
+            }
+        }
 
         // 如果存在引入的components，则将components编译至代码中。
         if (webConfig.components && webConfig.components.length) {
@@ -202,6 +240,7 @@ code = `
    // __webpack_public_path__
    __webpack_require__.p = "/";
    // Load entry module and return exports
+   $$WEPY_APP_PLATFORM_PLACEHOLDER$$
    return __webpack_require__(${appWpy.script.id});
 })([
 ${code}
@@ -218,6 +257,11 @@ ${code}
             config.components = components;
             config.apis = apis;
 
+            if (platformId !== undefined) {
+                code = code.replace('$$WEPY_APP_PLATFORM_PLACEHOLDER$$', `__webpack_require__(${platformId})`);
+            } else {
+                code = code.replace('$$WEPY_APP_PLATFORM_PLACEHOLDER$$', '');    
+            }
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 
             webConfig.jsOutput = webConfig.jsOutput || path.join(dist, 'dist.js');

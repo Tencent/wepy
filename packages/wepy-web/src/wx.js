@@ -15,188 +15,191 @@ const callback = (type, o, name, data) => {
     }
 }
 
-let wx = {
-    login (o) {
-        let code;
-        code = resolveQuery(window.location.search).code;
-        if (!code) {
-            code = resolveQuery(window.location.hash).code;
-        }
-        if (!code) {
-            code = resolveQuery(window.location.hash.substr(window.location.hash.indexOf('?'))).code;
-        }
-        if (code) {
-            callback('success', o, 'login', code);
-            return;
-        }
-        if (o.appId) {
-            let url = window.location.protocol + '//' + window.location.host + window.location.pathname,
-                state = o.state || 'qqchongzhi',
-                type = type || 'snsapi_base';
 
-            window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + o.appId + 
-                '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
-        } else {
-            console.error('wx.login is only implemented in wechat browser');
-            callback('fail', o, 'login', '');
-            callback('complete', o, 'login', '');
-        }
-    },
-    /*** Storage ***/
-    getStorageSync (v) {
-        let rst = window.localStorage.getItem(v);
-        try {
-                rst = JSON.parse(rst);
-        } catch (e) {
-        }
-        return rst;
-    },
-    getStorage (o) {
-        let rst = wx.getStorageSync(o.key);
-        callback('success', o, 'getStorage', rst);
-        callback('complete', o, 'getStorage', rst);
-    },
-    setStorageSync (k, d) {
-        if (typeof d !== 'string') {
-            d = JSON.stringify(d);
-        }
-        window.localStorage.setItem(k, d);
-    },
-    setStorage (o) {
-        let rst;
-        try {
-            rst = this.setStorageSync(o.key, o.data);
-            callback('success', o, 'getStorage', rst);
-        } catch (e) {
-            callback('fail', o, 'getStorage', rst);
-        }
-        callback('complete', o, 'getStorage', rst);
-    },
-    getStorageInfoSync () {
-        let MAX_SIZE = 5 * 1024;
-        let keys = Object.keys(window.localStorage);
-        return {
-            currentSize: 1,
-            keys: keys,
-            limitSize: MAX_SIZE
-        };
-    },
-    getStorageInfo (o) {
-        let rst = this.getStorageInfoSync();
-        callback('success', o, 'getStorageInfo', rst);
-        callback('complete', o, 'getStorageInfo', rst);
-    },
-    removeStorageSync (k) {
-        window.localStorage.removeItem(k);
-    },
-    removeStorage (o) {
-        let rst;
-        try {
-            rst = this.removeStorage(o.key);
-            callback('success', o, 'getStorage', rst);
-        } catch (e) {
-            callback('fail', o, 'getStorage', rst);
-        }
-        callback('complete', o, 'getStorage', rst);
-    },
-    clearStorageSync () {
-        window.localStorage.clear();
-    },
-    clearStorage () {
-        let rst;
-        try {
-            rst = this.clearStorage();
-        } catch (e) {
-        }
-    },
+let wx = window.wx || {};
 
-    /***** Navigate ******/
-    navigateTo (o) {
-        window.$router.go(o.url);
-    },
-    redirectTo (o) {
-        window.$router.go(o.url);
-    },
-    switchTab (o) {
-        window.$router.go(o.url);
-    },
-    navigateBack (o) {
-        if (!o) {
-            o = {};
-        }
-        if (o.delta)
-            o.delta = -1;
-        window.$router.go(o.delta);
-    },
+wx.login = wx.login ? wx.login : function login (o) {
+    return;
+    let code;
+    code = resolveQuery(window.location.search).code;
+    if (!code) {
+        code = resolveQuery(window.location.hash).code;
+    }
+    if (!code) {
+        code = resolveQuery(window.location.hash.substr(window.location.hash.indexOf('?'))).code;
+    }
+    if (code) {
+        callback('success', o, 'login', code);
+        return;
+    }
+    if (o.appId) {
+        let url = window.location.protocol + '//' + window.location.host + window.location.pathname,
+            state = o.state || 'qqchongzhi',
+            type = type || 'snsapi_base';
 
-    /***** System ******/
-    getSystemInfoSync () {
-        return {
-            SDKVersion: "0.0.0",
-            language: "-",
-            model: browser(),
-            pixelRatio: 0,
-            platform: system(),
-            screenHeight: window.screen.height,
-            screenWidth: window.screen.width,
-            system: system(),
-            version: "0.0.0",
-            windowHeight: window.innerHeight,
-            windowWidth: window.innerWidth
-        }
-    },
-    getSystemInfo (o) {
-        let rst = this.getSystemInfoSync();
-        callback('success', o, 'getStorageInfo', rst);
-        callback('complete', o, 'getStorageInfo', rst);
-    },
-    canIUse () {
-        return true;
-    },
-
-    /****** Network ***********/
-    getNetworkType () {
-        return 'unkown';
-    },
-
-    /****** NavigationBar *******/
-    setNavigationBarTitle (o) {
-        document.title = o.title;
-        callback('success', o, 'setNavigationBarTitle', null);
-        callback('complete', o, 'setNavigationBarTitle', null);
-    },
-    hideKeyboard () {
-        // http://stackoverflow.com/questions/8335834/how-can-i-hide-the-android-keyboard-using-javascript
-        setTimeout(() => {
-            let field = document.createElement('input');
-            field.setAttribute('type', 'text');
-            field.setAttribute('style', 'position:absolute; top: 0px; opacity: 0; -webkit-user-modify: read-write-plaintext-only; left:0px;');
-            document.body.appendChild(field);
-
-            field.onfocus = () => {
-                setTimeout(() => {
-                    field.setAttribute('style', 'display:none;');
-                    setTimeout(() => {
-                        document.body.removeChild(field);
-                        document.body.focus();
-                    }, 14);
-
-                }, 200);
-            };
-            field.focus();
-        }, 50);
+        window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + o.appId + 
+            '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
+    } else {
+        console.error('wx.login is only implemented in wechat browser');
+        callback('fail', o, 'login', '');
+        callback('complete', o, 'login', '');
     }
 };
 
+/*** Storage ***/
+wx.getStorageSync = wx.getStorageSync ? wx.getStorageSync : function getStorageSync (v) {
+    let rst = window.localStorage.getItem(v);
+    try {
+            rst = JSON.parse(rst);
+    } catch (e) {
+    }
+    return rst;
+};
+wx.getStorage = wx.getStorage ? wx.getStorage : function getStorage (o) {
+    let rst = wx.getStorageSync(o.key);
+    callback('success', o, 'getStorage', rst);
+    callback('complete', o, 'getStorage', rst);
+};
+wx.setStorageSync = wx.setStorageSync ? wx.setStorageSync : function setStorageSync (k, d) {
+    if (typeof d !== 'string') {
+        d = JSON.stringify(d);
+    }
+    window.localStorage.setItem(k, d);
+};
+wx.setStorage = wx.setStorage ? wx.setStorage : function setStorage (o) {
+    let rst;
+    try {
+        rst = this.setStorageSync(o.key, o.data);
+        callback('success', o, 'getStorage', rst);
+    } catch (e) {
+        callback('fail', o, 'getStorage', rst);
+    }
+    callback('complete', o, 'getStorage', rst);
+};
+wx.getStorageInfoSync = wx.getStorageInfoSync ? wx.getStorageInfoSync : function getStorageInfoSync () {
+    let MAX_SIZE = 5 * 1024;
+    let keys = Object.keys(window.localStorage);
+    return {
+        currentSize: 1,
+        keys: keys,
+        limitSize: MAX_SIZE
+    };
+};
+wx.getStorageInfo = wx.getStorageInfo ? wx.getStorageInfo : function getStorageInfo (o) {
+    let rst = this.getStorageInfoSync();
+    callback('success', o, 'getStorageInfo', rst);
+    callback('complete', o, 'getStorageInfo', rst);
+};
+wx.removeStorageSync = wx.removeStorageSync ? wx.removeStorageSync : function removeStorageSync (k) {
+    window.localStorage.removeItem(k);
+};
+wx.removeStorage = wx.removeStorage ? wx.removeStorage : function removeStorage (o) {
+    let rst;
+    try {
+        rst = this.removeStorage(o.key);
+        callback('success', o, 'getStorage', rst);
+    } catch (e) {
+        callback('fail', o, 'getStorage', rst);
+    }
+    callback('complete', o, 'getStorage', rst);
+};
+wx.clearStorageSync = wx.clearStorageSync ? wx.clearStorageSync : function clearStorageSync () {
+    window.localStorage.clear();
+};
+wx.clearStorage = wx.clearStorage ? wx.clearStorage : function clearStorage () {
+    let rst;
+    try {
+        rst = this.clearStorage();
+    } catch (e) {
+    }
+};
+
+    /***** Navigate ******/
+wx.navigateTo = wx.navigateTo ? wx.navigateTo : function navigateTo (o) {
+    window.$router.go(o.url);
+};
+wx.redirectTo = wx.redirectTo ? wx.redirectTo : function redirectTo (o) {
+    window.$router.go(o.url);
+};
+wx.switchTab = wx.switchTab ? wx.switchTab : function switchTab (o) {
+    window.$router.go(o.url);
+};
+wx.navigateBack = wx.navigateBack ? wx.navigateBack : function navigateBack (o) {
+    if (!o) {
+        o = {};
+    }
+    if (o.delta)
+        o.delta = -1;
+    window.$router.go(o.delta);
+};
+
+    /***** System ******/
+wx.getSystemInfoSync = wx.getSystemInfoSync ? wx.getSystemInfoSync : function getSystemInfoSync () {
+    return {
+        SDKVersion: "0.0.0",
+        language: "-",
+        model: browser(),
+        pixelRatio: 0,
+        platform: system(),
+        screenHeight: window.screen.height,
+        screenWidth: window.screen.width,
+        system: system(),
+        version: "0.0.0",
+        windowHeight: window.innerHeight,
+        windowWidth: window.innerWidth
+    }
+};
+wx.getSystemInfo = wx.getSystemInfo ? wx.getSystemInfo : function getSystemInfo (o) {
+    let rst = this.getSystemInfoSync();
+    callback('success', o, 'getStorageInfo', rst);
+    callback('complete', o, 'getStorageInfo', rst);
+};
+wx.canIUse = wx.canIUse ? wx.canIUse : function canIUse () {
+    return true;
+};
+
+    /****** Network ***********/
+wx.getNetworkType = wx.getNetworkType ? wx.getNetworkType : function getNetworkType () {
+    return 'unkown';
+};
+
+    /****** NavigationBar *******/
+wx.setNavigationBarTitle = wx.setNavigationBarTitle ? wx.setNavigationBarTitle : function setNavigationBarTitle (o) {
+    document.title = o.title;
+    callback('success', o, 'setNavigationBarTitle', null);
+    callback('complete', o, 'setNavigationBarTitle', null);
+};
+wx.hideKeyboard = wx.hideKeyboard ? wx.hideKeyboard : function hideKeyboard () {
+    // http://stackoverflow.com/questions/8335834/how-can-i-hide-the-android-keyboard-using-javascript
+    setTimeout(() => {
+        let field = document.createElement('input');
+        field.setAttribute('type', 'text');
+        field.setAttribute('style', 'position:absolute; top: 0px; opacity: 0; -webkit-user-modify: read-write-plaintext-only; left:0px;');
+        document.body.appendChild(field);
+
+        field.onfocus = () => {
+            setTimeout(() => {
+                field.setAttribute('style', 'display:none;');
+                setTimeout(() => {
+                    document.body.removeChild(field);
+                    document.body.focus();
+                }, 14);
+
+            }, 200);
+        };
+        field.focus();
+    }, 50);
+};
+
 ['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment'].forEach(k => {
-    wx[k] = (o = {}) => {
+    wx[k] = wx[k] ? wx[k] : (o = {}) => {
         console.error(`wx.${k} is not supported in browser`);
         callback('fail', o, k, null);
         callback('complete', o, k, null);
     };
 });
 
-wx.request = (options) => {
+wx.request = wx.request ? wx.request : function request (options) {
     let handlers = {};
     ['success', 'fail', 'complete', 'beforeAll', 'beforeSuccess', 'afterSuccess', 'beforeCancel', 'cancel', 'afterCancel', 'beforeFail', 'afterFail', 'afterAll'].forEach(k => {
             handlers[k] = options[k];
@@ -272,10 +275,6 @@ wx.request = (options) => {
 };
 
 if (typeof window !== 'undefined') {
-    window.wx = wx;
-
-    
-
     window.getApp = () => {
         return Vue;
     };

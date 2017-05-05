@@ -35,7 +35,6 @@ export default {
 
         wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
 
-            //console.log(match, lib);
             if (lib === 'wepy') 
                 lib = 'wepy-web';
 
@@ -110,7 +109,6 @@ export default {
 
             let wepyRequireId = mmap.get(source);
             depences.push(source);
-            //this.compile(source);
             return `__wepy_require(${wepyRequireId})`;
 
             if (needCopy) {

@@ -3,7 +3,7 @@
 </template>
 <script>
 import event from '../event';
-import helper from '../helper';
+import { merge }from '../helper/util';
 
 let TABLE_OPTIONS = {
     'scroll-x': {
@@ -58,7 +58,7 @@ export default {
             evt.$transfor(e);
             this.$parent.$event = evt;
 
-            let options = helper.merge(elem, TABLE_OPTIONS);
+            let options = merge(elem, TABLE_OPTIONS);
 
             this.$emit('scroll');
 
