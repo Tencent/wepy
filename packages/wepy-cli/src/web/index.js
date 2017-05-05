@@ -7,6 +7,7 @@ import compileWpy from '../compile-wpy';
 import cScript from './compile-script';
 import cTemplate from './compile-template';
 import cStyle from './compile-style';
+import {DOMParser, DOMImplementation} from 'xmldom';
 
 
 import loader from '../loader';
@@ -31,7 +32,15 @@ export default {
     addPage (k, v) {
         pages[k] = v;
     },
-    buildHtml (webConfig) {
+    replaceParams (str, params) {
+        let k, reg;
+        for (k in params) {
+            reg = new RegExp('{{' + k +'}}', 'g');
+            str = str.replace(reg, params[k]);
+        }
+        return str;
+    },
+    buildHtml (webConfig, platform) {
         let config = util.getConfig();
 
         if (webConfig.htmlTemplate) {
@@ -40,11 +49,31 @@ export default {
                 util.error('找不到文件：' + webConfig.htmlTemplate);
                 return;
             }
-            util.output('写入', webConfig.htmlOutput);
-            util.writeFile(webConfig.htmlOutput, template);
+
+            let domParser = new DOMParser({errorHandler: {
+                warning (x) {
+                    if (x.indexOf(' unclosed xml attribute') > -1) {
+                        // ignore warnings
+                    } else
+                        util.warning(x);
+                },
+                error (x) {
+                    util.error(x);
+                }
+            }});
+
+            let node = domParser.parseFromString(template);
+            let script = new DOMImplementation().createDocument().createElement('script');
+            script.setAttribute('src', '//open.mobile.qq.com/sdk/qqapi.js?_bid=152');
+            node.getElementsByTagName('head')[0].appendChild(script);
+
+            let target = this.replaceParams(webConfig.htmlOutput, {platform: platform});
+
+            util.output('写入', target);
+            util.writeFile(target, node.toString(true));
         }
     },
-    toWeb (file) {
+    toWeb (file, platform) {
         let src = cache.getSrc();
         let ext = cache.getExt();
         let config = util.getConfig();
@@ -61,7 +90,7 @@ export default {
 
         util.log('编译 WEB');
 
-        this.buildHtml(webConfig);
+        this.buildHtml(webConfig, platform);
 
         util.log('入口: ' + file, '编译');
         if (typeof(file) === 'object') {
@@ -192,7 +221,7 @@ ${code}
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 
             webConfig.jsOutput = webConfig.jsOutput || path.join(dist, 'dist.js');
-            let target = path.join(util.currentDir, webConfig.jsOutput);
+            let target = this.replaceParams(path.join(util.currentDir, webConfig.jsOutput), {platform: platform});
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'dist',
                 code: code,

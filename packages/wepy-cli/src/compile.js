@@ -261,7 +261,7 @@ export default {
         if (config.output === 'web') {
             files.forEach((f, i) => {
                 if (i === 0) {
-                    toWeb.toWeb(f);
+                    toWeb.toWeb(f, config.platform || 'browser');
                 } else {
                     toWeb.copy(path.join(util.currentDir, src, f));
                 }
