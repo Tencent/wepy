@@ -1,4 +1,4 @@
-## 1.5.3 (2017-05-04)
+## 1.5.4 (2017-05-05)
 * `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
 * `F` 修复了在使用slot时，添加注释会导致编译报错的BUG。
 * `F` 修复了属性值中使用`>`会导致属性编译出错的BUG。[ISSUE #118](https://github.com/wepyjs/wepy/issues/118)
