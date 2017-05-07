@@ -118,3 +118,21 @@ wepy build --watch
 [Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
 [License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+
+
+### 谁在用 WePY
+
+手机充值+
+爱羽客羽毛球
+小小羽球
+七弦琴大数据
+七弦琴小助手
+培恩医学
+公务员朝夕刷题
+独角兽公司
+逛人备忘
+英语助手君
+农资优选
+花花百科
+斑马小店
+...
