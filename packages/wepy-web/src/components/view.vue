@@ -50,7 +50,7 @@ export default {
     methods: {
         touchstart () {
             clearInterval(this.stayInterval);
-            if (this.hover && !this.startInterval && this.hoverClass !== 'none') {
+            if (this.hover && !this.startInterval && this.hoverClass !== 'none' && this.hoverClass !== '') { // 实测'none'和''都不会触发hover
                 this.startInterval = setInterval(() => {
                     this.isHover = true;
                 }, this.hoverStartTime);
@@ -58,7 +58,7 @@ export default {
         },
         touchend () {
             clearInterval(this.startInterval);
-            if (this.hover && !this.stayInterval && this.hoverClass !== 'none') {
+            if (this.hover && !this.stayInterval && this.hoverClass !== 'none' && this.hoverClass !== '') {
                 this.stayInterval = this.setInterval(() => {
                     this.isHover = false;
                 }, this.hoverStartTime);
