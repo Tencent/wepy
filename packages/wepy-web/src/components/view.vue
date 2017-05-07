@@ -25,7 +25,7 @@ export default {
     data () {
         return {
             isHover: false
-        }
+        };
     },
 
     props: {
@@ -33,15 +33,15 @@ export default {
             type: Boolean,
             default: false
         },
-        'hoverClass': {
+        'hover-class': {
             type: String,
             default: 'none'
         },
-        'hoverStartTime': {
+        'hover-start-time': {
             type: Number,
             default: 50
         },
-        'hoverStayTime': {
+        'hover-stay-time': {
             type: Number,
             default: 400
         }
@@ -49,25 +49,21 @@ export default {
 
     methods: {
         touchstart () {
-            if (this.hover && this.hoverClass !== 'none') {
-                setTimeout(() => {
-                    this.isHover = true
-                }, this.hoverStartTime)
+            clearInterval(this.stayInterval);
+            if (this.hover && !this.startInterval && this.hoverClass !== 'none') {
+                this.startInterval = setInterval(() => {
+                    this.isHover = true;
+                }, this.hoverStartTime);
             }
         },
         touchend () {
-            if (this.hover && this.hoverClass !== 'none') {
-                setTimeout(() => {
-                    this.isHover = false
-                }, this.hoverStayTime + this.hoverStartTime)
+            clearInterval(this.startInterval);
+            if (this.hover && !this.stayInterval && this.hoverClass !== 'none') {
+                this.stayInterval = this.setInterval(() => {
+                    this.isHover = false;
+                }, this.hoverStartTime);
             }
         }
     }
 }
 </script>
-
-<style lang="less">
-.wepy_view{
-    display: block;
-}
-</style>
