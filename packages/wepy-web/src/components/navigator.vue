@@ -88,7 +88,7 @@ export default {
     opacity: 0.1;
 }
 </style>
-<style lang="less" scoped>
+<style lang="less">
 .wepy_navigator {
     text-decoration: none;
     display: block;

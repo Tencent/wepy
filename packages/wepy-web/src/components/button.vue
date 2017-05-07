@@ -1,6 +1,6 @@
 <!--
 @author: gcaufy
-@description: 小程序基础组件button
+@description: 小程序表单组件button
 @link: https://mp.weixin.qq.com/debug/wxadoc/dev/component/button.html
 
 @properties:
@@ -37,7 +37,7 @@ open-type 有效值：
 contact 打开客服会话  1.1.0
 -->
 <template>
-    <button class="wepy_button" type="{{type}}" :class="hover ? hoverClass : ''" @touchstart="touchstart" @touchend="touchend"><slot></slot></button>
+    <button class="wepy_button" type="{{type}}" :class="isHover ? hoverClass : ''" @touchstart="touchstart" @touchend="touchend"><slot></slot></button>
 </template>
 <script>
 
@@ -80,7 +80,7 @@ export default {
         },
         'hover-class': {
             type: String,
-            default: ''
+            default: 'button-hover'
         },
         'hover-start-time': {
             type: [Number, String],
@@ -94,24 +94,24 @@ export default {
 
     data () {
         return {
-            hover: false
-        }
+            isHover: false
+        };
     },
 
     methods: {
         touchstart () {
             clearInterval(this.stayInterval);
-            if (!this.startInterval) {
+            if (!this.startInterval && this.hoverClass !== 'none' && this.hoverClass !== '') { // 实测'none'和''都不会触发hover
                 this.startInterval = setInterval(() => {
-                    this.hover = true;
+                    this.isHover = true;
                 }, this.hoverStartTime);
             }
         },
         touchend () {
             clearInterval(this.startInterval);
-            if (!this.stayInterval) {
+            if (!this.stayInterval && this.hoverClass !== 'none' && this.hoverClass !== '') {
                 this.stayInterval = setInterval(() => {
-                    this.hover = false;
+                    this.isHover = false;
                 }, this.hoverStayTime);
             }
         }
@@ -119,7 +119,7 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .wepy_button {
     position:relative;
     display:block;
@@ -156,6 +156,10 @@ export default {
     transform-origin:0 0;
     box-sizing:border-box;
     border-radius:10px;
+}
+.wepy_button.button-hover{
+    color: rgba(0, 0, 0, 0.6);
+    background-color: #DEDEDE;
 }
 .wepy_button[type="default"] {
     color: #000;
