@@ -112,7 +112,7 @@ export default {
             if (!this.stayInterval) {
                 this.stayInterval = setInterval(() => {
                     this.hover = false;
-                }, this.hoverStartTime + this.hoverStayTime);
+                }, this.hoverStayTime);
             }
         }
     }
