@@ -27,8 +27,8 @@ export default {
     computed: {
         style () {
             return {
-                userSelect: this.selectable ? 'text' : 'none';
-            }
+                userSelect: this.selectable ? 'text' : 'none'
+            };
         }
     }
 }

@@ -26,16 +26,17 @@
         <div class="wepy-api-toast__mask" v-show="mask"></div>
         <div class="wepy-api-toast__bd">
             <div v-show="icon">
-                <div class="wepy-api-toast__bd__img"></div>
+                <div class="wepy-api-toast__bd__img" :class="icon === 'loading' ? 'wepy-api-toast__bd__img__loading' : 'wepy-api-toast__bd__img__success'"></div>
             </div>
             <div class="wepy-api-toast__bd__title">{{title}}</div>
         </div>
     </div>
 </template>
-
 <script>
+
 export default {
     name: 'Toast',
+
     data () {
         return {
             icon: '',
@@ -62,60 +63,77 @@ export function getter (constructor) {
         wx.$toast = this.instance;
         Object.assign(this.instance, config);
         this.instance.show = true;
+        if (typeof config.success === 'function') {
+            config.success();
+        }
+        if (typeof config.complete === 'function') {
+            config.complete();
+        }
         setTimeout(() => {
             this.instance.show = false;
-            if (typeof config.success === 'function') {
-                config.success();
-            }
-            if (typeof config.complete === 'function') {
-                config.complete();
-            }
         }, this.instance.duration);
     };
 }
 </script>
-<style lang="css">
-    .wepy-api-toast {
-    }
-    .wepy-api-toast__mask {
-        position: fixed;
-        z-index: 1000;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-    }
-    .wepy-api-toast__bd {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        z-index: 5000;
-        min-width: 8.4em;
-        min-height: 8.4em;
-        max-width: 70%;
-        top: 140px;
-        left: 50%;
-        padding: 15px;
-        box-sizing: border-box;
-        transform: translateX(-50%);
-        background: rgba(40, 40, 40, 0.75);
-        border-radius: 5px;
-        color: #FFFFFF;
-        word-wrap: break-word;
-        word-break: break-all;
-        align-items: center;
-        justify-content: space-around;
-    }
-    .wepy-api-toast__bd__img {
-        margin-top: 3px;
-    }
-    .wepy-api-toast__bd__img_desc {
-        width: 55px;
-        height: 55px;
-        vertical-align: middle;
-    }
-    .wepy-api-toast__bd__title {
-        margin: 3px 0;
-        font-size: 1.2em;
-    }
+
+<style lang="less">
+@import "../components/styles/mixin/icon-font.less";
+@import "../components/styles/mixin/loading.less";
+
+.wepy-api-toast__bd__img:extend(.wepy_icon) {}
+
+.wepy-api-toast__bd__img__success { color: #fff }
+
+.wepy-api-toast__bd__img__success:before:extend(.wepy_icon-success:before){
+    font-size: 50px;
+    margin-top: 18px;
+}
+
+.wepy-api-toast__bd__img__loading:extend(.wepy_loading) {
+    width: 50px;
+    height: 50px;
+    margin-top: 18px;
+}
+
+.wepy-api-toast__mask {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+
+.wepy-api-toast__bd {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    z-index: 5000;
+    min-width: 8.4em;
+    min-height: 8.4em;
+    max-width: 70%;
+    top: 140px;
+    left: 50%;
+    padding: 15px;
+    box-sizing: border-box;
+    transform: translateX(-50%);
+    background: rgba(40, 40, 40, 0.75);
+    border-radius: 5px;
+    color: #FFFFFF;
+    word-wrap: break-word;
+    word-break: break-all;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.wepy-api-toast__bd__img_desc {
+    width: 55px;
+    height: 55px;
+    vertical-align: middle;
+}
+
+.wepy-api-toast__bd__title {
+    margin: 3px 0;
+    font-size: 1.2em;
+}
 </style>

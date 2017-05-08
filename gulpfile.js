@@ -12,7 +12,7 @@ var chalk   = require("chalk");
 var gulpif = require('gulp-if');
 var mkdirp = require('mkpath');
 
-var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue', './packages/wepy-web/src/apis/*.js'];
+var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue', './packages/wepy-web/src/apis/*.js', './packages/wepy-web/src/components/styles/*/*.less'];
 var bins = "./packages/*/bin/**/*";
 var srcEx, libFragment;
 
@@ -48,12 +48,12 @@ gulp.task("build", ['lec'], function () {
         file.path = file.path.replace(srcEx, libFragment);
         callback(null, file);
     }))
-    .pipe(gulpif((file) => path.parse(file.path).ext !== '.vue', through.obj(function (file, enc, callback) {
+    .pipe(gulpif((file) => !/\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
         gutil.log("Compiling", "'" + chalk.cyan(file.path) + "'...");
         callback(null, file);
     })))
     // If it's vue, then copy only, else babel it.
-    .pipe(gulpif((file) => path.parse(file.path).ext === '.vue', through.obj(function (file, enc, callback) {
+    .pipe(gulpif((file) => /\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
         gutil.log("Copy Vue Component", "'" + chalk.cyan(file._path) + "'...");
         mkdirp.sync(path.parse(file.path).dir);
         fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));
@@ -74,12 +74,12 @@ gulp.task("build-watch", function () {
             callback(null, file);
         }))
         .pipe(newer(dest))
-        .pipe(gulpif((file) => path.parse(file.path).ext !== '.vue', through.obj(function (file, enc, callback) {
+        .pipe(gulpif((file) => !/\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
             gutil.log("Compiling", "'" + chalk.cyan(file._path) + "'...");
             callback(null, file);
         })))
         // If it's vue, then copy only, else babel it.
-        .pipe(gulpif((file) => path.parse(file.path).ext === '.vue', through.obj(function (file, enc, callback) {
+        .pipe(gulpif((file) => /\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
             gutil.log("Copy Vue Component", "'" + chalk.cyan(file._path) + "'...");
             mkdirp.sync(path.parse(file.path).dir);
             fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));
