@@ -108,18 +108,6 @@ wepy build --watch
 2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
-
-### Links
-
-[Documentation](https://wepyjs.github.io/wepy/)
-
-[Changelog](https://wepyjs.github.io/wepy/#/CHANGELOG)
-
-[Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
-
-[License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
-
-
 ### 哪些小程序是用 WePY 开发的
  
 手机充值+、
@@ -136,3 +124,15 @@ wepy build --watch
 花花百科、
 斑马小店、
 ...
+
+
+### Links
+
+[Documentation](https://wepyjs.github.io/wepy/)
+
+[Changelog](https://wepyjs.github.io/wepy/#/CHANGELOG)
+
+[Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
+
+[License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+
