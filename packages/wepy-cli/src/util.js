@@ -345,7 +345,9 @@ const utils = {
         let relative;
         src = src || cache.getSrc();
         dist = dist || cache.getDist();
-        ext = (ext ? ('.' + ext) : opath.ext);
+        if (typeof(opath) === 'string')
+            opath = path.parse(opath);
+        ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
         if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
             relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);
