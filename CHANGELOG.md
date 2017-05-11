@@ -1,3 +1,7 @@
+## 1.5.5 (waiting)
+* `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
+* `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
+
 ## 1.5.4 (2017-05-05)
 * `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
 * `F` 修复了在使用slot时，添加注释会导致编译报错的BUG。
