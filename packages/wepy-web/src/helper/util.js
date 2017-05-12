@@ -27,7 +27,7 @@ export const wxCallback = (type, name, options, data) => {
     if (typeof options[type] === 'function') {
         setTimeout(() => {
             if (name === 'login') {
-                options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data});
+                options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data.code, data: data});
             } else {
                 options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), data: data});
             }

@@ -23,6 +23,8 @@ wx.login = (options) => {
     wxSuccess('login', options, cookies);
 }
 
+wx.__platform = 'qq';
+
 if (typeof window !== 'undefined') {
     window.wx = wx;
 }

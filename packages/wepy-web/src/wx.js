@@ -7,7 +7,7 @@ const callback = (type, o, name, data) => {
     if (typeof o[type] === 'function') {
         setTimeout(() => {
             if (name === 'login') {
-                o[type].call(wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data});
+                o[type].call(wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data.code, data: data});
             } else {
                 o[type].call(wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), data: data});
             }

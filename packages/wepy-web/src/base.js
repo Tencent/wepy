@@ -152,6 +152,7 @@ export default {
 
         let app = new appClass;
 
+        this.platform = wx.__platform;
         app.$components = [];
         app.$apis = [];
 
