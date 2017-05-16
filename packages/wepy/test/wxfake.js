@@ -20,7 +20,7 @@ module.exports = {
             pauseVoice: function () {},
             getUserInfo: function (p) {
                 p.success({
-                    name: 'gcaufy'
+                    name: 'fakeID'
                 });
                 p.complete({
                     complete: 'complete'

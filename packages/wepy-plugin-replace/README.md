@@ -37,7 +37,7 @@ module.exports.plugins = {
         filter: /anotherfile\.js$/,
         config: {
             find: 'hello world',
-            replace: 'hello gcaufy'
+            replace: 'hello wepy'
         }
     }]
 };
@@ -57,7 +57,7 @@ module.exports.plugins = {
             filter: /anotherfile\.js$/,
             config: {
                 find: 'hello world',
-                replace: 'hello gcaufy'
+                replace: 'hello wepy'
             }
         }
     }
