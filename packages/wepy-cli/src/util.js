@@ -274,7 +274,6 @@ const utils = {
         // Exp error when using this code: <input focus wx:if="{{test >   
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
-            const isKnownTag = knownTags.indexOf(tagName) >= 0;
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
                 if (type === '.once' || type === '.sync') {
                 }
@@ -282,9 +281,7 @@ const utils = {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                // 对于已知 tag 做原生事件名判断
-                const isNavtiveEvents = type !== '.user' && isKnownTag;
-                const prefix = isNavtiveEvents ? type === '.stop' ? 'catch' : 'bind' : 'v-on:';
+                const prefix = type !== '.user' ? (type === '.stop' ? 'catch' : 'bind') : 'v-on:';
                 return ` ${prefix}${name}=`;
             });
         });
@@ -349,7 +346,9 @@ const utils = {
         let relative;
         src = src || cache.getSrc();
         dist = dist || cache.getDist();
-        ext = (ext ? ('.' + ext) : opath.ext);
+        if (typeof(opath) === 'string')
+            opath = path.parse(opath);
+        ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
         if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
             relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);

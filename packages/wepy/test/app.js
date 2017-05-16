@@ -26,7 +26,7 @@ describe('app.js', () => {
     it('api call', () => {
         wepy.getUserInfo({
             success: function (res) {
-                assert.strictEqual(res.name, 'gcaufy', 'wepy.getUserInfo success');
+                assert.strictEqual(res.name, 'fakeID', 'wepy.getUserInfo success');
             }
         });
 
@@ -56,7 +56,7 @@ describe('app.js', () => {
         assert.strictEqual(wepy.getUserInfo() instanceof Promise, true, 'it\'s a Promise');
 
         wepy.getUserInfo().then(function (res) {
-            assert.strictEqual(res.name, 'gcaufy', 'wepy.getUserInfo promisify success');
+            assert.strictEqual(res.name, 'fakeID', 'wepy.getUserInfo promisify success');
         });
 
         wepy.login().then(function (res) {

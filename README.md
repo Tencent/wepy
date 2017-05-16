@@ -52,7 +52,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 <template lang="pug">
     view(class='container')
         view(class='userinfo' @tap='tap')
-            mycom(:prop.sync='myprop' @fn='myevent')
+            mycom(:prop.sync='myprop' @fn.user='myevent')
             text {{now}}
 </template>
 
@@ -108,6 +108,23 @@ wepy build --watch
 2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
+### 哪些小程序是用 WePY 开发的
+ 
+手机充值+、
+爱羽客羽毛球、
+小小羽球、
+七弦琴大数据、
+七弦琴小助手、
+培恩医学、
+公务员朝夕刷题、
+独角兽公司、
+逛人备忘、
+英语助手君、
+农资优选、
+花花百科、
+斑马小店、
+...
+
 
 ### Links
 
@@ -118,3 +135,4 @@ wepy build --watch
 [Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
 [License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+

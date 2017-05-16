@@ -44,7 +44,8 @@ export default {
                     target = path.join(npmPath, path.relative(modulesPath, source));
                     needCopy = true;
                 } else {
-                    target = source.replace(path.sep + 'src' + path.sep, path.sep + 'dist' + path.sep);   // e:/dist/util
+                    // e:/dist/util
+                    target = util.getDistPath(source);
                     needCopy = false;
                 }
             } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');

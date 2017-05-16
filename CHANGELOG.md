@@ -1,9 +1,15 @@
-## 1.5.3 (waiting)
+## 1.5.5 (waiting)
+* `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
+* `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
+
+## 1.5.4 (2017-05-05)
 * `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
-* `A` 修复了在使用slot时，添加注释会导致编译报错的BUG。
+* `F` 修复了在使用slot时，添加注释会导致编译报错的BUG。
 * `F` 修复了属性值中使用`>`会导致属性编译出错的BUG。[ISSUE #118](https://github.com/wepyjs/wepy/issues/118)
 * `F` 修复了在`onLoad`中使用`this.$redirect`报错的BUG。
 * `F` 修复了外链样式时，import路径错乱的BUG。
+* `F` 修复了空`<template>`节点编译报错的BUG。
+* `F` 修复了`<template>`中只有两个`component`时，只会显示一个的BUG。[ISSUE #123](https://github.com/wepyjs/wepy/issues/123)
 
 ## 1.5.2 (2017-04-17)
 * `A` style标签添加了scoped属性的支持。[ISSUE #79](https://github.com/wepyjs/wepy/issues/79)

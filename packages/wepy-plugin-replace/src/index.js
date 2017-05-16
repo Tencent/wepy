@@ -19,7 +19,7 @@ export default class {
 
         if (setting instanceof Array) {
             settings = settings.concat(setting);
-        } else if (setting instanceof Object) {
+        } else if (setting instanceof Object && !setting.filter) {
             for (let key in setting) {
                 let value = setting[key];
                 if(value.filter) {
