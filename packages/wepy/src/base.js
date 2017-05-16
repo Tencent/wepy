@@ -110,7 +110,7 @@ export default {
                 config[name] = app.constructor.prototype[name];
         });
 
-        config.$app = app;
+        // config.$app = app;
         app.$wxapp = getApp();
         return config;
     },
@@ -121,7 +121,8 @@ export default {
         if (pagePath)
             this.$instance.$pages[pagePath] = page;
         page.initMixins();
-        config.$page = page;
+        // This will be a circum Object
+        // config.$page = page;
 
         config.onLoad = function (...args) {
 
