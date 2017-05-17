@@ -9,6 +9,11 @@ export default class {
             }
         };
 
+        if (Array.isArray(c)) {
+            this.setting = c.map(s => Object.assign({}, def, s));
+            return;
+        }
+
         this.setting = Object.assign({}, def, c);
     }
     apply (op) {

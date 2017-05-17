@@ -4,7 +4,7 @@ import util from './util';
 
 export default class extends component {
 
-    isComponent = false;
+    $isComponent = false;
 
 
     $preloadData = {};
