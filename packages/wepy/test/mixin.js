@@ -47,8 +47,8 @@ describe('mixin.js', () => {
 
 
     it('mixin function', () => {
-        let appConfig = wepy.$createApp(App);
-        let pageConfig = wepy.$createPage(Index);
+        let appConfig = wepy.$createApp(App, true);
+        let pageConfig = wepy.$createPage(Index, true);
 
         let page = pageConfig.$page;
         let app = appConfig.$app;

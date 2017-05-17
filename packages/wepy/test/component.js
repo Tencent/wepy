@@ -20,8 +20,8 @@ describe('component.js', () => {
 
     wxfake.resetGlobal();
 
-    let appConfig = wepy.$createApp(App);
-    let pageConfig = wepy.$createPage(Index);
+    let appConfig = wepy.$createApp(App, true);
+    let pageConfig = wepy.$createPage(Index, true);
     pageConfig.onLoad.call(wxfake.getWxPage());
 
 
@@ -171,8 +171,8 @@ describe('component.js', () => {
     });
 
     it('$invoke', () => {
-        let appConfig = wepy.$createApp(App);
-        let pageConfig = wepy.$createPage(Index);
+        let appConfig = wepy.$createApp(App, true);
+        let pageConfig = wepy.$createPage(Index, true);
 
         let page = pageConfig.$page;
         let app = appConfig.$app;

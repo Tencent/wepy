@@ -11,7 +11,7 @@ wxfake.resetGlobal();
 describe('app.js', () => {
 
 
-    let appConfig = wepy.$createApp(App);
+    let appConfig = wepy.$createApp(App, true);
     let app = appConfig.$app;
 
 

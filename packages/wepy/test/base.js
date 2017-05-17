@@ -16,13 +16,13 @@ describe('base.js', () => {
     it('create app', () => {
         wxfake.resetGlobal();
 
-        let config = wepy.$createApp(App);
+        let config = wepy.$createApp(App, true);
 
         assert.strictEqual(typeof config.custom, 'function', 'return a app object');
     });
 
     it('create page', () => {
-        let page = wepy.$createPage(Index);
+        let page = wepy.$createPage(Index, true);
 
         page.onLoad.call(wxfake.getWxPage());
 
