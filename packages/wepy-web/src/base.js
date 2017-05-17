@@ -110,8 +110,13 @@ const $createComponent = (com, template) => {
 
         if (!com.$isComponent) {
             wx._currentPage = com;
-            wx._currentPage.__route__ = this.$vm.$route.path;
+            wx._currentPage.__route__ = this.$route.path;
             wx._currentPage.__wxWebviewId__ = 0;
+
+            let share = com.onShareAppMessage();
+            if (wx.__initShare && share) {
+                wx.__initShare(share);
+            }
         }
 
         if (typeof com.onLoad === 'function') {

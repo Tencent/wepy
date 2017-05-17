@@ -84,10 +84,10 @@ export default {
 
             let target = this.replaceParams(webConfig.htmlOutput, {platform: platform});
 
-            this.injectScript(node, [/*{
+            this.injectScript(node, [{
                 pos: 'head',
                 src: '//i.gtimg.cn/channel/lib/components/adapt/adapt-3.0.js?_bid=2106&max_age=86400000'
-            }, */{
+            }, {
                 pos: 'head',
                 src: '//open.mobile.qq.com/sdk/qqapi.js?_bid=152'
             }, {
