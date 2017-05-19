@@ -13,7 +13,7 @@ export const merge = (elem, defaultOptions) =>{
                 val = !!val;
                 break;
             case String:
-                val = val == null ? '' : (typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val));
+                val = !val ? '' : (typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val));
                 break;
             case Number:
                 let n = parseFloat(val);

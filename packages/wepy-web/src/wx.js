@@ -112,15 +112,15 @@ wx.navigateBack = wx.navigateBack ? wx.navigateBack : function navigateBack (o) 
     /***** System ******/
 wx.getSystemInfoSync = wx.getSystemInfoSync ? wx.getSystemInfoSync : function getSystemInfoSync () {
     return {
-        SDKVersion: "0.0.0",
-        language: "-",
+        SDKVersion: '0.0.0',
+        language: '-',
         model: browser(),
         pixelRatio: 0,
         platform: system(),
         screenHeight: window.screen.height,
         screenWidth: window.screen.width,
         system: system(),
-        version: "0.0.0",
+        version: '0.0.0',
         windowHeight: window.innerHeight,
         windowWidth: window.innerWidth
     }

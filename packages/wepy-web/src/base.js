@@ -8,8 +8,8 @@ import {camelize, hyphenate} from './helper/word';
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
 const addStyle = (stylelist) => {
-    let styleElement = document.createElement("style");
-    let head = document.head || document.getElementsByTagName("head")[0];
+    let styleElement = document.createElement('style');
+    let head = document.head || document.getElementsByTagName('head')[0];
 
     let css = '';
     stylelist.forEach(id => {
@@ -19,7 +19,7 @@ const addStyle = (stylelist) => {
     let cssNode = document.createTextNode(css);
     styleElement.appendChild(cssNode);
     head.appendChild(styleElement);
-    styleElement.type = "text/css";
+    styleElement.type = 'text/css';
     return styleElement;
 };
 
