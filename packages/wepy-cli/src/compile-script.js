@@ -7,12 +7,9 @@ import loader from './loader';
 
 
 const currentPath = util.currentDir;
-const src = cache.getSrc();
-const dist = cache.getDist();
 const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
-const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
-let appPath;
+let appPath, npmPath, src, dist;
 
 export default {
 
@@ -153,6 +150,10 @@ export default {
 
     compile (lang, code, type, opath) {
         let config = util.getConfig();
+
+        src = cache.getSrc();
+        dist = cache.getDist();
+        npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
         if (!code) {
             code = util.readFile(path.join(opath.dir, opath.base));

@@ -1,6 +1,8 @@
 ## 1.5.5 (waiting)
 * `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
 * `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
+* `F` 修复了`should not change the protected attribute __wxWebviewId__`的warning。[ISSUE 143](https://github.com/wepyjs/wepy/issues/143)
+* `F` 修复了`output`参数不生效的问题。[ISSUE 145](https://github.com/wepyjs/wepy/issues/145)
 
 ## 1.5.4 (2017-05-05)
 * `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
