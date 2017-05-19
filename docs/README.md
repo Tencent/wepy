@@ -60,6 +60,16 @@ wepy build --watch
 1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
 2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
+#### Atom下代码高亮
+1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
+2. 打开`Atom -> Config`菜单。在`core`键下添加：
+```
+customFileTypes:
+   "text.html.vue": [
+      "wpy"
+   ]
+```
+
 ### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
    以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
@@ -555,6 +565,27 @@ project
 </p>
 
 Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+
+#### computed 计算属性
+
+* **类型**: `{ [key: string]: Function }`
+
+* **详细**：
+计算属性可以直接当作绑定数据，在每次脏检查周期中。在每次脏检查流程中，只要有脏数据，那么`computed` 属性就会重新计算。
+
+* **示例**：
+
+```
+data = {
+    a: 1
+};
+
+computed = {
+    aPlus () {
+        return this.a + 1;
+    }
+}
+```
 
 #### Props 传值
 

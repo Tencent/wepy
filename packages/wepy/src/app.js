@@ -119,6 +119,9 @@ export default class {
                             if (key === 'request') {
                                 obj = (typeof(obj) === 'string') ? {url: obj} : obj;
                             }
+                            if (typeof obj === 'string') {
+                                return wx[key](obj);
+                            }
                             if (self.$addons.promisify) {
                                 return new Promise((resolve, reject) => {
                                     let bak = {};

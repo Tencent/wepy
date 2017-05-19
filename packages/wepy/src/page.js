@@ -4,7 +4,7 @@ import util from './util';
 
 export default class extends component {
 
-    isComponent = false;
+    $isComponent = false;
 
 
     $preloadData = {};
@@ -50,6 +50,10 @@ export default class extends component {
             url = {url: s};
         } else {
             params = util.$getParams(url.url);
+        }
+        // __route__ will be undefined if it called from onLoad
+        if (!this.$parent.__route__) {
+            this.$parent.__route__ = getCurrentPages()[0].__route__;
         }
         let realPath = util.$resolvePath(this.$parent.__route__, url.url.split('?')[0]);
         let goTo = this.$parent.$pages[realPath];

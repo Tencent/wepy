@@ -21,7 +21,7 @@ export class App extends wepy.app {
 
 ```
 this.$pages = {
-    './pages/index': Index:Page
+    './pages/index': IndexPage
 }
 ```
 

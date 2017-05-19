@@ -7,12 +7,9 @@ import loader from './loader';
 
 
 const currentPath = util.currentDir;
-const src = cache.getSrc();
-const dist = cache.getDist();
 const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
-const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
-let appPath;
+let appPath, npmPath, src, dist;
 
 export default {
 
@@ -44,7 +41,8 @@ export default {
                     target = path.join(npmPath, path.relative(modulesPath, source));
                     needCopy = true;
                 } else {
-                    target = source.replace(path.sep + 'src' + path.sep, path.sep + 'dist' + path.sep);   // e:/dist/util
+                    // e:/dist/util
+                    target = util.getDistPath(source);
                     needCopy = false;
                 }
             } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
@@ -152,6 +150,10 @@ export default {
 
     compile (lang, code, type, opath) {
         let config = util.getConfig();
+
+        src = cache.getSrc();
+        dist = cache.getDist();
+        npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
         if (!code) {
             code = util.readFile(path.join(opath.dir, opath.base));

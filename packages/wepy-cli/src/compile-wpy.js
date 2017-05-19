@@ -22,6 +22,9 @@ export default {
                     // ignore warnings
                 } else
                     util.warning(x);
+            },
+            error (x) {
+                util.error(x);
             }
         }});
     },

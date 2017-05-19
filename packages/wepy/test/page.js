@@ -10,12 +10,11 @@ var Page2 = require('./fake/page2');
 var App = require('./fake/app');
 
 
-let appConfig = wepy.$createApp(App);
+let appConfig = wepy.$createApp(App, true);
 wepy.$instance = appConfig.$app;
 
-let pageConfig = wepy.$createPage(Index, 'pages/page1');
-let page2Config = wepy.$createPage(Page2, 'pages/page2');
-
+let pageConfig = wepy.$createPage(Index, 'pages/page1', true);
+let page2Config = wepy.$createPage(Page2, 'pages/page2', true);
 let page = pageConfig.$page;
 let app = appConfig.$app;
 
@@ -67,13 +66,13 @@ describe('page.js', () => {
 
         assert.strictEqual(page instanceof Index, true, 'create a page instance');
 
-        assert.strictEqual(page.isComponent, false, 'page is not a component');
+        assert.strictEqual(page.$isComponent, false, 'page is not a component');
 
     });
 
 
     it('props', () => {
-        let pageConfig = wepy.$createPage(Index);
+        let pageConfig = wepy.$createPage(Index, true);
         let page = pageConfig.$page;
 
         pageConfig.onLoad.call(wxfake.getWxPage());
