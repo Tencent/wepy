@@ -11,8 +11,7 @@ import cScript from './compile-script';
 
 import loader from './loader';
 
-
-
+import toWeb from './web/index';
 
 let watchReady = false;
 let preventDup = {};
@@ -91,8 +90,6 @@ export default {
         let src = config.source || wepyrc.src || 'src';
         let dist = config.output || wepyrc.output || 'dist';
 
-
-
         chokidar.watch(`.${path.sep}${src}`, {
             depth: 99
         }).on('all', (evt, filepath) => {
@@ -122,7 +119,9 @@ export default {
             }
         }
         return true;
-
+    },
+    checkDependence (dep) {
+        return util.isDir(util.currentDir, 'node_modules', dep);
     },
     checkPlugin (plugins = {}) {
         return loader.loadPlugin(plugins);
@@ -178,6 +177,24 @@ export default {
         let dist = config.output || wepyrc.output;
         let ext = config.wpyExt || wepyrc.wpyExt;
 
+        if (config.output === 'web') {
+            wepyrc.web = wepyrc.web || {};
+            dist = wepyrc.web.dist || dist || 'web';
+            src = wepyrc.web.src || src || 'src';
+
+            if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-web'))) {
+                util.log('正在尝试安装缺失资源 wepy-web，请稍等。', '信息');
+                util.exec(`npm install wepy-web --save`).then(d => {
+                    util.log(`已完成安装 wepy-web，重新启动编译。`, '完成');
+                    this.build(config);
+                }).catch(e => {
+                    util.log(`安装插件失败：wepy-web，请尝试运行命令 "npm install wepy-web --save" 进行安装。`, '错误');
+                    console.log(e);
+                });
+                return;
+            }
+        }
+
         if (src === undefined)
             src = 'src';
         if (dist === undefined)
@@ -192,7 +209,8 @@ export default {
         if (ext.indexOf('.') === -1)
             ext = '.' + ext;
 
-        let file = config.file;
+        // WEB 模式下，不能指定文件编译
+        let file = (config.output !== 'web') ? config.file : '';
 
         let current = process.cwd();
         let files = file ? [file] : util.getFiles(src);
@@ -240,18 +258,26 @@ export default {
             files = ig.filter(files);
         }
 
-        files.forEach((f) => {
-            let opath = path.parse(path.join(current, src, f));
-            if (file) {
-                this.compile(opath);
-            } else { // 不指定文件编译时，跳过引用文件编译
-                let refs = this.findReference(f);
-                if (!refs.length)
+        if (config.output === 'web') {
+            files.forEach((f, i) => {
+                if (i === 0) {
+                    toWeb.toWeb(f);
+                } else {
+                    toWeb.copy(path.join(util.currentDir, src, f));
+                }
+            })
+        } else {
+            files.forEach((f) => {
+                let opath = path.parse(path.join(current, src, f));
+                if (file) {
                     this.compile(opath);
-            }
-        });
-
-
+                } else { // 不指定文件编译时，跳过引用文件编译
+                    let refs = this.findReference(f);
+                    if (!refs.length)
+                        this.compile(opath);
+                }
+            });
+        }
 
         if (config.watch) {
             this.watch(config);

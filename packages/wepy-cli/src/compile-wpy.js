@@ -12,6 +12,7 @@ import cCss from './compile-css';*/
 import cStyle from './compile-style';
 import cTemplate from './compile-template';
 import cScript from './compile-script';
+import toWeb from './web/index';
 import loader from './loader';
 
 export default {
@@ -162,7 +163,6 @@ export default {
 
                 if (!rstTypeObj.src)
                     rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
-
             }
         });
         //util.mergeWpy(rst);

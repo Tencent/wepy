@@ -257,6 +257,7 @@ commander.option('-V', '显示版本号', () => {
 commander.option('-s, --source <source>', '源码目录');
 commander.option('-t, --target <target>', '生成代码目录');
 commander.option('-f, --file <file>', '待编译wpy文件');
+commander.option('-o, --output <type>', '编译类型：web，weapp。默认为weapp');
 commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
 commander.option('--empty', '使用new生成项目时，生成空项目内容');
 commander.option('--no-lint', '使用new生成项目时，禁用eslint');

@@ -204,7 +204,7 @@ export default {
 
             let target;
             if (type !== 'npm') {
-                target = util.getDistPath(opath, 'js', src, dist);
+                target = util.getDistPath(opath, 'js');
             } else {
                 code = this.npmHack(opath.base, code);
                 target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
@@ -216,7 +216,6 @@ export default {
                 var Base64 = require('js-base64').Base64;
                 code += `\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Base64.encode(JSON.stringify(sourceMap))}`;
             }
-
 
             let plg = new loader.PluginHelper(config.plugins, {
                 type: type,

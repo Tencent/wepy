@@ -20,6 +20,7 @@ colors.setTheme({
     WARN: 'yellow',
     DEBUG: 'blue',
     ERROR: 'red',*/
+    'info': 'grey',
     '变更': 'bgYellow',
     '删除': 'bgMagenta',
     '执行': 'blue',
