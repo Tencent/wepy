@@ -109,7 +109,8 @@ wepy build --watch
 3. 项目根目录运行`wepy build --watch`，开启实时编译。
 
 ### 哪些小程序是用 WePY 开发的
- 
+
+阅邻二手书、
 [深大的树洞](https://github.com/jas0ncn/szushudong)、
 手机充值+、
 爱羽客羽毛球、
