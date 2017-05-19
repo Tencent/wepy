@@ -76,7 +76,6 @@ wx.__initShare = (share) => {
     }
 };
 
-
 wx.__hideShare = () => {
 
 };

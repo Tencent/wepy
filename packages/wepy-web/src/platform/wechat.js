@@ -1,6 +1,32 @@
 import { wxSuccess, wxFail } from '../helper/util';
+import { resolveQuery } from './helper/query';
 
 let wx = window.wx || {};
+
+
+let wxbak = wx;
+let k;
+let callList = [];
+
+for (k in wx) {
+    if (k !== 'config' && k !== 'ready') {
+        wx[k] = function () {
+            if (wx.__ready) {
+                wxbak[k].apply(wx, arguments);
+            } else {
+                callList.push([k, arguments]);
+            }
+        }
+    }
+}
+
+wx.ready(function () {
+    while (callList.length) {
+        let item = callList.shift();
+        wxbak[item[0]].apply(wx, item[1]);
+    }
+    wx.__ready = true;
+});
 
 /**
  * wx.login(OBJECT)
@@ -16,9 +42,28 @@ let wx = window.wx || {};
  * code    String  用户允许登录后，回调内容会带上 code（有效期五分钟），开发者需要将 code 发送到开发者服务器后台，使用code 换取 session_key api，将 code 换成 openid 和 session_key
  */
 wx.login = (options) => {
-    let cookies = cookie.all();
-    cookies.code = cookies.skey;
-    wxSuccess('login', options, cookies);
+    let code;
+    code = resolveQuery(window.location.search).code;
+    if (!code) {
+        code = resolveQuery(window.location.hash).code;
+    }
+    if (!code) {
+        code = resolveQuery(window.location.hash.substr(window.location.hash.indexOf('?'))).code;
+    }
+    if (code) {
+        wxSuccess('login', options, code);
+        return;
+    }
+    if (options.appId) {
+        let url = window.location.protocol + '//' + window.location.host + window.location.pathname,
+            state = options.state || 'qqchongzhi',
+            type = type || 'snsapi_base';
+
+        window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + options.appId + 
+            '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
+    } else {
+        wxFail('login', options, '');
+    }
 };
 
 /**
@@ -36,20 +81,7 @@ wx.login = (options) => {
  * complete    Function    否   接口调用结束的回调函数（调用成功、失败都会执行）
  */
 wx.requestPayment = (params) => {
-    if (mqq && mqq.tenpay && mqq.tenpay.pay) {
-        mqq.tenpay.pay({
-            tokenId: params.token,
-            appInfo: params.appinfo,
-            pubAcc: params.pubAcc,
-            pubAccHint: params.pubAccHint
-        }, function(result) {
-            if (+result,resultCode === 0) {
-                wxSuccess('requestPayment', params, result);
-            } else {
-                wxFail('requestPayment', params, result);
-            }
-        });
-    }
+    wx.chooseWXPay(params);
 };
 
 /**
@@ -61,18 +93,39 @@ wx.requestPayment = (params) => {
  * 此事件需要 return 一个 Object，用于自定义转发内容
  */
 wx.__initShare = (share) => {
-    if (mqq && mqq.ui && mqq.ui.setOnShareHandler) {
-        mqq.ui.setOnShareHandler(function(type){
-            mqq.ui.shareMessage({
-                title: share.title,
-                desc: share.desc,
-                share_type: type,
-                share_url: share.url,
-                image_url: share.img,
-                back: true
-            });
-        }, cb);
-    }
+    wx.onMenuShareTimeline({
+        title: share.title, // 分享标题
+        link: share.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl: share.img // 分享图标
+    });
+    wx.onMenuShareAppMessage({
+        title: share.title, // 分享标题
+        desc: share.desc, // 分享描述
+        link: share.url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+        imgUrl: share.img // 分享图标
+    });
+
+    wx.onMenuShareQQ({
+        title: share.title, // 分享标题
+        desc: share.desc, // 分享描述
+        link: share.url, // 分享链接
+        imgUrl: share.img // 分享图标
+    });
+    wx.onMenuShareWeibo({
+        title: share.title, // 分享标题
+        desc: share.desc, // 分享描述
+        link: share.url, // 分享链接
+        imgUrl: share.img // 分享图标
+    });
+    wx.onMenuShareQZone({
+        title: share.title, // 分享标题
+        desc: share.desc, // 分享描述
+        link: share.url, // 分享链接
+        imgUrl: share.img // 分享图标
+    });
+};
+wx.__hideShare = () => {
+
 };
 wx.__platform = 'wechat';
 

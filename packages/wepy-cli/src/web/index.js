@@ -50,7 +50,12 @@ export default {
         let doc = new DOMImplementation().createDocument();
         scripts.forEach(v => {
             let script = doc.createElement('script');
-            script.setAttribute('src', v.src);
+            if (v.src) {
+                script.setAttribute('src', v.src);    
+            } else if (v.js) {
+                script.appendChild(doc.createTextNode(v.js));
+            }
+            
             if (v.pos === 'body') {
                 body.appendChild(script);
             } else {
@@ -84,16 +89,29 @@ export default {
 
             let target = this.replaceParams(webConfig.htmlOutput, {platform: platform});
 
-            this.injectScript(node, [{
-                pos: 'head',
-                src: '//i.gtimg.cn/channel/lib/components/adapt/adapt-3.0.js?_bid=2106&max_age=86400000'
-            }, {
-                pos: 'head',
-                src: '//open.mobile.qq.com/sdk/qqapi.js?_bid=152'
-            }, {
+            let scripts = [];
+
+            if (platform === 'qq') {
+                scripts.push({
+                    pos: 'head',
+                    src: '//i.gtimg.cn/channel/lib/components/adapt/adapt-3.0.js?_bid=2106&max_age=86400000'
+                });
+                scripts.push({
+                    pos: 'head',
+                    src: '//open.mobile.qq.com/sdk/qqapi.js?_bid=152'
+                });
+            } else if (platform === 'wechat') {
+                scripts.push({
+                    pos: 'head',
+                    src: '//res.wx.qq.com/open/js/jweixin-1.2.0.js'
+                });
+            }
+
+            scripts.push({
                 pos: 'body',
                 src: this.replaceParams(path.relative(path.parse(target).dir, webConfig.jsOutput), {platform: platform})
-            }]);
+            });
+            this.injectScript(node, scripts);
 
 
             util.output('写入', target);

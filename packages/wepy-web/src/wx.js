@@ -19,31 +19,7 @@ const callback = (type, o, name, data) => {
 let wx = window.wx || {};
 
 wx.login = wx.login ? wx.login : function login (o) {
-    return;
-    let code;
-    code = resolveQuery(window.location.search).code;
-    if (!code) {
-        code = resolveQuery(window.location.hash).code;
-    }
-    if (!code) {
-        code = resolveQuery(window.location.hash.substr(window.location.hash.indexOf('?'))).code;
-    }
-    if (code) {
-        callback('success', o, 'login', code);
-        return;
-    }
-    if (o.appId) {
-        let url = window.location.protocol + '//' + window.location.host + window.location.pathname,
-            state = o.state || 'qqchongzhi',
-            type = type || 'snsapi_base';
-
-        window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + o.appId + 
-            '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
-    } else {
-        console.error('wx.login is only implemented in wechat browser');
-        callback('fail', o, 'login', '');
-        callback('complete', o, 'login', '');
-    }
+    console.error('wx.login is only implemented in browser');
 };
 
 /*** Storage ***/
