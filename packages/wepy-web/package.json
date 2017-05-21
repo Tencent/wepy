@@ -1,10 +1,9 @@
 {
   "name": "wepy-web",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "",
   "main": "lib/wepy.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:wepyjs/wepy.git"
