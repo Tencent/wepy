@@ -17,7 +17,6 @@ export default {
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
-        const filepath = path.join(opath.dir, opath.base);
 
         if (typeof styles === 'string') {
             // .compile('less', opath) 这种形式
