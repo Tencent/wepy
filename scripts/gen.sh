@@ -67,5 +67,18 @@ wepy build
 cd ../reduxdemo
 wepy build
 
+
+cd ..
+# Test build demos
+
+git clone git@github.com:wepyjs/wepy-wechat-demo.git
+
+cd wepy-wechat-demo
+
+npm install
+
+wepy build
+
+
 # Cleanup
 cleanup
