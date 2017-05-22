@@ -1,4 +1,4 @@
-## 1.5.5 (waiting)
+## 1.5.5 (2017-05-22)
 * `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
 * `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
 * `F` 修复了`should not change the protected attribute __wxWebviewId__`的warning。[ISSUE 143](https://github.com/wepyjs/wepy/issues/143)

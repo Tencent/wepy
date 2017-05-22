@@ -1,3 +1,9 @@
+## 1.5.5 (2017-05-22)
+* `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
+* `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
+* `F` 修复了`should not change the protected attribute __wxWebviewId__`的warning。[ISSUE 143](https://github.com/wepyjs/wepy/issues/143)
+* `F` 修复了`output`参数不生效的问题。[ISSUE 145](https://github.com/wepyjs/wepy/issues/145)
+
 ## 1.5.4 (2017-05-05)
 * `A` 添加`:class`标签支持，如`:class="{className: mycondition > 1}"`。[ISSUE #99](https://github.com/wepyjs/wepy/issues/99)
 * `F` 修复了在使用slot时，添加注释会导致编译报错的BUG。
@@ -12,6 +18,7 @@
 * `F` 修改了项目外层有`src`目录会导致编译文件目录错乱的BUG。[ISSUE #91](https://github.com/wepyjs/wepy/issues/91)
 * `A` 添加了redux支持，使用`wepy new demo --redux`生成带有redux示例的DEMO。[PR #93](https://github.com/wepyjs/wepy/pull/93)
 * `F` 修复了手动删除dist目录时，不会自动生成`npm`文件的问题。
+
 
 
 ## 1.5.1 (2017-03-27) 
