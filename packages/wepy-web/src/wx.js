@@ -263,4 +263,6 @@ if (typeof window !== 'undefined') {
     };
 }
 
+window.wx = wx;
+
 export default wx;

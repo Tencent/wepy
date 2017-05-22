@@ -114,10 +114,10 @@ const $createComponent = (com, template) => {
             wx._currentPage.__wxWebviewId__ = 0;
 
             let share = typeof com.onShareAppMessage === 'funciton' ? com.onShareAppMessage() : null;
-            if (wx.__initShare && share) {
-                wx.__initShare(share);
+            if (share) {
+                wx.__initShare && wx.__initShare(share);
             } else {
-                wx.__hideShare();
+                wx.__hideShare && wx.__hideShare();
             }
         }
 
