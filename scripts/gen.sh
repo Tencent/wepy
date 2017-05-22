@@ -71,7 +71,7 @@ wepy build
 cd ..
 # Test build demos
 
-git clone git@github.com:wepyjs/wepy-wechat-demo.git
+git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
 cd wepy-wechat-demo
 
