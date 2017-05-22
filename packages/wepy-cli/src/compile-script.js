@@ -29,7 +29,7 @@ export default {
         let wpyExt = params.wpyExt;
 
 
-        return code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
+        return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
 
             let resolved = lib;
 
@@ -45,7 +45,10 @@ export default {
                     target = util.getDistPath(source);
                     needCopy = false;
                 }
-            } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
+            } else if (lib.indexOf('/') === -1 || // require('asset');
+                lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
+                (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
+            ) {  
                 let pkg = this.getPkgConfig(lib);
                 if (!pkg) {
                     throw Error('找不到模块: ' + lib);
