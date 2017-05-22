@@ -27,7 +27,7 @@ export default class {
         } else if (setting instanceof Object && !setting.filter) {
             for (let key in setting) {
                 let value = setting[key];
-                if(value.filter) {
+                if (value.filter) {
                     settings.push(value);
                 }
             }
@@ -36,14 +36,32 @@ export default class {
         }
 
         settings.forEach((setting) => {
-          if (setting.filter.test(op.file)) {
-              op.output && op.output({
-                  action: '变更',
-                  file: op.file
-              });
+            if (setting.filter.test(op.file)) {
+                op.output && op.output({
+                    action: '变更',
+                    file: op.file
+                });
 
-              op.code = op.code.replace(setting.config.find, setting.config.replace);
-          }
+                let config = setting.config;
+                let configs = [];
+
+                if (config instanceof Array) {
+                    configs = configs.concat(config);
+                } else if (config instanceof Object && !config.find) {
+                    for (let key in config) {
+                        let value = config[key];
+                        if (value.find) {
+                            configs.push(value);
+                        }
+                    }
+                } else if (config instanceof Object && config.find) {
+                    configs.push(config);
+                }
+
+                configs.forEach((config) => {
+                    op.code = op.code.replace(config.find, config.replace);
+                })
+            }
         })
 
         op.next();
