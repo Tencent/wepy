@@ -85,7 +85,10 @@ export default {
                 }
             }});
 
-            let node = domParser.parseFromString(template);
+            // https://github.com/jindw/xmldom/blob/master/dom-parser.js#L13
+            // https://github.com/jindw/xmldom/blob/master/sax.js#L157
+            // without '/hmtl' it will throw unclosed xml attribute.
+            let node = domParser.parseFromString(template, '/html');
 
             let target = this.replaceParams(webConfig.htmlOutput, {platform: platform});
 
