@@ -8,6 +8,8 @@ const callback = (type, o, name, data) => {
         setTimeout(() => {
             if (name === 'login') {
                 o[type].call(wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data.code, data: data});
+            } else if (name === 'getSystemInfo') {
+                o[type].call(wx, data);
             } else {
                 o[type].call(wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), data: data});
             }
@@ -127,8 +129,8 @@ wx.getSystemInfoSync = wx.getSystemInfoSync ? wx.getSystemInfoSync : function ge
 };
 wx.getSystemInfo = wx.getSystemInfo ? wx.getSystemInfo : function getSystemInfo (o) {
     let rst = this.getSystemInfoSync();
-    callback('success', o, 'getStorageInfo', rst);
-    callback('complete', o, 'getStorageInfo', rst);
+    callback('success', o, 'getSystemInfo', rst);
+    callback('complete', o, 'getSystemInfo', rst);
 };
 wx.canIUse = wx.canIUse ? wx.canIUse : function canIUse () {
     return true;
@@ -167,12 +169,14 @@ wx.hideKeyboard = wx.hideKeyboard ? wx.hideKeyboard : function hideKeyboard () {
     }, 50);
 };
 
-['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment'].forEach(k => {
-    wx[k] = wx[k] ? wx[k] : (o = {}) => {
-        console.error(`wx.${k} is not supported in browser`);
-        callback('fail', o, k, null);
-        callback('complete', o, k, null);
-    };
+['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment', 'chooseImage', 'showToast'].forEach(k => {
+    if (!wx[k]) {
+        wx[k] = (o = {}) => {
+            console.error(`wx.${k} is not supported in browser`);
+            callback('fail', o, k, null);
+            callback('complete', o, k, null);
+        };
+    }
 });
 
 wx.request = wx.request ? wx.request : function request (options) {
