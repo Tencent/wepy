@@ -1,10 +1,12 @@
-// copy https://github.com/vuejs/vue-loader/blob/master/lib/style-compiler/plugins/scope-id.js and fix by wepy
-
 import postcss from 'postcss';
 
-let plugin = postcss.plugin('rpx-convert', function () {
+let rpxConvert = postcss.plugin('rpx-convert', function () {
   return function (root) {
     root.walkDecls(function(decl, i) {
+      // replace page to body
+      if (decl.parent.selector === 'page') {
+        decl.parent.selector = 'body';
+      }
       if (decl.value.indexOf('px') === -1) {
         return;
       }
@@ -21,7 +23,6 @@ let plugin = postcss.plugin('rpx-convert', function () {
   };
 });
 
-
-export default function rpxConvert (content, cb) {
-  return postcss(plugin()).process(content).css;
+export default function handler (content, cb) {
+  return postcss(rpxConvert()).process(content).css;
 }
