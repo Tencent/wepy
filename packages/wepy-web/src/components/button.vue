@@ -37,7 +37,7 @@ open-type 有效值：
 contact 打开客服会话  1.1.0
 -->
 <template>
-    <button class="wepy_button" type="{{type}}" :class="isHover ? hoverClass : ''" @touchstart="touchstart" @touchend="touchend"><slot></slot></button>
+    <button class="wepy_button" :size="size" type="{{type}}" :disabled="disabled" :plain="plain" :class="isHover ? hoverClass : ''" @touchstart="touchstart" @touchend="touchend"><slot></slot></button>
 </template>
 <script>
 
@@ -59,15 +59,25 @@ export default {
             }
         },
         'plain': {
-            type: Boolean,
-            default: false
+            type: [ Boolean, String ],
+            default: false,
+            coerce (val) {
+                if (typeof val === 'string' && (val === '0' || val === 'false'))
+                    return false;
+                return !!val;
+            }
         },
         'disabled': {
-            type: Boolean,
-            default: false
+            type: [ Boolean, String ],
+            default: false,
+            coerce (val) {
+                if (typeof val === 'string' && (val === '0' || val === 'false'))
+                    return false;
+                return !!val;
+            }
         },
         'loading': {
-            type: Boolean,
+            type: [ Boolean, String ],
             default: ''
         },
         'form-type': {
@@ -173,5 +183,60 @@ export default {
     color: #FFF;
     background-color: #E64340;
 }
-
+.wepy_button[disabled] {
+    color:rgba(255, 255, 255, 0.6);
+}
+.wepy_button[disabled][type="primary"] {
+    background-color:#9ED99D;
+}
+.wepy_button[disabled][type="default"] {
+    color:rgba(0, 0, 0, 0.3);
+    background-color:#F7F7F7;
+}
+.wepy_button[disabled][type="warn"] {
+    background-color:#EC8B89;
+}
+.wepy_button[plain] {
+    color:#353535;
+    border:1px solid #353535;
+    background-color:transparent;
+}
+.wepy_button[plain][disabled] {
+    color:rgba(0, 0, 0, 0.2);
+    border-color:rgba(0, 0, 0, 0.2);
+}
+.wepy_button[type="default"][plain] {
+    color:#353535;
+    border:1px solid #353535;
+    background-color:transparent;
+}
+.wepy_button[type="default"][plain][disabled] {
+    color:rgba(0, 0, 0, 0.2);
+    border-color:rgba(0, 0, 0, 0.2);
+}
+.wepy_button[type="primary"][plain] {
+    color:#1aad19;
+    border:1px solid #1aad19;
+    background-color:transparent;
+}
+.wepy_button[type="primary"][plain][disabled] {
+    color:rgba(0, 0, 0, 0.2);
+    border-color:rgba(0, 0, 0, 0.2);
+}
+.wepy_button[type="warn"][plain] {
+    color:#e64340;
+    border:1px solid #e64340;
+    background-color:transparent;
+}
+.wepy_button[type="warn"][plain][disabled] {
+    color:rgba(0, 0, 0, 0.2);
+    border-color:rgba(0, 0, 0, 0.2);
+}
+.wepy_button[size="mini"] {
+    display:inline-block;
+    line-height:2.3;
+    font-size:13px;
+    padding:0 1.34em;
+    width:auto;
+}
 </style>
