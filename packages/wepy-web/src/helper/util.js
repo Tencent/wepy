@@ -1,9 +1,36 @@
+
+
+export const numberValidator = (min, max) =>{
+    return (v) => {
+        let valid = true, num = Number(v);
+        if (isNaN(num)) {
+            valid = false;
+        }
+        if (min !== undefined) {
+            valid = valid && num >= min;
+        }
+        if (max !== undefined) {
+            valid = valid && num <= max;
+        }
+        return valid;
+    };
+};
+
+export const stringToBoolean = () =>{
+    return (v) => {
+        if (typeof v === 'string' && (v === '0' || v === 'false'))
+            return false;
+        return !!v;
+    };
+};
+
     /**
      * Merge options from element
      * @param  {Element} elem           Dom element
      * @param  {Object} defaultOptions weapp component options
      * @return {Object}                Merged options
      */
+    
 export const merge = (elem, defaultOptions) =>{
     let o = {};
     for (let k in defaultOptions) {

@@ -70,6 +70,11 @@ const $createComponent = (com, template) => {
         let fn = com.methods[method];
         vueObject.methods[method] = function (...arg) {
             let e = arg[arg.length - 1];
+
+            // Component event params are from $arguments
+            if (!e) {
+                e = this.$arguments[0];
+            }
             let evt = new event('system', com, e.type);
             evt.$transfor(e);
             if (evt.type === 'input') {
