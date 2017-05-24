@@ -87,11 +87,11 @@ export default {
             default: 'button-hover'
         },
         'hover-start-time': {
-            type: [Number, String],
+            type: [ Number, String ],
             default: 20
         },
         'hover-stay-time': {
-            type: [Number, String],
+            type: [ Number, String ],
             default: 70
         }
     },
