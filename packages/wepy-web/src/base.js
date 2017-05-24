@@ -245,6 +245,11 @@ export default {
         });
         router.start({}, '#app');
 
+        router.beforeEach((trans) => {
+            window.scrollTo(0, 0);
+            trans.next();
+        });
+
         window.$router = router;
     },
     $createPage (pageClass, pagePath) {
