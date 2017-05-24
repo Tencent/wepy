@@ -27,15 +27,16 @@
 </template>
 <script>
 
+const DEFAULT_PROPERTIES = {
+    mask: false,
+    title: '',
+};
+
 export default {
     name: 'Loading',
 
     data () {
-        return {
-            show: true,
-            mask: false,
-            title: '',
-        };
+        return Object.assign({show: false}, DEFAULT_PROPERTIES);
     }
 }
 
@@ -51,14 +52,11 @@ export function getter (constructor) {
             this.instance.$appendTo(document.body);
         }
         wx.$loading = this.instance;
-        Object.assign(this.instance, config);
+        Object.assign(this.instance, DEFAULT_PROPERTIES, {fail: void 0, success: void 0, complete: void 0}, config);
         this.instance.show = true;
-        if (typeof config.success === 'function') {
-            config.success();
-        }
-        if (typeof config.complete === 'function') {
-            config.complete();
-        }
+
+        typeof(config.success) === 'function' && config.success();
+        typeof(config.complete) === 'function' && config.complete();
     };
 }
 </script>

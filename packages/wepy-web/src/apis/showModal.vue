@@ -44,20 +44,21 @@
 
 <script>
 
+const DEFAULT_PROPERTIES = {
+    title: '提示的标题',
+    content: '提示的内容',
+    showCancel: true,
+    cancelText: '取消',
+    cancelColor: '#000000',
+    confirmText: '确定',
+    confirmColor: '#3CC51F'
+};
+
 export default {
     name: 'Modal',
 
     data () {
-        return {
-            show: false,
-            title: '提示的标题',
-            content: '提示的内容',
-            showCancel: true,
-            cancelText: '取消',
-            cancelColor: '#000000',
-            confirmText: '确定',
-            confirmColor: '#3CC51F'
-        };
+        return Object.assign({show: false}, DEFAULT_PROPERTIES);
     },
 
     methods: {
@@ -95,8 +96,8 @@ export function getter (constructor) {
             });
             this.instance.$appendTo(document.body);
         }
-        wx.$actionsheet = this.instance;
-        Object.assign(this.instance, config);
+        wx.$modal = this.instance;
+        Object.assign(this.instance, DEFAULT_PROPERTIES, {fail: void 0, success: void 0, complete: void 0}, config);
         this.instance.show = true;
     };
 }

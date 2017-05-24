@@ -37,14 +37,15 @@
 </template>
 <script>
 
+const DEFAULT_PROPERTIES = {
+    itemList: []
+};
+
 export default {
     name: 'ActionSheet',
 
     data () {
-        return {
-            show: true,
-            itemList: []
-        };
+        return Object.assign({show: false}, DEFAULT_PROPERTIES);
     },
 
     methods: {
@@ -80,7 +81,7 @@ export function getter (constructor) {
             this.instance.$appendTo(document.body);
         }
         wx.$actionsheet = this.instance;
-        Object.assign(this.instance, config);
+        Object.assign(this.instance, DEFAULT_PROPERTIES, {fail: void 0, success: void 0, complete: void 0}, config);
         this.instance.show = true;
     };
 }

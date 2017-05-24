@@ -34,18 +34,19 @@
 </template>
 <script>
 
+const DEFAULT_PROPERTIES = {
+    icon: '',
+    image: '',
+    mask: false,
+    duration: 1500,
+    title: '温馨提示',
+};
+
+
 export default {
     name: 'Toast',
-
     data () {
-        return {
-            icon: '',
-            image: '',
-            mask: false,
-            duration: 1500,
-            show: false,
-            title: '温馨提示',
-        };
+        return Object.assign({show: false}, DEFAULT_PROPERTIES);
     }
 }
 
@@ -61,14 +62,12 @@ export function getter (constructor) {
             this.instance.$appendTo(document.body);
         }
         wx.$toast = this.instance;
-        Object.assign(this.instance, config);
+        Object.assign(this.instance, DEFAULT_PROPERTIES, {fail: void 0, success: void 0, complete: void 0}, config);
         this.instance.show = true;
-        if (typeof config.success === 'function') {
-            config.success();
-        }
-        if (typeof config.complete === 'function') {
-            config.complete();
-        }
+
+        typeof(config.success) === 'function' && config.success();
+        typeof(config.complete) === 'function' && config.complete();
+        
         setTimeout(() => {
             this.instance.show = false;
         }, this.instance.duration);
