@@ -216,7 +216,8 @@ export default {
                             attr.value = func.name + '(';
 
                             func.params = func.params.map(p => {
-                                return this.changeExp(p);
+                                let exp = this.changeExp(p);
+                                return exp.indexOf('(') !== -1 ? exp : p;
                             }).concat('$event');
 
                             attr.value = `${func.name}(${func.params.join(',')})`;
@@ -247,15 +248,25 @@ export default {
                             child.setAttribute(':' + attr.name, this.changeExp(attr.value));
                             child.removeAttribute(attr.name);
                         }
-
+                                
                         // 修复打包后的组件的相对路径问题
                         if (attr.name === 'src') {
+                            let exp = this.changeExp(attr.value);
+                            let attrName = attr.name, attrValue = attr.value;
+
                             // 如果路径直接是参数形式，则不做修改
-                            if (this.changeExp(attr.value)[0] === '\'') {
+                            if (exp[0] === '\'') {
                                 let src = path.join(path.parse(file).dir, attr.value);
-                                attr.value = path.relative(srcPath, src).replace(/\\/ig, '/');
-                                child.setAttribute(attr.name, attr.value);
+                                attrValue = path.relative(srcPath, src).replace(/\\/ig, '/');
                             }
+                            
+                            // If it's a image and it's a exp src path, change src to :src
+                            if (child.tagName === 'img' && exp.indexOf('(') !== -1) {
+                                attrName = ':src';
+                            }
+
+                            child.removeAttribute(attr.name);
+                            child.setAttribute(attrName, attrName[0] === ':' ? this.changeExp(attrValue) : attrValue);
                         }
                     });
                 }
