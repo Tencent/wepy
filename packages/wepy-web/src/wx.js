@@ -169,10 +169,10 @@ wx.hideKeyboard = wx.hideKeyboard ? wx.hideKeyboard : function hideKeyboard () {
     }, 50);
 };
 
-['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment', 'chooseImage', 'showToast', 'showActionSheet'].forEach(k => {
+['getUserInfo', 'switchTab', 'showNavigationBarLoading', 'hideNavigationBarLoading', 'createAnimation', 'requestPayment', 'chooseImage', 'showModal', 'showToast', 'showActionSheet'].forEach(k => {
     if (!wx[k]) {
         wx[k] = (o = {}) => {
-            console.error(`wx.${k} is not supported in browser`);
+            console.error(`wx.${k} is not supported in browser or you did add it in config.`);
             callback('fail', o, k, null);
             callback('complete', o, k, null);
         };
