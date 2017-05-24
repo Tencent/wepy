@@ -13,7 +13,7 @@ color Color   icon的颜色，同css的color
 </template>
 <script>
 
-const VALID_TYPES = ['success', 'success_no_circle', 'info', 'warn', 'waiting', 'cancel', 'download', 'search', 'clear'];
+const VALID_TYPES = ['success', 'success_no_circle', 'circle', 'info_circle', 'info', 'warn', 'waiting', 'cancel', 'download', 'search', 'clear'];
 
 export default {
     name: 'icon',
