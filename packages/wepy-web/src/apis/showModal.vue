@@ -1,7 +1,7 @@
 /**
-* @author: dlhandsome
-* @description: wx.showLoading(OBJECT)
-* @link: https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-react.html#wxshowloadingobject
+* @author: Gcaufy
+* @description: wx.showModal(OBJECT)
+* @link: https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-react.html#wxshowmodalobject
 
 * @properties:
 * title   String  是   提示的标题
