@@ -41,6 +41,8 @@ contact 打开客服会话  1.1.0
 </template>
 <script>
 
+import { stringToBoolean }from '../helper/util';
+
 const BUTTON_TYPES = ['default', 'primary', 'warn'];
 
 export default {
@@ -61,20 +63,12 @@ export default {
         'plain': {
             type: [ Boolean, String ],
             default: false,
-            coerce (val) {
-                if (typeof val === 'string' && (val === '0' || val === 'false'))
-                    return false;
-                return !!val;
-            }
+            coerce: stringToBoolean()
         },
         'disabled': {
             type: [ Boolean, String ],
             default: false,
-            coerce (val) {
-                if (typeof val === 'string' && (val === '0' || val === 'false'))
-                    return false;
-                return !!val;
-            }
+            coerce: stringToBoolean()
         },
         'loading': {
             type: [ Boolean, String ],
