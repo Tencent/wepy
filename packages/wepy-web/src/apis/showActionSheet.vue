@@ -1,7 +1,7 @@
 /**
-* @author: dlhandsome
-* @description: wx.showLoading(OBJECT)
-* @link: https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-react.html#wxshowloadingobject
+* @author: Gcaufy
+* @description: wx.showActionSheet(OBJECT)
+* @link: https://mp.weixin.qq.com/debug/wxadoc/dev/api/api-react.html#wxshowactionsheetobject
 
 * @properties:
 * 参数  类型  必填  说明
@@ -125,6 +125,23 @@ export function getter (constructor) {
     padding: 10px 0;
     text-align: center;
     font-size: 18px;
+}
+.wepy-api-actionsheet__cell:first-child:before {
+    display: none;
+}
+.wepy-api-actionsheet__cell:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 1px;
+    border-top: 1px solid #e5e5e5;
+    color: #e5e5e5;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
 }
 .wepy-api-actionsheet__action {
     margin-top: 6px;
