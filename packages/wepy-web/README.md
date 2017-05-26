@@ -40,7 +40,13 @@
 | wx.switchTab | √ | √ |
 | wx.navigateBack | √ | √ |
 | wx.reLaunch | √ | × |
-| wx.login | jsapi | wx |
+| wx.login | jsapi | wx/qq |
+| wx.showLoading | √ | √ |
+| wx.hideLoading | √ | √ |
+| wx.showToast | √ | √ |
+| wx.hideToast | √ | √ |
+| wx.showModal | √ | √ |
+| wx.showActionSheet | √ | √ |
 
 
 ### 组件实现进度
@@ -52,6 +58,10 @@
 | button | × | button |
 | input | × | input |
 | scroll-view | √ | √ |
+| icon | √ | √ |
+| navigator | √ | √ |
+| progress | √ | √ |
+| slider | √ | √ |
 
 
 
