@@ -1,27 +1,11 @@
 import event from './event';
 
-const PREFIX = '$';
-const JOIN = '$';
-
-let prefixList = {};
-let comCount = 0;
-
-
-let $getPrefix = (prefix) => {
-    return prefix;
-    /*if (!prefix)
-        return '';
-    if (prefixList[prefix])
-        return prefixList[prefix];
-    prefixList[prefix] = `${PREFIX}${(comCount++)}${JOIN}`;
-    return prefixList[prefix];*/
-}
-
-const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
+const PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
+const APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
 
 
 let $bindEvt = (config, com, prefix) => {
-    com.$prefix = $getPrefix(prefix);
+    com.$prefix = prefix;
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
@@ -29,14 +13,12 @@ let $bindEvt = (config, com, prefix) => {
         child.$name = name;
         let comPrefix = prefix ? (prefix + child.$name + '$') : ('$' + child.$name + '$');
 
-        $getPrefix(comPrefix);
-
         com.$com[name] = child;
 
         $bindEvt(config, child, comPrefix);
     });
     Object.getOwnPropertyNames(com.constructor.prototype || []).forEach((prop) => {
-        if(prop !== 'constructor' && pageEvent.indexOf(prop) === -1) {
+        if(prop !== 'constructor' && PAGE_EVENT.indexOf(prop) === -1) {
             config[prop] = function () {
                 com.constructor.prototype[prop].apply(com, arguments);
                 com.$apply();
@@ -114,6 +96,14 @@ export default {
             config.$app = app;
         }
         app.$wxapp = getApp();
+
+        PAGE_EVENT.forEach((v) => {
+            config[v] = (...args) => {
+                let rst;
+                app[v] && (rst = app[v].apply(app, args));
+                return rst;
+            };
+        });
         return config;
     },
     $createPage (pageClass, pagePath) {
@@ -182,7 +172,7 @@ export default {
             page.$apply();
         };
 
-        pageEvent.forEach((v) => {
+        PAGE_EVENT.forEach((v) => {
             if (v !== 'onLoad' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
