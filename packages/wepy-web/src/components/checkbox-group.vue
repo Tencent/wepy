@@ -12,15 +12,15 @@ bindchange	EventHandle		<checkbox-group/>中选中项发生改变是触发 chang
     </div>
 </template>
 <script>
-	import { uuid } from '../helper/util';
+import { uuid } from '../helper/util';
 
-	export default {
-		name: 'checkbox-group',
+export default {
+    name: 'checkbox-group',
 
-		data () {
-			return {
-				id: `checkbox-${uuid()}`
-			};
-		}
-	}
+    data () {
+        return {
+            id: `checkbox-${uuid()}`
+        };
+    }
+}
 </script>
