@@ -48,6 +48,7 @@ export default {
   methods: {
       change (e) {
           e.stopPropagation();
+
           this.$dispatch('change', {
               type: 'change',
               detail: {
