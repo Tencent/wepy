@@ -17,7 +17,7 @@
     "url": "git@github.com:wepyjs/wepy.git"
   },
   "author": "Gcaufy",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wepyjs/wepy/issues"
   },
