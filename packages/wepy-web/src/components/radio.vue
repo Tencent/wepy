@@ -11,7 +11,7 @@ color	Color		radio的颜色，同css的color
 -->
 <template>
     <div class="wepy_radio">
-        <input type="radio" :name="radioName" :checked="checked" :disabled="disabled" :value="value" @change="change">
+        <input type="radio" :name="radioName" :checked="checked" :disabled="disabled" :value="value" @change="change" />
         <i class="wepy_icon" :style="{color: color}"></i>
     </div>
 </template>

@@ -11,7 +11,7 @@ color	Color		checkbox的颜色，同css的color
 -->
 <template>
     <div class="wepy_checkbox">
-        <input type="checkbox" :name="checkboxName" :checked="checked" :disabled="disabled" :value="value" @change="change">
+        <input type="checkbox" :name="checkboxName" :checked="checked" :disabled="disabled" :value="value" @change="change" />
         <i class="wepy_icon" :style="{color: color}"></i>
     </div>
 </template>
