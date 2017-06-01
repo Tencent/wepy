@@ -325,7 +325,12 @@ ${code}
             let opath = path.parse(wpys);
 
             if (opath.ext === wpyExt || opath.ext === '.vue') {
-                wpys = [compileWpy.resolveWpy(wpys)];
+                let wpy = compileWpy.resolveWpy(wpys);
+                if (!wpy) {
+                    util.error(`检测到不存在组件 ${opath.name}`);
+                    return;
+                }
+                wpys = [wpy];
             } else {
                 let compileType = 'babel';
                 // 如果是node_modules, 而且后缀不为 .wpy，那么不进行babel编译
