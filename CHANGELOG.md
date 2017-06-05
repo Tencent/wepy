@@ -1,3 +1,6 @@
+## 1.5.7 (waiting)
+* `F` 修复了`component`不支持mixin的onLoad的问题。[ISSUE 177](https://github.com/wepyjs/wepy/issues/177)
+
 ## 1.5.6 (2017-05-22)
 * `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
 * `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
