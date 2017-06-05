@@ -181,6 +181,11 @@ export default class {
             coms.forEach((name) => {
                 this.$com[name].init(this.getWxPage(), $root, this);
                 this.$com[name].onLoad && this.$com[name].onLoad();
+
+                this.$com[name].$mixins.forEach((mix) => {
+                    mix['onLoad'] && mix['onLoad'].call(this.$com[name]);
+                });
+
                 this.$com[name].$apply();
             });
         }
