@@ -12,6 +12,5 @@
   "author": "Gcaufy",
   "license": "MIT",
   "dependencies": {
-    "pretty-data": "^0.40.0"
   }
 }
