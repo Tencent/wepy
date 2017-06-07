@@ -400,7 +400,7 @@ export default {
                 let comid = util.getComId(com);
                 let src = util.findComponentInTemplate(com, template);
                 if (!src) {
-                    util.error('找不到组件：' + definePath, '错误');
+                    util.error('找不到组件：' + com.tagName, '错误');
                 } else {
                     let wpy = cWpy.resolveWpy(src);
                     let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
