@@ -9,8 +9,9 @@
 
 ### 选择性需求
 
-- [ ] wepy-web-wx 基于 wx jsapi 实现的小程序的API。
-- [ ] wepy-web-qq 基于 qq jsapi 实现的小程序的API。
+- [ 706 ] wepy-web-wechat 基于 wx jsapi 实现的小程序的API。
+- [ 70% ] wepy-web-qq 基于 qq jsapi 实现的小程序的API。
+- [ -- ] more...。
 
 ### 已可以在WEB上运行的实例DEMO
 
