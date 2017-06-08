@@ -16,6 +16,7 @@
 
 - [x] [默认生成模板](https://github.com/wepyjs/wepy/tree/master/packages/wepy-cli/templates/template)
 - [x] [wepy-wechat-demo](https://github.com/wepyjs/wepy-wechat-demo)
+- [x] [wepy-weui-demo](https://github.com/wepyjs/wepy-weui-demo)
 - [x] 手机充值+ *未开源项目*
 
 ### API 实现进度
