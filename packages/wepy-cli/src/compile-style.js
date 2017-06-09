@@ -79,6 +79,9 @@ export default {
                         let relative = path.relative(opath.dir + path.sep + opath.base, comsrc);
                         let code = util.readFile(comsrc);
                         if (isNPM || /<style/.test(code)) {
+                            if (/\.wpy$/.test(relative)) { // wpy 第三方组件
+                                relative = relative.replace(/\.wpy$/, '.wxss');
+                            }
                             relative = relative.replace(ext, '.wxss').replace(/\\/ig, '/').replace('../', './');
                             allContent = '@import "' + relative + '";\n' + allContent;
                         }
