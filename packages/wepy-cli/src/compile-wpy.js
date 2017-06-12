@@ -202,6 +202,8 @@ export default {
                     rst.template.type = 'wxml';
                 }
             }
+            if (rst.template.code)
+                rst.template.node = this.createParser().parseFromString(util.attrReplace(rst.template.code));
         })();
 
         // get imports
@@ -230,6 +232,8 @@ export default {
 
         // get props and events
         (() => {
+            if (!rst.template.node)
+                return;
             let coms = Object.keys(rst.template.components);
             let elems = [];
             let props = {};
@@ -238,7 +242,7 @@ export default {
             let calculatedComs = [];
 
             // Get components in repeat
-            util.elemToArray(xml.getElementsByTagName('repeat')).forEach(repeat => {
+            util.elemToArray(rst.template.node.getElementsByTagName('repeat')).forEach(repeat => {
                 elems = [];
                 if (repeat.getAttribute('for')) {
                     let tmp = {
@@ -276,7 +280,7 @@ export default {
 
             elems = [];
             coms.concat('component').forEach((com) => {
-                elems = elems.concat(util.elemToArray(xml.getElementsByTagName(com)));
+                elems = elems.concat(util.elemToArray(rst.template.node.getElementsByTagName(com)));
             });
 
             elems.forEach((elem) => {
