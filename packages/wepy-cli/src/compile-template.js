@@ -98,7 +98,7 @@ export default {
         let comid = this.getPrefix(prefix);
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
         return content.replace(/\{\{([^}]+)\}\}/ig, (matchs, words) => {
-            return matchs.replace(/[^\.\w'"]([a-z_\$][\w\d\._\$]*)/ig, (match, word, n) => {
+            return matchs.replace(/[^\.\w'"](\.{0}|\.{3})([a-z_\$][\w\d\._\$]*)/ig, (match, expand, word, n) => {
                 //console.log(matchs + '------' + match + '--' + word + '--' + n);
                 let char = match[0];
                 let tmp = word.match(/^([\w\$]+)(.*)/);
@@ -113,9 +113,9 @@ export default {
                         upper.pop();
                         upper = upper.join(PREFIX);
                         upper = upper ? `${PREFIX}${upper}${JOIN}` : '';
-                        return `${char}${upper}${mapping.items[w].mapping}${rest}`;
+                        return `${char}${expand}${upper}${mapping.items[w].mapping}${rest}`;
                     }
-                    return `${char}${PREFIX}${comid}${JOIN}${word}`;
+                    return `${char}${expand}${PREFIX}${comid}${JOIN}${word}`;
                 }
             });
         });
