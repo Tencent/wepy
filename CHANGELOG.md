@@ -2,6 +2,7 @@
 * `F` 修复了`component`不支持mixin的onLoad的问题。[ISSUE 177](https://github.com/wepyjs/wepy/issues/177)
 * `F` 修复了引用第三方组件时，样式引用路径不对的问题。
 * `F` 修复了使用`pug`时，`props`不生效的问题。[ISSUE 186](https://github.com/wepyjs/wepy/issues/186)
+* `F` 修复了使用扩展运算符`...`时，编译不正确的问题。[ISSUE 190](https://github.com/wepyjs/wepy/issues/190)
 
 ## 1.5.6 (2017-05-22)
 * `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
