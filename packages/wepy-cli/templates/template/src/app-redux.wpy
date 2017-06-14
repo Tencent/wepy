@@ -18,7 +18,7 @@ import configStore from './store'
 const store = configStore()
 setStore(store)
 
-export default class extends wepy.app {
+export default class App extends wepy.app {
   config = {
     pages: [
       'pages/index'

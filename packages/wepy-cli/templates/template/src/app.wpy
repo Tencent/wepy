@@ -13,7 +13,7 @@
 import wepy from 'wepy'
 import 'wepy-async-function'
 
-export default class extends wepy.app {
+export default class App extends wepy.app {
   config = {
     pages: [
       'pages/index'

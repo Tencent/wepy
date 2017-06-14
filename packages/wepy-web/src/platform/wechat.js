@@ -1,5 +1,5 @@
 import { wxSuccess, wxFail } from '../helper/util';
-import { resolveQuery } from './helper/query';
+import { resolveQuery } from '../helper/query';
 
 let wx = window.wx || {};
 

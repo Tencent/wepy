@@ -179,7 +179,8 @@ export default {
                 wpy.script.code = rst;
             }
 
-            let matchs = wpy.script.code.match(/exports\.default\s*=\s*(\w+);/i), defaultExport;
+            let matchs = wpy.script.code.match(/exports\.default\s*=\s*(((?!undefined).)*);/i), defaultExport;
+            // let matchs = wpy.script.code.match(/exports\.default\s*=\s*(\w+);/i), defaultExport;
 
             if (matchs && matchs.length) {
                 defaultExport = matchs[1];
