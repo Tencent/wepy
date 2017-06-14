@@ -350,7 +350,9 @@ const utils = {
             opath = path.parse(opath);
         ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
-        if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
+        // 相对目录以node_modules开始
+        if (path.relative(this.currentDir, opath.dir).indexOf('node_modules') === 0) {
+            // if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
             relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);
             relative = path.join('npm', relative);
         } else {
