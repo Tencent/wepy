@@ -362,9 +362,6 @@ export default class {
         let source = this;
         let $evt = new event(evtName, source, 'emit');
 
-        if (this.$parent === undefined)
-            console.log(this);
-
         // User custom event;
         if (this.$parent.$events && this.$parent.$events[this.$name]) {
             let method = this.$parent.$events[this.$name]['v-on:' + evtName];
@@ -422,7 +419,7 @@ export default class {
                             }
                         }
                     }
-                    // send to ReadyToSet
+                    // Send to ReadyToSet
                     readyToSet[this.$prefix + k] = this[k]; 
                     this.data[k] = this[k];
                     originData[k] = util.$copy(this[k], true);
