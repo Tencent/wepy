@@ -45,6 +45,12 @@
       }
     }
 
+    watch = {
+      num (curVal, oldVal) {
+        console.log(`旧值：${oldVal}，新值：${curVal}`)
+      }
+    }
+
     methods = {
       plus () {
         this.num = this.num + 1

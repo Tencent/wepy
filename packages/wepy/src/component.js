@@ -412,7 +412,18 @@ export default class {
             let readyToSet = {};
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
-                    readyToSet[this.$prefix + k] = this[k]; // send to ReadyToSet
+                    // data watch trigger
+                    if (this.watch) {
+                        if (this.watch[k]) {
+                            if (typeof this.watch[k] === 'function') {
+                                this.watch[k].call(this, this[k], originData[k]);
+                            } else if (typeof this.watch[k] === 'string' && typeof this.methods[k] === 'function') {
+                                this.methods[k].call(this, this[k], originData[k]);
+                            }
+                        }
+                    }
+                    // send to ReadyToSet
+                    readyToSet[this.$prefix + k] = this[k]; 
                     this.data[k] = this[k];
                     originData[k] = util.$copy(this[k], true);
                     if (this.$mappingProps[k]) {

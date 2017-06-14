@@ -15,6 +15,10 @@ module.exports = class Index extends wepy.page {
         this.methods = {
             'tap': function (evt) {
                 assert.strictEqual(evt.name, 'test_page_tap', 'page tap triggered');
+            },
+            'testFuncWatch': function (curVal, oldVal) {
+                assert.strictEqual(curVal, 'new', 'data function watch change');
+                assert.strictEqual(oldVal, 'old', 'data function watch change');
             }
         };
         this.components = {
@@ -23,7 +27,16 @@ module.exports = class Index extends wepy.page {
             comc: ComC,
             repeatitem: RepeatItem
         };
+        this.watch = {
+            testWatch: function (curVal, oldVal) {
+                assert.strictEqual(curVal, 'newVal', 'data watch change');
+                assert.strictEqual(oldVal, 'oldVal', 'data watch change');
+            },
+            testFuncWatch: 'testFuncWatch'
+        };
         this.data = {
+            'testWatch': 'oldVal',
+            'testFuncWatch': 'old',
             'a': 1,
             'objProp': {a:1},
             'c': 'string',

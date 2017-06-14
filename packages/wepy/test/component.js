@@ -72,6 +72,13 @@ describe('component.js', () => {
         assert.deepEqual(com.setData('a'), {a:1}, 'set data with one string params');
     });
 
+
+    it('watch', () => {
+        index.testWatch = 'newVal';
+        index.testFuncWatch = 'new';
+        index.$apply();
+    });
+
     it('$apply', () => {
         com.a = 2;
         com.$apply();
