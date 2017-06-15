@@ -9,7 +9,7 @@ let $bindEvt = (config, com, prefix) => {
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
-        child.initMixins();
+        child.$initMixins();
         child.$name = name;
         let comPrefix = prefix ? (prefix + child.$name + '$') : ('$' + child.$name + '$');
 
@@ -84,20 +84,18 @@ export default {
         let app = new appClass();
 
         if (!this.$instance) {
-            app.init(this);
+            app.$init(this);
             this.$instance = app;
         }
-        Object.getOwnPropertyNames(app.constructor.prototype).forEach((name) => {
-            if(name !== 'constructor')
-                config[name] = app.constructor.prototype[name];
-        });
 
+        // This is for test case
         if (arguments.length === 2 && arguments[1] === true) {
             config.$app = app;
         }
+
         app.$wxapp = getApp();
 
-        PAGE_EVENT.forEach((v) => {
+        APP_EVENT.forEach((v) => {
             config[v] = (...args) => {
                 let rst;
                 app[v] && (rst = app[v].apply(app, args));
@@ -113,7 +111,7 @@ export default {
         if (typeof pagePath === 'string') {
             this.$instance.$pages[pagePath] = page;
         }
-        page.initMixins();
+        page.$initMixins();
         // This will be a circum Object
         if ((typeof pagePath === 'boolean' && pagePath) || (arguments.length === 3 && arguments[2] === true))
             config.$page = page;
@@ -121,7 +119,7 @@ export default {
         config.onLoad = function (...args) {
 
             page.$name = pageClass.name || 'unnamed';
-            page.init(this, self.$instance, self.$instance);
+            page.$init(this, self.$instance, self.$instance);
 
             let prevPage = self.$instance.__prevPage__;
             let secParams = {};

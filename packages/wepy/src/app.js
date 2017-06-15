@@ -57,8 +57,8 @@ export default class {
 
 
 
-    init (wepy) {
-        this.initAPI(wepy);
+    $init (wepy) {
+        this.$initAPI(wepy);
         this.$wxapp = getApp();
     }
 
@@ -82,7 +82,7 @@ export default class {
     requestfix () {
     }
 
-    initAPI (wepy) {
+    $initAPI (wepy) {
         var self = this;
         let noPromiseMethods = {
             stopRecord: true,

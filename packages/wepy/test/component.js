@@ -27,10 +27,10 @@ describe('component.js', () => {
 
 
     let index = new Index();
-    index.init(wxfake.getWxPage(), wxfake.getWxPage());
+    index.$init(wxfake.getWxPage(), wxfake.getWxPage());
 
     let com = new ComA();
-    com.init(wxfake.getWxPage(), index, index);
+    com.$init(wxfake.getWxPage(), index, index);
 
 
     com.prefix = '$coma';
@@ -54,14 +54,14 @@ describe('component.js', () => {
 
     });
 
-    it('init', () => {
+    it('$init', () => {
         assert.strictEqual(com.getCurrentPages(), 'wxpage', 'get current pages');
     });
 
     it('add mixin', () => {
 
         com.mixins = MixinA;
-        com.initMixins();
+        com.$initMixins();
 
         assert.strictEqual(com.$mixins[0] instanceof MixinA, true, 'added a mixin for component');
     });

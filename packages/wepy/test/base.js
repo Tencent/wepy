@@ -18,7 +18,7 @@ describe('base.js', () => {
 
         let config = wepy.$createApp(App, true);
 
-        assert.strictEqual(typeof config.custom, 'function', 'return a app object');
+        assert.strictEqual(typeof config.$app.custom, 'function', 'return a app instance');
     });
 
     it('create page', () => {

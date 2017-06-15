@@ -84,7 +84,7 @@ export default class {
     data = {};
     methods = {};
 
-    init ($wxpage, $root, $parent) {
+    $init ($wxpage, $root, $parent) {
         let self = this;
 
         this.$wxpage = $wxpage;
@@ -179,7 +179,7 @@ export default class {
         let coms = Object.getOwnPropertyNames(this.$com);
         if (coms.length) {
             coms.forEach((name) => {
-                this.$com[name].init(this.getWxPage(), $root, this);
+                this.$com[name].$init(this.getWxPage(), $root, this);
                 this.$com[name].onLoad && this.$com[name].onLoad();
 
                 this.$com[name].$mixins.forEach((mix) => {
@@ -191,7 +191,7 @@ export default class {
         }
     }
 
-    initMixins () {
+    $initMixins () {
         if (this.mixins) {
             if (typeof(this.mixins) === 'function') {
                 this.mixins = [this.mixins];
@@ -201,7 +201,7 @@ export default class {
         }
         this.mixins.forEach((mix) => {
             let inst = new mix();
-            inst.init(this);
+            inst.$init(this);
             this.$mixins.push(inst);
         });
     }

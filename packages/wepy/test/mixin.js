@@ -36,10 +36,10 @@ describe('mixin.js', () => {
         assert.strictEqual(inst.data.a, 1, 'mixin data');
     });
 
-    it('init', () => {
+    it('$init', () => {
         let parent = {data: {b: 2, a: 2}};
         inst.data = {a: 1, c: 1};
-        inst.init(parent);
+        inst.$init(parent);
 
         assert.strictEqual(parent.data.a, 2, 'parent data covered if exsit in parent.');
         assert.strictEqual(parent.data.c, 1, 'mixin data copied if not exsit in parent.');
