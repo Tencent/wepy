@@ -1,3 +1,12 @@
+## 1.5.7 (2017-06-15)
+* `F` 修复了`App`中的`this`指向问题。
+* `F` 修复了`component`不支持mixin的onLoad的问题。[ISSUE 177](https://github.com/wepyjs/wepy/issues/177)
+* `F` 修复了引用第三方组件时，样式引用路径不对的问题。
+* `F` 修复了使用`pug`时，`props`不生效的问题。[ISSUE 186](https://github.com/wepyjs/wepy/issues/186)
+* `F` 修复了使用扩展运算符`...`时，编译不正确的问题。[ISSUE 190](https://github.com/wepyjs/wepy/issues/190)
+* `F` 修复了目录中包含src时，第三方组件编译路径不正确的问题。[ISSUE 183](https://github.com/wepyjs/wepy/issues/183)
+* `A` 添加数据的`watch`支持。[ISSUE 155](https://github.com/wepyjs/wepy/issues/155)
+
 ## 1.5.6 (2017-05-22)
 * `F` 修复了特殊情况下require路径编译出错的问题。[ISSUE 128](https://github.com/wepyjs/wepy/issues/128)
 * `F` 修复了`wepy.createVideoContext`调用报错的问题。[ISSUE 133](https://github.com/wepyjs/wepy/issues/133)
