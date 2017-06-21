@@ -40,6 +40,7 @@
     "mkdirp": "^0.5.1",
     "postcss": "^5.2.16",
     "postcss-selector-parser": "^2.2.3",
+    "pretty-data": "^0.40.0",
     "update-notifier": "^1.0.2",
     "xmldom": "^0.1.22"
   }
