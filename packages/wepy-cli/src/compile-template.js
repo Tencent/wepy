@@ -496,7 +496,13 @@ export default {
                 done (rst) {
                     util.output('写入', rst.file);
                     rst.code = self.replaceBooleanAttr(rst.code);
-                    util.writeFile(target, rst.code);
+                    const pd = require('pretty-data').pd;
+                    // 包裹一个view，是为了确保root节点只有一个
+                    let code = `<view>${rst.code.trim()}</view>`;
+                    if(process.env.NODE_ENV === 'production'){
+                      code = pd.xmlmin(code)
+                    }
+                    util.writeFile(target, code);
                 }
             });
         }).catch((e) => {
