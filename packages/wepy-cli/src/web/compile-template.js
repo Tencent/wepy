@@ -254,8 +254,10 @@ export default {
                             let exp = this.changeExp(attr.value);
                             let attrName = attr.name, attrValue = attr.value;
 
-                            // 如果路径直接是参数形式，则不做修改
-                            if (exp[0] === '\'') {
+                            
+                            if (/^\'http(s)?/.test(exp) || /^\'\/\/?/.test(exp)) {
+                                // 如果路径是url形式，则不做修改
+                            } else if (exp[0] === '\'') { // 如果路径不是参数形式，则不做修改
                                 let src = path.join(path.parse(file).dir, attr.value);
                                 attrValue = path.relative(srcPath, src).replace(/\\/ig, '/');
                             }
