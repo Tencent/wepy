@@ -106,6 +106,7 @@ const $createComponent = (com, template) => {
 
     vueObject.props = com.props;
     vueObject.computed = com.computed;
+    vueObject.watch = com.watch;
     vueObject.events = com.events;
 
     vueObject.created = function () {
