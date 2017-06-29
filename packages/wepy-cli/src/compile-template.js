@@ -466,6 +466,12 @@ export default {
             return;
         }
 
+        if (lang === 'pug') { // fix indent for pug, https://github.com/wepyjs/wepy/issues/211
+            let indent = util.getIndent(content);
+            if (indent.firstLineIndent) {
+                content = util.fixIndent(content, indent.firstLineIndent * -1, indent.char);
+            }
+        }
 
         compiler(content, config.compilers[lang] || {}).then(content => {
             let node = cWpy.createParser().parseFromString(content);

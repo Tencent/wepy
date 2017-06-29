@@ -198,6 +198,12 @@ export default {
             if (rst.template.type !== 'wxml' && rst.template.type !== 'xml') {
                 let compiler = loader.loadCompiler(rst.template.type);
                 if (compiler && compiler.sync) {
+                    if (rst.template.type === 'pug') { // fix indent for pug, https://github.com/wepyjs/wepy/issues/211
+                        let indent = util.getIndent(rst.template.code);
+                        if (indent.firstLineIndent) {
+                            rst.template.code = util.fixIndent(rst.template.code, indent.firstLineIndent * -1, indent.char);
+                        }
+                    }
                     rst.template.code = compiler.sync(rst.template.code, config.compilers[rst.template.type] || {});
                     rst.template.type = 'wxml';
                 }
