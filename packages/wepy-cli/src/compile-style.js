@@ -38,8 +38,21 @@ export default {
             const scoped = style.scoped;
             let filepath = style.src ? style.src : path.join(opath.dir, opath.base);
 
-            if (lang === 'scss')
+
+            let options = Object.assgin({}, config.compilers[lang] || {});
+
+            if (lang === 'sass' || lang === 'less') {
+                let indentedSyntax = false;
+                options = Object.assgin({}, config.compilers.sass || {});
+                
+                if (lang === 'sass') { // sass is using indented syntax
+                    indentedSyntax = true;
+                }
+                if (typeof options.indentedSyntax === undefined) {
+                    options.indentedSyntax = indentedSyntax;
+                }
                 lang = 'sass';
+            }
 
             let compiler = loader.loadCompiler(lang);
 
@@ -47,7 +60,7 @@ export default {
                 throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
             }
 
-            const p = compiler(content, config.compilers[lang] || {}, filepath).then((css) => {
+            const p = compiler(content, options || {}, filepath).then((css) => {
                 // 处理 scoped
                 if (scoped) {
                     // 存在有 scoped 的 style
