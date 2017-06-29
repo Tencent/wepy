@@ -480,6 +480,136 @@ export default class Com extends wepy.component {
 ```
 页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
 
+### 实例
+
+小程序在 WePY 中，被分为三个实例，`App`，`Page`，`Component`。其中`Page`实例继承自`Component`。声明方式如下：
+
+```
+import wepy from 'wepy';
+
+// 声明一个App文件
+export default class MyAPP extends wepy.app {
+}
+// 声明一个Page文件
+export default class IndexPage extends wepy.page {
+}
+// 声明一个组件文件
+export default class MyComponent extends wepy.component {
+}
+```
+
+#### App 实例
+
+App 实例中只包含小程序生命周期函数以及自定义方法与属性
+
+```
+import wepy from 'wepy';
+
+export default class MyAPP extends wepy.app {
+    customData = {};
+
+    customFunction ()　{ }
+
+    onLaunch () {}
+
+    onShow () {}
+
+    config = {}; // 对应 app.json 文件
+}
+```
+
+在 Page 实例中，可以通过`this.$parent`来访问 App 实例。
+
+
+#### Page 和 Component 实例
+
+Page 实例中只包含小程序页面生命周期函数，自定义方法与属性以及特有属性。
+
+
+```
+import wepy from 'wepy';
+
+// export default class MyPage extends wepy.page {
+export default class MyPage extends wepy.component {
+    customData = {};
+
+    customFunction ()　{}
+
+    onLoad () {} // 只在 Page 实例中会存在页面生命周期函数
+
+    onShow () {} // 只在 Page 实例中会存在页面生命周期函数
+
+    // 特有属性示例
+
+    config = {}; // 对应page.json文件，只在 Page 实例中存在
+    
+    data = {}; // 页面所需数据均需在这里声明
+
+    components = {}; // 声明页面所引用的子组件
+
+    mixins = []; // 声明页面所引用的Mixin实例
+
+    computed = {}; // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
+
+    watch = {}; // 声明数据watcher
+
+    methods = {}; // 声明页面响应事件。注意，此处只用于声明页面bind，catch事件，自定义方法需以自定义方法的方式声明
+
+    events = {}; // 声明组件之间的事件传递
+}
+```
+
+对于 methods 属性，因为与Vue的使用习惯不一致，一直存在一个误区，这里的 methods 属性只声明页面bind，catch事件，不能声明自定义方法。示例如下：
+
+```
+// 错误示例
+import wepy from 'wepy';
+
+export default class MyPage extends wepy.component {
+
+    methods = {
+        bindtap () {
+            let rst = this.commonFunc();
+            // doSomething
+        },
+        bindinput () {
+            let rst = this.commonFunc();
+            // doSomething
+        },
+        commonFunc () {
+            return 'sth.';
+        }
+    };
+
+}
+
+
+// 正确示例
+import wepy from 'wepy';
+
+export default class MyPage extends wepy.component {
+
+    methods = {
+        bindtap () {
+            let rst = this.commonFunc();
+            // doSomething
+        },
+        bindinput () {
+            let rst = this.commonFunc();
+            // doSomething
+        },
+    };
+
+    commonFunc () {
+        return 'sth.';
+    }
+
+}
+```
+
+
+
+
 ### 组件
 小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
@@ -519,6 +649,31 @@ project
     }
 </script>
 ```
+
+需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+如果需要避免这个问题，则需要分配多个组件ID和实例。代码如下：
+```
+<template>
+    <view class="child1">
+        <child></child>
+    </view>
+    <view class="child2">
+        <anotherchild></anotherchild>
+    </view>
+
+</template>
+<script>
+    import wepy form 'wepy';
+    import Child from './coms/child';
+    export default class Index extends wepy.component {
+        components = {
+            child: Child,
+            anotherchild: Child
+        };
+    }
+</script>
+```
+
 
 #### 循环列表组件引用
 
@@ -585,6 +740,35 @@ computed = {
         return this.a + 1;
     }
 }
+```
+
+#### watcher
+
+* **类型**: `{ [key: string]: Function }`
+
+* **详细**：
+通过`watcher`我们能监听到任何数值属性的数值更新。
+
+* **示例**：
+
+```
+data = {
+    num: 1
+};
+
+watch = {
+    num (newValue, oldValue) {
+        console.log(`num value: ${oldValue} -> ${newValue}`)
+    }
+}
+
+onLoad () {
+    setInterval(() => {
+        this.num++;
+        this.$apply();
+    }, 1000)
+}
+
 ```
 
 #### Props 传值
