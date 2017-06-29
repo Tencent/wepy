@@ -39,16 +39,16 @@ export default {
             let filepath = style.src ? style.src : path.join(opath.dir, opath.base);
 
 
-            let options = Object.assgin({}, config.compilers[lang] || {});
+            let options = Object.assign({}, config.compilers[lang] || {});
 
             if (lang === 'sass' || lang === 'less') {
                 let indentedSyntax = false;
-                options = Object.assgin({}, config.compilers.sass || {});
+                options = Object.assign({}, config.compilers.sass || {});
                 
                 if (lang === 'sass') { // sass is using indented syntax
                     indentedSyntax = true;
                 }
-                if (typeof options.indentedSyntax === undefined) {
+                if (options.indentedSyntax === undefined) {
                     options.indentedSyntax = indentedSyntax;
                 }
                 lang = 'sass';
