@@ -1,3 +1,6 @@
+## 1.5.8 (waiting)
+* `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)。
+
 ## 1.5.7 (2017-06-15)
 * `F` 修复了`App`中的`this`指向问题。
 * `F` 修复了`component`不支持mixin的onLoad的问题。[ISSUE 177](https://github.com/wepyjs/wepy/issues/177)
