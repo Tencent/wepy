@@ -79,12 +79,12 @@ let $bindEvt = (config, com, prefix) => {
 
 
 export default {
-    $createApp (appClass) {
+    $createApp (appClass, appConfig) {
         let config = {};
         let app = new appClass();
 
         if (!this.$instance) {
-            app.$init(this);
+            app.$init(this, appConfig);
             this.$instance = app;
         }
 

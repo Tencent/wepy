@@ -57,8 +57,8 @@ export default class {
 
 
 
-    $init (wepy) {
-        this.$initAPI(wepy);
+    $init (wepy, config = {}) {
+        this.$initAPI(wepy, config.promisifyAPI);
         this.$wxapp = getApp();
     }
 
@@ -82,7 +82,7 @@ export default class {
     requestfix () {
     }
 
-    $initAPI (wepy) {
+    $initAPI (wepy, promisifyAPI) {
         var self = this;
         let noPromiseMethods = {
             stopRecord: true,
@@ -98,6 +98,11 @@ export default class {
             hideKeyboard: true,
             stopPullDownRefresh: true
         };
+        if (promisifyAPI) {
+            for (let k in promisifyAPI) {
+                noPromiseMethods[k] = promisifyAPI[k];
+            }
+        }
         Object.keys(wx).forEach((key) => {
             if (!noPromiseMethods[key] && key.substr(0, 2) !== 'on' && !(/\w+Sync$/.test(key))) {
                 Object.defineProperty(native, key, {
