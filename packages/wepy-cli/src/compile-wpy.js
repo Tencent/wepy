@@ -204,6 +204,12 @@ export default {
                             rst.template.code = util.fixIndent(rst.template.code, indent.firstLineIndent * -1, indent.char);
                         }
                     }
+                    let config = config.compilers[rst.template.type];
+
+                    // xmldom replaceNode have some issues when parsing pug minify html, so if it's not set, then default to un-minify html.
+                    if (config.pretty === undefined) {
+                        config.pretty = true;
+                    }
                     rst.template.code = compiler.sync(rst.template.code, config.compilers[rst.template.type] || {});
                     rst.template.type = 'wxml';
                 }
