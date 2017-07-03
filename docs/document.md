@@ -421,7 +421,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 // mixins/test.js
 import wepy from 'wepy';
 
-export default class TestMixin extends wepy.page {
+export default class TestMixin extends wepy.mixin {
     data = {
         foo: 'foo defined by page',
         bar: 'bar defined by testMix'
@@ -437,7 +437,7 @@ export default class TestMixin extends wepy.page {
 import wepy from 'wepy';
 import TestMixin from './mixins/test';
 
-export default class Index extends wepy.mixin {
+export default class Index extends wepy.page {
     data = {
         foo: 'foo defined by index'
     };
@@ -458,7 +458,7 @@ export default class Index extends wepy.mixin {
 // mixins/test.js
 import wepy from 'wepy';
 
-export default class TestMixin extends wepy.page {
+export default class TestMixin extends wepy.mixin {
     methods = {
         tap () {
             console.log('mix tap');
@@ -473,7 +473,7 @@ export default class TestMixin extends wepy.page {
 import wepy from 'wepy';
 import TestMixin from './mixins/test';
 
-export default class Index extends wepy.mixin {
+export default class Index extends wepy.page {
 
     mixins = [TestMixin];
     methods = {
