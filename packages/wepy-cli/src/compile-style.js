@@ -41,7 +41,7 @@ export default {
 
             let options = Object.assign({}, config.compilers[lang] || {});
 
-            if (lang === 'sass' || lang === 'less') {
+            if (lang === 'sass' || lang === 'scss') {
                 let indentedSyntax = false;
                 options = Object.assign({}, config.compilers.sass || {});
                 
