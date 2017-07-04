@@ -105,6 +105,14 @@ export default class {
         let key, val, binded;
         let inRepeat = false, repeatKey;
 
+
+        // save a init data.
+        if (this.$initData === undefined) {
+            this.$initData = util.$copy(this.data, true);
+        } else {
+            this.data = util.$copy(this.$initData, true);
+        }
+
         if (this.$props) { // generate mapping Props
             for (key in this.$props) {
                 for (binded in this.$props[key]) {
