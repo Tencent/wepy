@@ -505,6 +505,7 @@ import wepy from 'wepy';
 export default class extends wepy.app {
 
     constructor () {
+        super();
         this.intercept('request', {
             config (p) {
                 p.timestamp = +new Date();
