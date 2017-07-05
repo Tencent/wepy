@@ -22,4 +22,4 @@ module.exports = {
 
 ## 参数说明
 
-[TypeScript](https://www.tslang.cn/docs/tutorial.html)
+[TypeScript](https://www.tslang.cn/docs/home.html)
