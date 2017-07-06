@@ -73,7 +73,7 @@ customFileTypes:
 #### Vscode下代码高亮
 1. 在vscode里先安装vue的语法高亮 - language-vue，如果装过了就忽略这一步。
 2. 在项目根目录下，建立.vscode目录
-3. 在.vscode里建立settting.json文件，内容如下：
+3. 在.vscode里建立settings.json文件，内容如下：
 ```json
 {
     "git.ignoreLimitWarning": true,
