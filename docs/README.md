@@ -76,12 +76,12 @@ customFileTypes:
 3. 在.vscode里建立settting.json文件，内容如下：
 ```json
 {
-  "git.ignoreLimitWarning": true,
-  "files.associations": {
-    "*.wxml": "html",
-    "*.wxss": "css",
-    "*.wpy": "vue"
-  }
+    "git.ignoreLimitWarning": true,
+    "files.associations": {
+        "*.wxml": "html",
+        "*.wxss": "css",
+        "*.wpy": "vue"
+    }
 }
 ```
 
