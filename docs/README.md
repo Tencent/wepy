@@ -70,6 +70,21 @@ customFileTypes:
    ]
 ```
 
+#### Vscode下代码高亮
+1. 在vscode里先安装vue的语法高亮 - language-vue，如果装过了就忽略这一步。
+2. 在项目根目录下，建立.vscode目录
+3. 在.vscode里建立settings.json文件，内容如下：
+```json
+{
+    "git.ignoreLimitWarning": true,
+    "files.associations": {
+        "*.wxml": "html",
+        "*.wxss": "css",
+        "*.wpy": "vue"
+    }
+}
+```
+
 ### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
    以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
