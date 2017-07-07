@@ -27,6 +27,7 @@ git clone git@github.com:wepyjs/wepy.git
 cd wepy
 
 # Start
+# This command will run npm install and generate `wepy-dev` and `wepy-debug` command for you
 npm run bootstrap
 
 
@@ -36,13 +37,13 @@ npm run build
 # Watch
 npm run watch
 
-# Run test
+# Run test cases
 npm run test
 
 # Useage
-wepy # Realy wepy you installed
+wepy build # Global wepy you installed by npm
 
-wepy-dev # Local wepy
+wepy-dev build # Local wepy you compiled by your local repository
 
-wepy-debug # Debug local wepy using node --inspect
+wepy-debug build # Debug local wepy using node --inspect
 ```
