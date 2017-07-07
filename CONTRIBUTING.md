@@ -27,7 +27,7 @@ git clone git@github.com:wepyjs/wepy.git
 cd wepy
 
 # Start
-# This command will run npm install and generate `wepy-dev` and `wepy-debug` command for you
+# This command will generate `wepy-dev` and `wepy-debug` command for you
 npm run bootstrap
 
 
