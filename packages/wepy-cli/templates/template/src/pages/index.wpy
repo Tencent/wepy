@@ -51,7 +51,7 @@
 
       <text class="testcounter">计数组件1: </text>
       <view class="counterview">
-        <counter1 @index-emit="counterEmit" />
+        <counter1 @index-emit.user="counterEmit" />
       </view>
 
       <text class="testcounter">计数组件2: </text>
