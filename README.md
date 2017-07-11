@@ -106,7 +106,8 @@ wepy build --watch
 
 1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
 2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
-3. 项目根目录运行`wepy build --watch`，开启实时编译。
+3. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
+4. 项目根目录运行`wepy build --watch`，开启实时编译。
 
 ### 哪些小程序是用 WePY 开发的
 
