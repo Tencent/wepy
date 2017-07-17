@@ -96,6 +96,8 @@ export default {
 
     parseExp (content, prefix, ignores, mapping) {
         let comid = this.getPrefix(prefix);
+        if (!comid)
+            return content;
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
         return content.replace(/\{\{([^}]+)\}\}/ig, (matchs, words) => {
             return matchs.replace(/[^\.\w'"](\.{0}|\.{3})([a-z_\$][\w\d\._\$]*)/ig, (match, expand, word, n) => {
