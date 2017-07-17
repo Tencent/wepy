@@ -2,6 +2,7 @@
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
 * `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)
 * `F` 修复了使用PUG编译时，首行不能缩进的问题。[ISSUE 211](https://github.com/wepyjs/wepy/issues/211)
+* `A` 添加组件 kebab-case 写法支持。[ISSUE 242](https://github.com/wepyjs/wepy/issues/242)
 * `F` 修复了当项目文件夹存在空文件时编译会卡死的问题。[ISSUE 253](https://github.com/wepyjs/wepy/issues/253)
 * `A` 添加了组件对`class`的支持。[ISSUE 255](https://github.com/wepyjs/wepy/issues/255)
 * `F` 修复了页面中使用`:class`无效的BUG。[ISSUE 257](https://github.com/wepyjs/wepy/issues/257)
