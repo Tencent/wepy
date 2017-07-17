@@ -83,14 +83,19 @@ export default {
 
         if (content === null) {
             util.error('打开文件失败: ' + filepath)
-            return;
+            return null;
         }
-        let startlen = content.indexOf('<script') + 7;
-        while(content[startlen++] !== '>') {
-            // do nothing;
+        if (content === '') {
+            return null;
         }
-        content = util.encode(content, startlen, content.indexOf('</script>') - 1);
 
+        let startlen = content.indexOf('<script') + 7;
+        if (startlen >= 7 && content.length >= 8) { // this is no scripts
+            while(content[startlen++] !== '>') {
+                // do nothing;
+            }
+            content = util.encode(content, startlen, content.indexOf('</script>') - 1);
+        }
         // replace :attr to v-bind:attr
         /*content = content.replace(/<[\w-\_]*\s[^>]*>/ig, (tag) => {
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
@@ -204,11 +209,11 @@ export default {
                             rst.template.code = util.fixIndent(rst.template.code, indent.firstLineIndent * -1, indent.char);
                         }
                     }
-                    let config = config.compilers[rst.template.type];
+                    let compilerConfig = config.compilers[rst.template.type];
 
                     // xmldom replaceNode have some issues when parsing pug minify html, so if it's not set, then default to un-minify html.
-                    if (config.pretty === undefined) {
-                        config.pretty = true;
+                    if (compilerConfig.pretty === undefined) {
+                        compilerConfig.pretty = true;
                     }
                     rst.template.code = compiler.sync(rst.template.code, config.compilers[rst.template.type] || {});
                     rst.template.type = 'wxml';
@@ -379,6 +384,10 @@ export default {
         }
 
         let wpy = this.resolveWpy(opath);
+
+        if (!wpy) {
+            return;
+        }
 
         if (type === 'app') { // 第一个编译
             cache.setPages(wpy.config.pages.map(v => path.join(src, v + wpyExt)));
