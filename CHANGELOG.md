@@ -3,6 +3,7 @@
 * `F` 修复了使用PUG编译时，首行不能缩进的问题。[ISSUE 211](https://github.com/wepyjs/wepy/issues/211)
 * `F` 修复了当项目文件夹存在空文件时编译会卡死的问题。[ISSUE 253](https://github.com/wepyjs/wepy/issues/253)
 * `A` 添加了组件对`class`的支持。[ISSUE 255](https://github.com/wepyjs/wepy/issues/255)
+* `F` 修复了页面中使用`:class`无效的BUG。[ISSUE 257](https://github.com/wepyjs/wepy/issues/257)
 
 ## 1.5.7 (2017-06-15)
 * `F` 修复了`App`中的`this`指向问题。
