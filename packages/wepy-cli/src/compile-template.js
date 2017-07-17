@@ -15,10 +15,9 @@ export default {
     comPrefix: {},
     comCount: 0,
     getPrefix (prefix) {
-        return prefix;
-        if (this.comPrefix[prefix])
-            return this.comPrefix[prefix];
-        this.comPrefix[prefix] = this.comCount++;
+        if (!this.comPrefix[prefix]) {
+            this.comPrefix[prefix] = util.camelize(prefix || '');;
+        }
         return this.comPrefix[prefix];
     },
     getTemplate (content) {

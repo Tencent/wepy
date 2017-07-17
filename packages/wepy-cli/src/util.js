@@ -184,6 +184,21 @@ const utils = {
         return fs.statSync(p).isDirectory();
     },
     /**
+    * Hyphenate a camelCase string.
+    */
+    hyphenate (str) {
+        return str
+            .replace(/([^-])([A-Z])/g, '$1-$2')
+            .replace(/([^-])([A-Z])/g, '$1-$2')
+            .toLowerCase();
+    },
+    /**
+     * Camelize a hyphen-delimited string.
+     */
+    camelize (str) {
+        return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '');
+    },
+    /**
      * xml dom 对 TEXT_NODE 和 ATTRIBUTE_NODE 进行转义。
      */
     decode (content) {

@@ -277,6 +277,21 @@ export default {
             });
        }
        return rst;
+    },
+    /**
+    * Hyphenate a camelCase string.
+    */
+    hyphenate (str) {
+        return str
+            .replace(/([^-])([A-Z])/g, '$1-$2')
+            .replace(/([^-])([A-Z])/g, '$1-$2')
+            .toLowerCase();
+    },
+    /**
+     * Camelize a hyphen-delimited string.
+     */
+    camelize (str) {
+        return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '');
     }
 };
 

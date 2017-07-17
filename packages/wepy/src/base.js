@@ -1,11 +1,12 @@
 import event from './event';
+import util from './util';
 
 const PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 const APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
 
 
 let $bindEvt = (config, com, prefix) => {
-    com.$prefix = prefix;
+    com.$prefix = util.camelize(prefix || '');
     Object.getOwnPropertyNames(com.components || {}).forEach((name) => {
         let cClass = com.components[name];
         let child = new cClass();
