@@ -324,7 +324,12 @@ export default {
 
         if (node && node.documentElement) {
             Object.keys(comAppendAttribute).forEach((key) => {
-                node.documentElement.setAttribute(key, comAppendAttribute[key]);
+                if (key === 'class') {
+                    let classNames = node.documentElement.getAttribute('class').split(' ').concat(comAppendAttribute[key].split(' ')).join(' ');
+                    node.documentElement.setAttribute('class', classNames);
+                } else {
+                    node.documentElement.setAttribute(key, comAppendAttribute[key]);
+                }
             });
         }
 
@@ -371,7 +376,7 @@ export default {
                 };
                 [].slice.call(com.attributes || []).forEach(attr => {
 
-                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) > -1) {
+                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class'].indexOf(attr.name) > -1) {
                         comAttributes[attr.name] = attr.value;
                     }
                     let name = attr.name;
@@ -421,7 +426,7 @@ export default {
         componentElements.forEach((com) => {
             let comid, definePath, isCustom = false, comAttributes = {};
             [].slice.call(com.attributes || []).forEach((attr) => {
-                if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) > -1) {
+                if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class'].indexOf(attr.name) > -1) {
                     comAttributes[attr.name] = attr.value;
                 }
             });
