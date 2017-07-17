@@ -1,6 +1,7 @@
 ## 1.5.8 (waiting)
 * `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)
 * `F` 修复了使用PUG编译时，首行不能缩进的问题。[ISSUE 211](https://github.com/wepyjs/wepy/issues/211)
+* `F` 修复了当项目文件夹存在空文件时编译会卡死的问题。[ISSUE 253](https://github.com/wepyjs/wepy/issues/253)
 
 ## 1.5.7 (2017-06-15)
 * `F` 修复了`App`中的`this`指向问题。
