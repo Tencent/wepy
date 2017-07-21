@@ -444,7 +444,7 @@ export default class extends wepy.app {
     <counter1></counter1>
 </template>
 <script>
-import wepy form 'wepy';
+import wepy from 'wepy';
 import Counter from '../components/counter';
 export default class Index extends wepy.page {
 
@@ -480,7 +480,7 @@ export default class Index extends wepy.page {
     <view>  </view>
 </template>
 <script>
-import wepy form 'wepy';
+import wepy from 'wepy';
 export default class Com extends wepy.component {
 
     components = {};
@@ -655,7 +655,7 @@ project
     <child></child>
 </template>
 <script>
-    import wepy form 'wepy';
+    import wepy from 'wepy';
     import Child from './coms/child';
     export default class Index extends wepy.component {
         components = {
@@ -678,7 +678,7 @@ project
 
 </template>
 <script>
-    import wepy form 'wepy';
+    import wepy from 'wepy';
     import Child from './coms/child';
     export default class Index extends wepy.component {
         components = {
@@ -714,7 +714,7 @@ project
     </repeat>
 </template>
 <script>
-    import wepy form 'wepy';
+    import wepy from 'wepy';
     import Child from './coms/child';
     export default class Index extends wepy.component {
         components = {
@@ -855,7 +855,7 @@ $this.$emit('some-event', 1, 2, 3, 4);
 
 组件的事件监听需要写在`events`属性下，如：
 ```javascript
-import wepy form 'wepy';
+import wepy from 'wepy';
 export default class Com extends wepy.component {
 
     components = {};
@@ -920,7 +920,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
     <child @childFn.user="parentFn"></child>
 </template>
 <script>
-    import wepy form 'wepy';
+    import wepy from 'wepy';
     import Child from './coms/child';
     export default class Index extends wepy.page {
         components = {
@@ -941,7 +941,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
     <view @tap="tap">Click me</view>
 </template>
 <script>
-    import wepy form 'wepy';
+    import wepy from 'wepy';
     export default class Child extends wepy.component {
         methods = {
             tap () {

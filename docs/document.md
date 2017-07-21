@@ -226,7 +226,7 @@ wepy编译组件的过程如下：
 </template>
 <sciprt>
     import wepy from 'wepy';
-    import Child form './child';
+    import Child from './child';
 
     export Parent from wepy.page {
         components = {
