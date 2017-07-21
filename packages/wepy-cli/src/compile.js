@@ -127,7 +127,7 @@ export default {
         return loader.loadPlugin(plugins);
     },
 
-    wepyUpdate(required = '1.5.8') {
+    wepyUpdate(required = '1.5.7') {
         let pkgfile = path.join(util.currentDir, 'node_modules', 'wepy', 'package.json');
         let pkg;
         try {
