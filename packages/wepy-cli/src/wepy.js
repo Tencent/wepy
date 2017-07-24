@@ -20,14 +20,21 @@ let displayVersion = () => {
 
 let generateProject = (name, config) => {
 
-    util.log('目录：' + name, '创建');
+    let inPlace = !name || name === '.';
 
-    if (util.mkdir(name) !== true) {
-        util.error('创建目录失败。');
-        return;
+    if (inPlace) {
+        util.log('使用当前目录');
+    } else {
+        util.log('目录：' + name, '创建');
+
+        if (util.mkdir(name) !== true) {
+            util.error('创建目录失败。');
+            return;
+        }
+    
+        process.chdir(name);
     }
 
-    process.chdir(name);
     util.currentDir = process.cwd();
 
     let packagePath = path.join(util.currentDir, 'package.json');
