@@ -108,7 +108,7 @@ if (prod) {
 | ---- | ---- | ---- |
 |style|`css`|`css`，`less`，`sass`，`stylus`|
 |template|`wxml`|`wxml`，`xml`，`pug(原jade)`|
-|script|`bable`|`bable`，`TypeScript`|
+|script|`babel`|`babel`，`TypeScript`|
 
 ### script说明
 
