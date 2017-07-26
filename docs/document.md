@@ -3,8 +3,8 @@
 
 ### wepy.config.js 配置文件说明
 执行`wepy new demo`后，会生成类似配置文件。
-```javascript
 
+```javascript
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
@@ -61,7 +61,6 @@ if (prod) {
         }
     };
 }
-
 ```
 
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
@@ -95,6 +94,7 @@ if (prod) {
 3. 代码`<script></script>`对应原有`js`。
 
 其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
+
 ```
 <style lang="less" src="page1.less"></style>
 <template lang="wxml" src="page1.wxml"></template>
@@ -102,6 +102,7 @@ if (prod) {
     // some code
 </script>
 ```
+
 标签对应 `lang` 值如下表所示：
 
 | 标签 | lang默认值 | lang支持值 |
@@ -113,6 +114,7 @@ if (prod) {
 ### script说明
 
 #### 程序入口app.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -137,9 +139,11 @@ export default class extends wepy.app {
 }
 </script>
 ```
+
 入口`app.wpy`继承自`wepy.app`，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原有的`app.json`，编译时会根据`config`生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供API。
 
 #### 页面index.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -166,6 +170,7 @@ export default class Index extends wepy.page {
 }
 </script>
 ```
+
 页面入口继承自`wepy.page`，主要属性说明如下：
 
 | 属性 | 说明 |
@@ -178,6 +183,7 @@ export default class Index extends wepy.page {
 |其它|如`onLoad`，`onReady`等小程序事件以及其它自定义方法与属性|
 
 #### 组件com.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -199,6 +205,7 @@ export default class Com extends wepy.component {
 }
 </script>
 ```
+
 页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
 
 ### 组件
@@ -217,7 +224,7 @@ wepy编译组件的过程如下：
 
 需要注意的是，组件ID必须是唯一的，如果需要多次引入同一组件，那么需要声明该组件多次。如下：
 
-```
+```html
 <template>
     <view>
         <child1 />
@@ -254,7 +261,7 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 * **示例**：
 
-```
+```javascript
 data = {
     a: 1
 };
@@ -272,7 +279,7 @@ computed = {
 
 使用静态传值时，子组件会接收到字符串的值。
 
-```
+```javascript
 <child title="mytitle"></child>
 
 // child.wpy
@@ -289,7 +296,7 @@ onLoad () {
 
 使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
 
-```
+```javascript
 // parent.wpy
 <child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
 
@@ -382,7 +389,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 在`Panel`组件中有以下模板：
 
-```
+```html
 <view class="panel">
     <slot name="title">默认标题</slot>
     <slot>
@@ -393,7 +400,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 在父组件使用`Pannel`组件时，可以这样使用：
 
-```
+```html
 <panel>
     <view>
         <text>这是我放到的内容</text>
@@ -417,6 +424,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 #### 默认式混合
 
 对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
+
 ```js
 // mixins/test.js
 import wepy from 'wepy';
@@ -499,7 +507,6 @@ export default class Index extends wepy.page {
 可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
 
 ```javascript
-
 import wepy from 'wepy';
 
 export default class extends wepy.app {
@@ -530,17 +537,22 @@ export default class extends wepy.app {
 
 #### 小程序数据绑定方式
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
+
 ```js
 this.setData({title: 'this is title'});
 ```
+
 因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
 
 #### wepy数据绑定方式
 wepy使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
+
 ```javascript
 this.title = 'this is title';
 ```
+
 但需注意，在函数运行周期之外的函数里去修改数据需要手动调用`$apply`方法。如：
+
 ```javascript
 setTimeout(() => {
     this.title = 'this is title';
@@ -559,6 +571,7 @@ setTimeout(() => {
 
 #### 1. wx.request 接收参数修改
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
+
 ```javascript
 // 官方
 wx.request({
@@ -574,6 +587,7 @@ wepy.request('xxxx').then((d) => console.log(d));
 
 #### 2. 优化事件参数传递
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
+
 ```javascript
 // 官方
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
@@ -601,6 +615,7 @@ events: {
 `this.setData(object)`
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
+
 ```html
 // 官方
 <view> {{ message }} </view>
@@ -621,6 +636,7 @@ onLoad () {
 #### 4. 组件代替模板和模块
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
+
 ```html
 // 官方
 <!-- item.wxml -->
@@ -653,5 +669,4 @@ var item = require('item.js')
         components = { Item }
     }
 </script>
-
 ```
