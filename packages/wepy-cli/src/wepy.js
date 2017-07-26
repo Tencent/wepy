@@ -105,7 +105,7 @@ let generateProject = (name, config) => {
     util.writeFile(packagePath, JSON.stringify(pkg));
     util.log('配置: ' + 'package.json', '写入');
 
-    let files = util.getFiles(template);
+    let files = util.getFiles(template).filter(file => file !== 'package.json');
 
     const copyFn = function (sourcePath) {
         return function (file) {
