@@ -23,7 +23,8 @@ let generateProject = (name, config) => {
     let inPlace = !name || name === '.';
 
     if (inPlace) {
-        util.log('使用当前目录');
+        name = process.cwd().split('/').pop();
+        util.log('使用当前目录：' + name);
     } else {
         util.log('目录：' + name, '创建');
 
@@ -31,7 +32,7 @@ let generateProject = (name, config) => {
             util.error('创建目录失败。');
             return;
         }
-    
+
         process.chdir(name);
     }
 
