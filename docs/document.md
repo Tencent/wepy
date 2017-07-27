@@ -231,7 +231,7 @@ wepy编译组件的过程如下：
         <child2 />
     </view>
 </template>
-<sciprt>
+<script>
     import wepy from 'wepy';
     import Child from './child';
 
@@ -241,7 +241,7 @@ wepy编译组件的过程如下：
             child2: Child
         }
     }
-</sciprt>
+</script>
 ```
 
 页面和组件都可以引入子组件，引入若干组件后，如下图：
