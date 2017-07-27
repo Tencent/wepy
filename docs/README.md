@@ -29,7 +29,9 @@ cd myproject
 ```bash
 wepy build --watch
 ```
+
 #### 项目目录结构
+
 ```
 ├── dist                   微信开发者工具指定的目录
 ├── node_modules           
@@ -63,7 +65,8 @@ wepy build --watch
 #### Atom下代码高亮
 1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
 2. 打开`Atom -> Config`菜单。在`core`键下添加：
-```
+
+```javascript
 customFileTypes:
    "text.html.vue": [
       "wpy"
@@ -74,7 +77,8 @@ customFileTypes:
 1. 在vscode里先安装vue的语法高亮 - language-vue，如果装过了就忽略这一步。
 2. 在项目根目录下，建立.vscode目录
 3. 在.vscode里建立settings.json文件，内容如下：
-```json
+
+```javascripton
 {
     "git.ignoreLimitWarning": true,
     "files.associations": {
@@ -84,6 +88,14 @@ customFileTypes:
     }
 }
 ```
+
+#### VIM 下代码高亮
+1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)
+2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮
+
+    ```vim
+    au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
+    ```
 
 ### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
@@ -107,6 +119,7 @@ customFileTypes:
 在原有的小程序的开发模式下进行再次封装，更贴近于现有MVVM框架开发模式。框架在开发过程中参考了一些现在框架的一些特性，并且融入其中，以下是使用wepy前后的代码对比图。
 
 官方DEMO代码：
+
 ```javascript
 //index.js
 //获取应用实例
@@ -127,6 +140,7 @@ Page({
 ```
 
 基于wepy的实现：
+
 ```javascript
 import wepy from 'wepy';
 
@@ -146,10 +160,12 @@ export default class Index extends wepy.page {
     };
 }
 ```
+
 ### 2. 支持组件化开发。
 
 参见章节：[组件](#组件)
 示例代码：
+
 ```html
 // index.wpy
 <template>
@@ -202,6 +218,7 @@ export default class Index extends wepy.page {
 所以使用wepy开发前后开发目录对比如下：
 
 官方DEMO：
+
 ```
 project
 ├── pages
@@ -219,7 +236,9 @@ project
 ├── app.json            小程序公共设置
 └── app.wxss            小程序公共样式表
 ```
+
 使用wepy框架后目录结构：
+
 ```
 project
 └── src
@@ -234,6 +253,7 @@ project
 用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
 
 示例代码：
+
 ```javascript
 import wepy from 'wepy';
 
@@ -252,10 +272,12 @@ export default class Index extends wepy.page {
     };
 }
 ```
+
 ### 6. 针对原生API进行优化。
 
 对现在API进行promise处理，同时修复一些现有API的缺陷，比如：wx.request并发问题等。
 原有代码：
+
 ```javascript
 onLoad = function () {
     var self = this;
@@ -270,7 +292,9 @@ onLoad = function () {
     });
 }
 ```
+
 基于wepy实现代码：
+
 ```javascript
 import wepy from 'wepy';
 
@@ -297,6 +321,7 @@ async onLoad() {
 
 ### wepy.config.js 配置文件说明
 执行`wepy new demo`后，会生成类似配置文件。
+
 ```javascript
 
 let prod = process.env.NODE_ENV === 'production';
@@ -355,7 +380,6 @@ if (prod) {
         }
     };
 }
-
 ```
 
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
@@ -389,6 +413,7 @@ if (prod) {
 3. 代码`<script></script>`对应原有`js`。
 
 其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
+
 ```Html
 <style lang="less" src="page1.less"></style>
 <template lang="wxml" src="page1.wxml"></template>
@@ -396,17 +421,19 @@ if (prod) {
     // some code
 </script>
 ```
+
 标签对应 `lang` 值如下表所示：
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
 | style    | `css`   | `css`，`less`，`sass`，`stylus` |
 | template | `wxml`  | `wxml`，`xml`，`pug(原jade)`    |
-| script   | `bable` | `bable`，`TypeScript`         |
+| script   | `babel` | `babel`，`TypeScript`         |
 
 ### script说明
 
 #### 程序入口app.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -415,7 +442,7 @@ if (prod) {
 import wepy from 'wepy';
 export default class extends wepy.app {
     config = {
-            "pages":[
+        "pages":[
             "pages/index/index"
         ],
         "window":{
@@ -431,9 +458,11 @@ export default class extends wepy.app {
 }
 </script>
 ```
+
 入口`app.wpy`继承自`wepy.app`，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原有的`app.json`，编译时会根据`config`生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供API。
 
 #### 页面index.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -460,6 +489,7 @@ export default class Index extends wepy.page {
 }
 </script>
 ```
+
 页面入口继承自`wepy.page`，主要属性说明如下：
 
 | 属性         | 说明                                       |
@@ -472,6 +502,7 @@ export default class Index extends wepy.page {
 | 其它         | 如`onLoad`，`onReady`等小程序事件以及其它自定义方法与属性    |
 
 #### 组件com.wpy
+
 ```html
 <style lang="less">
 /** less **/
@@ -493,13 +524,14 @@ export default class Com extends wepy.component {
 }
 </script>
 ```
+
 页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
 
 ### 实例
 
 小程序在 WePY 中，被分为三个实例，`App`，`Page`，`Component`。其中`Page`实例继承自`Component`。声明方式如下：
 
-```
+```javascript
 import wepy from 'wepy';
 
 // 声明一个App文件
@@ -517,7 +549,7 @@ export default class MyComponent extends wepy.component {
 
 App 实例中只包含小程序生命周期函数以及自定义方法与属性
 
-```
+```javascript
 import wepy from 'wepy';
 
 export default class MyAPP extends wepy.app {
@@ -541,7 +573,7 @@ export default class MyAPP extends wepy.app {
 Page 实例中只包含小程序页面生命周期函数，自定义方法与属性以及特有属性。
 
 
-```
+```javascript
 import wepy from 'wepy';
 
 // export default class MyPage extends wepy.page {
@@ -576,7 +608,7 @@ export default class MyPage extends wepy.component {
 
 对于 methods 属性，因为与Vue的使用习惯不一致，一直存在一个误区，这里的 methods 属性只声明页面bind，catch事件，不能声明自定义方法。示例如下：
 
-```
+```javascript
 // 错误示例
 import wepy from 'wepy';
 
@@ -667,7 +699,8 @@ project
 
 需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
 如果需要避免这个问题，则需要分配多个组件ID和实例。代码如下：
-```
+
+```html
 <template>
     <view class="child1">
         <child></child>
@@ -745,17 +778,17 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 * **示例**：
 
-```
-data = {
-    a: 1
-};
+    ```javascript
+    data = {
+        a: 1
+    };
 
-computed = {
-    aPlus () {
-        return this.a + 1;
+    computed = {
+        aPlus () {
+            return this.a + 1;
+        }
     }
-}
-```
+    ```
 
 #### watcher
 
@@ -766,25 +799,24 @@ computed = {
 
 * **示例**：
 
-```
-data = {
-    num: 1
-};
+    ```javascript
+    data = {
+        num: 1
+    };
 
-watch = {
-    num (newValue, oldValue) {
-        console.log(`num value: ${oldValue} -> ${newValue}`)
+    watch = {
+        num (newValue, oldValue) {
+            console.log(`num value: ${oldValue} -> ${newValue}`)
+        }
     }
-}
 
-onLoad () {
-    setInterval(() => {
-        this.num++;
-        this.$apply();
-    }, 1000)
-}
-
-```
+    onLoad () {
+        setInterval(() => {
+            this.num++;
+            this.$apply();
+        }, 1000)
+    }
+    ```
 
 #### Props 传值
 
@@ -849,11 +881,13 @@ onLoad () {
 
 #### 组件通信与交互
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
-```js
+
+```javascript
 $this.$emit('some-event', 1, 2, 3, 4);
 ```
 
 组件的事件监听需要写在`events`属性下，如：
+
 ```javascript
 import wepy from 'wepy';
 export default class Com extends wepy.component {
@@ -871,7 +905,9 @@ export default class Com extends wepy.component {
     // Other properties
 }
 ```
+
 **$broadcast**
+
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
@@ -879,6 +915,7 @@ export default class Com extends wepy.component {
 </p>
 
 **$emit**
+
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
@@ -886,12 +923,16 @@ export default class Com extends wepy.component {
 </p>
 
 **$invoke**
+
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
+
 ```Javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
+
 如果想在组件A中调用组件G的某个方法：
+
 ```Javascript
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
@@ -960,7 +1001,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 在`Panel`组件中有以下模板：
 
-```Html
+```html
 <view class="panel">
     <slot name="title">默认标题</slot>
     <slot>
@@ -971,7 +1012,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 在父组件使用`Pannel`组件时，可以这样使用：
 
-```Html
+```html
 <panel>
     <view>
         <text>这是我放到的内容</text>
@@ -995,6 +1036,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 #### 默认式混合
 
 对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
+
 ```Javascript
 // mixins/test.js
 import wepy from 'wepy';
@@ -1077,7 +1119,6 @@ export default class Index extends wepy.page {
 可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
 
 ```javascript
-
 import wepy from 'wepy';
 
 export default class extends wepy.app {
@@ -1106,17 +1147,22 @@ export default class extends wepy.app {
 
 #### 小程序数据绑定方式
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
+
 ```Javascript
 this.setData({title: 'this is title'});
 ```
+
 因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
 
 #### wepy数据绑定方式
 wepy使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
+
 ```javascript
 this.title = 'this is title';
 ```
+
 但需注意，在函数运行周期之外的函数里去修改数据需要手动调用`$apply`方法。如：
+
 ```javascript
 setTimeout(() => {
     this.title = 'this is title';
@@ -1135,6 +1181,7 @@ setTimeout(() => {
 
 #### 1. wx.request 接收参数修改
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
+
 ```javascript
 // 官方
 wx.request({
@@ -1150,6 +1197,7 @@ wepy.request('xxxx').then((d) => console.log(d));
 
 #### 2. 优化事件参数传递
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
+
 ```javascript
 // 官方
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
@@ -1186,7 +1234,8 @@ methods: {
 `this.setData(object)`
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
-```Html
+
+```html
 // 官方
 <view> {{ message }} </view>
 
@@ -1206,6 +1255,7 @@ onLoad () {
 #### 4. 组件代替模板和模块
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
+
 ```html
 // 官方
 <!-- item.wxml -->

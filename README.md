@@ -42,7 +42,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 
 ### Demo
 
-```
+```html
 <style lang="less">
     @color: #4D926F;
     .userinfo {
@@ -86,19 +86,19 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 
 #### 安装（更新） wepy 命令行工具。
 
-```
+```console
 npm install wepy-cli -g
 ```
 
 #### 生成开发示例
 
-```
+```console
 wepy new myproject
 ```
 
 #### 开发实时编译
 
-```
+```console
 wepy build --watch
 ```
 
