@@ -23,7 +23,7 @@ let generateProject = (name, config) => {
     let inPlace = !name || name === '.';
 
     if (inPlace) {
-        name = process.cwd().split('/').pop();
+        name = process.cwd().split(path.sep).pop();
         util.log('使用当前目录：' + name);
     } else {
         util.log('目录：' + name, '创建');
