@@ -95,7 +95,7 @@ if (prod) {
 
 其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
 
-```
+```html
 <style lang="less" src="page1.less"></style>
 <template lang="wxml" src="page1.wxml"></template>
 <script>
@@ -261,17 +261,17 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 * **示例**：
 
-```javascript
-data = {
-    a: 1
-};
+    ```javascript
+    data = {
+        a: 1
+    };
 
-computed = {
-    aPlus () {
-        return this.a + 1;
+    computed = {
+        aPlus () {
+            return this.a + 1;
+        }
     }
-}
-```
+    ```
 
 #### Props 传值
 
@@ -336,11 +336,13 @@ onLoad () {
 
 #### 组件通信与交互
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
-```js
+
+```javascript
 $this.$emit('some-event', 1, 2, 3, 4);
 ```
 
 组件的事件监听需要写在`events`属性下，如：
+
 ```javascript
 import wepy from 'wepy';
 export default class Com extends wepy.component {
@@ -358,7 +360,9 @@ export default class Com extends wepy.component {
     // Other properties
 }
 ```
+
 **$broadcast**
+
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
@@ -366,6 +370,7 @@ export default class Com extends wepy.component {
 </p>
 
 **$emit**
+
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
@@ -373,13 +378,17 @@ export default class Com extends wepy.component {
 </p>
 
 **$invoke**
+
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
-```js
+
+```javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
+
 如果想在组件A中调用组件G的某个方法：
-```js
+
+```javascript
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
@@ -425,7 +434,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 
 对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
 
-```js
+```javascript
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -462,7 +471,7 @@ export default class Index extends wepy.page {
 
 对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
 
-```js
+```javascript
 // mixins/test.js
 import wepy from 'wepy';
 
@@ -529,7 +538,6 @@ export default class extends wepy.app {
         });
     }
 }
-
 ```
 
 
@@ -538,7 +546,7 @@ export default class extends wepy.app {
 #### 小程序数据绑定方式
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
 
-```js
+```javascript
 this.setData({title: 'this is title'});
 ```
 
