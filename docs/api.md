@@ -4,7 +4,7 @@
 
 App 基类，小程序入口。
 
-```
+```javascript
 export class App extends wepy.app {
     onLaunch () {
 
@@ -19,7 +19,7 @@ export class App extends wepy.app {
 * `$pages:List<Page>`: 所有页面列表
 格式如下：
 
-```
+```javascript
 this.$pages = {
     './pages/index': IndexPage
 }
@@ -28,7 +28,7 @@ this.$pages = {
 * `$interceptors:List<Object>`：所有拦截器列表
 格式如下：
 
-```
+```javascript
 this.$interceptors = {
     'request': {
         config (p) {
@@ -49,14 +49,14 @@ this.$interceptors = {
 `promisify`：使用`wepy.xxx`的方式请求小程序原生API都将Promise化。
 使用方法如下:
 
-```
+```javascript
 this.use('requestfix');
 this.use('promisify');
 ```
 
 * `intercept(api:String, provider:Object)`：使用拦截器对原生API请求进行拦截。
 
-```
+```javascript
 // app.js
 constructor () {
     super();
@@ -94,7 +94,7 @@ constructor () {
 * `setData(key:String|Object, [value:Object])`：对原有小程序的`setData`的封装。
 因为WePY的脏查检流程会自动执行setData操作，所以通常情况下不需要使用此方法。
 
-```
+```javascript
 this.setData('list', ['apple', 'pen']);
 this.setData({
     list: ['apple', 'pen']
@@ -104,7 +104,7 @@ this.setData({
 * `getCurrentPages()`：相当于全局方法`getCurrentPages()`。
 * `$getComponent(com:String)`：通过组件名称路径查找组件对象。
 
-```
+```javascript
 this.$getComponent('./coma/comb');
 this.$getComponent('../comc');
 ```
@@ -112,7 +112,7 @@ this.$getComponent('../comc');
 * `$invoke(com:String|Component)`：调用另一组件的方法。
 优先调用methods中方法，如果方法不存在，则调用组件的自定义方法，调用自定义方法时，不会传递事件$event。
 
-```
+```javascript
 // coma.js
 this.$invoke('./ComB', 'func1', 'p1', 'p2');
 this.$invoke('./ComB', 'func2', 'p1', 'p2');
@@ -129,7 +129,7 @@ export class ComB extends wepy.component {
 * `$broadcast(eventName:String, [args])`：组件发起一个广播事件。
 向所有子组件发起一个广播事件，事件会依次传播直至所有子组件遍历完毕或者事件被手动终止传播。
 
-```
+```javascript
 // page1.js
 components = { ComA };
 this.$broadcast('broadcast-event', 'p1', 'p2');
@@ -143,7 +143,7 @@ events = {
 * `$emit(eventName:String, [args])`：组件发起一个冒泡事件。
 向父组件发起一个冒泡事件，事件会向上冒泡直至Page或者者事件被手动终止传播。
 
-```
+```javascript
 // coma.js
 this.$emit('emit-event', 'p1', 'p2');
 
@@ -158,7 +158,7 @@ events = {
 正常流程下，改变数据后，组件会在流程结束时自动触发脏检查。
 在异步或者回调流程中改变数据时，需要手动调用`$apply`方法。
 
-```
+```javascript
 this.userName = 'Gcaufy';
 this.$apply();
 
@@ -180,7 +180,7 @@ this.$apply(() => {
 * `$preload(key:String|Object, [value:Object])`：给页面加载preload数据
 加载preload数据后，跳转至另一个页面时，在onLoad方法中可以获取到上个页面的preload数据。
 
-```
+```javascript
 // page1.js
 this.$preload('userName': 'Gcaufy');
 this.$redirect('./page2');
@@ -193,7 +193,7 @@ onLoad (params, data) {
 
 * `$redirect(url:String|Object, [params:Object])`：`wx.redirectTo`的封装方法。
 
-```
+```javascript
 this.$redirect('./page2', {a: 1, b: 2});
 this.$redirect({
     url: './pages?a=1&b=2'
@@ -210,7 +210,7 @@ this.$redirect({
 
 小程序事件封装类
 
-```
+```javascript
 new wepy.event(name:String, source:Component, type:String)
 ```
 
@@ -238,7 +238,7 @@ new wepy.event(name:String, source:Component, type:String)
 
 Mixin基类，用于复用不同组件中的相同功能。
 
-```
+```javascript
 // mymixn.js
 export class MyMixin extends wepy.mixin {
     // my logic here
