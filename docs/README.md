@@ -89,6 +89,14 @@ customFileTypes:
 }
 ```
 
+#### VIM 下代码高亮
+1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)
+2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮
+
+    ```vim
+    au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
+    ```
+
 ### 代码规范：
 1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
    以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
