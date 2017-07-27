@@ -770,17 +770,17 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 
 * **示例**：
 
-```javascript
-data = {
-    a: 1
-};
+    ```javascript
+    data = {
+        a: 1
+    };
 
-computed = {
-    aPlus () {
-        return this.a + 1;
+    computed = {
+        aPlus () {
+            return this.a + 1;
+        }
     }
-}
-```
+    ```
 
 #### watcher
 
@@ -791,24 +791,24 @@ computed = {
 
 * **示例**：
 
-```javascript
-data = {
-    num: 1
-};
+    ```javascript
+    data = {
+        num: 1
+    };
 
-watch = {
-    num (newValue, oldValue) {
-        console.log(`num value: ${oldValue} -> ${newValue}`)
+    watch = {
+        num (newValue, oldValue) {
+            console.log(`num value: ${oldValue} -> ${newValue}`)
+        }
     }
-}
 
-onLoad () {
-    setInterval(() => {
-        this.num++;
-        this.$apply();
-    }, 1000)
-}
-```
+    onLoad () {
+        setInterval(() => {
+            this.num++;
+            this.$apply();
+        }, 1000)
+    }
+    ```
 
 #### Props 传值
 
@@ -899,6 +899,7 @@ export default class Com extends wepy.component {
 ```
 
 **$broadcast**
+
 `$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
@@ -906,6 +907,7 @@ export default class Com extends wepy.component {
 </p>
 
 **$emit**
+
 `$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
@@ -913,6 +915,7 @@ export default class Com extends wepy.component {
 </p>
 
 **$invoke**
+
 `$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
 
