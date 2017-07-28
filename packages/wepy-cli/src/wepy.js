@@ -20,14 +20,22 @@ let displayVersion = () => {
 
 let generateProject = (name, config) => {
 
-    util.log('目录：' + name, '创建');
+    let inPlace = !name || name === '.';
 
-    if (util.mkdir(name) !== true) {
-        util.error('创建目录失败。');
-        return;
+    if (inPlace) {
+        name = process.cwd().split(path.sep).pop();
+        util.log('使用当前目录：' + name);
+    } else {
+        util.log('目录：' + name, '创建');
+
+        if (util.mkdir(name) !== true) {
+            util.error('创建目录失败。');
+            return;
+        }
+
+        process.chdir(name);
     }
 
-    process.chdir(name);
     util.currentDir = process.cwd();
 
     let packagePath = path.join(util.currentDir, 'package.json');
@@ -97,7 +105,7 @@ let generateProject = (name, config) => {
     util.writeFile(packagePath, JSON.stringify(pkg));
     util.log('配置: ' + 'package.json', '写入');
 
-    let files = util.getFiles(template);
+    let files = util.getFiles(template).filter(file => file !== 'package.json');
 
     const copyFn = function (sourcePath) {
         return function (file) {
