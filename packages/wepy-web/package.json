@@ -1,6 +1,6 @@
 {
   "name": "wepy-web",
-  "version": "1.5.8",
+  "version": "0.0.13",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {},
