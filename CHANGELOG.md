@@ -1,4 +1,4 @@
-## 1.5.8 (waiting)
+## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
 * `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)
 * `F` 修复了使用PUG编译时，首行不能缩进的问题。[ISSUE 211](https://github.com/wepyjs/wepy/issues/211)
