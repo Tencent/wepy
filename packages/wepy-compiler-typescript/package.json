@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-typescript",
-  "version": "1.3.9",
+  "version": "1.5.8",
   "description": "wepy compile typescript",
   "main": "lib/index.js",
   "scripts": {
