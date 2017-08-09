@@ -302,8 +302,10 @@ export default {
                 cStyle.compile('less', opath);
                 break;
             case '.sass':
-            case '.scss':
                 cStyle.compile('sass', opath);
+                break;
+            case '.scss':
+                cStyle.compile('scss', opath);
                 break;
             case '.js':
                 cScript.compile('babel', null, 'js', opath);
