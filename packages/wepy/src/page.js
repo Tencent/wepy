@@ -55,7 +55,8 @@ export default class extends component {
         if (!this.$parent.__route__) {
             this.$parent.__route__ = getCurrentPages()[0].__route__;
         }
-        let realPath = util.$resolvePath(this.$parent.__route__, url.url.split('?')[0]);
+        let absoluteRoute = this.$parent.__route__[0] !== '/' ? ('/' + this.$parent.__route__) : this.$parent.__route__;
+        let realPath = util.$resolvePath(absoluteRoute, url.url.split('?')[0]);
         let goTo = this.$parent.$pages[realPath];
         if (goTo && goTo.onPrefetch) {
             let prevPage = this.$parent.__prevPage__;

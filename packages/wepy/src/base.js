@@ -110,7 +110,7 @@ export default {
         let config = {}, k;
         let page = new pageClass();
         if (typeof pagePath === 'string') {
-            this.$instance.$pages[pagePath] = page;
+            this.$instance.$pages['/' + pagePath] = page;
         }
         page.$initMixins();
         // This will be a circum Object
