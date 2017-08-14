@@ -156,6 +156,8 @@ export default class {
                                 this.$mappingProps[key]['parent'] = binded;
                             }
                         }
+                    } else if (typeof val === 'object' && val.value !== undefined) { // 静态传值
+                        this.data[key] = val.value;
                     }
                 }
                 if (!this.data[key] && !props[key].repeat) {
