@@ -1,3 +1,8 @@
+## 1.5.9 (waiting)
+* `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
+* `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
+* `F` 修复了使用绝对路径跳转时，`onPrefetch`没被调用的问题。[ISSUE 244](https://github.com/wepyjs/wepy/issues/244)
+
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
 * `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)
