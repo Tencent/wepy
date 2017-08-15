@@ -1,5 +1,5 @@
 {
-  "name": "wepy-cli",
+  "name": "xsp-wepy-cli",
   "version": "1.5.8",
   "description": "",
   "main": "bin/wepy.js",

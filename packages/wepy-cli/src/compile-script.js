@@ -48,7 +48,7 @@ export default {
             } else if (lib.indexOf('/') === -1 || // require('asset');
                 lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
-            ) {  
+            ) {
                 let pkg = this.getPkgConfig(lib);
                 if (!pkg) {
                     throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base));
@@ -162,6 +162,13 @@ export default {
             code = util.readFile(path.join(opath.dir, opath.base));
             if (code === null) {
                 throw '打开文件失败: ' + path.join(opath.dir, opath.base);
+            }
+        }
+
+        if (lang === 'js') {
+            const babelAddition = config.compilers.babel && config.compilers.babel.addition;
+            if (babelAddition && path.join(opath.dir, opath.base).indexOf(babelAddition) !== -1) {
+                lang = 'babel';
             }
         }
 
