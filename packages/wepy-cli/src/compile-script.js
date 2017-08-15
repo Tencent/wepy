@@ -51,7 +51,7 @@ export default {
             ) {  
                 let pkg = this.getPkgConfig(lib);
                 if (!pkg) {
-                    throw Error('找不到模块: ' + lib);
+                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base));
                 }
                 let main = pkg.main || 'index.js';
                 if (pkg.browser && typeof pkg.browser === 'string') {
