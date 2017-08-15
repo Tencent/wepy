@@ -166,7 +166,7 @@ export default {
         }
 
         if (lang === 'js') {
-            const babelAddition = config.compilers.babel && config.compilers.babel.addition;
+            const babelAddition = config.babelAddition;
             if (babelAddition && path.join(opath.dir, opath.base).indexOf(babelAddition) !== -1) {
                 lang = 'babel';
             }
