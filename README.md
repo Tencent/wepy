@@ -128,8 +128,8 @@ wepy build --watch
 花花百科、
 斑马小店、
 鲜花说小店、
+[2018校园招聘](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg)
 ...
-
 
 ### Links
 
