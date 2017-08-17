@@ -88,18 +88,18 @@ wx.scanCode = (params) => {
     const QR_CODE = 'QR_CODE';
     const EAN_13 = 'EAN_13';
 
-	wx.scanQRCode({
-		needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-		scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+    wx.scanQRCode({
+        needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+        scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
         success (res) {
-		    if (res.resultStr.includes(EAN_13)) {
-				wxSuccess('scanCode', params, {
-				    result: res.resultStr.replace(/EAN_13,/g, ''),
+            if (res.resultStr.includes(EAN_13)) {
+                wxSuccess('scanCode', params, {
+                    result: res.resultStr.replace(/EAN_13,/g, ''),
                     scanType: EAN_13
                 })
             } else {
-		        wxSuccess('scanCode', params, {
-		            result: res.resultStr,
+                wxSuccess('scanCode', params, {
+                    result: res.resultStr,
                     scanType: QR_CODE
                 })
             }

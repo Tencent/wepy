@@ -61,7 +61,7 @@ export const wxCallback = (type, name, options, data) => {
             if (name === 'login') {
                 options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), code: data.code, data: data});
             } else if (name === 'scanCode') {
-				options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), result: data.result, charSet: 'utf-8', scanType: data.scanType});
+                options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), result: data.result, charSet: 'utf-8', scanType: data.scanType});
             } else {
                 options[type].call(window.wx, {errMsg: name + ':' + (type === 'fail' ? 'fail' : 'ok'), data: data});
             }
