@@ -147,6 +147,13 @@ wx.setNavigationBarTitle = wx.setNavigationBarTitle ? wx.setNavigationBarTitle :
     callback('success', o, 'setNavigationBarTitle', null);
     callback('complete', o, 'setNavigationBarTitle', null);
 };
+
+wx.makePhoneCall = wx.makePhoneCall || function makePhoneCall (o) {
+    window.location = 'tel:' + o.phoneNumber;
+		callback('success', o, 'makePhoneCall', null);
+		callback('complete', o, 'makePhoneCall', null);
+};
+
 wx.hideKeyboard = wx.hideKeyboard ? wx.hideKeyboard : function hideKeyboard () {
     // http://stackoverflow.com/questions/8335834/how-can-i-hide-the-android-keyboard-using-javascript
     setTimeout(() => {
