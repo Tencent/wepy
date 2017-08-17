@@ -96,15 +96,15 @@ wx.scanCode = (params) => {
                 wxSuccess('scanCode', params, {
                     result: res.resultStr.replace(/EAN_13,/g, ''),
                     scanType: EAN_13
-                })
+                });
             } else {
                 wxSuccess('scanCode', params, {
                     result: res.resultStr,
                     scanType: QR_CODE
-                })
+                });
             }
         }
-    })
+    });
 };
 
 /**
