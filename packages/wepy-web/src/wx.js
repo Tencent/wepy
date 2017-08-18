@@ -20,12 +20,12 @@ const callback = (type, o, name, data) => {
 
 let wx = window.wx || {};
 
-wx.login = wx.login ? wx.login : function login (o) {
+wx.login = wx.login || function login (o) {
     console.error('wx.login is only implemented in browser');
 };
 
 /*** Storage ***/
-wx.getStorageSync = wx.getStorageSync ? wx.getStorageSync : function getStorageSync (v) {
+wx.getStorageSync = wx.getStorageSync || function getStorageSync (v) {
     let rst = window.localStorage.getItem(v);
     try {
             rst = JSON.parse(rst);
@@ -33,18 +33,18 @@ wx.getStorageSync = wx.getStorageSync ? wx.getStorageSync : function getStorageS
     }
     return rst;
 };
-wx.getStorage = wx.getStorage ? wx.getStorage : function getStorage (o) {
+wx.getStorage = wx.getStorage || function getStorage (o) {
     let rst = wx.getStorageSync(o.key);
     callback('success', o, 'getStorage', rst);
     callback('complete', o, 'getStorage', rst);
 };
-wx.setStorageSync = wx.setStorageSync ? wx.setStorageSync : function setStorageSync (k, d) {
+wx.setStorageSync = wx.setStorageSync || function setStorageSync (k, d) {
     if (typeof d !== 'string') {
         d = JSON.stringify(d);
     }
     window.localStorage.setItem(k, d);
 };
-wx.setStorage = wx.setStorage ? wx.setStorage : function setStorage (o) {
+wx.setStorage = wx.setStorage || function setStorage (o) {
     let rst;
     try {
         rst = this.setStorageSync(o.key, o.data);
@@ -54,7 +54,7 @@ wx.setStorage = wx.setStorage ? wx.setStorage : function setStorage (o) {
     }
     callback('complete', o, 'getStorage', rst);
 };
-wx.getStorageInfoSync = wx.getStorageInfoSync ? wx.getStorageInfoSync : function getStorageInfoSync () {
+wx.getStorageInfoSync = wx.getStorageInfoSync || function getStorageInfoSync () {
     let MAX_SIZE = 5 * 1024;
     let keys = Object.keys(window.localStorage);
     return {
@@ -63,15 +63,15 @@ wx.getStorageInfoSync = wx.getStorageInfoSync ? wx.getStorageInfoSync : function
         limitSize: MAX_SIZE
     };
 };
-wx.getStorageInfo = wx.getStorageInfo ? wx.getStorageInfo : function getStorageInfo (o) {
+wx.getStorageInfo = wx.getStorageInfo || function getStorageInfo (o) {
     let rst = this.getStorageInfoSync();
     callback('success', o, 'getStorageInfo', rst);
     callback('complete', o, 'getStorageInfo', rst);
 };
-wx.removeStorageSync = wx.removeStorageSync ? wx.removeStorageSync : function removeStorageSync (k) {
+wx.removeStorageSync = wx.removeStorageSync || function removeStorageSync (k) {
     window.localStorage.removeItem(k);
 };
-wx.removeStorage = wx.removeStorage ? wx.removeStorage : function removeStorage (o) {
+wx.removeStorage = wx.removeStorage || function removeStorage (o) {
     let rst;
     try {
         rst = this.removeStorage(o.key);
@@ -81,10 +81,10 @@ wx.removeStorage = wx.removeStorage ? wx.removeStorage : function removeStorage 
     }
     callback('complete', o, 'getStorage', rst);
 };
-wx.clearStorageSync = wx.clearStorageSync ? wx.clearStorageSync : function clearStorageSync () {
+wx.clearStorageSync = wx.clearStorageSync || function clearStorageSync () {
     window.localStorage.clear();
 };
-wx.clearStorage = wx.clearStorage ? wx.clearStorage : function clearStorage () {
+wx.clearStorage = wx.clearStorage || function clearStorage () {
     let rst;
     try {
         rst = this.clearStorage();
@@ -93,16 +93,16 @@ wx.clearStorage = wx.clearStorage ? wx.clearStorage : function clearStorage () {
 };
 
     /***** Navigate ******/
-wx.navigateTo = wx.navigateTo ? wx.navigateTo : function navigateTo (o) {
+wx.navigateTo = wx.navigateTo || function navigateTo (o) {
     window.$router.go(o.url);
 };
-wx.redirectTo = wx.redirectTo ? wx.redirectTo : function redirectTo (o) {
+wx.redirectTo = wx.redirectTo || function redirectTo (o) {
     window.$router.go(o.url);
 };
-wx.switchTab = wx.switchTab ? wx.switchTab : function switchTab (o) {
+wx.switchTab = wx.switchTab || function switchTab (o) {
     window.$router.go(o.url);
 };
-wx.navigateBack = wx.navigateBack ? wx.navigateBack : function navigateBack (o) {
+wx.navigateBack = wx.navigateBack || function navigateBack (o) {
     if (!o) {
         o = {};
     }
@@ -112,7 +112,7 @@ wx.navigateBack = wx.navigateBack ? wx.navigateBack : function navigateBack (o) 
 };
 
     /***** System ******/
-wx.getSystemInfoSync = wx.getSystemInfoSync ? wx.getSystemInfoSync : function getSystemInfoSync () {
+wx.getSystemInfoSync = wx.getSystemInfoSync || function getSystemInfoSync () {
     return {
         SDKVersion: '0.0.0',
         language: '-',
@@ -127,27 +127,34 @@ wx.getSystemInfoSync = wx.getSystemInfoSync ? wx.getSystemInfoSync : function ge
         windowWidth: window.innerWidth
     }
 };
-wx.getSystemInfo = wx.getSystemInfo ? wx.getSystemInfo : function getSystemInfo (o) {
+wx.getSystemInfo = wx.getSystemInfo || function getSystemInfo (o) {
     let rst = this.getSystemInfoSync();
     callback('success', o, 'getSystemInfo', rst);
     callback('complete', o, 'getSystemInfo', rst);
 };
-wx.canIUse = wx.canIUse ? wx.canIUse : function canIUse () {
+wx.canIUse = wx.canIUse || function canIUse () {
     return true;
 };
 
     /****** Network ***********/
-wx.getNetworkType = wx.getNetworkType ? wx.getNetworkType : function getNetworkType () {
+wx.getNetworkType = wx.getNetworkType || function getNetworkType () {
     return 'unkown';
 };
 
     /****** NavigationBar *******/
-wx.setNavigationBarTitle = wx.setNavigationBarTitle ? wx.setNavigationBarTitle : function setNavigationBarTitle (o) {
+wx.setNavigationBarTitle = wx.setNavigationBarTitle || function setNavigationBarTitle (o) {
     document.title = o.title;
     callback('success', o, 'setNavigationBarTitle', null);
     callback('complete', o, 'setNavigationBarTitle', null);
 };
-wx.hideKeyboard = wx.hideKeyboard ? wx.hideKeyboard : function hideKeyboard () {
+
+wx.makePhoneCall = wx.makePhoneCall || function makePhoneCall (o) {
+    window.location = 'tel:' + o.phoneNumber;
+    callback('success', o, 'makePhoneCall', null);
+    callback('complete', o, 'makePhoneCall', null);
+};
+
+wx.hideKeyboard = wx.hideKeyboard || function hideKeyboard () {
     // http://stackoverflow.com/questions/8335834/how-can-i-hide-the-android-keyboard-using-javascript
     setTimeout(() => {
         let field = document.createElement('input');
