@@ -1,3 +1,4 @@
+// Hats off to the Alibaba Mini Program engineers.
 import app from './app';
 import page from './page';
 import component from './component';
