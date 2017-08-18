@@ -26,6 +26,7 @@ export default {
     resolveDeps (code, type, opath) {
 
         let params = cache.getParams();
+        let config = cache.getConfig();
         let wpyExt = params.wpyExt;
 
 
@@ -34,6 +35,10 @@ export default {
             let resolved = lib;
 
             let target = '', source = '', ext = '', needCopy = false;
+
+            if (config.output === 'ant' && lib === 'wepy') {
+                lib = 'wepy-ant';
+            }
 
             if (lib[0] === '.') { // require('./something'');
                 source = path.join(opath.dir, lib);  // e:/src/util
@@ -128,11 +133,11 @@ export default {
         });
     },
 
-    npmHack (filename, code) {
+    npmHack (opath, code) {
         // 一些库（redux等） 可能会依赖 process.env.NODE_ENV 进行逻辑判断
         // 这里在编译这一步直接做替换 否则报错
         code = code.replace(/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV));
-        switch(filename) {
+        switch(opath.base) {
             case 'lodash.js':
             case '_global.js':
                 code = code.replace('Function(\'return this\')()', 'this');
@@ -147,6 +152,10 @@ export default {
                 break;
             case '_freeGlobal.js':
                 code = code.replace('module.exports = freeGlobal;', 'module.exports = freeGlobal || this;')
+        }
+        let config = util.getConfig();
+        if (config.output === 'ant' && opath.dir.substr(-19) === 'wepy-async-function') {
+            code = '';
         }
         return code;
     },
@@ -210,7 +219,7 @@ export default {
             if (type !== 'npm') {
                 target = util.getDistPath(opath, 'js');
             } else {
-                code = this.npmHack(opath.base, code);
+                code = this.npmHack(opath, code);
                 target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
             }
 

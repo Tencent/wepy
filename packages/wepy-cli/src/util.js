@@ -286,7 +286,12 @@ const utils = {
             // 用户可以通过临时加入 knownTags 的方法兼容
             knownTags.push.apply(knownTags, configTags);
         }
-        // Exp error when using this code: <input focus wx:if="{{test >   
+        // Exp error when using this code: <input focus wx:if="{{test >
+        if (config.output === 'ant') {
+            content = content.replace(/\s+wx\:(\w+)/ig, (match, name) => {
+                return ' a:' + name;
+            });
+        } 
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
@@ -296,7 +301,11 @@ const utils = {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                const prefix = type !== '.user' ? (type === '.stop' ? 'catch' : 'bind') : 'v-on:';
+                let prefix = type !== '.user' ? (type === '.stop' ? 'catch' : 'bind') : 'v-on:';
+                if (config.output === 'ant' && prefix === 'bind') {
+                    prefix = 'on';
+                    name = name[0].toUpperCase() + name.substring(1);
+                }
                 return ` ${prefix}${name}=`;
             });
         });

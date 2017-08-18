@@ -9,7 +9,7 @@ import loader from './loader';
 const PREFIX = '$';
 const JOIN = '$';
 
-const BOOLEAN_ATTRS = ['wx:else', 'show-info', 'active', 'controls', 'danmu-btn', 'enable-danmu', 'autoplay', 'disabled', 'show-value', 'checked', 'scroll-x', 'scroll-y', 'auto-focus', 'focus', 'auto-height', 'password', 'indicator-dots', 'report-submit', 'hidden', 'plain', 'loading', 'redirect', 'loop', 'controls'];
+const BOOLEAN_ATTRS = ['a:else', 'wx:else', 'show-info', 'active', 'controls', 'danmu-btn', 'enable-danmu', 'autoplay', 'disabled', 'show-value', 'checked', 'scroll-x', 'scroll-y', 'auto-focus', 'focus', 'auto-height', 'password', 'indicator-dots', 'report-submit', 'hidden', 'plain', 'loading', 'redirect', 'loop', 'controls'];
 
 export default {
     comPrefix: {},
@@ -209,6 +209,9 @@ export default {
 
     updateBind (node, prefix, ignores = {}, mapping = {}) {
 
+        let config = cache.getConfig();
+        let tagprefix = config.output === 'ant' ? 'a' : 'wx';
+
         let comid = prefix ? this.getPrefix(prefix) : '';
 
         if (node.nodeName === '#text' && prefix) {
@@ -239,16 +242,19 @@ export default {
                     if (attr.value.indexOf('{{') > -1) {
                         attr.value = this.parseExp(attr.value, prefix, ignores, mapping);
                     }
-                    if (attr.name === 'wx:for' || attr.name === 'wx:for-items') {
-                        let index = node.getAttribute('wx:for-index') || 'index';
-                        let item = node.getAttribute('wx:for-item') || 'item';
+                    if (attr.name === tagprefix + ':for' || attr.name === tagprefix + ':for-items') {
+                        let index = node.getAttribute(tagprefix + ':for-index') || 'index';
+                        let item = node.getAttribute(tagprefix + ':for-item') || 'item';
                         ignores[index] = true;
                         ignores[item] = true;
                         //attr.value = parseExp(attr.value, prefix, ignores);
                     }
                 }
                 // bindtap="abc" => bindtap="prefix_abc"
-                if (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0) {
+                if (
+                    (config.output !== 'ant' && (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0)) ||
+                    (config.output === 'ant' && (attr.name.indexOf('on') === 0 || attr.name.indexOf('catch') === 0))
+                    ) {
                     // added index for all events;
                     if (mapping.items && mapping.items.length > 0) {
                         // prefix 减少一层
@@ -268,6 +274,10 @@ export default {
                     }
                     if (prefix)
                         attr.value = `${PREFIX}${comid}${JOIN}` + attr.value;
+                }
+                if (attr.name === 'a:for-items' && config.output === 'ant') {
+                    node.setAttribute('a:for', attr.value);
+                    node.removeAttribute(attr.name);
                 }
             });
             [].slice.call(node.childNodes || []).forEach((child) => {
@@ -319,6 +329,9 @@ export default {
 
     compileXML (node, template, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
 
+        let config = cache.getConfig();
+        let tagprefix = config.output === 'ant' ? 'a' : 'wx';
+
         this.updateSlot(node, childNodes);
 
         this.updateBind(node, prefix, {}, propsMapping);
@@ -348,14 +361,13 @@ export default {
             repeat.tagName = 'block'; 
             let val = repeat.getAttribute('for');
             if (val) {
-                repeat.setAttribute('wx:for', val);
+                repeat.setAttribute(tagprefix + ':for', val);
                 repeat.removeAttribute('for');
                 ['index', 'item', 'key'].forEach(attr => {
                     let val = repeat.getAttribute(attr);
-                    let tag = attr === 'key' ? 'wx:key' : `wx:for-${attr}`;
+                    let tag = attr === 'key' ? `${tagprefix}:key` : `${tagprefix}:for-${attr}`;
                     val = val || attr;
                     forDetail[attr] = val;
-
                     if (prefix) {
                         repeat.setAttribute(tag, `${PREFIX}${prefix}${JOIN}${val}`);
                     } else {
@@ -377,7 +389,7 @@ export default {
                 };
                 [].slice.call(com.attributes || []).forEach(attr => {
 
-                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class'].indexOf(attr.name) > -1) {
+                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class', 'a:if', 'a:elif', 'a:else'].indexOf(attr.name) > -1) {
                         comAttributes[attr.name] = attr.value;
                     }
                     let name = attr.name;
@@ -427,7 +439,7 @@ export default {
         componentElements.forEach((com) => {
             let comid, definePath, isCustom = false, comAttributes = {};
             [].slice.call(com.attributes || []).forEach((attr) => {
-                if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class'].indexOf(attr.name) > -1) {
+                if (['hidden', tagprefix + ':if', tagprefix + ':elif', tagprefix + ':else', 'class'].indexOf(attr.name) > -1) {
                     comAttributes[attr.name] = attr.value;
                 }
             });
@@ -482,7 +494,7 @@ export default {
         compiler(content, config.compilers[lang] || {}).then(content => {
             let node = cWpy.createParser().parseFromString(content);
             node = this.compileXML(node, template);
-            let target = util.getDistPath(path.parse(template.src), 'wxml', src, dist);
+            let target = util.getDistPath(path.parse(template.src), config.output === 'ant' ? 'axml' : 'wxml', src, dist);
 
             if (node.childNodes.length === 0) {
                 // empty node tostring will cause an error.

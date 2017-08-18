@@ -181,6 +181,7 @@ export default {
             wepyrc.web = wepyrc.web || {};
             dist = wepyrc.web.dist || dist || 'web';
             src = wepyrc.web.src || src || 'src';
+            wepyrc.output = 'web';
 
             if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-web'))) {
                 util.log('正在尝试安装缺失资源 wepy-web，请稍等。', '信息');
@@ -189,6 +190,23 @@ export default {
                     this.build(config);
                 }).catch(e => {
                     util.log(`安装插件失败：wepy-web，请尝试运行命令 "npm install wepy-web --save" 进行安装。`, '错误');
+                    console.log(e);
+                });
+                return;
+            }
+        } else if (config.output === 'ant') {
+            wepyrc.ant = wepyrc.ant || {};
+            dist = wepyrc.ant.dist || dist || 'ant';
+            src = wepyrc.ant.src || src || 'src';
+            wepyrc.output = 'ant';
+
+            if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-ant'))) {
+                util.log('正在尝试安装缺失资源 wepy-ant，请稍等。', '信息');
+                util.exec(`npm install wepy-ant --save`).then(d => {
+                    util.log(`已完成安装 wepy-ant，重新启动编译。`, '完成');
+                    this.build(config);
+                }).catch(e => {
+                    util.log(`安装插件失败：wepy-ant，请尝试运行命令 "npm install wepy-ant --save" 进行安装。`, '错误');
                     console.log(e);
                 });
                 return;
