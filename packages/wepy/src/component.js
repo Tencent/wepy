@@ -417,6 +417,15 @@ export default class {
         this.$$phase = '$digest';
         while (this.$$phase) {
             let readyToSet = {};
+            if (this.computed) {
+                for (k in this.computed) { // If there are computed property, calculated every times
+                    let fn = this.computed[k], val = fn.call(this);
+                    if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
+                        readyToSet[this.$prefix + k] = val;
+                        this[k] = util.$copy(val, true);
+                    }
+                }
+            }
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
                     // data watch trigger
@@ -452,15 +461,6 @@ export default class {
                 }
             }
             if (Object.keys(readyToSet).length) {
-                if (this.computed) {
-                    for (k in this.computed) { // If there are computed property, calculated every times
-                        let fn = this.computed[k], val = fn.call(this);
-                        if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
-                            readyToSet[this.$prefix + k] = val;
-                            this[k] = util.$copy(val, true);
-                        }
-                    }
-                }
                 this.setData(readyToSet);
             }
             this.$$phase = (this.$$phase === '$apply') ? '$digest' : false;
