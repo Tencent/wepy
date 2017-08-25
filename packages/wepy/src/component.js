@@ -141,8 +141,9 @@ export default class {
                             bindfor.split('.').forEach(t => {
                                 binddata = binddata[t];
                             });
-                            repeatKey = Object.keys(binddata)[0];
-
+                            if(typeof binddata === 'object'){
+                                repeatKey = Object.keys(binddata)[0];
+                            }
 
                             if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
                             this.$mappingProps[key]['parent'] = {
