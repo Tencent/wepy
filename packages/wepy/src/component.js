@@ -141,7 +141,7 @@ export default class {
                             bindfor.split('.').forEach(t => {
                                 binddata = binddata[t];
                             });
-                            if(typeof binddata === 'object'){
+                            if(typeof binddata === 'object' && binddata !== null){
                                 repeatKey = Object.keys(binddata)[0];
                             }
 
