@@ -5,21 +5,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
 [![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
-
-<p align="center">
-  <p align="center"></p>
-  <p align="center"></p>
-  <p align="center"></p>
-
-  <p align="center">
-    <img src="https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png" alt="qrcode">
-  </p>
-
-  <p align="center">
-     WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
-  </p>
-</p>
-
 ### 介绍
 
 WePY 是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions的引入都是为了能让开发小程序项目变得更加简单，高效。
@@ -131,6 +116,12 @@ wepy build --watch
 [趣店招聘](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg)、
 [满熊阅读](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg)、
 ...
+
+### 交流群
+
+WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
+
+![](https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png)
 
 ### Links
 
