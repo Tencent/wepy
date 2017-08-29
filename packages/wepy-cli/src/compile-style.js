@@ -76,6 +76,11 @@ export default {
 
             allPromises.push(p);
         });
+
+        // 父组件没有写style标签，但是有子组件的。
+        if (requires.length > 0 && styles.length === 0) {
+            allPromises = [Promise.resolve('')];
+        }
         Promise.all(allPromises).then((rets) => {
             let allContent = rets.join('');
             if (requires && requires.length) {
