@@ -115,6 +115,7 @@ wepy build --watch
 鲜花说小店、
 [趣店招聘](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg)、
 [满熊阅读](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg)、
+[平行进口报价内参](https://miniapp.ourauto.club/qrcode.jpg)、
 ...
 
 ### 交流群
