@@ -141,7 +141,7 @@ export default class {
                             bindfor.split('.').forEach(t => {
                                 binddata = binddata[t];
                             });
-                            if(typeof binddata === 'object' && binddata !== null){
+                            if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
                                 repeatKey = Object.keys(binddata)[0];
                             }
 
@@ -175,7 +175,7 @@ export default class {
         }
 
         this.$data = util.$copy(this.data, true);
-        if (inRepeat)
+        if (inRepeat && repeatKey !== undefined)
             this.$setIndex(repeatKey);
 
         if (this.computed) {
