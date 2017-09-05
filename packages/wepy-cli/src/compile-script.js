@@ -25,11 +25,14 @@ export default {
 
             let resolved = lib;
 
+
             let target = '', source = '', ext = '', needCopy = false;
 
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
             }
+            
+            lib = resolved.resolveAlias(lib);
 
             if (lib[0] === '.') { // require('./something'');
                 source = path.join(opath.dir, lib);  // e:/src/util
