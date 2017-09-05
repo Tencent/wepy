@@ -5,7 +5,6 @@ export default function (filepath) {
     let config = util.getConfig();
 
     if (config.eslint) {
-        debugger;
         const compiler = loader.load('wepy-eslint');
 
         if (!compiler) {
