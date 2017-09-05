@@ -20,6 +20,7 @@ export default {
             }
         });
         this._cacheModules = {};
+        this._cacheAlias = {};
     },
 
     walk (file) {
@@ -95,5 +96,36 @@ export default {
             pkg: o.pkg,
             dir: o.dir
         };
-    }
+    },
+
+    resolveAlias (lib) {
+        if (!this.alias)
+            return lib;
+        if (this._cacheAlias[lib]) {
+            return this._cacheAlias[lib];
+        }
+        let rst = lib;
+
+        for (let k in this.alias) {
+            let alias = this.alias[k];
+            if (k[k.length - 1] === '$') {
+                k = k.substring(0, k.length - 1);
+                if (k === lib) {
+                    if (path.extname(alias) === '') { // this is directory
+                        this._cacheAlias[lib] = path.join(alias, 'index.js');
+                    } else {
+                        this._cacheAlias[lib] = alias;
+                    }
+                }
+            } else {
+                if ((lib.indexOf(k) === 0 && lib === k) || (lib !== k && lib.indexOf(k + '/') === 0)) {
+                    this._cacheAlias[lib] = lib.replace(k, alias);
+                }
+            }
+        }
+        if (!this._cacheAlias[lib]) {
+            this._cacheAlias[lib] = lib;
+        }
+        return this._cacheAlias[lib];
+    }   
 }
