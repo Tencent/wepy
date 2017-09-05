@@ -274,12 +274,13 @@ commander.option('--redux', '使用new生成项目时，增加redux相关内容'
 commander.option('-w, --watch', '监听文件改动');
 
 commander.command('build').description('编译项目').action(projectPath => {
-    if (!util.isDir(path.join(util.currentDir, 'node_modules'))) {
+    compile.build(commander);
+    /*if (!util.isDir(path.join(util.currentDir, 'node_modules'))) {
         util.error('请先执行npm install安装所需依赖', '错误');
         return;
     } else {
         compile.build(commander);
-    }
+    }*/
 });
 
 commander.command('new <projectName>').description('生成项目').action(name => {

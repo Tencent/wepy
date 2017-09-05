@@ -10,6 +10,7 @@ import cStyle from './compile-style';
 import cScript from './compile-script';
 
 import loader from './loader';
+import resolve from './resolve';
 
 import toWeb from './web/index';
 
@@ -120,29 +121,25 @@ export default {
         }
         return true;
     },
-    checkDependence (dep) {
-        return util.isDir(util.currentDir, 'node_modules', dep);
-    },
     checkPlugin (plugins = {}) {
         return loader.loadPlugin(plugins);
     },
 
     wepyUpdate(required = '1.5.7') {
-        let pkgfile = path.join(util.currentDir, 'node_modules', 'wepy', 'package.json');
-        let pkg;
-        try {
-            pkg = JSON.parse(util.readFile(pkgfile));
-        } catch (e) {}
-        pkg = pkg || {version: '0.0.0'};
+        let o = resolve.getPkg('wepy') || {};
+        let pkg = o.pkg || {version: '0.0.0'};
         return compareVersions(required, pkg.version) === 1;
     },
 
     build (config) {
+
         let wepyrc = util.getConfig();
         if (!wepyrc) {
             util.error('没有检测到wepy.config.js文件, 请执行`wepy new demo`创建');
             return;
         }
+        resolve.init(wepyrc.resolve || {});
+        loader.attach(resolve);
 
         if (this.wepyUpdate()) { // 需要更新wepy版本
             util.log('检测到wepy版本不符合要求，正在尝试更新，请稍等。', '信息');
@@ -163,7 +160,7 @@ export default {
                     util.log(`已完成安装 ${loader.missingNPM}，重新启动编译。`, '完成');
                     this.build(config);
                 }).catch(e => {
-                    util.log(`安装插件失败：${loader.missingNPM}，请尝试运行命令 "npm install ${name} --save-dev" 进行安装。`, '错误');
+                    util.log(`安装插件失败：${loader.missingNPM}，请尝试运行命令 "npm install ${loader.missingNPM} --save-dev" 进行安装。`, '错误');
                     console.log(e);
                 });
             }).catch(e => {
@@ -183,7 +180,7 @@ export default {
             src = wepyrc.web.src || src || 'src';
             wepyrc.output = 'web';
 
-            if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-web'))) {
+            if (!resolve.getPkg('wepy-web')) {
                 util.log('正在尝试安装缺失资源 wepy-web，请稍等。', '信息');
                 util.exec(`npm install wepy-web --save`).then(d => {
                     util.log(`已完成安装 wepy-web，重新启动编译。`, '完成');
@@ -200,7 +197,7 @@ export default {
             src = wepyrc.ant.src || src || 'src';
             wepyrc.output = 'ant';
 
-            if (!util.isDir(path.join(util.currentDir, 'node_modules', 'wepy-ant'))) {
+            if (!resolve.getPkg('wepy-ant')) {
                 util.log('正在尝试安装缺失资源 wepy-ant，请稍等。', '信息');
                 util.exec(`npm install wepy-ant --save`).then(d => {
                     util.log(`已完成安装 wepy-ant，重新启动编译。`, '完成');

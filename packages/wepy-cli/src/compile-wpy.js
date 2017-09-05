@@ -379,7 +379,7 @@ export default {
 
         // Ignore all node modules, avoid eslint warning.
         // https://github.com/eslint/eslint/blob/75b7ba4113db4d9bc1661a4600c8728cf3bfbf2b/lib/cli-engine.js#L325
-        if (!/^node_modules/.test(relative)) {
+        if (!opath.npm) {
             this.lint(filepath);
         }
 
@@ -428,6 +428,7 @@ export default {
 
         if (wpy.template && wpy.template.code && type !== 'component') { // App 和 Component 不编译 wxml
             //cTemplate.compile(wpy.template.type, wpy.template.code, opath);
+            wpy.template.npm = opath.npm;
             cTemplate.compile(wpy.template);
         }
 

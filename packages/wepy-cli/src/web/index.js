@@ -11,6 +11,7 @@ import {DOMParser, DOMImplementation} from 'xmldom';
 
 
 import loader from '../loader';
+import resolve from '../resolve';
 
 import {getInstance, createInstance} from './modulemap';
 
@@ -18,7 +19,6 @@ import {getInstance, createInstance} from './modulemap';
 const currentPath = util.currentDir;
 const src = cache.getSrc();
 const dist = cache.getDist();
-const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
 const npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
 let appPath;
@@ -166,12 +166,19 @@ export default {
 
         tasks.push(this.compile([appWpy].concat(wpypages)));
 
+
+        let wepyWebPkg = resolve.getPkg('wepy-web');
+
         // 注入平台wx hack 代码
         if (platform !== 'browser') {
             if (['wechat', 'qq'].indexOf(platform) > -1) {
-                let platformFile = path.join(modulesPath, 'wepy-web', 'lib', 'platform', platform + '.js');
+                let platformFile = path.join(wepyWebPkg.dir, 'lib', 'platform', platform + '.js');
                 platformId = mmap.add(platformFile);
-                tasks.push(this.compile(platformFile));
+                tasks.push(this.compile({
+                    id: platformId,
+                    path: platformFile,
+                    npm: wepyWebPkg
+                }));
             } else {
                 util.warning('platform参数目前只支持 wechat 和 qq');
             }
@@ -180,15 +187,19 @@ export default {
         // 如果存在引入的components，则将components编译至代码中。
         if (webConfig.components && webConfig.components.length) {
             webConfig.components.forEach(k => {
-                let componentFile = path.join(modulesPath, 'wepy-web', 'lib', 'components', k + '.vue');
+                let componentFile = path.join(wepyWebPkg.dir, 'lib', 'components', k + '.vue');
                 components[k] = mmap.add(componentFile);
-                tasks.push(this.compile(componentFile));
+                tasks.push(this.compile({
+                    id: components[k],
+                    path: componentFile,
+                    npm: wepyWebPkg
+                }));
             });
         }
         // 如果存在引入的apis，则将apis编译至代码中。
         if (webConfig.apis && webConfig.apis.length) {
             webConfig.apis.forEach(k => {
-                let apiFile = path.join(modulesPath, 'wepy-web', 'lib', 'apis', k);
+                let apiFile = path.join(wepyWebPkg.dir, 'lib', 'apis', k);
                 if (util.isFile(apiFile + '.vue')) {
                     apiFile = apiFile + '.vue';
                 } else {
@@ -313,19 +324,20 @@ ${code}
 
         let singleFile = false;
 
-        if (typeof(wpys) === 'string') {
-            
-            if (mmap.getPending(wpys))
+        if (wpys.path) {
+            if (mmap.getPending(wpys.path))
                 return Promise.resolve(0);
 
-            let wpy = mmap.getObject(wpys);
+            let wpy = mmap.getObject(wpys.path);
             if (wpy) {
                 return Promise.resolve(wpy);
             }
-            let opath = path.parse(wpys);
+
+            let opath = path.parse(wpys.path);
+
 
             if (opath.ext === wpyExt || opath.ext === '.vue') {
-                let wpy = compileWpy.resolveWpy(wpys);
+                let wpy = compileWpy.resolveWpy(wpys.path);
                 if (!wpy) {
                     util.error(`检测到不存在组件 ${opath.name}`);
                     return;
@@ -333,16 +345,17 @@ ${code}
                 wpys = [wpy];
             } else {
                 let compileType = 'babel';
-                // 如果是node_modules, 而且后缀不为 .wpy，那么不进行babel编译
-                if (opath.ext !== wpyExt && path.relative(modulesPath, wpys)[0] !== '.') {
+                // 如果是npm包, 而且后缀不为 .wpy，那么不进行babel编译
+                if (opath.ext !== wpyExt && wpys.npm) {
                     compileType = 'js';
                 }
                 wpys = [{
                     script: {
-                        code: util.readFile(wpys),
-                        src: wpys,
+                        code: util.readFile(wpys.path),
+                        src: wpys.path,
                         type: compileType
-                    }
+                    },
+                    npm: wpys.npm
                 }];
             }
             singleFile = true;

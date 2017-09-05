@@ -6,6 +6,7 @@ import path from 'path';
 import {exec} from 'child_process';
 import hash from 'hash-sum';
 import cache from './cache';
+import resolve from './resolve';
 
 colors.enabled = true;
 
@@ -126,15 +127,9 @@ const utils = {
                 src = com + wpyExt;
             }
         } else {
-            let comPath = path.join(this.currentDir, 'node_modules', com);
-            if (this.isDir(comPath)) {
-                let pkg = this.readFile(path.join(comPath, 'package.json'));
-                try {
-                    pkg = JSON.parse(pkg);
-                } catch (e) {
-                    pkg = null;
-                }
-                src = path.join(comPath, pkg.main);
+            let o = resolve.getMainFile(com);
+            if (o) {
+                src = path.join(o.dir, o.file);
             } else {
                 let comPath = path.join(this.currentDir, cache.getSrc(), 'components', com);
                 if (this.isFile(comPath + wpyExt)) {
@@ -433,10 +428,8 @@ const utils = {
             opath = path.parse(opath);
         ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
-        // 相对目录以node_modules开始
-        if (path.relative(this.currentDir, opath.dir).indexOf('node_modules') === 0) {
-            // if (opath.dir.indexOf(`${path.sep}${src}${path.sep}`) === -1 && opath.dir.indexOf('node_modules') > 1) {
-            relative = path.relative(path.join(this.currentDir, 'node_modules'), opath.dir);
+        if (opath.npm) {
+            relative = path.relative(opath.npm.modulePath, opath.npm.dir);
             relative = path.join('npm', relative);
         } else {
             relative = path.relative(path.join(this.currentDir, src), opath.dir);

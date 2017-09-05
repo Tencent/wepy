@@ -1,33 +1,24 @@
 import path from 'path';
 import util from './util';
 import cache from './cache';
-import compileWpy from './compile-wpy';
+import cWpy from './compile-wpy';
 
 import loader from './loader';
 
+import resolve from './resolve';
+
 
 const currentPath = util.currentDir;
-const modulesPath = path.join(currentPath, 'node_modules' + path.sep);
 
 let appPath, npmPath, src, dist;
 
 export default {
-
-    getPkgConfig (lib) {
-        let pkg = util.readFile(path.join(modulesPath, lib, 'package.json'));
-        try {
-            pkg = JSON.parse(pkg);
-        } catch (e) {
-            pkg = null;
-        }
-        return pkg;
-    },
-
     resolveDeps (code, type, opath) {
 
         let params = cache.getParams();
         let config = cache.getConfig();
         let wpyExt = params.wpyExt;
+        let npmInfo = opath.npm;
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
@@ -43,7 +34,7 @@ export default {
             if (lib[0] === '.') { // require('./something'');
                 source = path.join(opath.dir, lib);  // e:/src/util
                 if (type === 'npm') {
-                    target = path.join(npmPath, path.relative(modulesPath, source));
+                    target = path.join(npmPath, path.relative(npmInfo.modulePath, source));
                     needCopy = true;
                 } else {
                     // e:/dist/util
@@ -54,22 +45,27 @@ export default {
                 lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
             ) {  
-                let pkg = this.getPkgConfig(lib);
-                if (!pkg) {
+
+                let mainFile = resolve.getMainFile(lib);
+
+                if (!mainFile) {
                     throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base));
                 }
-                let main = pkg.main || 'index.js';
-                if (pkg.browser && typeof pkg.browser === 'string') {
-                    main = pkg.browser;
-                }
-                source = path.join(modulesPath, lib, main);
-                target = path.join(npmPath, lib, main);
-                lib += path.sep + main;
+                npmInfo = {
+                    lib: lib,
+                    dir: mainFile.dir,
+                    modulePath: mainFile.modulePath,
+                    file: mainFile.file
+                };
+                source = path.join(mainFile.dir, mainFile.file);
+                target = path.join(npmPath, lib, mainFile.file);
+
+                lib += path.sep + mainFile.file;
                 ext = '';
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
-                //console.log('3: ' + lib);
-                source = path.join(modulesPath, lib);
+                let o = resolve.walk(lib);
+                source = path.join(o.modulePath, lib);
                 target = path.join(npmPath, lib);
                 ext = '';
                 needCopy = true;
@@ -102,24 +98,15 @@ export default {
                 if (!cache.checkBuildCache(source)) {
                     cache.setBuildCache(source);
                     util.log('依赖: ' + path.relative(process.cwd(), target), '拷贝');
-                    /*let dirname = path.dirname(target);
-                    mkdirp.sync(dirname);*/
-
-                    this.compile('js', null, 'npm', path.parse(source));
+                    let newOpath = path.parse(source);
+                    newOpath.npm = npmInfo;
+                    this.compile('js', null, 'npm', newOpath);
 
                 }
-                /*if (!buildCache[source] || buildCache[source] !== getModifiedTime(source)) {
-                    buildCache[source] = getModifiedTime(source);
-                    console.log('copying........' + target + ' ===== ' + source);
-                    let dirname = path.dirname(target);
-                    buildCache[source] = getModifiedTime(source);
-                    mkdirp.sync(dirname);
-                    gulp.src(source).pipe(change(compileJS)).pipe(gulp.dest(dirname));
-                }*/
             }
             if (type === 'npm') {
                 if (lib[0] !== '.') {
-                    resolved = path.join('..' + path.sep, path.relative(opath.dir, modulesPath), lib);
+                    resolved = path.join('..' + path.sep, path.relative(opath.dir, npmInfo.modulePath), lib);
                 } else {
                     if (lib[0] === '.' && lib[1] === '.')
                         resolved = './' + resolved;
@@ -211,7 +198,7 @@ export default {
             code = this.resolveDeps(code, type, opath);
 
             if (type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
-                compileWpy.compile(opath);
+                cWpy.compile(opath);
                 return;
             }
 
@@ -220,7 +207,7 @@ export default {
                 target = util.getDistPath(opath, 'js');
             } else {
                 code = this.npmHack(opath, code);
-                target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
+                target = path.join(npmPath, path.relative(opath.npm.modulePath, path.join(opath.dir, opath.base)));
             }
 
             if (sourceMap) {
@@ -247,52 +234,6 @@ export default {
         }).catch((e) => {
             console.log(e);
         });
-
-
-
-
-        /*if (type !== 'npm') {
-            code = transform(code, config.babel).code;
-
-            if (type === 'page' || type === 'app') {
-                let defaultExport = 'exports.default';
-                let matchs = code.match(/exports\.default\s*=\s*(\w+);/i);
-                if (matchs) {
-                    defaultExport = matchs[1];
-                    code = code.replace(/exports\.default\s*=\s*(\w+);/i, '');
-
-                    if (type === 'page') {
-                        code += `\nPage(require('wepy').default.$createPage(${defaultExport}));\n`;
-                    } else {
-                        code += `\nApp(require('wepy').default.$createApp(${defaultExport}));\n`;
-                    }
-                }
-            }
-        }
-        code = this.resolveDeps(code, type, opath);
-
-        if (type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
-            compileWpy.compile(opath);
-            return;
-        }
-
-        let target;
-        if (type !== 'npm') {
-            target = util.getDistPath(opath, 'js', src, dist);
-        } else {
-            code = this.npmHack(opath.base, code);
-            target = path.join(npmPath, path.relative(modulesPath, path.join(opath.dir, opath.base)));
-        }
-
-        let plg = new loader(config.plugins, {
-            type: type,
-            code: code,
-            file: target,
-            done (rst) {
-                util.output('写入', rst.file);
-                util.writeFile(target, rst.code);
-            }
-        });*/
     }
 
 }

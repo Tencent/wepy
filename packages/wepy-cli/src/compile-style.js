@@ -4,6 +4,7 @@ import util from './util';
 import cache from './cache';
 
 import loader from './loader';
+import resolve from './resolve';
 import scopedHandler from './style-compiler/scoped';
 
 const LANG_MAP = {
@@ -17,6 +18,7 @@ export default {
         let src = cache.getSrc();
         let dist = cache.getDist();
         let ext = cache.getExt();
+        let isNPM = false;
 
         let outputExt = config.output === 'ant' ? 'acss' : 'wxss';
 
@@ -85,17 +87,28 @@ export default {
             let allContent = rets.join('');
             if (requires && requires.length) {
                 requires.forEach((r) => {
-                    let comsrc = util.findComponent(r);
-                    let isNPM = false;
-
+                    let comsrc = null;
+                    if (path.isAbsolute(r)) {
+                        if (path.extname(r) === '' && util.isFile(r + ext)) {
+                            comsrc = r + ext;
+                        }
+                    } else {
+                        let o = resolve.getMainFile(r);
+                        comsrc = path.join(o.dir, o.file);
+                        let newOpath = path.parse(comsrc);
+                        newOpath.npm = {
+                            lib: r,
+                            dir: o.dir,
+                            file: o.file,
+                            modulePath: o.modulePath
+                        };
+                        comsrc = util.getDistPath(newOpath);
+                        comsrc = comsrc.replace(ext, '.' + outputExt).replace(`${path.sep}${dist}${path.sep}`, `${path.sep}${src}${path.sep}`);
+                        isNPM = true;
+                    }
                     if (!comsrc) {
                         util.log('找不到组件：' + r, '错误');
                     } else {
-                        if (comsrc.indexOf('node_modules') > -1) {
-                            comsrc = util.getDistPath(path.parse(comsrc));
-                            comsrc = comsrc.replace(ext, '.' + outputExt).replace(`${path.sep}${dist}${path.sep}`, `${path.sep}${src}${path.sep}`);
-                            isNPM = true;
-                        }
                         let relative = path.relative(opath.dir + path.sep + opath.base, comsrc);
                         let code = util.readFile(comsrc);
                         if (isNPM || /<style/.test(code)) {

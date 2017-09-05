@@ -494,7 +494,9 @@ export default {
         compiler(content, config.compilers[lang] || {}).then(content => {
             let node = cWpy.createParser().parseFromString(content);
             node = this.compileXML(node, template);
-            let target = util.getDistPath(path.parse(template.src), config.output === 'ant' ? 'axml' : 'wxml', src, dist);
+            let opath = path.parse(template.src);
+            opath.npm = template.npm;
+            let target = util.getDistPath(opath, config.output === 'ant' ? 'axml' : 'wxml', src, dist);
 
             if (node.childNodes.length === 0) {
                 // empty node tostring will cause an error.

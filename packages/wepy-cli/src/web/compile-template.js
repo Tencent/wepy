@@ -4,16 +4,16 @@ import {DOMParser, DOMImplementation} from 'xmldom';
 import util from '../util';
 import cache from '../cache';
 import loader from '../loader';
+import resolve from '../resolve';
 
 import { getInstance } from './modulemap';
 
-let mmap;
+let mmap, libCompoents;
 
 const currentPath = util.currentDir;
 const src = cache.getSrc();
 const dist = cache.getDist();
 const srcPath = path.join(currentPath, src);
-const libCompoents = path.join(currentPath, 'node_modules', 'wepy-web', 'lib');
 
 const WEAPP_TAGS = ['view', 'text', 'navigator', 'image'];
 
@@ -300,6 +300,9 @@ export default {
         }
 
         mmap = getInstance();
+
+
+        libCompoents = path.join(resolve.getPkg('wepy-web').dir, 'lib');
 
         return compiler(wpy.template.code, config.compilers[wpy.template.type] || {}).then(rst => {
 

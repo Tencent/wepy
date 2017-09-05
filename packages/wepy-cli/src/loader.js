@@ -34,6 +34,9 @@ class PluginHelper {
 }
 
 export default {
+    attach (resolve) {
+        this.resolve = resolve;
+    },
     loadCompiler (lang) {
         if (['wxml', 'xml', 'css', 'js'].indexOf(lang) > -1) {
             return (c) => {
@@ -48,7 +51,6 @@ export default {
             this.missingNPM = name;
             util.log(`找不到编译器：${name}。`, 'warning');
         }
-
         return compiler;
     },
 
@@ -57,6 +59,7 @@ export default {
         if (typeof Module === 'object') return null;
 
         let relativeMod = relativeModules[relative];
+        let paths = [];
 
         if (!relativeMod) {
             relativeMod = new Module;
@@ -64,11 +67,16 @@ export default {
             let filename = path.join(relative, './');
             relativeMod.id = filename;
             relativeMod.filename = filename;
+            relativeMod.paths = [].concat(this.resolve.modulePaths);
 
-            relativeMod.paths = Module._nodeModulePaths(relative);
+            paths = Module._nodeModulePaths(relative);
             relativeModules[relative] = relativeMod;
         }
-
+        paths.forEach((v) => {
+            if (relativeMod.paths.indexOf(v) === -1) {
+                relativeMod.paths.push(v);
+            }
+        });
         try {
             return Module._resolveFilename(loc, relativeMod);
         } catch (err) {
