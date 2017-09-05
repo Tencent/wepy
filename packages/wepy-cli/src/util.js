@@ -516,6 +516,7 @@ const utils = {
     },
     error (msg) {
         this.log(msg, 'error', false);
+        process.exit(0);
     },
     warning (msg) {
         this.log(msg, 'warning', false);

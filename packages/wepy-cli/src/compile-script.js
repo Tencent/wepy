@@ -49,7 +49,7 @@ export default {
                 let mainFile = resolve.getMainFile(lib);
 
                 if (!mainFile) {
-                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base));
+                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
                 }
                 npmInfo = {
                     lib: lib,
@@ -232,7 +232,8 @@ export default {
             // 缓存文件修改时间戳
             cache.saveBuildCache();
         }).catch((e) => {
-            console.log(e);
+            util.error(e);
+            process.exit(0);
         });
     }
 

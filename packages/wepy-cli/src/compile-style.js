@@ -61,7 +61,7 @@ export default {
             let compiler = loader.loadCompiler(lang);
 
             if (!compiler) {
-                throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`;
+                throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`
             }
 
             const p = compiler(content, options || {}, filepath).then((css) => {
@@ -107,7 +107,7 @@ export default {
                         isNPM = true;
                     }
                     if (!comsrc) {
-                        util.log('找不到组件：' + r, '错误');
+                        util.error('找不到组件：' + r + `\n请尝试使用 npm install ${r} 安装`, '错误');
                     } else {
                         let relative = path.relative(opath.dir + path.sep + opath.base, comsrc);
                         let code = util.readFile(comsrc);
@@ -136,7 +136,8 @@ export default {
                 }
             });
         }).catch((e) => {
-            console.log(e);
+            console.log(111);
+            util.error(e);
         });
     }
 }

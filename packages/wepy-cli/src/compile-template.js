@@ -418,7 +418,7 @@ export default {
                 let comid = util.getComId(com);
                 let src = util.findComponentInTemplate(com, template);
                 if (!src) {
-                    util.error('找不到组件：' + com.tagName, '错误');
+                    util.error('找不到组件：' + com.tagName, '\n请尝试使用 npm install ' + com.tagName + ' 安装', '错误');
                 } else {
                     let wpy = cWpy.resolveWpy(src);
                     let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
@@ -457,7 +457,7 @@ export default {
 
             let src = util.findComponent(definePath, isCustom);
             if (!src) {
-                util.error('找不到组件：' + definePath, '错误');
+                util.error('找不到组件：' + definePath, '\n请尝试使用 npm install ' + definePath + ' 安装', '错误');
             } else {
                 let wpy = cWpy.resolveWpy(src);
                 let newnode = this.compileXML(this.getTemplate(wpy.template.code), wpy.template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes);
