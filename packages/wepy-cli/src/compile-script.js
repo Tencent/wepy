@@ -31,10 +31,11 @@ export default {
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
             }
-            
-            lib = resolved.resolveAlias(lib);
-
-            if (lib[0] === '.') { // require('./something'');
+            lib = resolve.resolveAlias(lib);
+            if (path.isAbsolute(lib)) {
+                source = lib;
+                target = util.getDistPath(source);
+            } else if (lib[0] === '.') { // require('./something'');
                 source = path.join(opath.dir, lib);  // e:/src/util
                 if (type === 'npm') {
                     target = path.join(npmPath, path.relative(npmInfo.modulePath, source));

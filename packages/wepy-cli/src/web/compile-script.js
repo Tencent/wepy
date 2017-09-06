@@ -26,8 +26,6 @@ export default {
         let id = mmap.add(wpy.script.src, {type: 'script', source: wpy});
         wpy.script.id = id;
 
-        //console.log(map);
-
         let params = cache.getParams();
         let wpyExt = params.wpyExt;
 
@@ -44,9 +42,11 @@ export default {
 
             let dep = {}, npmInfo;
 
-            lib = resolved.resolveAlias(lib);
+            lib = resolve.resolveAlias(lib);
 
-            if (lib[0] === '.') { // require('./something'');
+            if (path.isAbsolute(lib)) {
+                source = lib;
+            } else if (lib[0] === '.') { // require('./something'');
                 source = path.join(opath.dir, lib);  // e:/src/util
             } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
 

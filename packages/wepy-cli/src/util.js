@@ -529,11 +529,10 @@ const utils = {
         if(type && this.isString(type)) {
             type = type.toUpperCase();
             if(type === 'ERROR'){
+                debugger;
                 console.error(colors.red('[Error] ' + msg));
-                //console.log();
             } else if(type === 'WARNING'){
                 console.error(colors.yellow('[WARNING] ' + msg));
-                //console.log();
             } else {
                 let fn = colors[type] ? colors[type] : colors['info'];
                 console.log(dateTime + fn(`[${type}]`) + ' ' + msg);

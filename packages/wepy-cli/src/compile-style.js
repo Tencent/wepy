@@ -93,17 +93,25 @@ export default {
                             comsrc = r + ext;
                         }
                     } else {
-                        let o = resolve.getMainFile(r);
-                        comsrc = path.join(o.dir, o.file);
-                        let newOpath = path.parse(comsrc);
-                        newOpath.npm = {
-                            lib: r,
-                            dir: o.dir,
-                            file: o.file,
-                            modulePath: o.modulePath
-                        };
-                        comsrc = util.getDistPath(newOpath);
-                        comsrc = comsrc.replace(ext, '.' + outputExt).replace(`${path.sep}${dist}${path.sep}`, `${path.sep}${src}${path.sep}`);
+                        let lib = resolve.resolveAlias(r);
+                        if (path.isAbsolute(lib)) {
+                            comsrc = lib;
+                            if (path.extname(comsrc) === '') {
+                                comsrc += '.' + outputExt;
+                            }
+                        } else {
+                            let o = resolve.getMainFile(r);
+                            comsrc = path.join(o.dir, o.file);
+                            let newOpath = path.parse(comsrc);
+                            newOpath.npm = {
+                                lib: r,
+                                dir: o.dir,
+                                file: o.file,
+                                modulePath: o.modulePath
+                            };
+                            comsrc = util.getDistPath(newOpath);
+                            comsrc = comsrc.replace(ext, '.' + outputExt).replace(`${path.sep}${dist}${path.sep}`, `${path.sep}${src}${path.sep}`);
+                        }
                         isNPM = true;
                     }
                     if (!comsrc) {
@@ -136,7 +144,6 @@ export default {
                 }
             });
         }).catch((e) => {
-            console.log(111);
             util.error(e);
         });
     }
