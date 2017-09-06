@@ -85,7 +85,7 @@
   import { connect } from 'wepy-redux'
   import List from '../components/list'
   import Panel from '../components/panel'
-  import Counter from '../components/counter'
+  import Counter from 'counter' // alias example
   import Group from '../components/group'
   import Toast from 'wepy-com-toast'
   import testMixin from '../mixins/test'

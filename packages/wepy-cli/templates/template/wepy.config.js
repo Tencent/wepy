@@ -10,6 +10,12 @@ module.exports = {
       jsOutput: path.join('web', 'index.js')
     }
   },
+  resolve: {
+    alias: {
+      counter: path.join(__dirname, 'src/components/counter')
+    },
+    modules: ['node_modules']
+  },
   eslint: true,
   compilers: {
     less: {
