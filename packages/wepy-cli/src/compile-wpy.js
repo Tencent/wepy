@@ -16,6 +16,7 @@ import toWeb from './web/index';
 import loader from './loader';
 
 export default {
+    _cacheWpys: {},
     createParser () {
         return new DOMParser({errorHandler: {
             warning (x) {
@@ -78,6 +79,9 @@ export default {
         } else {
             opath = path.parse(xml);
             filepath = xml;
+        }
+        if (this._cacheWpys[filepath]) {
+            return this._cacheWpys[filepath];
         }
         let content = util.readFile(filepath);
 
@@ -151,6 +155,9 @@ export default {
 
                 if (rstTypeObj.src) {
                     rstTypeObj.src = path.resolve(opath.dir, rstTypeObj.src);
+                    rstTypeObj.link = true;
+                } else {
+                    rstTypeObj.link = false;
                 }
 
                 if (rstTypeObj.src && util.isFile(rstTypeObj.src)) {
@@ -335,8 +342,9 @@ export default {
             // 更新 template.code
             rst.template.code = node.toString();
         }
-
-        return rst;
+        this._cacheWpys[filepath] = rst;
+        return this._cacheWpys[filepath];
+        // return rst;
     },
 
     remove (opath, ext) {

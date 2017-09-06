@@ -529,7 +529,6 @@ const utils = {
         if(type && this.isString(type)) {
             type = type.toUpperCase();
             if(type === 'ERROR'){
-                debugger;
                 console.error(colors.red('[Error] ' + msg));
             } else if(type === 'WARNING'){
                 console.error(colors.yellow('[WARNING] ' + msg));
