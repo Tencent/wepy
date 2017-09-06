@@ -5,7 +5,7 @@
 * `F` 修复了在组件中没有`<style>`节点报错的BUG。[ISSUE 160](https://github.com/wepyjs/wepy/issues/160)
 * `F` 修复了repeat中for变量为null或者undefined报错的问题。[PR 353](https://github.com/wepyjs/wepy/pull/353)
 * `A` 添加了computed的watch和sync功能。[ISSUE 318](https://github.com/wepyjs/wepy/issues/318)
-* 
+* `F` 修复了`--watch`模式下，修复外链文件可能不会触发编译的问题。
 
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
