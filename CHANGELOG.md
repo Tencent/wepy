@@ -2,6 +2,10 @@
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
 * `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
 * `F` 修复了使用绝对路径跳转时，`onPrefetch`没被调用的问题。[ISSUE 244](https://github.com/wepyjs/wepy/issues/244)
+* `F` 修复了在组件中没有`<style>`节点报错的BUG。[ISSUE 160](https://github.com/wepyjs/wepy/issues/160)
+* `F` 修复了repeat中for变量为null或者undefined报错的问题。[PR 353](https://github.com/wepyjs/wepy/pull/353)
+* `A` 添加了computed的watch和sync功能。[ISSUE 318](https://github.com/wepyjs/wepy/issues/318)
+* 
 
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
