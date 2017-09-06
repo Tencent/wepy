@@ -80,9 +80,6 @@ export default {
             opath = path.parse(xml);
             filepath = xml;
         }
-        if (this._cacheWpys[filepath]) {
-            return this._cacheWpys[filepath];
-        }
         let content = util.readFile(filepath);
 
         if (content === null) {
