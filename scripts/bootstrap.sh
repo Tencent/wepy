@@ -51,7 +51,7 @@ for mod in "${array[@]}"
 do
     params=""
     if [ "$mod"x = "debug"x ]; then
-        params=" --inspect --debug-brk"
+        params=" --inspect-brk"
     fi
     cat > "$globalDirForPosix/wepy-$mod" <<- EOF
 #!/bin/sh
