@@ -6,6 +6,7 @@
 * `F` 修复了repeat中for变量为null或者undefined报错的问题。[PR 353](https://github.com/wepyjs/wepy/pull/353)
 * `A` 添加了computed的watch和sync功能。[ISSUE 318](https://github.com/wepyjs/wepy/issues/318)
 * `F` 修复了`--watch`模式下，修复外链文件可能不会触发编译的问题。
+* `F` 修复了repeat中传多个参数无效的BUG。[ISSUE 348](https://github.com/wepyjs/wepy/issues/348)
 
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
