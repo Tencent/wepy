@@ -134,6 +134,10 @@ export default class {
                     if (binded) {
                         if (typeof(binded) === 'object') {
                             props[key].repeat = binded.for;
+                            props[key].item = binded.item;
+                            props[key].index = binded.index;
+                            props[key].key = binded.key;
+                            props[key].value = binded.value;
                             
                             inRepeat = true;
 
@@ -274,7 +278,17 @@ export default class {
                                 binddata = binddata[t];
                             });
 
-                            val = binddata[index];
+                            index = Array.isArray(binddata) ? +index : index;
+
+                            if (props[key].value === props[key].item) {
+                                val = binddata[index];
+                            } else if (props[key].value === props[key].index) {
+                                val = index;
+                            } else if (props[key].value === props[key].key) {
+                                val = index;
+                            } else {
+                                val = $parent[props[key].value];
+                            }
                             this.$index = index;
                             this.data[key] = val;
                             this[key] = val;

@@ -280,17 +280,19 @@ export default {
                         calculatedComs.push(elem);
                         let comid = util.getComId(elem);
                         [].slice.call(elem.attributes || []).forEach((attr) => {
-                            if (attr.name !== 'id' && attr.name !== 'path') {
-                                if (/v-on:/.test(attr.name)) { // v-on:fn user custom event
-                                    if (!events[comid])
-                                        events[comid] = {};
-                                    events[comid][attr.name] = attr.value;
-                                } else {
-                                    if (!props[comid])
-                                        props[comid] = {};
-                                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                                        props[comid][attr.name] = tmp;
-                                        props[comid][attr.name]['value'] = attr.value;
+                            if (attr.name !== 'xmlns:v-bind=""') {
+                                if (attr.name !== 'id' && attr.name !== 'path') {
+                                    if (/v-on:/.test(attr.name)) { // v-on:fn user custom event
+                                        if (!events[comid])
+                                            events[comid] = {};
+                                        events[comid][attr.name] = attr.value;
+                                    } else {
+                                        if (!props[comid])
+                                            props[comid] = {};
+                                        if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
+                                            props[comid][attr.name] = Object.assign({}, tmp);
+                                            props[comid][attr.name]['value'] = attr.value;
+                                        }
                                     }
                                 }
                             }
