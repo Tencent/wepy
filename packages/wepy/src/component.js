@@ -257,9 +257,6 @@ export default class {
      * 对于在repeat中的组件，index改变时需要修改对应的数据
      */
     $setIndex (index) {
-        if (this.$index === index)
-            return;
-
         this.$index = index;
 
         let props = this.props,
