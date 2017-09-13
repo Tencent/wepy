@@ -122,7 +122,7 @@ const utils = {
         let wpyExt = cache.getExt();
 
         let src = '';
-        if (com.indexOf(path.sep) !== -1) {
+        if (com.indexOf(path.sep) !== -1||com.indexOf('@') === -1) {
             if (this.isFile(com + wpyExt)) {
                 src = com + wpyExt;
             }
