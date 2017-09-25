@@ -237,7 +237,6 @@ export default {
             cache.saveBuildCache();
         }).catch((e) => {
             util.error(e);
-            process.exit(0);
         });
     }
 

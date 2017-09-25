@@ -317,6 +317,7 @@ export default {
         }
 
         if (config.watch) {
+            util.isWatch = true;
             this.watch(config);
         }
     },

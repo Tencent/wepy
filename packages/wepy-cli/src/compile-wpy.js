@@ -432,7 +432,6 @@ export default {
                 cStyle.compile(wpy.style, requires, opath, wpy.moduleId);
             } catch (e) {
                 util.error(e);
-                process.exit(0);
             }
         } else {
             this.remove(opath, 'wxss');
