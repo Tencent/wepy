@@ -134,10 +134,6 @@ export default class {
                     if (binded) {
                         if (typeof(binded) === 'object') {
                             props[key].repeat = binded.for;
-                            props[key].item = binded.item;
-                            props[key].index = binded.index;
-                            props[key].key = binded.key;
-                            props[key].value = binded.value;
                             
                             inRepeat = true;
 
@@ -149,9 +145,8 @@ export default class {
 								  binddata = [{}];
 								}
                             });
-                            if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
-                                repeatKey = Object.keys(binddata)[0];
-                            }
+                            repeatKey = Object.keys(binddata)[0];
+
 
                             if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
                             this.$mappingProps[key]['parent'] = {
@@ -183,7 +178,7 @@ export default class {
         }
 
         this.$data = util.$copy(this.data, true);
-        if (inRepeat && repeatKey !== undefined)
+        if (inRepeat)
             this.$setIndex(repeatKey);
 
         if (this.computed) {
@@ -261,6 +256,9 @@ export default class {
      * 对于在repeat中的组件，index改变时需要修改对应的数据
      */
     $setIndex (index) {
+        if (this.$index === index)
+            return;
+
         this.$index = index;
 
         let props = this.props,
@@ -283,17 +281,7 @@ export default class {
 								}
                             });
 
-                            index = Array.isArray(binddata) ? +index : index;
-
-                            if (props[key].value === props[key].item) {
-                                val = binddata[index];
-                            } else if (props[key].value === props[key].index) {
-                                val = index;
-                            } else if (props[key].value === props[key].key) {
-                                val = index;
-                            } else {
-                                val = $parent[props[key].value];
-                            }
+                            val = binddata[index];
                             this.$index = index;
                             this.data[key] = val;
                             this[key] = val;
@@ -437,15 +425,6 @@ export default class {
         this.$$phase = '$digest';
         while (this.$$phase) {
             let readyToSet = {};
-            if (this.computed) {
-                for (k in this.computed) { // If there are computed property, calculated every times
-                    let fn = this.computed[k], val = fn.call(this);
-                    if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
-                        readyToSet[this.$prefix + k] = val;
-                        this[k] = util.$copy(val, true);
-                    }
-                }
-            }
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
                     // data watch trigger
@@ -481,6 +460,15 @@ export default class {
                 }
             }
             if (Object.keys(readyToSet).length) {
+                if (this.computed) {
+                    for (k in this.computed) { // If there are computed property, calculated every times
+                        let fn = this.computed[k], val = fn.call(this);
+                        if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
+                            readyToSet[this.$prefix + k] = val;
+                            this[k] = util.$copy(val, true);
+                        }
+                    }
+                }
                 this.setData(readyToSet);
             }
             this.$$phase = (this.$$phase === '$apply') ? '$digest' : false;
