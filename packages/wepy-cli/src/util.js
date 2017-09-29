@@ -516,7 +516,7 @@ const utils = {
     },
     error (msg) {
         this.log(msg, 'error', false);
-        if (!util.isWatch) {
+        if (!this.isWatch) {
             process.exit(0);
         }
     },
@@ -531,7 +531,11 @@ const utils = {
         if(type && this.isString(type)) {
             type = type.toUpperCase();
             if(type === 'ERROR'){
-                console.error(colors.red('[Error] ' + msg));
+                if (msg instanceof Error) {
+                    console.error(colors.red('[Error] ' + msg.stack));
+                } else {
+                    console.error(colors.red('[Error] ' + msg));
+                }
             } else if(type === 'WARNING'){
                 console.error(colors.yellow('[WARNING] ' + msg));
             } else {

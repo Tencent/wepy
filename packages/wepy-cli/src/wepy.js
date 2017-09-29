@@ -67,9 +67,9 @@ let generateProject = (name, config) => {
         'babel-plugin-transform-decorators-legacy',
         'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
-        'babel-preset-es2015',
+        'babel-plugin-transform-class-properties',
+        'babel-preset-env',
         'wepy-compiler-less',
-        'babel-preset-stage-1',
         'cross-env'
     ];
     const eslintDeps = [

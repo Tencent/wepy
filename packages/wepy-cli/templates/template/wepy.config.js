@@ -27,10 +27,10 @@ module.exports = {
     babel: {
       sourceMap: true,
       presets: [
-        'es2015',
-        'stage-1'
+        'env'
       ],
       plugins: [
+        'babel-plugin-transform-class-properties',
         'transform-decorators-legacy',
         'transform-export-extensions',
         'syntax-export-extensions'
