@@ -879,7 +879,7 @@ onLoad () {
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
 
 ```javascript
-$this.$emit('some-event', 1, 2, 3, 4);
+this.$emit('some-event', 1, 2, 3, 4);
 ```
 
 组件的事件监听需要写在`events`属性下，如：
