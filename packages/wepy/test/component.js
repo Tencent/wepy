@@ -55,7 +55,7 @@ describe('component.js', () => {
     });
 
     it('$init', () => {
-        assert.strictEqual(com.getCurrentPages(), 'wxpage', 'get current pages');
+        assert.strictEqual(com.getCurrentPages()[0].__route__, 'pages/page1', 'get current pages');
     });
 
     it('add mixin', () => {

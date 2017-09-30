@@ -53,16 +53,13 @@ module.exports = {
 
         global.getApp = function () { return {app:'app'}; };
         global.getCurrentPages = function () { 
-            return [{__route__: 'pages/page1'}]; 
+            return [{__route__: 'pages/page1', __wxWebviewId__: 0}]; 
         };
     },
     getWxPage: function () {
         return {
             $root: { '$wxapp': { app: 'app' } },
             setData: function (v) { return v; },
-            getCurrentPages: function () {
-                return 'wxpage';
-            },
             $coma$comaa$tap: function () {
                 return arguments;
             }
