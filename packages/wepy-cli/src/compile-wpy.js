@@ -230,7 +230,7 @@ export default {
         // get imports
         (() => {
             let coms = {};
-            rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/]*)['"]/ig, (match, com, path) => {
+            rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/\@]*)['"]/ig, (match, com, path) => {
                 coms[com] = path;
             });
 
