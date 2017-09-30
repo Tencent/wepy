@@ -143,7 +143,7 @@ export default class {
 
                             let bindfor = binded.for, binddata = $parent;
                             bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
+                                binddata = binddata ? binddata[t] : {};
                             });
                             if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
                                 repeatKey = Object.keys(binddata)[0];
@@ -272,7 +272,7 @@ export default class {
                         if (typeof(binded) === 'object') {
                             let bindfor = binded.for, binddata = $parent;
                             bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
+                                binddata = binddata ? binddata[t] : {};
                             });
 
                             index = Array.isArray(binddata) ? +index : index;
@@ -454,6 +454,12 @@ export default class {
                     readyToSet[this.$prefix + k] = this[k]; 
                     this.data[k] = this[k];
                     originData[k] = util.$copy(this[k], true);
+                    if (this.$repeat && this.$repeat[k]) {
+                        let $repeat = this.$repeat[k];
+                        this.$com[$repeat.com].data[$repeat.props] = this[k];
+                        this.$com[$repeat.com].$setIndex(0);
+                        this.$com[$repeat.com].$apply();
+                    }
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {
                             let mapping = this.$mappingProps[k][changed];

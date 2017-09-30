@@ -259,6 +259,9 @@ export default {
             let elems = [];
             let props = {};
             let events = {};
+            let $repeat = {};
+
+            let repeatItem = '';
 
             let calculatedComs = [];
 
@@ -279,6 +282,11 @@ export default {
                     elems.forEach((elem) => {
                         calculatedComs.push(elem);
                         let comid = util.getComId(elem);
+                        let forexp = tmp.for;
+                        if (forexp.indexOf('.') > -1) {  // for="{{mydata.list}}"
+                            forexp = forexp.split('.')[0];
+                        }
+                        $repeat[forexp] = { com: comid };
                         [].slice.call(elem.attributes || []).forEach((attr) => {
                             if (attr.name !== 'xmlns:v-bind=""') {
                                 if (attr.name !== 'id' && attr.name !== 'path') {
@@ -290,13 +298,27 @@ export default {
                                         if (!props[comid])
                                             props[comid] = {};
                                         if (['hidden', 'wx:if', 'wx:elif', 'wx:else'].indexOf(attr.name) === -1) {
-                                            props[comid][attr.name] = Object.assign({}, tmp);
-                                            props[comid][attr.name]['value'] = attr.value;
+                                            let assign = { value: attr.value };
+                                            switch (assign.value) {
+                                                case tmp.item:
+                                                    assign.type = 'item';
+                                                    repeatItem = attr.name.replace('v-bind:', '').replace('.once', '');
+                                                    break;
+                                                case tmp.index:
+                                                    assign.type = 'index';
+                                                    break;
+                                                case tmp.key:
+                                                    assign.type = 'key';
+                                                    break;
+                                            }
+                                            props[comid][attr.name] = Object.assign(assign, tmp);
                                         }
                                     }
                                 }
                             }
                         });
+
+                        $repeat[forexp].props = repeatItem;
                     });
                 }
             });
@@ -329,7 +351,7 @@ export default {
             });
             if (Object.keys(props).length) {
                 rst.script.code =rst.script.code.replace(/[\s\r\n]components\s*=[\s\r\n]*/, (match, item, index) => {
-                    return `$props = ${JSON.stringify(props)};\r\n$events = ${JSON.stringify(events)};\r\n${match}`;
+                    return `$repeat = ${JSON.stringify($repeat)};\r\n$props = ${JSON.stringify(props)};\r\n$events = ${JSON.stringify(events)};\r\n${match}`;
                 });
             }
         })();
