@@ -143,7 +143,11 @@ export default class {
 
                             let bindfor = binded.for, binddata = $parent;
                             bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
+                                if (binddata[t]){
+								  binddata = binddata[t];
+								}else{
+								  binddata = [{}];
+								}
                             });
                             if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
                                 repeatKey = Object.keys(binddata)[0];
@@ -272,7 +276,11 @@ export default class {
                         if (typeof(binded) === 'object') {
                             let bindfor = binded.for, binddata = $parent;
                             bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
+                                if (binddata[t]){
+								  binddata = binddata[t];
+								}else{
+								  binddata = [{}];
+								}
                             });
 
                             index = Array.isArray(binddata) ? +index : index;
