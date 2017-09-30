@@ -250,7 +250,7 @@ export default class {
     }
 
     getCurrentPages () {
-        return this.$wxpage.getCurrentPages();
+        return getCurrentPages();
     }
 
     /**
