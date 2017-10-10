@@ -42,7 +42,8 @@ describe('page.js', () => {
     it('wx instance', () => {
 
         assert.strictEqual(page.$wxapp.app, 'app', 'wxapp equal getApp()');
-        assert.strictEqual(page.$wxpage.getCurrentPages(), 'wxpage', 'wxpage equal wxpages');
+
+        assert.strictEqual(page.getCurrentPages()[0]['__wxWebviewId__'], 0, 'getCurrentPages');
 
         // app created many times in test case, can not make a object compare here.
         assert.strictEqual(page.$parent.$wxapp.app, app.$wxapp.app, 'page\'s parent is page');
