@@ -88,6 +88,7 @@ export default {
             if (requires && requires.length) {
                 requires.forEach((r) => {
                     let comsrc = null;
+                    isNPM = false;
                     if (path.isAbsolute(r)) {
                         if (path.extname(r) === '' && util.isFile(r + ext)) {
                             comsrc = r + ext;
@@ -96,9 +97,6 @@ export default {
                         let lib = resolve.resolveAlias(r);
                         if (path.isAbsolute(lib)) {
                             comsrc = lib;
-                            if (path.extname(comsrc) === '') {
-                                comsrc += '.' + outputExt;
-                            }
                         } else {
                             let o = resolve.getMainFile(r);
                             comsrc = path.join(o.dir, o.file);
@@ -110,16 +108,23 @@ export default {
                                 modulePath: o.modulePath
                             };
                             comsrc = util.getDistPath(newOpath);
-                            comsrc = comsrc.replace(ext, '.' + outputExt).replace(`${path.sep}${dist}${path.sep}`, `${path.sep}${src}${path.sep}`);
+                            isNPM = true;
                         }
-                        isNPM = true;
                     }
                     if (!comsrc) {
                         util.error('找不到组件：' + r + `\n请尝试使用 npm install ${r} 安装`, '错误');
                     } else {
+                        if (path.extname(comsrc) === '') {
+                            comsrc += ext;
+                        }
                         let relative = path.relative(opath.dir + path.sep + opath.base, comsrc);
                         let code = util.readFile(comsrc);
                         if (isNPM || /<style/.test(code)) {
+                            if (isNPM) {
+                                let srcRelative = path.relative(opath.dir + path.sep + opath.base, path.join(util.currentDir, src));
+                                let distFile = path.relative(path.join(util.currentDir, dist), comsrc);
+                                relative = path.join(srcRelative, distFile);
+                            }
                             if (/\.wpy$/.test(relative)) { // wpy 第三方组件
                                 relative = relative.replace(/\.wpy$/, '.' + outputExt);
                             }
