@@ -77,11 +77,12 @@ export default {
                 warning (x) {
                     if (x.indexOf(' unclosed xml attribute') > -1) {
                         // ignore warnings
-                    } else
-                        util.warning(x);
+                    } else {
+                        util.warning('WARNING IN : ' + webConfig.htmlTemplate + '\n' + x);
+                    }
                 },
                 error (x) {
-                    util.error(x);
+                    util.warning('ERROR IN : ' + webConfig.htmlTemplate + '\n' + x);
                 }
             }});
 

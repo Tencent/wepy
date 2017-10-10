@@ -17,16 +17,17 @@ import loader from './loader';
 
 export default {
     _cacheWpys: {},
-    createParser () {
+    createParser (opath) {
         return new DOMParser({errorHandler: {
             warning (x) {
                 if (x.indexOf('missed value!!') > -1) {
                     // ignore warnings
-                } else
-                    util.warning(x);
+                } else {
+                    util.warning('WARNING IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
+                }
             },
             error (x) {
-                util.error(x);
+                util.error('ERROR IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
             }
         }});
     },
@@ -112,7 +113,7 @@ export default {
 
         content = util.attrReplace(content);
 
-        xml = this.createParser().parseFromString(content);
+        xml = this.createParser(opath).parseFromString(content);
 
         const moduleId = util.genId(filepath);
 
@@ -224,7 +225,7 @@ export default {
                 }
             }
             if (rst.template.code)
-                rst.template.node = this.createParser().parseFromString(util.attrReplace(rst.template.code));
+                rst.template.node = this.createParser(opath).parseFromString(util.attrReplace(rst.template.code));
         })();
 
         // get imports
