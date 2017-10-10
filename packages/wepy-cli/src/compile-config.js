@@ -2,6 +2,7 @@ import path from  'path';
 
 import util from './util';
 import cache from './cache';
+import loader from './loader';
 
 
 export default {
@@ -13,7 +14,17 @@ export default {
             config.defaultTitle = config.navigationBarTitleText;
         }
         let target = util.getDistPath(opath, 'json', src, dist);
-        util.log('配置: ' + path.relative(util.currentDir, target), '写入');
-        util.writeFile(target, JSON.stringify(config));
+        let plg = new loader.PluginHelper(wepyrc.plugins, {
+            type: 'config',
+            code: JSON.stringify(config),
+            file: target,
+            output (p) {
+                util.output(p.action, p.file);
+            },
+            done (result) {
+                util.output('写入', result.file);
+                util.writeFile(target, result.code);
+            }
+        });
     }
 }

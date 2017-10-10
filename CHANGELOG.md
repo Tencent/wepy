@@ -12,6 +12,7 @@
 * `F` 修复getCurrentPages调用错误的问题。[PR 396](https://github.com/wepyjs/wepy/pull/396)
 * `F` 修复使用repeat时，默认数据为空引发的BUG。[PR 411](https://github.com/wepyjs/wepy/pull/411)
 * `F` 修复了使用第三方组件时，修改ouput属性导致引用错乱的BUG。[ISSUE 415](https://github.com/wepyjs/wepy/pull/415)
+* `F` 修复了生成JSON时没有通过plugins处理的问题。[ISSUE 403](https://github.com/wepyjs/wepy/pull/403)
 
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
