@@ -74,6 +74,7 @@ const Props = {
 export default class {
 
     $com = {};
+    $events = {};
     $mixins = [];
 
     $isComponent = true;
@@ -384,14 +385,16 @@ export default class {
         let source = this;
         let $evt = new event(evtName, source, 'emit');
 
+        args = args.concat($evt);
+
         // User custom event;
-        if (this.$parent.$events && this.$parent.$events[this.$name]) {
+        if (this.$parent && this.$parent.$events && this.$parent.$events[this.$name]) {
             let method = this.$parent.$events[this.$name]['v-on:' + evtName];
             if (method && this.$parent.methods) {
                 let fn = this.$parent.methods[method];
                 if (typeof(fn) === 'function') {
                     this.$parent.$apply(() => {
-                        fn.apply(this.$parent, args.concat($evt));
+                        fn.apply(this.$parent, args);
                     });
                     return;
                 } else {
@@ -403,11 +406,70 @@ export default class {
             // 保存 com 块级作用域组件实例
             let comContext = com;
             let fn = getEventsFn(comContext, evtName);
-            fn && comContext.$apply(() => {
-                fn.apply(comContext, args.concat($evt));
-            });
+            if (fn) {
+                if (typeof fn === 'function') {
+                    comContext.$apply(() => {
+                        fn.apply(comContext, args);
+                    });
+                } else if (Array.isArray(fn)) {
+                    fn.forEach(f => {
+                        f.apply(comContext, args);
+                    })
+                    comContext.$apply();
+                }
+            }
             com = comContext.$parent;
         }
+    }
+
+    $on (evtName, fn) {
+        if (typeof evtName === 'string') {
+            (this.$events[evtName] || (this.$events[evtName] = [])).push(fn);
+        } else if (Array.isArray(evtName)) {
+            evtName.forEach(k => {
+                this.$on(k, fn);
+            });
+        } else if (typeof evtName === 'object') {
+            for (let k in evtName) {
+                this.$on(k, evtName[k]);
+            }
+        }
+        return this;
+    }
+
+    $once (evtName, fn) {
+        let self = this;
+        let oncefn = function oncefn () {
+            self.$off(evtName, oncefn);
+            fn.apply(self, arguments);
+        }
+        oncefn.fn = fn;
+        this.$on(evtName, oncefn);
+    }
+
+    $off (evtName, fn) {
+        // off all events;
+        if (evtName === undefined) {
+            this.$events = {};
+        } else if (typeof evtName === 'string') {
+            if (fn) {
+                let fns = this.$events[evtName];
+                let i = fns.length;
+                while (i--) {
+                    if (fn === fns[i] || fn === fns[i].fn) {
+                        fns.splice(i, 1);
+                        break;
+                    }
+                }
+            } else {
+                this.$events[evtName] = [];
+            }
+        } else if (Array.isArray(evtName)) {
+            evtName.forEach(k => {
+                this.$off(k, fn);
+            });
+        }
+        return this;
     }
 
     $apply (fn) {
@@ -488,7 +550,7 @@ export default class {
 }
 
 function getEventsFn (comContext, evtName) {
-    let fn = comContext.events ? comContext.events[evtName] : undefined;
+    let fn = comContext.events ? comContext.events[evtName] : (comContext.$events[evtName] ? comContext.$events[evtName] : undefined);
     const typeFn = typeof(fn);
     let fnFn;
     if (typeFn === 'string') {
@@ -497,7 +559,7 @@ function getEventsFn (comContext, evtName) {
         if (typeof(method) === 'function') {
             fnFn = method;
         }
-    } else if (typeFn === 'function') {
+    } else if (typeFn === 'function' || Array.isArray(fn)) {
         fnFn = fn;
     }
     return fnFn;
