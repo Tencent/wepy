@@ -173,6 +173,10 @@ export default class {
             }
         }
 
+        if(typeof(this.data) === 'function'){
+          this.data = this.data.apply(this.data);
+        }
+
         for (k in this.data) {
             defaultData[`${this.$prefix}${k}`] = this.data[k];
             this[k] = this.data[k];
