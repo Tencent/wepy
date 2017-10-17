@@ -1,0 +1,19 @@
+{
+  "name": "wepy-plugin-autoprefixer",
+  "version": "0.0.1",
+  "description": "wepy autoprefixer plugin",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "autoprefixer",
+    "postcss"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "dependencies": {
+    "autoprefixer": "^7.1.5",
+    "postcss": "^6.0.13"
+  }
+}
