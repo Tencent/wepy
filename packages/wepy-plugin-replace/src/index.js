@@ -4,7 +4,7 @@ export default class {
 
     constructor(c = {}) {
         const def = {
-            filter: new RegExp('\w$'),
+            filter: /\w$/,
             config: {
             }
         };
@@ -36,7 +36,7 @@ export default class {
         }
 
         settings.forEach((setting) => {
-            if (setting.filter.test(op.file)) {
+            if (op.code !== null && setting.filter.test(op.file)) {
                 op.output && op.output({
                     action: '变更',
                     file: op.file
