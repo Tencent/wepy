@@ -95,6 +95,15 @@ export default class {
             createAnimation: true,
             createContext: true,
             createCanvasContext: true,
+            createSelectorQuery: true,
+            createAudioContext: true,
+            createInnerAudioContext: true,
+            createVideoContext: true,
+            createCameraContext: true,
+            createMapContext: true,
+            pageScrollTo: true,
+            onBLEConnectionStateChange: true,
+            onBLECharacteristicValueChange: true
             hideKeyboard: true,
             stopPullDownRefresh: true
         };
