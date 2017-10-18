@@ -58,6 +58,14 @@ wepy new nolintdemo --no-lint
 cd demo
 wepy build
 
+wepy build --output web
+
+wepy build --output web --platform qq
+
+wepy build --output web --platform wechat
+
+wepy build --output ant
+
 cd ../emptydemo
 wepy build
 
