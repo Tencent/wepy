@@ -188,8 +188,8 @@ export default {
 
         if (config.output === 'web') {
             wepyrc.web = wepyrc.web || {};
-            dist = wepyrc.web.dist || dist || 'web';
-            src = wepyrc.web.src || src || 'src';
+            wepyrc.web.dist = wepyrc.web.dist || 'web';
+            wepyrc.web.src = wepyrc.web.src || 'src';
             wepyrc.output = 'web';
 
             if (!resolve.getPkg('wepy-web')) {
@@ -205,8 +205,8 @@ export default {
             }
         } else if (config.output === 'ant') {
             wepyrc.ant = wepyrc.ant || {};
-            dist = wepyrc.ant.dist || dist || 'ant';
-            src = wepyrc.ant.src || src || 'src';
+            wepyrc.ant.dist = wepyrc.ant.dist || 'ant';
+            wepyrc.ant.src = wepyrc.ant.src || 'src';
             wepyrc.output = 'ant';
 
             if (!resolve.getPkg('wepy-ant')) {
