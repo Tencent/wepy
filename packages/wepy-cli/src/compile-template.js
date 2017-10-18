@@ -94,8 +94,7 @@ export default {
     },
 
     parseExp (content, prefix, ignores, mapping) {
-        let comid = this.getPrefix(prefix);
-        if (!comid)
+        if (!prefix)
             return content;
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
         return content.replace(/\{\{([^}]+)\}\}/ig, (matchs, words) => {
@@ -110,13 +109,13 @@ export default {
                 } else {
                     if (mapping.items && mapping.items[w]) {
                         // prefix 减少一层
-                        let upper = comid.split(PREFIX);
+                        let upper = prefix.split(PREFIX);
                         upper.pop();
                         upper = upper.join(PREFIX);
                         upper = upper ? `${PREFIX}${upper}${JOIN}` : '';
                         return `${char}${expand}${upper}${mapping.items[w].mapping}${rest}`;
                     }
-                    return `${char}${expand}${PREFIX}${comid}${JOIN}${word}`;
+                    return `${char}${expand}${PREFIX}${prefix}${JOIN}${word}`;
                 }
             });
         });
@@ -227,8 +226,6 @@ export default {
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
 
-        let comid = prefix ? this.getPrefix(prefix) : '';
-
         node = this.fixRelativePath(node, template, parentTemplate);
 
         if (node.nodeName === '#text' && prefix) {
@@ -275,7 +272,7 @@ export default {
                     // added index for all events;
                     if (mapping.items && mapping.items.length > 0) {
                         // prefix 减少一层
-                        let upper = comid.split(PREFIX);
+                        let upper = prefix.split(PREFIX);
                         upper.pop();
                         upper = upper.join(PREFIX);
                         upper = upper ? `${PREFIX}${upper}${JOIN}` : '';
@@ -290,7 +287,7 @@ export default {
                         });
                     }
                     if (prefix)
-                        attr.value = `${PREFIX}${comid}${JOIN}` + attr.value;
+                        attr.value = `${PREFIX}${prefix}${JOIN}` + attr.value;
                 }
                 if (attr.name === 'a:for-items' && config.output === 'ant') {
                     node.setAttribute('a:for', attr.value);
@@ -437,7 +434,7 @@ export default {
                     util.error('找不到组件：' + com.tagName, '\n请尝试使用 npm install ' + com.tagName + ' 安装', '错误');
                 } else {
                     let comWpy = cWpy.resolveWpy(src);
-                    let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes, template.props[comid]);
+                    let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes, template.props[comid]);
                     node.replaceChild(newnode, com);
                 }
             });
@@ -476,7 +473,7 @@ export default {
                 util.error('找不到组件：' + definePath, '\n请尝试使用 npm install ' + definePath + ' 安装', '错误');
             } else {
                 let comWpy = cWpy.resolveWpy(src);
-                let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, prefix ? `${prefix}$${comid}` : `${comid}`, com.childNodes, comAttributes);
+                let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
                 
                 node.replaceChild(newnode, com);
             }
