@@ -103,7 +103,7 @@ export default class {
             createMapContext: true,
             pageScrollTo: true,
             onBLEConnectionStateChange: true,
-            onBLECharacteristicValueChange: true
+            onBLECharacteristicValueChange: true,
             hideKeyboard: true,
             stopPullDownRefresh: true
         };
