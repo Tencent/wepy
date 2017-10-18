@@ -192,7 +192,7 @@ export default {
                             return `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
                         } else {
                             appPath = opath;
-                            let appConfig = JSON.stringify(config.appConfig);
+                            let appConfig = JSON.stringify(config.appConfig || {});
                             return `\nApp(require('wepy').default.$createApp(${defaultExport}, ${appConfig}));\n`;
                         }
                     });
