@@ -283,7 +283,7 @@ export default {
                         let funcInfo = this.getFunctionInfo(attr.value);
                         attr.value = funcInfo.name;
                         funcInfo.params.forEach((p, i) => {
-                            node.setAttribute('data-wepy-params-' + String.fromCharCode(97 + i), p);
+                            node.setAttribute('data-wpy' + funcInfo.name.toLowerCase() + '-' + String.fromCharCode(97 + i), p);
                         });
                     }
                     if (prefix)
