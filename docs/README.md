@@ -571,12 +571,12 @@ Page 实例中只包含小程序页面生命周期函数，自定义方法与属
 import wepy from 'wepy';
 
 // export default class MyPage extends wepy.page {
-export default class MyPage extends wepy.component {
+export default class MyComponent extends wepy.component {
     customData = {};
 
     customFunction ()　{}
 
-    onLoad () {} // 只在 Page 实例中会存在页面生命周期函数
+    onLoad () {} // 只在 Page 和 Component共用的生命周期函数
 
     onShow () {} // 只在 Page 实例中会存在页面生命周期函数
 
@@ -606,7 +606,7 @@ export default class MyPage extends wepy.component {
 // 错误示例
 import wepy from 'wepy';
 
-export default class MyPage extends wepy.component {
+export default class MyComponent extends wepy.component {
 
     methods = {
         bindtap () {
@@ -628,7 +628,7 @@ export default class MyPage extends wepy.component {
 // 正确示例
 import wepy from 'wepy';
 
-export default class MyPage extends wepy.component {
+export default class MyComponent extends wepy.component {
 
     methods = {
         bindtap () {
