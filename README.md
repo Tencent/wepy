@@ -121,11 +121,6 @@ wepy build --watch
 [求知微阅读(完全开源)](https://github.com/KingJeason/wepy-books)
 ...
 
-### 交流群
-
-WePY 交流群已满500人，请加 gcaufy-helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
-
-![](https://cloud.githubusercontent.com/assets/2182004/23608978/d42cd6c8-02a6-11e7-9f2e-eda22a9737c7.png)
 
 ### Links
 
