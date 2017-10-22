@@ -21,7 +21,6 @@ export default {
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-            const DEBUG = lib==="date-fns" || lib==="date-fns/esm"
             let resolved = lib;
 
 
@@ -47,8 +46,7 @@ export default {
                 }
             } else if (lib.indexOf('/') === -1 || // require('asset');
                 lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
-                (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) || // require('@abc/something')
-                lib === "date-fns/format"
+                (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
             ) {
 
                 let mainFile = resolve.getMainFile(lib);
