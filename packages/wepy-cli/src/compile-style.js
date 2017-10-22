@@ -48,7 +48,7 @@ export default {
             if (lang === 'sass' || lang === 'scss') {
                 let indentedSyntax = false;
                 options = Object.assign({}, config.compilers.sass || {});
-                
+
                 if (lang === 'sass') { // sass is using indented syntax
                     indentedSyntax = true;
                 }
@@ -92,6 +92,10 @@ export default {
                     if (path.isAbsolute(r)) {
                         if (path.extname(r) === '' && util.isFile(r + ext)) {
                             comsrc = r + ext;
+                        }
+                        // 如果路径已包含为 ext 的后缀名，且其是一个文件。
+                        if (path.extname(r) === ext && util.isFile(r)) {
+                            comsrc = r;
                         }
                     } else {
                         let lib = resolve.resolveAlias(r);
