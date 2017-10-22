@@ -45,7 +45,7 @@ export default {
                     needCopy = false;
                 }
             } else if (lib.indexOf('/') === -1 || // require('asset');
-                lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
+                lib.lastIndexOf('/') === lib.length - 1 || // require('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
             ) {
 
