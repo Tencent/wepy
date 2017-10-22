@@ -81,10 +81,10 @@ const utils = {
         });
     },
     timeoutExec(sec, cmd, quite) {
-        let timeout = new Promise(function(resolve, reject) { 
+        let timeout = new Promise(function(resolve, reject) {
             setTimeout(() => {
                 reject('timeout');
-            }, sec * 1000); 
+            }, sec * 1000);
         });
         let task = this.exec(cmd, quite);
         return Promise.race([timeout, task]);
@@ -126,9 +126,13 @@ const utils = {
             if (this.isFile(com + wpyExt)) {
                 src = com + wpyExt;
             }
+            // 如果路径已包含为 wpyExt 的后缀名，且其是一个文件。
+            if (path.extname(com) === wpyExt && this.isFile(com)) {
+                src = com;
+            }
         } else {
             let o = resolve.getMainFile(com);
-            
+
             if (o) {
                 src = path.join(o.dir, o.file);
             } else {
@@ -267,7 +271,7 @@ const utils = {
 
             // 地图
             'map',
-            
+
             // 画布
             'canvas',
 
@@ -287,7 +291,7 @@ const utils = {
             content = content.replace(/\s+wx\:(\w+)/ig, (match, name) => {
                 return ' a:' + name;
             });
-        } 
+        }
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
