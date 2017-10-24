@@ -103,31 +103,24 @@ customFileTypes:
 ### 代码规范
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
-   
    以`$`开头的方法或者属性为wepy框架内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
    
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
-   
    具体请参考[wpy文件说明](#wpy文件说明)。
    
 3. 使用ES6语法开发。
-   
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
    
 4. 使用Promise。
-   
    框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，所以需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
    
 5. 事件绑定语法使用优化语法代替。
-   
    原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
    
 6. 事件传参使用优化后语法代替。
-   
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
    
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
-   
    不可以使用`input、button、view、repeat`等微信小程序远程组件名称命名自定义组件；另外也不要使用wepy框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
