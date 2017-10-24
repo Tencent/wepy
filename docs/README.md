@@ -6,13 +6,13 @@
 
 wepy的安装或更新都通过`npm`进行。
 
-**安装或更新wepy命令行工具**
+**全局安装或更新wepy命令行工具**
 
 ```bash
 npm install wepy-cli -g
 ```
 
-**在开发目录生成DEMO开发项目**
+**在开发目录中生成DEMO开发项目**
 
 ```bash
 wepy new myproject
@@ -48,7 +48,7 @@ wepy build --watch
 
 #### 重要提醒
 
-1. wepy借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则会遇到比较多的障碍。
+1. wepy借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读wepy文档以及使用wepy的过程中，将会遇到比较多的障碍。
 2. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
 3. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
 4. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
@@ -109,7 +109,7 @@ customFileTypes:
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
    
 4. 使用Promise。
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，因此需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，所以需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
    
 5. 事件绑定语法使用优化语法代替。
    原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
