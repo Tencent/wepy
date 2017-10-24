@@ -48,12 +48,13 @@ wepy build --watch
 
 #### 重要提醒
 
-1. wepy借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读wepy文档以及使用wepy的过程中，将会遇到比较多的障碍。
-2. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
-3. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
-4. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
-5. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>
-6. 本地项目根目录运行`wepy build --watch`，开启实时编译。
+1. wepy借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读wepy文档以及使用wepy进行开发的过程中，将会遇到比较多的障碍。
+2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
+3. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
+4. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。<font style="color:red">重要：漏掉此项会运行报错。</font>
+5. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全` <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
+6. `微信开发者工具`-->`项目`-->`关闭代码压缩上传` <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效(注：压缩功能可使用wepy提供的build指令代替，详见后文相关介绍以及DEMO项目根目录中的`wepy.config.js`和`package.json`文件)。</font>
+7. 本地项目根目录运行`wepy build --watch`，开启实时编译（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实现实时预览功能，非常方便）。
 
 #### 代码高亮
 
@@ -83,6 +84,7 @@ customFileTypes:
 ```
 
 - **VS Code中的代码高亮**
+
 1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
 2. 打开任意 `.wpy` 文件。
 3. 点击右下角的选择语言模式，默认为`纯文本`。
@@ -90,6 +92,7 @@ customFileTypes:
 5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
 - **VIM中的代码高亮**
+
 1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
 2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮。
 
