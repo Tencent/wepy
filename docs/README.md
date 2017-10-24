@@ -103,7 +103,7 @@ customFileTypes:
 ### 代码规范
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
-   以`$`开头的方法或者属性为wepy框架内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+   以`$`开头的标识符为wepy框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
    
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
    具体请参考[wpy文件说明](#wpy文件说明)。
@@ -121,7 +121,7 @@ customFileTypes:
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
    
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
-   不可以使用`input、button、view、repeat`等微信小程序远程组件名称命名自定义组件；另外也不要使用wepy框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用wepy框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
 ## 主要解决问题
