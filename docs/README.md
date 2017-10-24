@@ -89,7 +89,7 @@ customFileTypes:
 4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
 5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
-= **VIM中的代码高亮**
+- **VIM中的代码高亮**
 1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
 2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮。
 
@@ -97,25 +97,34 @@ customFileTypes:
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
     ```
 
-### 代码规范：
-1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
-   以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
-2. 入口，页面，组件的命名后缀为`.wpy`。外链的文件可以是其它后缀。
-   请参考[wpy文件说明](#wpy文件说明)
+### 代码规范
+
+1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
+   以`$`开头的方法或者属性为wepy框架内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+   
+2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
+   具体请参考[wpy文件说明](#wpy文件说明)
+   
 3. 使用ES6语法开发。
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
-4. 使用Promise：
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
-5. 事件绑定语法使用优化语法代替：
-   原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
-6. 事件传参使用优化后语法代替：
-   原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
-7. 自定义组件命名应避开微信原生组件以及功能标签`<repeat>`。
-   不可以使用`input, button, view, repeat`等命名自定义组件。更多`repeat`用法，参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+   
+4. 使用Promise。
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，因此需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
+   
+5. 事件绑定语法使用优化语法代替。
+   原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+   
+6. 事件传参使用优化后语法代替。
+   原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
+   
+7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
+   不可以使用`input、button、view、repeat`等微信小程序远程组件名称命名自定义组件；另外也不要使用wepy框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
-## 主要解决问题：
+## 主要解决问题
+
 ### 1. 开发模式转换
+
 在原有的小程序的开发模式下进行再次封装，更贴近于现有MVVM框架开发模式。框架在开发过程中参考了一些现在框架的一些特性，并且融入其中，以下是使用wepy前后的代码对比图。
 
 官方DEMO代码：
