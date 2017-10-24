@@ -1,36 +1,36 @@
-# 小程序框架wepy文档
+# 微信小程序组件化开发框架wepy官方文档
 
-## 快速入门
+## 快速入门指南
 
-### 项目创建与使用
+### wepy项目的创建与使用
 
-以下安装都通过`npm`安装
+wepy的安装或更新都通过`npm`进行。
 
-**安装（更新） wepy 命令行工具。**
+**安装或更新wepy命令行工具**
 
 ```bash
 npm install wepy-cli -g
 ```
 
-**在开发目录生成开发DEMO。**
+**在开发目录生成DEMO开发项目**
 
 ```bash
 wepy new myproject
 ```
 
-**切换至项目目录。**
+**切换至项目目录**
 
 ```bash
 cd myproject
 ```
 
-**开发实时编译。**
+**开启实时编译**
 
 ```bash
 wepy build --watch
 ```
 
-#### 项目目录结构
+#### wepy项目的目录结构
 
 ```
 ├── dist                   微信开发者工具指定的目录
@@ -53,18 +53,21 @@ wepy build --watch
 4. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>
 5. 本地项目根目录运行`wepy build --watch`，开启实时编译。
 
-#### Sublime下代码高亮
+#### 代码高亮
+
 文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+
+##### Sublime中的代码高亮
 
 1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
 2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
 3. 关闭`.wpy`文件重新打开即可高亮。
 
-#### WebStorm下代码高亮
+##### WebStorm中的代码高亮
 1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
 2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
-#### Atom下代码高亮
+##### Atom中的代码高亮
 1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
 2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
@@ -75,7 +78,7 @@ customFileTypes:
    ]
 ```
 
-#### VS Code 下代码高亮
+##### VS Code中的代码高亮
 1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`
 2. 打开任意 `.wpy` 文件
 3. 点击右下角的选择语言模式，默认为`纯文本`
