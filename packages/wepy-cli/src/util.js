@@ -132,7 +132,7 @@ const utils = {
             if (o) {
                 src = path.join(o.dir, o.file);
             } else {
-                let comPath = path.join(this.currentDir, cache.getSrc(), 'components', com);
+                let comPath = resolve.resolveAlias(com);
                 if (this.isFile(comPath + wpyExt)) {
                     src = comPath + wpyExt;
                 } else if (this.isFile(comPath + '/index' + wpyExt)) {
