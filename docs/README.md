@@ -46,28 +46,32 @@ wepy build --watch
 └── package.json           package 配置
 ```
 
-#### 开发使用说明
-1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
-2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
-3. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
-4. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>
-5. 本地项目根目录运行`wepy build --watch`，开启实时编译。
+#### 重要提醒
+
+1. wepy借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则会遇到比较多的障碍。
+2. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
+3. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
+4. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
+5. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>
+6. 本地项目根目录运行`wepy build --watch`，开启实时编译。
 
 #### 代码高亮
 
 文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
 
-##### Sublime中的代码高亮
+- **Sublime中的代码高亮**
 
 1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
 2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
 3. 关闭`.wpy`文件重新打开即可高亮。
 
-##### WebStorm中的代码高亮
+- **WebStorm/PhpStorm中的代码高亮**
+
 1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
 2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
-##### Atom中的代码高亮
+- **Atom中的代码高亮**
+
 1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
 2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
@@ -78,17 +82,16 @@ customFileTypes:
    ]
 ```
 
-##### VS Code中的代码高亮
-1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`
-2. 打开任意 `.wpy` 文件
-3. 点击右下角的选择语言模式，默认为`纯文本`
-4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`
-5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`
+- **VS Code中的代码高亮**
+1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
+2. 打开任意 `.wpy` 文件。
+3. 点击右下角的选择语言模式，默认为`纯文本`。
+4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
+5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
-
-#### VIM 下代码高亮
-1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)
-2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮
+= **VIM中的代码高亮**
+1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮。
 
     ```vim
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
