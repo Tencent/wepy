@@ -12,6 +12,7 @@
 * `F` 修复getCurrentPages调用错误的问题。[PR 396](https://github.com/wepyjs/wepy/pull/396)
 * `F` 修复使用repeat时，默认数据为空引发的BUG。[PR 411](https://github.com/wepyjs/wepy/pull/411)
 * `F` 修复了使用第三方组件时，修改ouput属性导致引用错乱的BUG。[ISSUE 415](https://github.com/wepyjs/wepy/pull/415)
+* `A` 添加了`resolve`, `alias`的功能
 
 提前体验：`npm install wepy-cli@1.5.9-3`
 
