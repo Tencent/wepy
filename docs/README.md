@@ -303,7 +303,6 @@ project
 import wepy from 'wepy';
 
 export default class Index extends wepy.page {
-
     getData() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -311,6 +310,7 @@ export default class Index extends wepy.page {
             }, 3000);
         });
     };
+    
     async onLoad() {
         let data = await this.getData();
         console.log(data.data);
