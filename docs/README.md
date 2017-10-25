@@ -142,18 +142,23 @@ WePY框架在开发过程中参考了Vue.js等现有框架的一些语法风格�
 
 ```javascript
 //index.js
+
 //获取应用实例
 var app = getApp()
+
+//通过Page构造函数创建页面逻辑
 Page({
     //可用于页面模板绑定的数据
     data: {
         motto: 'Hello World',
         userInfo: {}
     },
+    
     //事件处理函数
     bindViewTap: function() {
         console.log('button clicked')
     },
+    
     //页面的生命周期函数
     onLoad: function () {
         console.log('onLoad')
@@ -164,20 +169,25 @@ Page({
 基于WePY的代码：
 
 ```javascript
+//index.wpy中的<script>部分
+
 import wepy from 'wepy';
 
+//通过继承自wepy.page的class类创建页面逻辑
 export default class Index extends wepy.page {
     //可用于页面模板绑定的数据
     data = {
         motto: 'Hello World',
         userInfo: {}
     };
+    
     //事件处理函数(集中保存在methods对象中)
     methods = {
         bindViewTap () {
             console.log('button clicked');
         }
     };
+    
     //页面的生命周期函数
     onLoad() {
         console.log('onLoad');
@@ -193,6 +203,7 @@ export default class Index extends wepy.page {
 
 ```html
 // index.wpy
+
 <template>
     <view>
         <panel>
@@ -203,6 +214,7 @@ export default class Index extends wepy.page {
         <list :item="items"></list>
     </view>
 </template>
+
 <script>
 import wepy from 'wepy';
 import List from '../components/list';
