@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-replace",
-  "version": "1.5.7",
+  "version": "1.5.9",
   "description": "wepy replace plugin",
   "main": "lib/index.js",
   "scripts": {
