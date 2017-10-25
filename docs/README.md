@@ -134,7 +134,7 @@ customFileTypes:
 
 ## 主要功能特性
 
-### 1. 开发模式转换
+### 开发模式转换
 
 WePY框架在开发过程中参考了Vue.js等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
@@ -185,7 +185,7 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 2. 支持组件化开发
+### 支持组件化开发
 
 参见章节：[组件](#组件)
 
@@ -229,7 +229,7 @@ export default class Index extends wepy.page {
 </script>
 ```
 
-### 3. 支持加载外部NPM包
+### 支持加载外部NPM包
 
 在编译过程当中，会递归遍历代码中的`require`然后将对应依赖文件从node_modules当中拷贝出来，并且修改`require`为相对路径，从而实现对外部NPM包的支持。如下图：
 
@@ -237,7 +237,7 @@ export default class Index extends wepy.page {
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png">
 </p>
 
-### 4. 单文件模式，目录结构更加清晰
+### 单文件模式，目录结构更清晰，开发更方便
 
 原生小程序要求app实例必须有3个文件`app.js`、`app.json`、`app.wxss`，而page页面则有4个文件`page.js`、`page.json`、`page.wxml`、`page.wxss`，并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名。具体可参看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>
 
@@ -276,7 +276,7 @@ project
     └──app.wpy           小程序逻辑、公共配置、公共样式
 ```
 
-### 5. 默认使用babel编译，支持ES6/7的一些新特性
+### 默认使用babel编译，支持ES6/7的一些新特性
 
 用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`、`async/await`（自WePY 1.4.1开始必须手动开启，原因参见前文`代码规范`一节中的介绍）等等。
 
