@@ -35,13 +35,13 @@ wepy build --watch
 ```
 ├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令编译生成）
 ├── node_modules           
-├── src                    代码编写的目录（该目录为WePY的工作目录）
+├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
 |   |   ├── com_a.wpy      可复用的WePY组件 a
 |   |   └── com_b.wpy      可复用的WePY组件 b
 |   ├── pages              WePY页面目录（属于完整页面）
 |   |   ├── index.wpy      index 页面（经build后，会在dist目录下的pages目录中生成index.js、index.json、index.wxml和index.wxss文件）
-|   |   └── page.wpy       page 页面（经build后，会在dist目录下的pages目录中生成page.js、page.json、page.wxml和page.wxss文件）
+|   |   └── other.wpy      other 页面（经build后，会在dist目录下的pages目录中生成other.js、other.json、other.wxml和other.wxss文件）
 |   └── app.wpy            小程序配置项（全局数据、样式配置、声明钩子等；经build后，会在dist目录下生成app.js、app.json和app.wxss文件）
 └── package.json           项目的package 配置
 ```
@@ -138,7 +138,7 @@ customFileTypes:
 
 WePY框架在开发过程中参考了Vue.js等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
-官方Demo代码：
+原生代码：
 
 ```javascript
 //index.js
@@ -161,7 +161,7 @@ Page({
 })
 ```
 
-基于WePY的实现：
+基于WePY的代码：
 
 ```javascript
 import wepy from 'wepy';
@@ -239,44 +239,44 @@ export default class Index extends wepy.page {
 
 ### 4. 单文件模式，目录结构更加清晰
 
-<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>原生小程序要求app实例必须有3个文件`app.js`、`app.json`、`app.wxss`，而page页面则有4个文件 `page.js`、`page.json`、`page.wxml`、`page.wxss`。并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名。
+<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>原生小程序要求app实例必须有3个文件`app.js`、`app.json`、`app.wxss`，而page页面则有4个文件`page.js`、`page.json`、`page.wxml`、`page.wxss`。并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名。
 
-而在WePY中则使用了单文件模式，将原生小程序app实例的3个文件统一为`app.wpy`，page页面的4个文件统一为`page.wpy`。使用WePY开发前后开发目录对比如下：
+而在WePY中则使用了单文件模式，将原生小程序app实例的3个文件统一为`app.wpy`，page页面的4个文件统一为`page.wpy`。使用WePY开发前后的开发目录结构对比如下：
 
-官方DEMO：
+原生小程序的目录结构：
 
 ```
 project
 ├── pages
 |   ├── index
-|   |   ├── index.json  index 页面配置
 |   |   ├── index.js    index 页面逻辑
+|   |   ├── index.json  index 页面配置
 |   |   ├── index.wxml  index 页面结构
-|   |   └── index.wxss  index 页面样式表
+|   |   └── index.wxss  index 页面样式
 |   └── log
+|       ├── log.js      log 页面逻辑
 |       ├── log.json    log 页面配置
-|       ├── log.wxml    log 页面逻辑
-|       ├── log.js      log 页面结构
-|       └── log.wxss    log 页面样式表
+|       ├── log.wxml    log 页面结构
+|       └── log.wxss    log 页面样式
 ├── app.js              小程序逻辑
-├── app.json            小程序公共设置
-└── app.wxss            小程序公共样式表
+├── app.json            小程序公共配置
+└── app.wxss            小程序公共样式
 ```
 
-使用WePY框架后目录结构：
+使用WePY框架后的开发目录结构(主要为src目录的结构，dist目录除外)：
 
 ```
 project
 └── src
     ├── pages
-    |   ├── index.wpy    index 页面配置、结构、样式、逻辑
-    |   └── log.wpy      log 页面配置、结构、样式、逻辑
-    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+    |   ├── index.wpy    index 页面逻辑、配置、结构、样式
+    |   └── log.wpy      log 页面逻辑、配置、结构、样式
+    └──app.wpy           小程序逻辑、公共配置、公共样式
 ```
 
-### 5. 默认使用babel编译，支持ES6/7的一些新特性。
+### 5. 默认使用babel编译，支持ES6/7的一些新特性
 
-用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
+用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`、`async/await`（自WePY 1.4.1开始必须手动开启，原因参见前文`代码规范`一节中的介绍）等等。
 
 示例代码：
 
@@ -299,10 +299,11 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 6. 针对原生API进行优化。
+### 6. 针对原生API进行优化
 
-对现在API进行promise处理，同时修复一些现有API的缺陷，比如：wx.request并发问题等。
-原有代码：
+对小程序原生API进行promise处理，同时修复了一些原生API的缺陷，比如：wx.request的并发问题等。
+
+原生代码：
 
 ```javascript
 onLoad = function () {
@@ -319,7 +320,7 @@ onLoad = function () {
 }
 ```
 
-基于WePY实现代码：
+基于WePY的代码：
 
 ```javascript
 import wepy from 'wepy';
@@ -346,6 +347,7 @@ async onLoad() {
 ## 进阶说明
 
 ### wepy.config.js 配置文件说明
+
 执行`wepy new demo`后，会生成类似配置文件。
 
 ```javascript
@@ -410,15 +412,16 @@ if (prod) {
 
 **wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
-**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。持续开发...
-对应compiler请参考各自文档
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。其他compiler持续开发中...
+
+对应各compiler请参考各自文档：
 >**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 >**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
 >**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 >**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
 >**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
 
-**plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
+**plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。其他plugin持续开发中...
 
 ### 关于compilers和plugins
 
