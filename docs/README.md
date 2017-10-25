@@ -1,36 +1,36 @@
-# 小程序框架wepy文档
+# 微信小程序组件化开发框架WePY官方文档
 
-## 快速入门
+## 快速入门指南
 
-### 项目创建与使用
+### WePY项目的创建与使用
 
-以下安装都通过`npm`安装
+WePY的安装或更新都通过`npm`进行。
 
-**安装（更新） wepy 命令行工具。**
+**全局安装或更新WePY命令行工具**
 
 ```bash
 npm install wepy-cli -g
 ```
 
-**在开发目录生成开发DEMO。**
+**在开发目录中生成Demo开发项目**
 
 ```bash
 wepy new myproject
 ```
 
-**切换至项目目录。**
+**切换至项目目录**
 
 ```bash
 cd myproject
 ```
 
-**开发实时编译。**
+**开启实时编译**
 
 ```bash
 wepy build --watch
 ```
 
-#### 项目目录结构
+### WePY项目的目录结构
 
 ```
 ├── dist                   微信开发者工具指定的目录
@@ -46,25 +46,39 @@ wepy build --watch
 └── package.json           package 配置
 ```
 
-#### 开发使用说明
-1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
-2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
-3. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
-4. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>
-5. 本地项目根目录运行`wepy build --watch`，开启实时编译。
+### 重要提醒
 
-#### Sublime下代码高亮
+1. WePY借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
+
+2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
+
+3. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
+
+4. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。 <font style="color:red">重要：漏掉此项会运行报错。</font>
+
+5. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全`。 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
+
+6. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件）。</font>
+
+7. 本地项目根目录运行`wepy build --watch`，开启实时编译（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实现实时预览功能，非常方便）。
+
+### 代码高亮
+
 文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+
+- **Sublime中的代码高亮**
 
 1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
 2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
 3. 关闭`.wpy`文件重新打开即可高亮。
 
-#### WebStorm下代码高亮
+- **WebStorm/PhpStorm中的代码高亮**
+
 1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
 2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
-#### Atom下代码高亮
+- **Atom中的代码高亮**
+
 1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
 2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
@@ -75,42 +89,52 @@ customFileTypes:
    ]
 ```
 
-#### VS Code 下代码高亮
-1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`
-2. 打开任意 `.wpy` 文件
-3. 点击右下角的选择语言模式，默认为`纯文本`
-4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`
-5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`
+- **VS Code中的代码高亮**
 
+1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
+2. 打开任意 `.wpy` 文件。
+3. 点击右下角的选择语言模式，默认为`纯文本`。
+4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
+5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
-#### VIM 下代码高亮
-1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)
-2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮
+- **VIM中的代码高亮**
+
+1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮。
 
     ```vim
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
     ```
 
-### 代码规范：
-1. 变量与方法使用尽量使用驼峰式命名，避免使用`$`开头。
-   以`$`开头的方法或者属性为框架内建方法或者属性，可以被使用，使用前请[参考API文档](#api)。
-2. 入口，页面，组件的命名后缀为`.wpy`。外链的文件可以是其它后缀。
-   请参考[wpy文件说明](#wpy文件说明)
+### 代码规范
+
+1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
+   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+   
+2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
+   具体请参考[wpy文件说明](#wpy文件说明)。
+   
 3. 使用ES6语法开发。
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
-4. 使用Promise：
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
-5. 事件绑定语法使用优化语法代替：
+   
+4. 使用Promise。
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，所以需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
+   
+5. 事件绑定语法使用优化语法代替。
    原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
-6. 事件传参使用优化后语法代替：
+   
+6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
-7. 自定义组件命名应避开微信原生组件以及功能标签`<repeat>`。
-   不可以使用`input, button, view, repeat`等命名自定义组件。更多`repeat`用法，参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+   
+7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
+   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
-## 主要解决问题：
+## 主要解决问题
+
 ### 1. 开发模式转换
-在原有的小程序的开发模式下进行再次封装，更贴近于现有MVVM框架开发模式。框架在开发过程中参考了一些现在框架的一些特性，并且融入其中，以下是使用wepy前后的代码对比图。
+
+在原有的小程序的开发模式下进行再次封装，更贴近于现有MVVM框架开发模式。框架在开发过程中参考了一些现在框架的一些特性，并且融入其中，以下是使用WePY前后的代码对比图。
 
 官方DEMO代码：
 
@@ -133,7 +157,7 @@ Page({
 })
 ```
 
-基于wepy的实现：
+基于WePY的实现：
 
 ```javascript
 import wepy from 'wepy';
@@ -209,7 +233,7 @@ export default class Index extends wepy.page {
 ### 4. 单文件模式，使得目录结构更加清晰。
 
 <a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
-所以使用wepy开发前后开发目录对比如下：
+所以使用WePY开发前后开发目录对比如下：
 
 官方DEMO：
 
@@ -231,7 +255,7 @@ project
 └── app.wxss            小程序公共样式表
 ```
 
-使用wepy框架后目录结构：
+使用WePY框架后目录结构：
 
 ```
 project
@@ -287,7 +311,7 @@ onLoad = function () {
 }
 ```
 
-基于wepy实现代码：
+基于WePY实现代码：
 
 ```javascript
 import wepy from 'wepy';
@@ -300,13 +324,13 @@ async onLoad() {
 
 在同时并发10个request请求测试时：
 
-不使用wepy:
+不使用WePY:
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554651/5185f740-b198-11e6-88f8-45e359090dc3.png" alt="2 small">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554886/c30e802a-b199-11e6-927d-08cd4e5ed0b0.png" alt="2 small">
 </p>
 
-使用wepy后：
+使用WePY后：
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png">
 </p>
@@ -654,9 +678,9 @@ export default class MyComponent extends wepy.component {
 ### 组件
 小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
 例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
-因此wepy让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在wepy的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
+因此WePY让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在WePY的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
 
-wepy编译组件的过程如下：
+WePY编译组件的过程如下：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/22774767/8f090dd6-eee3-11e6-942b-1591a6379ad3.png">
@@ -1019,7 +1043,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 ### 第三方组件
 
-wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
+WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
 ### 混合
@@ -1150,8 +1174,8 @@ this.setData({title: 'this is title'});
 
 因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
 
-#### wepy数据绑定方式
-wepy使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
+#### WePY数据绑定方式
+WePY使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
 
 ```javascript
 this.title = 'this is title';
@@ -1166,7 +1190,7 @@ setTimeout(() => {
 }, 3000);
 ```
 
-#### wepy脏数据检查流程
+#### WePY脏数据检查流程
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
 <p align="center">
@@ -1187,7 +1211,7 @@ wx.request({
     }
 });
 
-// wepy 使用方式
+// WePY 使用方式
 wepy.request('xxxx').then((d) => console.log(d));
 ```
 
@@ -1205,7 +1229,7 @@ Page({
   }
 });
 
-// wepy 建议传参方式
+// WePY 建议传参方式
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 methods: {
@@ -1214,7 +1238,7 @@ methods: {
     }
 }
 
-// wepy 1.1.8以后的版本，只允许传string。
+// WePY 1.1.8以后的版本，只允许传string。
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 methods: {
@@ -1240,7 +1264,7 @@ onLoad: function () {
 }
 
 
-// wepy
+// WePY
 <view> {{ message }} </view>
 
 onLoad () {
@@ -1269,7 +1293,7 @@ var item = require('item.js')
 
 
 
-// wepy
+// WePY
 <!-- /components/item.wpy -->
  <text>{{text}}</text>
 
