@@ -109,7 +109,7 @@ export default class {
         };
         if (noPromiseAPI) {
             if (Array.isArray(noPromiseAPI)) {
-                noPromiseAPI.forEach(v => noPromiseMethods[k] = true);
+                noPromiseAPI.forEach(v => noPromiseMethods[v] = true);
             } else {
                 for (let k in noPromiseAPI) {
                     noPromiseMethods[k] = noPromiseAPI[k];
