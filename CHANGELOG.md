@@ -1,4 +1,4 @@
-## 1.5.9 (waiting) 
+## 1.5.9 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
 * `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
 * `F` 修复了使用绝对路径跳转时，`onPrefetch`没被调用的问题。[ISSUE 244](https://github.com/wepyjs/wepy/issues/244)
@@ -13,18 +13,9 @@
 * `F` 修复使用repeat时，默认数据为空引发的BUG。[PR 411](https://github.com/wepyjs/wepy/pull/411)
 * `F` 修复了使用第三方组件时，修改ouput属性导致引用错乱的BUG。[ISSUE 415](https://github.com/wepyjs/wepy/pull/415)
 * `A` 添加了`resolve`, `alias`的功能
-
-提前体验：`npm install wepy-cli@1.5.9-3`
-
 * `F` 修复了生成JSON时没有通过plugins处理的问题。[ISSUE 403](https://github.com/wepyjs/wepy/pull/403)
 * `F` 修复了组件中引用相对路径在某些情况下不准确的问题。[ISSUE 345](https://github.com/wepyjs/wepy/pull/345)
-
-提前体验：`npm install wepy-cli@1.5.9-4`
-
 * `F` 修复了repeat使用驼峰命名组件出现问题的BUG。[ISSUE 397](https://github.com/wepyjs/wepy/pull/397)
-
-提前体验：`npm install wepy-cli@1.5.9-5`
-
 * `F` 修复绑定多个事件传参时，参数混乱的问题。[ISSUE 385](https://github.com/wepyjs/wepy/pull/385)
 
 ## 1.5.8 (2017-08-05)
