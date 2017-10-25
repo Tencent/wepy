@@ -217,22 +217,27 @@ export default class Index extends wepy.page {
 
 <script>
 import wepy from 'wepy';
+//引入List、Panel和Counter组件
 import List from '../components/list';
 import Panel from '../components/panel';
 import Counter from '../components/counter';
 
 export default class Index extends wepy.page {
-
-    config = {
+    //页面配置
+    config = {
         "navigationBarTitleText": "test"
     };
-    components = {
+   
+    //声明页面中将要使用到的组件
+    components = {
         panel: Panel,
         counter1: Counter,
         counter2: Counter,
         list: List
     };
-    data = {
+   
+    //可用于页面模板中绑定的数据
+    data = {
         myNum: 50,
         syncNum: 100,
         items: [1, 2, 3, 4]
