@@ -239,7 +239,7 @@ export default class Index extends wepy.page {
 
 ### 4. 单文件模式，目录结构更加清晰
 
-<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>原生小程序要求app实例必须有3个文件`app.js`、`app.json`、`app.wxss`，而page页面则有4个文件`page.js`、`page.json`、`page.wxml`、`page.wxss`。并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名。
+原生小程序要求app实例必须有3个文件`app.js`、`app.json`、`app.wxss`，而page页面则有4个文件`page.js`、`page.json`、`page.wxml`、`page.wxss`，并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名。具体可参看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>
 
 而在WePY中则使用了单文件模式，将原生小程序app实例的3个文件统一为`app.wpy`，page页面的4个文件统一为`page.wpy`。使用WePY开发前后的开发目录结构对比如下：
 
@@ -264,6 +264,8 @@ project
 ```
 
 使用WePY框架后的开发目录结构(主要为src目录的结构，dist目录除外)：
+
+    注：dist目录为WePY通过build指令生成的目录，除额外增加的npm目录外，其目录结构与原生小程序的目录结构类似。
 
 ```
 project
