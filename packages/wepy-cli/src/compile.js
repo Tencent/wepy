@@ -40,8 +40,14 @@ export default {
                 reg = new RegExp('\\' + ext + '$');
                 if (!reg.test(importpath))
                     importpath = importpath + ext;
-
-                if (path.join(opath.dir, importpath) === path.join(util.currentDir, src, file)) {
+                let resolved = resolve.resolveAlias(importpath);
+                let compath;
+                if (path.isAbsolute(resolved)) {
+                    compath = path.resolve(resolved);
+                } else {
+                    compath = path.join(opath.dir, resolved);
+                }
+                if (compath === path.join(util.currentDir, src, file)) {
                     if (!reg.test(f)) {
                         parents = parents.concat(this.findReference(f));
                     } else {
