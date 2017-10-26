@@ -455,14 +455,15 @@ if (prod) {
   <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
-一个`.wpy`文件分为三个部分：
+一个`.wpy`文件可分为三大部分，各自对应于一个标签：
 
-1. 逻辑部分，即`<script></script>`脚本部分(但config对象除外)，对应于原生的`.js`文件。
-2. 配置部分，即逻辑部分(脚本部分)中的config对象，对应于原生的`.json`文件。
+1. 脚本部分，即`<script></script>`标签中的内容，又可分为两个部分：
+&emsp;&emsp;&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
+&emsp;&emsp;&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
 2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
 3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
 
-其中，入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码。
+其中，小程序入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，会忽略内联代码。
 
 示例如下：
 
@@ -482,7 +483,7 @@ if (prod) {
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
 | script   | `babel` | `babel`、`TypeScript`         |
 
-### 逻辑部分(脚本部分)介绍
+### 脚本部分介绍
 
 #### 小程序入口app.wpy
 
@@ -512,7 +513,7 @@ export default class extends wepy.app {
 </style>
 ```
 
-入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供的相关API。
+入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性生成`app.json`文件，如果需要修改`config`中的内容，请使用微信提供的相关API。
 
 #### 页面page.wpy
 
@@ -549,12 +550,12 @@ export default class Page extends wepy.page {
 
 | 属性         | 说明                                       |
 | ---------- | ---------------------------------------- |
-| config     | 页面配置，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
-| components | 页面所引入的组件列表                                |
-| data       | 页面需要渲染的数据(即可用于页面模板绑定的数据)                                |
-| methods    | 响应wmxl中所捕获到的事件的事件处理函数，如`bindtap`、`bindchange`        |
-| events     | 响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的事件处理函数            |
-| 其它         | 如`onLoad`、`onReady`等小程序页面生命周期函数，以及其它自定义的方法与属性    |
+| config     | 页面配置对象，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
+| components | 页面组件列表对象，声明页面所引入的组件列表                               |
+| data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                                |
+| methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange`        |
+| events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
+| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
 
@@ -581,7 +582,7 @@ export default class Com extends wepy.component {
 </style>
 ```
 
-组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，其属性与页面属性大致相同，除了不需要`config`配置以及页面特有的一些生命周期函数等等。
+组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，除了不需要`config`配置以及页面特有的一些生命周期函数之外，其属性与页面属性大致相同。
 
 ### 实例
 
@@ -590,20 +591,20 @@ export default class Com extends wepy.component {
 ```javascript
 import wepy from 'wepy';
 
-// 声明一个小程序实例
+// 声明一个App小程序实例
 export default class MyAPP extends wepy.app {
 }
-// 声明一个页面实例
+// 声明一个Page页面实例
 export default class IndexPage extends wepy.page {
 }
-// 声明一个组件实例
+// 声明一个Component组件实例
 export default class MyComponent extends wepy.component {
 }
 ```
 
-#### 小程序实例
+#### App小程序实例
 
-小程序实例中只包含小程序生命周期函数以及自定义方法与属性
+App小程序实例中主要包含小程序生命周期函数、config配置对象、globalData全局数据对象，以及其他自定义方法与属性。
 
 ```javascript
 import wepy from 'wepy';
@@ -617,16 +618,18 @@ export default class MyAPP extends wepy.app {
 
     onShow () {}
 
-    config = {}; // 对应 app.json 文件
+    config = {}  // 对应 app.json 文件
+    
+    globalData = {}
 }
 ```
 
-在 Page 实例中，可以通过`this.$parent`来访问 App 实例。
+在Page页面实例中，可以通过`this.$parent`来访问App实例。
 
 
-#### Page 和 Component 实例
+#### Page页面实例和Component组件实例
 
-Page 实例中只包含小程序页面生命周期函数，自定义方法与属性以及特有属性。
+由于Page页面实际上继承自Component组件，除扩展了页面所特有的`config`配置以及特有的页面生命周期函数之外，其它属性和方法与Component一致，因此这里以Page页面为例进行介绍。
 
 
 ```javascript
@@ -634,52 +637,53 @@ import wepy from 'wepy';
 
 // export default class MyPage extends wepy.page {
 export default class MyComponent extends wepy.component {
-    customData = {};
+    customData = {}  // 自定义数据
 
-    customFunction ()　{}
+    customFunction ()　{}  //自定义方法
 
-    onLoad () {} // 只在 Page 和 Component共用的生命周期函数
+    onLoad () {}  // 在Page和Component共用的生命周期函数
 
-    onShow () {} // 只在 Page 实例中会存在页面生命周期函数
+    onShow () {}  // 只在Page中存在的页面生命周期函数
 
-    // 特有属性示例
-
-    config = {}; // 对应page.json文件，只在 Page 实例中存在
+    config = {};  // 只在Page实例中存在的配置数据，对应于原生的page.json文件
     
-    data = {}; // 页面所需数据均需在这里声明
+    data = {};  // 页面所需数据均需在这里声明，可用于模板数据绑定
 
-    components = {}; // 声明页面所引用的子组件
+    components = {};  // 声明页面中所引用的组件，或声明组件中所引用的子组件
 
-    mixins = []; // 声明页面所引用的Mixin实例
+    mixins = [];  // 声明页面所引用的Mixin实例
 
-    computed = {}; // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
+    computed = {};  // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
 
-    watch = {}; // 声明数据watcher
+    watch = {};  // 声明数据watcher（详见后文介绍）
 
-    methods = {}; // 声明页面响应事件。注意，此处只用于声明页面bind，catch事件，自定义方法需以自定义方法的方式声明
+    methods = {};  // 声明页面wxml中标签的事件处理函数。注意，此处只用于声明页面wxml中标签的bind、catch事件，自定义方法需以自定义方法的方式声明
 
-    events = {}; // 声明组件之间的事件传递
+    events = {};  // 声明组件之间的事件处理函数
 }
 ```
 
-对于 methods 属性，因为与Vue的使用习惯不一致，一直存在一个误区，这里的 methods 属性只声明页面bind，catch事件，不能声明自定义方法。示例如下：
+对于methods属性，因为与Vue的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
+
 import wepy from 'wepy';
 
 export default class MyComponent extends wepy.component {
-
     methods = {
         bindtap () {
             let rst = this.commonFunc();
             // doSomething
         },
+        
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
         },
-        commonFunc () {
+        
+        //错误：普通自定义方法不能放在methods对象中
+        commonFunc () {
             return 'sth.';
         }
     };
@@ -688,22 +692,24 @@ export default class MyComponent extends wepy.component {
 
 
 // 正确示例
+
 import wepy from 'wepy';
 
 export default class MyComponent extends wepy.component {
-
     methods = {
         bindtap () {
             let rst = this.commonFunc();
             // doSomething
         },
+        
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
         },
-    };
+    }
 
-    commonFunc () {
+    //正确：普通自定义方法在methods对象外声明，与methods平级
+    commonFunc () {
         return 'sth.';
     }
 
@@ -711,9 +717,12 @@ export default class MyComponent extends wepy.component {
 ```
 
 ### 组件
-小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
-例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
-因此WePY让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在WePY的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
+
+原生小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
+
+例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此，只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
+
+因此，在WePY中实现了小程序的组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在WePY的组件化开发过程中，A组件只会影响到A所绑定的`myclick`，B也如此。
 
 WePY编译组件的过程如下：
 
@@ -722,9 +731,10 @@ WePY编译组件的过程如下：
 </p>
 
 #### 普通组件引用
-当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签。如：
 
-```Html
+当页面需要引入组件或组件需要引入子组件时，必须在`.wpy`文件的`<script>`脚本部分先import组件文件，然后在`components`对象中给组件声明唯一的组件ID，接着在`<template>`模板部分中添加以`components`对象中所声明的组件ID进行命名的自定义标签以插入组件。如：
+
+```html
 /**
 project
 └── src
@@ -733,24 +743,32 @@ project
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
-    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+    └──app.wpy           小程序配置项（全局公共配置、公共样式、声明钩子等）
 **/
+
 // index.wpy
+
 <template>
-    <child></child>
+    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
+    <child></child>
 </template>
+
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    //引入组件文件
+    import Child from './coms/child';
+   
     export default class Index extends wepy.component {
-        components = {
+        //声明组件，分配组件id为child
+        components = {
             child: Child
         };
     }
 </script>
 ```
 
-需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID的组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+
 如果需要避免这个问题，则需要分配多个组件ID和实例。代码如下：
 
 ```html
@@ -758,17 +776,21 @@ project
     <view class="child1">
         <child></child>
     </view>
+   
     <view class="child2">
         <anotherchild></anotherchild>
     </view>
-
 </template>
+
+
 <script>
     import wepy from 'wepy';
     import Child from './coms/child';
+   
     export default class Index extends wepy.component {
         components = {
-            child: Child,
+            //为两个相同组件的不同实例分配不同的组件ID，从而避免数据同步变化的问题
+            child: Child,
             anotherchild: Child
         };
     }
