@@ -457,10 +457,10 @@ if (prod) {
 
 一个`.wpy`文件分为三个部分：
 
-1. 逻辑部分，即`<script></script>`脚本部分(但config对象除外)，对应原生的`.js`文件。
-2. 配置部分，即逻辑部分(脚本部分)中的config对象，对应原生的`.json`文件。
-2. 结构部分，即`<template></template>`模板部分，对应原生的`.wxml`文件。
-3. 样式部分，即`<style></style>`样式部分，对应原生的`.wxss`文件。
+1. 逻辑部分，即`<script></script>`脚本部分(但config对象除外)，对应于原生的`.js`文件。
+2. 配置部分，即逻辑部分(脚本部分)中的config对象，对应于原生的`.json`文件。
+2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
+3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
 
 其中，入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码。
 
@@ -478,9 +478,9 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`，`less`，`sass`，`stylus` |
-| template | `wxml`  | `wxml`，`xml`，`pug(原jade)`    |
-| script   | `babel` | `babel`，`TypeScript`         |
+| style    | `css`   | `css`、`less`、`sass`、`stylus` |
+| template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
+| script   | `babel` | `babel`、`TypeScript`         |
 
 ### 逻辑部分(脚本部分)介绍
 
@@ -550,25 +550,22 @@ export default class Page extends wepy.page {
 | 属性         | 说明                                       |
 | ---------- | ---------------------------------------- |
 | config     | 页面配置，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
-| components | 页面引入的组件列表                                |
+| components | 页面所引入的组件列表                                |
 | data       | 页面需要渲染的数据(即可用于页面模板绑定的数据)                                |
-| methods    | 对wmxl中所捕获到的事件进行处理的函数，如`bindtap`，`bindchange`        |
-| events     | 组件之间通过`broadcast`、`emit`传递的事件进行处理的函数            |
-| 其它         | 如`onLoad`，`onReady`等小程序页面生命周期函数以及其它自定义的方法与属性    |
+| methods    | 响应wmxl中所捕获到的事件的事件处理函数，如`bindtap`、`bindchange`        |
+| events     | 组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件进行处理的事件处理函数            |
+| 其它         | 如`onLoad`、`onReady`等小程序页面生命周期函数，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
 
 ```html
-<style lang="less">
-/** less **/
-</style>
 <template lang="wxml">
     <view>  </view>
 </template>
+
 <script>
 import wepy from 'wepy';
 export default class Com extends wepy.component {
-
     components = {};
 
     data = {};
@@ -578,31 +575,35 @@ export default class Com extends wepy.component {
     // Other properties
 }
 </script>
+
+<style lang="less">
+/** less **/
+</style>
 ```
 
-页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
+组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，其属性与页面属性大致相同，除了不需要`config`配置以及页面特有的一些生命周期函数等等。
 
 ### 实例
 
-小程序在 WePY 中，被分为三个实例，`App`，`Page`，`Component`。其中`Page`实例继承自`Component`。声明方式如下：
+通过前文的介绍可知，在 WePY 中，小程序被分为三个实例：小程序实例`App`、页面实例`Page`、组件实例`Component`。其中`Page`实例继承自`Component`。各自的声明方式如下：
 
 ```javascript
 import wepy from 'wepy';
 
-// 声明一个App文件
+// 声明一个小程序实例
 export default class MyAPP extends wepy.app {
 }
-// 声明一个Page文件
+// 声明一个页面实例
 export default class IndexPage extends wepy.page {
 }
-// 声明一个组件文件
+// 声明一个组件实例
 export default class MyComponent extends wepy.component {
 }
 ```
 
-#### App 实例
+#### 小程序实例
 
-App 实例中只包含小程序生命周期函数以及自定义方法与属性
+小程序实例中只包含小程序生命周期函数以及自定义方法与属性
 
 ```javascript
 import wepy from 'wepy';
