@@ -469,6 +469,7 @@ if (prod) {
 &emsp;&emsp;&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
 
 2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
+
 3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
 
 其中，小程序入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，会忽略内联代码。
