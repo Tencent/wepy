@@ -33,53 +33,55 @@ wepy build --watch
 ### WePY项目的目录结构
 
 ```
-├── dist                   微信开发者工具指定的目录
-├── node_modules           
-├── src                    代码编写的目录
-|   ├── components         组件文件夹（非完整页面）
-|   |   ├── com_a.wpy      可复用组件 a
-|   |   └── com_b.wpy      可复用组件 b
-|   ├── pages              页面文件夹（完整页面）
-|   |   ├── index.wpy      页面 index
-|   |   └── page.wpy       页面 page
-|   └── app.wpy            小程序配置项（全局样式配置、声明钩子等）
-└── package.json           package 配置
+├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令编译生成）
+├── node_modules           
+├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
+|   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
+|   |   ├── com_a.wpy      可复用的WePY组件a
+|   |   └── com_b.wpy      可复用的WePY组件b
+|   ├── pages              WePY页面目录（属于完整页面）
+|   |   ├── index.wpy      index页面（经build后，会在dist目录下的pages目录中生成index.js、index.json、index.wxml和index.wxss文件）
+|   |   └── other.wpy      other页面（经build后，会在dist目录下的pages目录中生成other.js、other.json、other.wxml和other.wxss文件）
+|   └── app.wpy            小程序配置项（全局数据、样式、声明钩子等；经build后，会在dist目录下生成app.js、app.json和app.wxss文件）
+└── package.json           项目的package配置
 ```
 
-### 重要提醒
+### 参考建议
 
-1. WePY借鉴了vue.js的语法风格和功能特性，如果你之前从未接触过vue，建议先阅读vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
+1. WePY借鉴了Vue.js的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
-3. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
+### 重要提醒
 
-4. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。 <font style="color:red">重要：漏掉此项会运行报错。</font>
+1. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
 
-5. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全`。 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
+2. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。 <font style="color:red">重要：漏掉此项会运行报错。</font>
 
-6. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件）。</font>
+3. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全`。 <font style="color:red">重要：某些情况下漏掉此项也会运行报错。</font>
 
-7. 本地项目根目录运行`wepy build --watch`，开启实时编译（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实现实时预览功能，非常方便）。
+4. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
+
+5. 本地项目根目录运行`wepy build --watch`，开启实时编译。（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实现实时预览功能，非常方便。）
 
 ### 代码高亮
 
-文件后缀为`.wpy`，可共用`vue`高亮，但需要手动安装。
+文件后缀为`.wpy`，可共用`Vue`的高亮规则，但需要手动设置。下面提供一些常见IDE或编辑器中实现代码高亮的相关设置步骤以供参考(也可通过更改文件后缀名的方式来实现高亮，详见后文相关介绍)。
 
-- **Sublime中的代码高亮**
+- **Sublime**
 
 1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
 2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
 3. 关闭`.wpy`文件重新打开即可高亮。
 
-- **WebStorm/PhpStorm中的代码高亮**
+- **WebStorm/PhpStorm**
 
 1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
 2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
-- **Atom中的代码高亮**
+- **Atom**
 
-1. 在Atom里先安装vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
+1. 在Atom里先安装Vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
 2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
 ```javascript
@@ -89,7 +91,7 @@ customFileTypes:
    ]
 ```
 
-- **VS Code中的代码高亮**
+- **VS Code**
 
 1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
 2. 打开任意 `.wpy` 文件。
@@ -97,10 +99,10 @@ customFileTypes:
 4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
 5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
-- **VIM中的代码高亮**
+- **VIM**
 
-1. 安装 `vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
-2. 配置 `.wpy` 后缀名的文件使用 `vue` 语法高亮。
+1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
     ```vim
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
@@ -118,7 +120,7 @@ customFileTypes:
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
    
 4. 使用Promise。
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，所以需要手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：WePY 1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，如果不在意该问题可手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
    
 5. 事件绑定语法使用优化语法代替。
    原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
@@ -127,65 +129,81 @@ customFileTypes:
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
    
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
-   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
-## 主要解决问题
+## 主要功能特性
 
-### 1. 开发模式转换
+### 开发模式转换
 
-在原有的小程序的开发模式下进行再次封装，更贴近于现有MVVM框架开发模式。框架在开发过程中参考了一些现在框架的一些特性，并且融入其中，以下是使用WePY前后的代码对比图。
+WePY框架在开发过程中参考了Vue.js等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
-官方DEMO代码：
+原生代码：
 
 ```javascript
 //index.js
+
 //获取应用实例
 var app = getApp()
+
+//通过Page构造函数创建页面逻辑
 Page({
-    data: {
+    //可用于页面模板绑定的数据
+    data: {
         motto: 'Hello World',
         userInfo: {}
     },
-    //事件处理函数
+    
+    //事件处理函数
     bindViewTap: function() {
         console.log('button clicked')
     },
-    onLoad: function () {
+    
+    //页面的生命周期函数
+    onLoad: function () {
         console.log('onLoad')
     }
 })
 ```
 
-基于WePY的实现：
+基于WePY的代码：
 
 ```javascript
+//index.wpy中的<script>部分
+
 import wepy from 'wepy';
 
+//通过继承自wepy.page的class类创建页面逻辑
 export default class Index extends wepy.page {
-
+    //可用于页面模板绑定的数据
     data = {
         motto: 'Hello World',
         userInfo: {}
     };
+    
+    //事件处理函数(集中保存在methods对象中)
     methods = {
         bindViewTap () {
             console.log('button clicked');
         }
     };
+    
+    //页面的生命周期函数
     onLoad() {
         console.log('onLoad');
     };
 }
 ```
 
-### 2. 支持组件化开发。
+### 支持组件化开发
 
 参见章节：[组件](#组件)
+
 示例代码：
 
 ```html
 // index.wpy
+
 <template>
     <view>
         <panel>
@@ -196,24 +214,30 @@ export default class Index extends wepy.page {
         <list :item="items"></list>
     </view>
 </template>
+
 <script>
 import wepy from 'wepy';
+//引入List、Panel和Counter组件
 import List from '../components/list';
 import Panel from '../components/panel';
 import Counter from '../components/counter';
 
 export default class Index extends wepy.page {
-
-    config = {
+    //页面配置
+    config = {
         "navigationBarTitleText": "test"
     };
-    components = {
+   
+    //声明页面中将要使用到的组件
+    components = {
         panel: Panel,
         counter1: Counter,
         counter2: Counter,
         list: List
     };
-    data = {
+   
+    //可用于页面模板中绑定的数据
+    data = {
         myNum: 50,
         syncNum: 100,
         items: [1, 2, 3, 4]
@@ -222,7 +246,7 @@ export default class Index extends wepy.page {
 </script>
 ```
 
-### 3. 支持加载外部NPM包。
+### 支持加载外部NPM包
 
 在编译过程当中，会递归遍历代码中的`require`然后将对应依赖文件从node_modules当中拷贝出来，并且修改`require`为相对路径，从而实现对外部NPM包的支持。如下图：
 
@@ -230,45 +254,48 @@ export default class Index extends wepy.page {
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554645/482b0f64-b198-11e6-8d4e-70c92326004f.png">
 </p>
 
-### 4. 单文件模式，使得目录结构更加清晰。
+### 单文件模式，目录结构更清晰，开发更方便
 
-<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>要求app必须有三个文件`app.json`，`app.js`，`app.wxss`，页面有4个文件 `index.json`，`index.js`，`index.wxml`，`index.wxss`。而且文件必须同名。
-所以使用WePY开发前后开发目录对比如下：
+原生小程序要求app实例必须有3个文件：`app.js`、`app.json`、`app.wxss`，而page页面则一般有4个文件：`page.js`、`page.json`、`page.wxml`、`page.wxss`，并且还要求app实例的3个文件以及page页面的4个文件除后缀名外必须同名，具体可参看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/structure.html?t=20161107" target="_blank">官方目录结构</a>。
 
-官方DEMO：
+而在WePY中则使用了单文件模式，将原生小程序app实例的3个文件统一为`app.wpy`，page页面的4个文件统一为`page.wpy`。使用WePY开发前后的开发目录结构对比如下：
+
+原生小程序的目录结构：
 
 ```
 project
 ├── pages
 |   ├── index
-|   |   ├── index.json  index 页面配置
 |   |   ├── index.js    index 页面逻辑
+|   |   ├── index.json  index 页面配置
 |   |   ├── index.wxml  index 页面结构
-|   |   └── index.wxss  index 页面样式表
+|   |   └── index.wxss  index 页面样式
 |   └── log
+|       ├── log.js      log 页面逻辑
 |       ├── log.json    log 页面配置
-|       ├── log.wxml    log 页面逻辑
-|       ├── log.js      log 页面结构
-|       └── log.wxss    log 页面样式表
+|       ├── log.wxml    log 页面结构
+|       └── log.wxss    log 页面样式
 ├── app.js              小程序逻辑
-├── app.json            小程序公共设置
-└── app.wxss            小程序公共样式表
+├── app.json            小程序公共配置
+└── app.wxss            小程序公共样式
 ```
 
-使用WePY框架后目录结构：
+使用WePY框架后的开发目录结构(主要为src目录的结构，dist目录除外)：
+
+   注：dist目录为WePY通过build指令生成的目录，除额外增加的npm目录外，其目录结构与原生小程序的目录结构类似。
 
 ```
 project
 └── src
     ├── pages
-    |   ├── index.wpy    index 页面配置、结构、样式、逻辑
-    |   └── log.wpy      log 页面配置、结构、样式、逻辑
-    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+    |   ├── index.wpy    index 页面逻辑、配置、结构、样式
+    |   └── log.wpy      log 页面逻辑、配置、结构、样式
+    └──app.wpy           小程序逻辑、公共配置、公共样式
 ```
 
-### 5. 默认使用babel编译，支持ES6/7的一些新特性。
+### 默认使用babel编译，支持ES6/7的一些新特性
 
-用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`，`async/await`等等。
+用户可以通过修改`wepy.config.js`(老版本使用`.wepyrc`)配置文件，配置自己熟悉的babel环境进行开发。默认开启使用了一些新的特性如`promise`、`async/await`（自WePY 1.4.1开始必须手动开启，原因参见前文`代码规范`一节中的介绍）等等。
 
 示例代码：
 
@@ -276,7 +303,6 @@ project
 import wepy from 'wepy';
 
 export default class Index extends wepy.page {
-
     getData() {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -284,6 +310,7 @@ export default class Index extends wepy.page {
             }, 3000);
         });
     };
+    
     async onLoad() {
         let data = await this.getData();
         console.log(data.data);
@@ -291,10 +318,11 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 6. 针对原生API进行优化。
+### 6. 针对原生API进行优化
 
-对现在API进行promise处理，同时修复一些现有API的缺陷，比如：wx.request并发问题等。
-原有代码：
+对小程序原生API进行promise处理，同时修复了一些原生API的缺陷，比如：wx.request的并发问题等。
+
+原生代码：
 
 ```javascript
 onLoad = function () {
@@ -311,7 +339,7 @@ onLoad = function () {
 }
 ```
 
-基于WePY实现代码：
+基于WePY的代码：
 
 ```javascript
 import wepy from 'wepy';
@@ -338,6 +366,7 @@ async onLoad() {
 ## 进阶说明
 
 ### wepy.config.js 配置文件说明
+
 执行`wepy new demo`后，会生成类似配置文件。
 
 ```javascript
@@ -400,17 +429,18 @@ if (prod) {
 }
 ```
 
-**wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型高亮，此时可以修改所有文件为`.vue`后缀(因为与vue高亮规则一样)，然后将此选项修改为`.vue`，就能解决部分IDE代码高亮问题。
+**wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
-**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。持续开发...
-对应compiler请参考各自文档
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。其他compiler持续开发中...
+
+对应各compiler请参考各自文档：
 >**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 >**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
 >**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 >**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
 >**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
 
-**plugins：** plugins为`1.1.6`版本之后功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。持续开发...
+**plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。其他plugin持续开发中...
 
 ### 关于compilers和plugins
 
