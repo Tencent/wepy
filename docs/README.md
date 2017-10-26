@@ -463,8 +463,11 @@ if (prod) {
 一个`.wpy`文件可分为三大部分，各自对应于一个标签：
 
 1. 脚本部分，即`<script></script>`标签中的内容，又可分为两个部分：
+
 &emsp;&emsp;&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
+
 &emsp;&emsp;&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
+
 2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
 3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
 
