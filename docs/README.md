@@ -430,16 +430,17 @@ if (prod) {
 }
 ```
 
-**wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
+**wpyExt：** 缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
 **compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。其他compiler持续开发中...
 
 对应各compiler请参考各自文档：
->**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
->**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
->**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
->**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
->**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
+
+> **sass：** sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
+> **less：** less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+> **stylus：** stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
+> **babel：** babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
+> **typescript：** typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。其他plugin持续开发中...
 
