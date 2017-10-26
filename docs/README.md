@@ -33,7 +33,7 @@ wepy build --watch
 ### WePY项目的目录结构
 
 ```
-├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令编译生成）
+├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
 ├── node_modules           
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
@@ -518,7 +518,7 @@ export default class extends wepy.app {
 </style>
 ```
 
-入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性生成`app.json`文件，如果需要修改`config`中的内容，请使用微信提供的相关API。
+入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其它全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性自动生成`app.json`文件，如果需要修改`config`中的内容，请使用微信提供的相关API。
 
 #### 页面page.wpy
 
