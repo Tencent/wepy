@@ -603,9 +603,11 @@ import wepy from 'wepy';
 // 声明一个App小程序实例
 export default class MyAPP extends wepy.app {
 }
+
 // 声明一个Page页面实例
 export default class IndexPage extends wepy.page {
 }
+
 // 声明一个Component组件实例
 export default class MyComponent extends wepy.component {
 }
