@@ -553,7 +553,7 @@ export default class Page extends wepy.page {
 | components | 页面所引入的组件列表                                |
 | data       | 页面需要渲染的数据(即可用于页面模板绑定的数据)                                |
 | methods    | 响应wmxl中所捕获到的事件的事件处理函数，如`bindtap`、`bindchange`        |
-| events     | 组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件进行处理的事件处理函数            |
+| events     | 响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的事件处理函数            |
 | 其它         | 如`onLoad`、`onReady`等小程序页面生命周期函数，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
