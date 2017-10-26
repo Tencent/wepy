@@ -437,9 +437,13 @@ if (prod) {
 对应各compiler请参考各自文档：
 
 > **sass：** sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
+
 > **less：** less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+
 > **stylus：** stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
+
 > **babel：** babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
+
 > **typescript：** typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
 
 **plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。其他plugin持续开发中...
