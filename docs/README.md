@@ -822,7 +822,7 @@ project
 
 *1.4.6新增*
 
-当想在`wx:for`中使用组件时，需要使用辅助标签`<repeat>`，如下：
+当需要循环渲染WePY组件时(类似于通过`wx:for`循环渲染原生的wxml标签)，必须使用WePY定义的辅助标签`<repeat>`，代码如下：
 
 ```Html
 /**
@@ -835,19 +835,28 @@ project
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
     └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
 **/
+
 // index.wpy
+
 <template>
-    <repeat for="{{list}}" key="index" index="index" item="item">
-        <child :item="item"></child>
+    //注意，使用`for`属性，而不是使用`wx:for`属性
+    <repeat for="{{list}}" key="index" index="index" item="item">
+        //插入`<script>`脚本部分所声明的`child`组件，同时传入`item`
+        <child :item="item"></child>
     </repeat>
 </template>
+
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    //引入child组件文件
+    import Child from './coms/child';
+   
     export default class Index extends wepy.component {
         components = {
-            child: Child
-        };
+            //声明页面中要使用到的Child组件的ID为child
+            child: Child
+        }
+   
         data = {
             list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
         }
@@ -856,27 +865,28 @@ project
 ```
 
 
-页面和组件都可以引入子组件，引入若干组件后，如下图：
+页面可以引入组件，而组件还可以引入子组件。一个页面引入若干组件后，组件结构如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
 </p>
 
-Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+如上图所示，Index页面引入了A、B、C三个组件，同时组件A和组件B又有自己的子组件D、E、F、G、H。
 
-#### computed 计算属性
+#### computed计算属性
 
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-计算属性可以直接当作绑定数据，在每次脏检查周期中。在每次脏检查流程中，只要有脏数据，那么`computed` 属性就会重新计算。
+
+计算属性可以直接当作绑定数据(也就是类似于data对象中的数据，脚本中可通过`this.计算属性名称`引用，模板中也可直接用`{{计算属性名称}}`插值)。而在每次脏数据检查流程(详见后文有关`脏数据检查`的介绍)中，只要有脏数据，计算属性就会被重新计算。
 
 * **示例**：
 
     ```javascript
     data = {
         a: 1
-    };
+    }
 
     computed = {
         aPlus () {
@@ -890,7 +900,8 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-通过`watcher`我们能监听到任何数值属性的数值更新。
+
+通过`watcher`能够监听到任何数值属性的数值更新。
 
 * **示例**：
 
