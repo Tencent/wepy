@@ -1025,17 +1025,19 @@ onLoad () {
 this.$emit('some-event', 1, 2, 3, 4);
 ```
 
-组件之间的事件处理函数需要写在`events`属性下，如：
+用于监听组件之间的通信与交互事件的事件处理函数需要写在`events`对象中，如：
 
 ```javascript
-import wepy from 'wepy';
-export default class Com extends wepy.component {
+import wepy from 'wepy'
 
+export default class Com extends wepy.component {
     components = {};
 
     data = {};
+    
     methods = {};
 
+    // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
     events = {
         'some-event': (p1, p2, p3, $event) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
@@ -1065,13 +1067,13 @@ export default class Com extends wepy.component {
 
 `$invoke`是一个页面或组件对另一个组件中的方法的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 
-比如，想在页面`Page_Index`中调用组件A的某个方法：
+比如，想在页面`Page_Index`中调用组件ComA的某个方法：
 
 ```Javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
 
-如果想在组件A中调用组件G的某个方法：
+如果想在组件ComA中调用组件ComG的某个方法：
 
 ```Javascript
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
@@ -1097,12 +1099,15 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 ```Html
 // index.wpy
+
 <template>
     <child @childFn.user="parentFn"></child>
 </template>
+
 <script>
-    import wepy from 'wepy';
-    import Child from './coms/child';
+    import wepy from 'wepy'
+    import Child from './coms/child'
+   
     export default class Index extends wepy.page {
         components = {
             child: Child
@@ -1179,6 +1184,7 @@ WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范
 
 ```Javascript
 // mixins/test.js
+
 import wepy from 'wepy';
 
 export default class TestMixin extends wepy.mixin {
@@ -1193,7 +1199,9 @@ export default class TestMixin extends wepy.mixin {
   }
 }
 
+
 // pages/index.wpy
+
 import wepy from 'wepy';
 import TestMixin from './mixins/test';
 
@@ -1216,6 +1224,7 @@ export default class Index extends wepy.page {
 
 ```Javascript
 // mixins/test.js
+
 import wepy from 'wepy';
 
 export default class TestMixin extends wepy.mixin {
@@ -1246,7 +1255,6 @@ export default class Index extends wepy.page {
     }
 }
 
-
 // index onshow
 // mix onshow
 // ----- when tap
@@ -1262,7 +1270,6 @@ export default class Index extends wepy.page {
 import wepy from 'wepy';
 
 export default class extends wepy.app {
-
     constructor () {
         this.intercept('request', {
             config (p) {
@@ -1327,7 +1334,7 @@ setTimeout(() => {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 官方
+// 原生代码
 wx.request({
     url: 'xxx',
     success: function (data) {
@@ -1335,7 +1342,7 @@ wx.request({
     }
 });
 
-// WePY 使用方式
+// 基于WePY的代码
 wepy.request('xxxx').then((d) => console.log(d));
 ```
 
@@ -1346,6 +1353,7 @@ wepy.request('xxxx').then((d) => console.log(d));
 ```javascript
 // 原生的事件传参方式
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
+
 Page({
   tapName: function(event) {
     console.log(event.currentTarget.dataset.id)// output: 1
@@ -1353,6 +1361,7 @@ Page({
     console.log(event.currentTarget.dataset.other)// output: otherparams
   }
 });
+
 
 // WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
@@ -1362,6 +1371,7 @@ methods: {
         console.log(id, title, other)// output: 1, wepy, otherparams
     }
 }
+
 
 // WePY 1.1.8以后的版本，只允许传string
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
@@ -1376,6 +1386,7 @@ methods: {
 #### 3. 改变数据绑定方式
 
 保留setData方法，但不建议使用setData执行绑定，修复传入`undefined`的bug，并且修改入参支持：
+
 `this.setData(target, value)`
 `this.setData(object)`
 
