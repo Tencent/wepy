@@ -935,13 +935,19 @@ project
     }
     ```
 
-#### Props 传值
+#### props 传值
 
-Props传值在WePY中属于页面与组件之间以及父组件与子组件之间传值的一种机制，包括静态传值与动态传值，其中动态传值有包括了
+props传值在WePY中属于父组件与子组件之间(包括页面与其组件之间)传值的一种机制，包括静态传值与动态传值。
+
+在props对象中声明需要传递的值，静态传值与动态传值的声明略有不同，具体可参看下面的示例代码。
 
 **静态传值**
 
-使用静态传值时，子组件会接收到字符串的值。
+静态传值为父组件向子组件单向静态传值，只能在子组件初始化的时候一次性传值，且只能传递String字符串类型，不能传递Number、Boolean、Object等其他类型的数据。
+
+因此，使用静态传值时，子组件只能接收到字符串的值。
+
+在子组件`template`模板部分的组件标签中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
 
 ```Javascript
 <child title="mytitle"></child>
@@ -956,14 +962,21 @@ onLoad () {
 }
 ```
 
-*注意*：静态传值只能传递String类型，不存在Number，Boolean等类型。
+*注意*：再次提醒，静态传值只能传递String类型，不能传递Number、Boolean、Object等其他类型。
 
 **动态传值**
 
-使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
+与静态传值只能通过父组件向子组件单向传值不同，动态传值包括了单向动态传值和双向动态传值。
+
+&emsp;&emsp;1. 单向动态传值：父组件向子组件单向动态传值(父组件可随时改变子组件中的值)。
+
+&emsp;&emsp;2. 双向动态传值：子组件props对象中某个属性值的修改会改变父组件data对象中对应属性的值(注意，父子组件中的这两个属性其名称可以不一致，两者通过在父组件wxml中插入子组件时在子组件标签的属性中进行映射关联)。
+
+在`template`模板部分的组件标签中，使用`:prop`属性（等价于Vue中的`v-bind:prop`属性）来进行动态传值。
 
 ```Javascript
 // parent.wpy
+
 <child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
 
 data = {
@@ -972,13 +985,17 @@ data = {
 
 
 // child.wpy
+
 props = {
-    title: String,
-    syncTitle: {
+    // 静态传值
+    title: String,
+    // 单向动态传值
+    syncTitle: {
         type: String,
         default: 'null'
     },
-    twoWayTitle: {
+    // 双向动态传值（注意：当twoWay的值为false时，等同于单向动态传值）
+    twoWayTitle: {
         type: Number,
         default: 50,
         twoWay: true
@@ -993,22 +1010,22 @@ onLoad () {
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
     this.twoWayTitle = 60;
-    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props修改会改变父组件对应的值
+    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     console.log(this.title); // 'p-title';
-    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props，当父组件改变时，会影响子组件的值。
+    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
 
 #### 组件通信与交互
 
-`wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
+`wepy.component`基类提供`$broadcast`、`$emit`、`$invoke`三个方法用于组件之间的通信和交互，因此任一页面或任一组件都可以调用上述三种方法实现相互之间的通信与交互。如：
 
 ```javascript
 this.$emit('some-event', 1, 2, 3, 4);
 ```
 
-组件的事件监听需要写在`events`属性下，如：
+组件之间的事件处理函数需要写在`events`属性下，如：
 
 ```javascript
 import wepy from 'wepy';
@@ -1030,7 +1047,7 @@ export default class Com extends wepy.component {
 
 **$broadcast**
 
-`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
+`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果页面`Page_Index`发起一个`$broadcast`事件，那么按先后顺序依次接收到该事件的组件为：ComA、ComB、ComC、ComD、ComE、ComF、ComG、ComH。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
@@ -1038,7 +1055,7 @@ export default class Com extends wepy.component {
 
 **$emit**
 
-`$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
+`$emit`与`$broadcast`正好相反，事件发起组件的祖先组件(包括父组件、父组件的父组件...直到组件所在的页面)会依次接收到`$emit`事件，如上图，如果组件ComE发起一个`$emit`事件，那么接收到事件的先后顺序为：组件ComA、页面Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
@@ -1046,8 +1063,9 @@ export default class Com extends wepy.component {
 
 **$invoke**
 
-`$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
-如果想在`Page_Index`中调用组件A的某个方法：
+`$invoke`是一个页面或组件对另一个组件中的方法的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
+
+比如，想在页面`Page_Index`中调用组件A的某个方法：
 
 ```Javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
@@ -1285,7 +1303,7 @@ this.setData({title: 'this is title'});
 this.title = 'this is title';
 ```
 
-但需注意，在异步函数中修改了数据的话，必须手动调用`$apply`方法。如：
+但需注意，如果在异步函数中修改了数据的话，必须手动调用`$apply`方法。如：
 
 ```javascript
 setTimeout(() => {
