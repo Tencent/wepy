@@ -33,22 +33,22 @@ wepy build --watch
 ### WePY项目的目录结构
 
 ```
-├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令编译生成）
+├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
 ├── node_modules           
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
 |   |   ├── com_a.wpy      可复用的WePY组件a
 |   |   └── com_b.wpy      可复用的WePY组件b
 |   ├── pages              WePY页面目录（属于完整页面）
-|   |   ├── index.wpy      index页面（经build后，会在dist目录下的pages目录中生成index.js、index.json、index.wxml和index.wxss文件）
-|   |   └── other.wpy      other页面（经build后，会在dist目录下的pages目录中生成other.js、other.json、other.wxml和other.wxss文件）
+|   |   ├── index.wpy      index页面（经build后，会在dist目录下的pages目录生成index.js、index.json、index.wxml和index.wxss文件）
+|   |   └── other.wpy      other页面（经build后，会在dist目录下的pages目录生成other.js、other.json、other.wxml和other.wxss文件）
 |   └── app.wpy            小程序配置项（全局数据、样式、声明钩子等；经build后，会在dist目录下生成app.js、app.json和app.wxss文件）
 └── package.json           项目的package配置
 ```
 
 ### 参考建议
 
-1. WePY借鉴了Vue.js的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
+1. WePY借鉴了Vue.js（后文简称Vue）的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
@@ -62,7 +62,7 @@ wepy build --watch
 
 4. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
 
-5. 本地项目根目录运行`wepy build --watch`，开启实时编译。（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实现实时预览功能，非常方便。）
+5. 本地项目根目录运行`wepy build --watch`，开启实时编译。（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实时预览，非常方便。）
 
 ### 代码高亮
 
@@ -136,7 +136,7 @@ customFileTypes:
 
 ### 开发模式转换
 
-WePY框架在开发过程中参考了Vue.js等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
+WePY框架在开发过程中参考了Vue等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
 原生代码：
 
@@ -173,7 +173,7 @@ Page({
 
 import wepy from 'wepy';
 
-//通过继承自wepy.page的class类创建页面逻辑
+//通过继承自wepy.page的类创建页面逻辑
 export default class Index extends wepy.page {
     //可用于页面模板绑定的数据
     data = {
@@ -281,8 +281,9 @@ project
 ```
 
 使用WePY框架后的开发目录结构(主要为src目录的结构，dist目录除外)：
-
-   注：dist目录为WePY通过build指令生成的目录，除额外增加的npm目录外，其目录结构与原生小程序的目录结构类似。
+```
+    注：dist目录为WePY通过build指令生成的目录，除额外增加的npm目录外，其目录结构与原生小程序的目录结构类似。
+```
 
 ```
 project
@@ -318,7 +319,7 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 6. 针对原生API进行优化
+### 针对原生API进行优化
 
 对小程序原生API进行promise处理，同时修复了一些原生API的缺陷，比如：wx.request的并发问题等。
 
@@ -363,11 +364,11 @@ async onLoad() {
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554663/65704c2e-b198-11e6-8277-abb77e0c7b3e.png">
 </p>
 
-## 进阶说明
+## 进阶介绍
 
-### wepy.config.js 配置文件说明
+### wepy.config.js配置文件说明
 
-执行`wepy new demo`后，会生成类似配置文件。
+执行`wepy new demo`后，会生成类似下面这样的配置文件。
 
 ```javascript
 
@@ -429,38 +430,51 @@ if (prod) {
 }
 ```
 
-**wpyExt：**缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
+**wpyExt：** 缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
-**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`，`wepy-compiler-babel`，`wepy-compiler-pug`。其他compiler持续开发中...
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`、`wepy-compiler-babel`、`wepy-compiler-pug`，其他compiler持续开发中......
 
 对应各compiler请参考各自文档：
->**sass：**sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
->**less：**less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
->**stylus：**stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
->**babel：**babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
->**typescript：**typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
 
-**plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩与图片压缩，`wepy-plugin-ugliyjs`，`wepy-plugin-imagemin`。其他plugin持续开发中...
+> **sass：** sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
+
+> **less：** less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+
+> **stylus：** stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
+
+> **babel：** babel编译配置，参见<a href="http://babeljs.io/docs/usage/options/" target="_blank">这里</a>。
+
+> **typescript：** typescript编译配置，参见<a href="https://www.tslang.cn/docs/home.html" target="_blank">这里</a>。
+
+**plugins：** plugins为`1.1.6`版本之后的功能，目前支持js压缩`wepy-plugin-ugliyjs`、图片压缩`wepy-plugin-imagemin`，其他plugin持续开发中......
 
 ### 关于compilers和plugins
 
 1.3.1版本新功能，文档建设中...
 
-### wpy文件说明
+### .wpy文件说明
 
-`wpy`文件的编译过程过下：
+`.wpy`文件的编译过程过下：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
-一个`.wpy`文件分为三个部分：
+一个`.wpy`文件可分为三大部分，各自对应于一个标签：
 
-1. 样式`<style></style>`对应原有`wxss`。
-2. 模板`<template></template>`对应原有`wxml`。
-3. 代码`<script></script>`对应原有`js`。
+1. 脚本部分，即`<script></script>`标签中的内容，又可分为两个部分：
 
-其中入口文件`app.wpy`不需要`template`，所以编译时会被忽略。这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，忽略内联代码，示例如下：
+&emsp;&emsp;&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
+
+&emsp;&emsp;&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
+
+2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
+
+3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
+
+其中，小程序入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，会忽略内联代码。
+
+示例如下：
 
 ```Html
 <style lang="less" src="page1.less"></style>
@@ -470,22 +484,19 @@ if (prod) {
 </script>
 ```
 
-标签对应 `lang` 值如下表所示：
+各标签对应的`lang`值如下表所示：
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`，`less`，`sass`，`stylus` |
-| template | `wxml`  | `wxml`，`xml`，`pug(原jade)`    |
-| script   | `babel` | `babel`，`TypeScript`         |
+| style    | `css`   | `css`、`less`、`sass`、`stylus` |
+| template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
+| script   | `babel` | `babel`、`TypeScript`         |
 
-### script说明
+### 脚本部分介绍
 
-#### 程序入口app.wpy
+#### 小程序入口app.wpy
 
 ```html
-<style lang="less">
-/** less **/
-</style>
 <script>
 import wepy from 'wepy';
 export default class extends wepy.app {
@@ -505,26 +516,22 @@ export default class extends wepy.app {
     }
 }
 </script>
-```
 
-入口`app.wpy`继承自`wepy.app`，包含一个`config`属性和其全局属性、方法、事件。其中`config`属性对应原有的`app.json`，编译时会根据`config`生成`app.json`文件，如果需要修改`config`中的内容，请使用系统提供API。
-
-#### 页面index.wpy
-
-```html
 <style lang="less">
 /** less **/
 </style>
-<template lang="wxml">
-    <view>
-    </view>
-    <counter1></counter1>
-</template>
+```
+
+入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其它全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性自动生成`app.json`文件，如果需要修改`config`中的内容，请使用微信提供的相关API。
+
+#### 页面page.wpy
+
+```html
 <script>
 import wepy from 'wepy';
 import Counter from '../components/counter';
-export default class Index extends wepy.page {
-
+   
+export default class Page extends wepy.page {
     config = {};
     components = {counter1: Counter};
 
@@ -536,32 +543,39 @@ export default class Index extends wepy.page {
     // Other properties
 }
 </script>
+
+<template lang="wxml">
+    <view>
+    </view>
+    <counter1></counter1>
+</template>
+
+<style lang="less">
+/** less **/
+</style>
 ```
 
-页面入口继承自`wepy.page`，主要属性说明如下：
+页面文件`page.wpy`中所声明的页面实例继承自`wepy.page`类，该类的主要属性介绍如下：
 
 | 属性         | 说明                                       |
 | ---------- | ---------------------------------------- |
-| config     | 页面config，相当于原来的index.json，同`app.wpy`中的config |
-| components | 页面引入的组件列表                                |
-| data       | 页面需要渲染的数据                                |
-| methods    | wmxl的事件捕捉，如`bindtap`，`bindchange`        |
-| events     | 组件之间通过`broadcast`，`emit`传递的事件            |
-| 其它         | 如`onLoad`，`onReady`等小程序事件以及其它自定义方法与属性    |
+| config     | 页面配置对象，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
+| components | 页面组件列表对象，声明页面所引入的组件列表                               |
+| data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                                |
+| methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange`        |
+| events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
+| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
 
 ```html
-<style lang="less">
-/** less **/
-</style>
 <template lang="wxml">
     <view>  </view>
 </template>
+
 <script>
 import wepy from 'wepy';
 export default class Com extends wepy.component {
-
     components = {};
 
     data = {};
@@ -571,31 +585,37 @@ export default class Com extends wepy.component {
     // Other properties
 }
 </script>
+
+<style lang="less">
+/** less **/
+</style>
 ```
 
-页面入口继承自`wepy.component`，属性与页面属性一样，除了不需要`config`以及页面特有的一些小程序事件等等。
+组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，除了不需要`config`配置以及页面特有的一些生命周期函数之外，其属性与页面属性大致相同。
 
 ### 实例
 
-小程序在 WePY 中，被分为三个实例，`App`，`Page`，`Component`。其中`Page`实例继承自`Component`。声明方式如下：
+通过前文的介绍可知，在 WePY 中，小程序被分为三个实例：小程序实例`App`、页面实例`Page`、组件实例`Component`。其中`Page`实例继承自`Component`。各自的声明方式如下：
 
 ```javascript
 import wepy from 'wepy';
 
-// 声明一个App文件
+// 声明一个App小程序实例
 export default class MyAPP extends wepy.app {
 }
-// 声明一个Page文件
+
+// 声明一个Page页面实例
 export default class IndexPage extends wepy.page {
 }
-// 声明一个组件文件
+
+// 声明一个Component组件实例
 export default class MyComponent extends wepy.component {
 }
 ```
 
-#### App 实例
+#### App小程序实例
 
-App 实例中只包含小程序生命周期函数以及自定义方法与属性
+App小程序实例中主要包含小程序生命周期函数、config配置对象、globalData全局数据对象，以及其他自定义方法与属性。
 
 ```javascript
 import wepy from 'wepy';
@@ -609,16 +629,18 @@ export default class MyAPP extends wepy.app {
 
     onShow () {}
 
-    config = {}; // 对应 app.json 文件
+    config = {}  // 对应 app.json 文件
+    
+    globalData = {}
 }
 ```
 
-在 Page 实例中，可以通过`this.$parent`来访问 App 实例。
+在Page页面实例中，可以通过`this.$parent`来访问App实例。
 
 
-#### Page 和 Component 实例
+#### Page页面实例和Component组件实例
 
-Page 实例中只包含小程序页面生命周期函数，自定义方法与属性以及特有属性。
+由于Page页面实际上继承自Component组件，除扩展了页面所特有的`config`配置以及特有的页面生命周期函数之外，其它属性和方法与Component一致，因此这里以Page页面为例进行介绍。
 
 
 ```javascript
@@ -626,52 +648,53 @@ import wepy from 'wepy';
 
 // export default class MyPage extends wepy.page {
 export default class MyComponent extends wepy.component {
-    customData = {};
+    customData = {}  // 自定义数据
 
-    customFunction ()　{}
+    customFunction ()　{}  //自定义方法
 
-    onLoad () {} // 只在 Page 和 Component共用的生命周期函数
+    onLoad () {}  // 在Page和Component共用的生命周期函数
 
-    onShow () {} // 只在 Page 实例中会存在页面生命周期函数
+    onShow () {}  // 只在Page中存在的页面生命周期函数
 
-    // 特有属性示例
-
-    config = {}; // 对应page.json文件，只在 Page 实例中存在
+    config = {};  // 只在Page实例中存在的配置数据，对应于原生的page.json文件
     
-    data = {}; // 页面所需数据均需在这里声明
+    data = {};  // 页面所需数据均需在这里声明，可用于模板数据绑定
 
-    components = {}; // 声明页面所引用的子组件
+    components = {};  // 声明页面中所引用的组件，或声明组件中所引用的子组件
 
-    mixins = []; // 声明页面所引用的Mixin实例
+    mixins = [];  // 声明页面所引用的Mixin实例
 
-    computed = {}; // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
+    computed = {};  // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
 
-    watch = {}; // 声明数据watcher
+    watch = {};  // 声明数据watcher（详见后文介绍）
 
-    methods = {}; // 声明页面响应事件。注意，此处只用于声明页面bind，catch事件，自定义方法需以自定义方法的方式声明
+    methods = {};  // 声明页面wxml中标签的事件处理函数。注意，此处只用于声明页面wxml中标签的bind、catch事件，自定义方法需以自定义方法的方式声明
 
-    events = {}; // 声明组件之间的事件传递
+    events = {};  // 声明组件之间的事件处理函数
 }
 ```
 
-对于 methods 属性，因为与Vue的使用习惯不一致，一直存在一个误区，这里的 methods 属性只声明页面bind，catch事件，不能声明自定义方法。示例如下：
+对于methods属性，因为与Vue的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
+
 import wepy from 'wepy';
 
 export default class MyComponent extends wepy.component {
-
     methods = {
         bindtap () {
             let rst = this.commonFunc();
             // doSomething
         },
+        
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
         },
-        commonFunc () {
+        
+        //错误：普通自定义方法不能放在methods对象中
+        commonFunc () {
             return 'sth.';
         }
     };
@@ -680,35 +703,37 @@ export default class MyComponent extends wepy.component {
 
 
 // 正确示例
+
 import wepy from 'wepy';
 
 export default class MyComponent extends wepy.component {
-
     methods = {
         bindtap () {
             let rst = this.commonFunc();
             // doSomething
         },
+        
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
         },
-    };
+    }
 
-    commonFunc () {
+    //正确：普通自定义方法在methods对象外声明，与methods平级
+    commonFunc () {
         return 'sth.';
     }
 
 }
 ```
 
-
-
-
 ### 组件
-小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
-例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
-因此WePY让小程序支持组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在WePY的组件化开发过程中，A组件只会影响到A绑定的`myclick`，B也如此。
+
+原生小程序支持js<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/app-service/module.html?t=20161107" target="_blank">模块化</a>，但彼此独立，业务代码与交互事件仍需在页面处理。无法实现组件化的松耦合与复用的效果。
+
+例如模板A中绑定一个`bindtap="myclick"`，模板B中同样绑定一样`bindtap="myclick"`，那么就会影响同一个页面事件。对于数据同样如此。因此，只有通过改变变量或者事件方法，或者给其加不同前缀才能实现绑定不同事件或者不同数据。当页面复杂之后就十分不利于开发维护。
+
+因此，在WePY中实现了小程序的组件化开发，组件的所有业务与功能在组件本身实现，组件与组件之间彼此隔离，上述例子在WePY的组件化开发过程中，A组件只会影响到A所绑定的`myclick`，B也如此。
 
 WePY编译组件的过程如下：
 
@@ -717,9 +742,10 @@ WePY编译组件的过程如下：
 </p>
 
 #### 普通组件引用
-当页面或者组件需要引入子组件时，需要在页面或者`script`中的`components`给组件分配唯一id，并且在`template`中添加`<component>`标签。如：
 
-```Html
+当页面需要引入组件或组件需要引入子组件时，必须在`.wpy`文件的`<script>`脚本部分先import组件文件，然后在`components`对象中给组件声明唯一的组件ID，接着在`<template>`模板部分中添加以`components`对象中所声明的组件ID进行命名的自定义标签以插入组件。如：
+
+```html
 /**
 project
 └── src
@@ -728,24 +754,32 @@ project
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
-    └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
+    └──app.wpy           小程序配置项（全局公共配置、公共样式、声明钩子等）
 **/
+
 // index.wpy
+
 <template>
-    <child></child>
+    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
+    <child></child>
 </template>
+
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    //引入组件文件
+    import Child from './coms/child';
+   
     export default class Index extends wepy.component {
-        components = {
+        //声明组件，分配组件id为child
+        components = {
             child: Child
         };
     }
 </script>
 ```
 
-需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+需要注意的是，WePY中的组件都是静态组件，是以组件ID作为唯一标识的，每一个ID都对应一个组件实例，当页面引入两个相同ID的组件时，这两个组件共用同一个实例与数据，当其中一个组件数据变化时，另外一个也会一起变化。
+
 如果需要避免这个问题，则需要分配多个组件ID和实例。代码如下：
 
 ```html
@@ -753,17 +787,21 @@ project
     <view class="child1">
         <child></child>
     </view>
+   
     <view class="child2">
         <anotherchild></anotherchild>
     </view>
-
 </template>
+
+
 <script>
     import wepy from 'wepy';
     import Child from './coms/child';
+   
     export default class Index extends wepy.component {
         components = {
-            child: Child,
+            //为两个相同组件的不同实例分配不同的组件ID，从而避免数据同步变化的问题
+            child: Child,
             anotherchild: Child
         };
     }
