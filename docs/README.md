@@ -870,7 +870,7 @@ project
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
 </p>
 
-如上图所示，Page_Index页面引入了ComA、ComB、ComC三个组件，同时组件A和组件B又有自己的子组件ComD、ComE、ComF、ComG、ComH。
+如上图所示，Page_Index页面引入了ComA、ComB、ComC三个组件，同时ComA组件和ComB组件又有自己的子组件ComD、ComE、ComF、ComG、ComH。
 
 #### computed 计算属性
 
