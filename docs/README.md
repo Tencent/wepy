@@ -34,7 +34,7 @@ wepy build --watch
 
 ```
 ├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
-├── node_modules           
+├── node_modules           npm包目录（该目录存放使用WePY开发过程中所用到的npm包及相关的依赖包）
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
 |   |   ├── com_a.wpy      可复用的WePY组件a
@@ -48,7 +48,7 @@ wepy build --watch
 
 ### 参考建议
 
-1. WePY借鉴了Vue.js（后文简称Vue）的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
+1. WePY借鉴了Vue.js（简称Vue）的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
@@ -76,8 +76,8 @@ wepy build --watch
 
 - **WebStorm/PhpStorm**
 
-1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
-2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
+1. 打开`Settings`，搜索`Plugins`，搜索`Vue.js`插件并安装。
+2. 打开`Settings`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
 - **Atom**
 
@@ -134,7 +134,7 @@ customFileTypes:
 
 ## 主要功能特性
 
-### 开发模式转换
+### 开发模式转换，更贴近于MVVM架构模式
 
 WePY框架在开发过程中参考了Vue等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
@@ -195,7 +195,7 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 支持组件化开发
+### 支持组件化开发，更利于项目的工程化
 
 参见章节：[组件](#组件)
 
