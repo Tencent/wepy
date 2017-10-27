@@ -70,19 +70,19 @@ wepy build --watch
 
 - **Sublime**
 
-1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
-2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
-3. 关闭`.wpy`文件重新打开即可高亮。
+&emsp;&emsp;1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
+&emsp;&emsp;2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
+&emsp;&emsp;3. 关闭`.wpy`文件重新打开即可高亮。
 
 - **WebStorm/PhpStorm**
 
-1. 打开`Settings`，搜索`Plugins`，搜索`Vue.js`插件并安装。
-2. 打开`Settings`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
+&emsp;&emsp;1. 打开`Settings`，搜索`Plugins`，搜索`Vue.js`插件并安装。
+&emsp;&emsp;2. 打开`Settings`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
 - **Atom**
 
-1. 在Atom里先安装Vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
-2. 打开`Atom -> Config`菜单。在`core`键下添加：
+&emsp;&emsp;1. 在Atom里先安装Vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
+&emsp;&emsp;2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
 ```javascript
 customFileTypes:
@@ -93,16 +93,16 @@ customFileTypes:
 
 - **VS Code**
 
-1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
-2. 打开任意 `.wpy` 文件。
-3. 点击右下角的选择语言模式，默认为`纯文本`。
-4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
-5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
+&emsp;&emsp;1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
+&emsp;&emsp;2. 打开任意 `.wpy` 文件。
+&emsp;&emsp;3. 点击右下角的选择语言模式，默认为`纯文本`。
+&emsp;&emsp;4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
+&emsp;&emsp;5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
 - **VIM**
 
-1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
-2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
+&emsp;&emsp;1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+&emsp;&emsp;2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
     ```vim
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
@@ -464,9 +464,9 @@ if (prod) {
 
 1. 脚本部分，即`<script></script>`标签中的内容，又可分为两个部分：
 
-&emsp;&emsp;&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
+&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
 
-&emsp;&emsp;&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
+&emsp;&emsp;配置部分，即config对象，对应于原生的`.json`文件。
 
 2. 结构部分，即`<template></template>`模板部分，对应于原生的`.wxml`文件。
 
