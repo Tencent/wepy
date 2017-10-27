@@ -878,9 +878,13 @@ project
 
 * **详细**：
 
-计算属性可以直接当作绑定数据(也就是类似于data对象中的数据，脚本中可通过`this.计算属性名称`引用，模板中也可直接用`{{ 计算属性名称 }}`插值)。而在每次脏数据检查流程(详见后文有关`脏数据检查`的介绍)中，只要有脏数据，计算属性就会被重新计算。
+计算属性在`computed`对象中声明，其本质上是一个应该有返回值的函数(没有返回值也不会报错，但这样就失去了其意义)，可以直接被当作绑定数据来使用，亦即可被看作是`data`对象中的属性值，因此类似于`data`对象中的属性，脚本中可通过`this.计算属性名`来引用，模板中也可通过`{{ 计算属性名 }}`来插值。
 
-计算属性适用于每当发生脏数据检查时需要进行某些额外处理的情形。
+只要计算属性所在的组件或页面中的数据发生了改变(也就是有脏数据)，从而触发了脏数据检查流程(详见后文有关`脏数据检查`的介绍)的运行，计算属性就会被重新计算(即被自动调用执行)。
+
+计算属性适用于其所在组件或页面中每当发生脏数据检查时需要进行某些额外处理的情形。
+
+需要注意的是，只要是计算属性所在的组件或页面中的数据发生了改变，从而引发了脏数据检查流程的运行，就会被重新计算，而跟其所引用的数据(比如`data`对象中的属性)本身是否发生改变无直接关系；换言之，计算属性中所引用的数据发生了改变，自然会导致其被重新计算，然而即便计算属性中所引用的数据未发生改变，而是其所在的组件或页面中的其他数据发生了改变，也会导致计算属性被重新计算。
 
 * **示例**：
 
@@ -903,7 +907,7 @@ project
 
 * **详细**：
 
-通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就被执行一次。
+通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就会被自动调用执行一次。
 
 监听器适用于当数值属性改变时需要进行某些额外处理的情形。
 
@@ -915,14 +919,15 @@ project
     };
 
     watch = {
-        // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名
-        num (newValue, oldValue) {
+        // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
+        // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
+        num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
     onLoad () {
-        // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被执行一次
+        // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
         setInterval(() => {
             this.num++;
             this.$apply();
@@ -931,6 +936,8 @@ project
     ```
 
 #### Props 传值
+
+Props传值在WePY中属于页面与组件之间以及父组件与子组件之间传值的一种机制，包括静态传值与动态传值，其中动态传值有包括了
 
 **静态传值**
 
@@ -994,6 +1001,7 @@ onLoad () {
 ```
 
 #### 组件通信与交互
+
 `wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
 
 ```javascript
@@ -1260,22 +1268,24 @@ export default class extends wepy.app {
 ### 数据绑定
 
 #### 小程序数据绑定方式
+
 小程序通过`Page`提供的`setData`方法去绑定数据，如：
 
 ```Javascript
 this.setData({title: 'this is title'});
 ```
 
-因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
+因为原生小程序本身架构上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际是JS逻辑层与页面渲染层进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，然而[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上是明确表示基于性能考虑不提倡频繁进行`setData`操作的。
 
 #### WePY数据绑定方式
-WePY使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
+
+在WePY中使用脏数据检查对setData进行了封装，只在函数运行周期结束时才执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁地去修改数据实现绑定，而不用重复去写setData方法。代码如下：
 
 ```javascript
 this.title = 'this is title';
 ```
 
-但需注意，在函数运行周期之外的函数里去修改数据需要手动调用`$apply`方法。如：
+但需注意，在异步函数中修改了数据的话，必须手动调用`$apply`方法。如：
 
 ```javascript
 setTimeout(() => {
@@ -1285,6 +1295,7 @@ setTimeout(() => {
 ```
 
 #### WePY脏数据检查流程
+
 在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
 <p align="center">
@@ -1294,6 +1305,7 @@ setTimeout(() => {
 ### 其它优化细节
 
 #### 1. wx.request 接收参数修改
+
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
@@ -1310,10 +1322,11 @@ wepy.request('xxxx').then((d) => console.log(d));
 ```
 
 #### 2. 优化事件参数传递
+
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 官方
+// 原生的事件传参方式
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
 Page({
   tapName: function(event) {
@@ -1323,7 +1336,7 @@ Page({
   }
 });
 
-// WePY 建议传参方式
+// WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 methods: {
@@ -1332,7 +1345,7 @@ methods: {
     }
 }
 
-// WePY 1.1.8以后的版本，只允许传string。
+// WePY 1.1.8以后的版本，只允许传string
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 methods: {
@@ -1343,6 +1356,7 @@ methods: {
 ```
 
 #### 3. 改变数据绑定方式
+
 保留setData方法，但不建议使用setData执行绑定，修复传入`undefined`的bug，并且修改入参支持：
 `this.setData(target, value)`
 `this.setData(object)`
@@ -1350,7 +1364,7 @@ methods: {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 官方
+// 原生代码
 <view> {{ message }} </view>
 
 onLoad: function () {
@@ -1358,7 +1372,7 @@ onLoad: function () {
 }
 
 
-// WePY
+// 基于WePY的代码
 <view> {{ message }} </view>
 
 onLoad () {
@@ -1371,7 +1385,7 @@ onLoad () {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 官方
+// 原生代码
 <!-- item.wxml -->
 <template name="item">
   <text>{{text}}</text>
@@ -1385,9 +1399,7 @@ onLoad () {
 var item = require('item.js')
 
 
-
-
-// WePY
+// 基于WePY的代码
 <!-- /components/item.wpy -->
  <text>{{text}}</text>
 
