@@ -65,9 +65,9 @@ let generateProject = (name, config) => {
     let devDependencies = [
         'wepy-compiler-babel',
         'babel-plugin-transform-decorators-legacy',
-        'babel-plugin-syntax-export-extensions',
         'babel-plugin-transform-export-extensions',
         'babel-plugin-transform-class-properties',
+        'babel-plugin-transform-object-rest-spread',
         'babel-preset-env',
         'wepy-compiler-less',
         'cross-env'
