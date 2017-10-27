@@ -683,7 +683,7 @@ export default class MyComponent extends wepy.component {
 }
 ```
 
-对于methods属性，因为与Vue的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue的用法是不一致的。示例如下：
+对于WePY中的methods属性，因为与Vue中的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue中的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
@@ -839,21 +839,21 @@ project
 // index.wpy
 
 <template>
-    //注意，使用`for`属性，而不是使用`wx:for`属性
+    // 注意，使用for属性，而不是使用wx:for属性
     <repeat for="{{list}}" key="index" index="index" item="item">
-        //插入`<script>`脚本部分所声明的`child`组件，同时传入`item`
+        // 插入<script>脚本部分所声明的child组件，同时传入item
         <child :item="item"></child>
     </repeat>
 </template>
 
 <script>
     import wepy from 'wepy';
-    //引入child组件文件
+    // 引入child组件文件
     import Child from './coms/child';
    
     export default class Index extends wepy.component {
         components = {
-            //声明页面中要使用到的Child组件的ID为child
+            // 声明页面中要使用到的Child组件的ID为child
             child: Child
         }
    
@@ -880,6 +880,8 @@ project
 
 计算属性可以直接当作绑定数据(也就是类似于data对象中的数据，脚本中可通过`this.计算属性名称`引用，模板中也可直接用`{{ 计算属性名称 }}`插值)。而在每次脏数据检查流程(详见后文有关`脏数据检查`的介绍)中，只要有脏数据，计算属性就会被重新计算。
 
+计算属性适用于每当发生脏数据检查时需要进行某些额外处理的情形。
+
 * **示例**：
 
     ```javascript
@@ -888,7 +890,7 @@ project
     }
 
     computed = {
-        //计算属性aPlus，在脚本中可通过`this.aPlus`来引用，在模板中可通过`{{ aPlus }}`来插值
+        // 计算属性aPlus，在脚本中可通过this.aPlus来引用，在模板中可通过{{ aPlus }}来插值
         aPlus () {
             return this.a + 1;
         }
@@ -901,7 +903,9 @@ project
 
 * **详细**：
 
-通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在watch对象中声明，类型为函数，函数名与需要被监听的data对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就被执行一次，适用于数值属性改变时需要进行某些额外处理的情形。
+通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就被执行一次。
+
+监听器适用于当数值属性改变时需要进行某些额外处理的情形。
 
 * **示例**：
 
@@ -911,14 +915,14 @@ project
     };
 
     watch = {
-        //监听器函数名与需要被监听的data对象中的数值属性num同名
+        // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
     onLoad () {
-        //每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被执行一次
+        // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被执行一次
         setInterval(() => {
             this.num++;
             this.$apply();
