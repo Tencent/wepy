@@ -925,7 +925,8 @@ project
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
-
+    ```
+    ```javascript
     // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
