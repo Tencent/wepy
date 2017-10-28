@@ -1083,15 +1083,15 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 *1.4.8新增*
 
-可以使用`@customEvent.user`绑定用户自定义组件事件。
+可以在组件标签中使用类似`@customEvent.user`这样的属性绑定用户自定义的组件事件。
 
 其中，`@`表示事件修饰符，`customEvent` 表示事件名称，`.user`表示事件后缀。
 
 目前有三种后缀：
 
-- `.default`: 绑定小程序冒泡事件事件，如`bindtap`。
+- `.default`: 绑定小程序冒泡事件，如`bindtap`，`.default`后缀可省略不写；
 
-- `.stop`: 绑定小程序非冒泡事件，如`catchtap`。
+- `.stop`: 绑定小程序非冒泡事件，如`catchtap`；
 
 - `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
 
@@ -1111,7 +1111,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
     export default class Index extends wepy.page {
         components = {
             child: Child
-        };
+        }
 
         methods = {
             parentFn (num, evt) {
@@ -1123,16 +1123,19 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 
 // child.wpy
+
 <template>
     <view @tap="tap">Click me</view>
 </template>
+
 <script>
-    import wepy from 'wepy';
+    import wepy from 'wepy'
+   
     export default class Child extends wepy.component {
         methods = {
             tap () {
-                console.log('child is clicked');
-                this.$emit('childFn', 100);
+                console.log('child is clicked')
+                this.$emit('childFn', 100)
             }
         }
     }
@@ -1140,27 +1143,25 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
 
-#### 组件内容分发slot
+#### slot 组件内容分发插槽
 
-可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
+使用`<slot>`标签作为组件内容分发插槽，在使用组件时，可以随意进行组件内容分发。参看以下示例：
 
 在`Panel`组件中有以下模板：
 
 ```html
 <view class="panel">
     <slot name="title">默认标题</slot>
-    <slot>
-        默认内容
-    </slot>
+    <slot>默认内容</slot>
 </view>
 ```
 
-在父组件使用`Pannel`组件时，可以这样使用：
+在父组件中使用`Pannel`子组件时，可以这样使用：
 
 ```html
 <panel>
     <view>
-        <text>这是我放到的内容</text>
+        <text>这是我放置的内容</text>
     </view>
     <view slot="title">Panel的Title</view>
 </panel>
@@ -1194,15 +1195,9 @@ import wepy from 'wepy'
 
 export default class TestMixin extends wepy.mixin {
     data = {
-        foo: 'foo defined by testMixin',
-        bar: 'bar defined by testMixin'
+        foo: 'foo defined by mixin',
+        bar: 'bar defined by mixin'
     }
-    
-    methods: {
-        tap () {
-            console.log('mix tap')
-    }
-  }
 }
 
 
@@ -1219,8 +1214,8 @@ export default class Index extends wepy.page {
     mixins = [TestMixin ]
     
     onShow() {
-        console.log(this.foo);  // foo defined by index. 由于index.wpy中已经声明了this.foo，所以不是by testMinx，而是by index
-        console.log(this.bar);  // foo defined by testMixin. 由于index.wpy中没有声明this.bar，所以是by testMinx
+        console.log(this.foo);  // foo defined by index. 由于index.wpy中已经声明了this.foo，所以不是by mixin，而是by index
+        console.log(this.bar);  // foo defined by mixin. 由于index.wpy中没有声明this.bar，所以是by mixin
     }
 }
 ```
@@ -1240,12 +1235,12 @@ import wepy from 'wepy'
 export default class TestMixin extends wepy.mixin {
     methods = {
         tap () {
-            console.log('mix tap')
+            console.log('mixin tap')
         }
     }
     
     onShow() {
-        console.log('mix onshow')
+        console.log('mixin onshow')
     }
 }
 
@@ -1270,10 +1265,10 @@ export default class Index extends wepy.page {
 }
 
 // index onshow
-// mix onshow
+// mixin onshow
 // ----- when tap
 // index tap
-// mix tap
+// mixin tap
 ```
 
 ### 拦截器
