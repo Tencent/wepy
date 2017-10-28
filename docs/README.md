@@ -893,6 +893,7 @@ project
         a: 1
     }
 
+    // 计算属性aPlus，在脚本中可通过this.aPlus来引用，在模板中可通过{{ aPlus }}来插值
     computed = {
         aPlus () {
             return this.a + 1
