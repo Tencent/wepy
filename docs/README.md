@@ -1171,30 +1171,36 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
-### 混合
+### Mixin 混合
 
-混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
+混合可以将多个组件的JavaScript脚本中可复用的数据、事件处理函数以及其他方法等抽取出来，然后通过混合的方式，将这些数据、事件处理函数以及其他方法等注入到组件中。
+
+混合分分为两种：
 
 * 默认式混合
+
 * 兼容式混合
 
 #### 默认式混合
 
-对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
+对于组件(包括页面)中的`data`数据、`components`组件、`events`事件处理函数以及其它自定义方法采用**默认式混合**。
+
+所谓默认式混合，就是如果组件未声明该数据、组件、事件处理函数、自定义方法等属性，会将混合对象mixins中对应的属性自动注入组件之中。但对于组件已中声明的同名属性不受影响(相当于组件中已声明了的属性会覆盖混合对象所注入的相应同名属性)。
 
 ```Javascript
 // mixins/test.js
 
-import wepy from 'wepy';
+import wepy from 'wepy'
 
 export default class TestMixin extends wepy.mixin {
     data = {
-        foo: 'foo defined by page',
-        bar: 'bar defined by testMix'
-    };
+        foo: 'foo defined by testMixin',
+        bar: 'bar defined by testMixin'
+    }
+    
     methods: {
-    tap () {
-      console.log('mix tap');
+        tap () {
+            console.log('mix tap')
     }
   }
 }
@@ -1202,17 +1208,19 @@ export default class TestMixin extends wepy.mixin {
 
 // pages/index.wpy
 
-import wepy from 'wepy';
-import TestMixin from './mixins/test';
+import wepy from 'wepy'
+import TestMixin from './mixins/test'
 
 export default class Index extends wepy.page {
     data = {
         foo: 'foo defined by index'
-    };
-    mixins = [TestMixin ];
+    }
+    
+    mixins = [TestMixin ]
+    
     onShow() {
-        console.log(this.foo); // foo defined by index.
-        console.log(this.bar); // foo defined by testMix.
+        console.log(this.foo);  // foo defined by index. 由于index.wpy中已经声明了this.foo，所以不是by testMinx，而是by index
+        console.log(this.bar);  // foo defined by testMixin. 由于index.wpy中没有声明this.bar，所以是by testMinx
     }
 }
 ```
@@ -1220,38 +1228,44 @@ export default class Index extends wepy.page {
 
 #### 兼容式混合
 
-对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
+对于组件(包括页面)`methods`对象中的wxml标签事件处理函数，以及小程序页面事件处理函数(即页面生命周期函数)，将采用**兼容式混合**。
+
+所谓兼容式混合，也就是当组件中的事件发生时，先是组件本身相应的事件处理函数被触发执行，然后是混合对象所注入的相应事件处理函数被触发执行。换句话说，当组件中的事件发生时，组件本身相应的事件处理函数，以及混合对象所注入的相应事件处理函数，**都会**被触发执行，而且是**先后依次**被触发执行。
 
 ```Javascript
 // mixins/test.js
 
-import wepy from 'wepy';
+import wepy from 'wepy'
 
 export default class TestMixin extends wepy.mixin {
     methods = {
         tap () {
-            console.log('mix tap');
+            console.log('mix tap')
         }
-    };
+    }
+    
     onShow() {
-        console.log('mix onshow');
+        console.log('mix onshow')
     }
 }
 
+
 // pages/index.wpy
-import wepy from 'wepy';
-import TestMixin from './mixins/test';
+
+import wepy from 'wepy'
+import TestMixin from './mixins/test'
 
 export default class Index extends wepy.page {
-
-    mixins = [TestMixin];
+    mixins = [TestMixin]
+    
     methods = {
         tap () {
-            console.log('index tap');
+            console.log('index tap')
         }
-    };
+    }
+    
     onShow() {
-        console.log('index onshow');
+        console.log('index onshow')
     }
 }
 
@@ -1264,27 +1278,29 @@ export default class Index extends wepy.page {
 
 ### 拦截器
 
-可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
+可以使用全局拦截器配置API的config、fail、success、complete方法。参考示例：
 
 ```javascript
-import wepy from 'wepy';
+import wepy from 'wepy'
 
 export default class extends wepy.app {
     constructor () {
         this.intercept('request', {
             config (p) {
-                p.timestamp = +new Date();
-                return p;
+                p.timestamp = +new Date()
+                return p
             },
+            
             success (p) {
-                console.log('request success');
-                return p;
+                console.log('request success')
+                return p
             },
+            
             fail (p) {
-                console.log('request error');
-                return p;
+                console.log('request error')
+                return p
             }
-        });
+        })
     }
 }
 ```
@@ -1294,13 +1310,13 @@ export default class extends wepy.app {
 
 #### 原生小程序的数据绑定方式
 
-原生小程序通过`Page`提供的`setData`方法去绑定数据，如：
+原生小程序通过`Page`提供的`setData`方法来绑定数据，如：
 
 ```Javascript
 this.setData({title: 'this is title'});
 ```
 
-由于原生小程序本身架构上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际上是JS逻辑层与页面渲染层进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，不过[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上明确表示，基于性能考虑不提倡频繁进行`setData`操作。
+由于原生小程序本身架构设计上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际上是JS逻辑层与页面渲染层两个进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，不过[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上明确表示，基于性能考虑不提倡频繁进行`setData`操作。
 
 #### WePY的数据绑定方式
 
@@ -1310,7 +1326,7 @@ this.setData({title: 'this is title'});
 this.title = 'this is title';
 ```
 
-但需注意，如果在异步函数中修改了数据的话，必须手动调用`$apply`方法。如：
+但需注意，如果在异步函数(包括async关键词修饰的函数)中修改了数据的话，必须手动调用`$apply`方法。如：
 
 ```javascript
 setTimeout(() => {
@@ -1319,9 +1335,9 @@ setTimeout(() => {
 }, 3000);
 ```
 
-#### WePY脏数据检查流程
+#### WePY脏数据检查的流程
 
-在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
+在执行脏数据检查时，会通过`this.$$phase`标识当前检查状态，并且会保证在脏数据检查发生并发时，只有一个脏数据检查流程在运行。以下是执行脏数据检查的流程图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png">
@@ -1329,7 +1345,7 @@ setTimeout(() => {
 
 ### 其它优化细节
 
-#### 1. wx.request 接收参数修改
+#### wx.request 接收参数修改
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
@@ -1346,7 +1362,7 @@ wx.request({
 wepy.request('xxxx').then((d) => console.log(d));
 ```
 
-#### 2. 优化事件参数传递
+#### 优化事件参数传递
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
@@ -1383,7 +1399,7 @@ methods: {
 }
 ```
 
-#### 3. 改变数据绑定方式
+#### 改变数据绑定方式
 
 保留setData方法，但不建议使用setData执行绑定，修复传入`undefined`的bug，并且修改入参支持：
 
@@ -1409,7 +1425,7 @@ onLoad () {
 }
 ```
 
-#### 4. 组件代替模板和模块
+#### 组件代替模板和模块
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
