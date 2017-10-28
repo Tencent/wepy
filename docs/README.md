@@ -918,14 +918,13 @@ project
         num: 1
     }
 
-    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
-    // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
+    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
     watch = {
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
-    
+
     // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
