@@ -1292,19 +1292,19 @@ export default class extends wepy.app {
 
 ### 数据绑定
 
-#### 小程序数据绑定方式
+#### 原生小程序的数据绑定方式
 
-小程序通过`Page`提供的`setData`方法去绑定数据，如：
+原生小程序通过`Page`提供的`setData`方法去绑定数据，如：
 
 ```Javascript
 this.setData({title: 'this is title'});
 ```
 
-因为原生小程序本身架构上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际是JS逻辑层与页面渲染层进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，然而[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上是明确表示基于性能考虑不提倡频繁进行`setData`操作的。
+由于原生小程序本身架构上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际上是JS逻辑层与页面渲染层进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，不过[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上明确表示，基于性能考虑不提倡频繁进行`setData`操作。
 
-#### WePY数据绑定方式
+#### WePY的数据绑定方式
 
-在WePY中使用脏数据检查对setData进行了封装，只在函数运行周期结束时才执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁地去修改数据实现绑定，而不用重复去写setData方法。代码如下：
+在WePY中，使用脏数据检查来实现数据绑定。WePY的脏数据检查对setData进行了封装，只在函数运行周期结束时才执行脏数据检查，这样一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁地去修改数据实现绑定，而不用重复地setData。代码如下：
 
 ```javascript
 this.title = 'this is title';
