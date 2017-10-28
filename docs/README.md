@@ -673,7 +673,7 @@ export default class MyComponent extends wepy.component {
 
     mixins = [];  // 声明页面所引用的Mixin实例
 
-    computed = {};  // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
+    computed = {};  // 声明计算属性（详见后文介绍）
 
     watch = {};  // 声明数据watcher（详见后文介绍）
 
@@ -683,7 +683,7 @@ export default class MyComponent extends wepy.component {
 }
 ```
 
-对于WePY中的methods属性，因为与Vue中的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue中的用法是不一致的。示例如下：
+注意，对于WePY中的methods属性，因为与Vue中的使用习惯不一致，非常容易造成误解，这里需要特别强调一下：WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue中的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
@@ -703,7 +703,7 @@ export default class MyComponent extends wepy.component {
         },
         
         //错误：普通自定义方法不能放在methods对象中
-        commonFunc () {
+        customFunction () {
             return 'sth.';
         }
     };
@@ -729,7 +729,7 @@ export default class MyComponent extends wepy.component {
     }
 
     //正确：普通自定义方法在methods对象外声明，与methods平级
-    commonFunc () {
+    customFunction () {
         return 'sth.';
     }
 
