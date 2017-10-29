@@ -772,7 +772,7 @@ project
 // index.wpy
 
 <template>
-    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
+    <!-- 以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件 -->
     <child></child>
 </template>
 
@@ -842,9 +842,9 @@ project
 // index.wpy
 
 <template>
-    // 注意，使用for属性，而不是使用wx:for属性
+    <!-- 注意，使用for属性，而不是使用wx:for属性 -->
     <repeat for="{{list}}" key="index" index="index" item="item">
-        // 插入<script>脚本部分所声明的child组件，同时传入item
+        <!-- 插入<script>脚本部分所声明的child组件，同时传入item -->
         <child :item="item"></child>
     </repeat>
 </template>
@@ -1348,16 +1348,18 @@ setTimeout(() => {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 原生代码
+原生代码:
+
 wx.request({
     url: 'xxx',
     success: function (data) {
         console.log(data);
     }
-});
+})
 
-// 基于WePY的代码
-wepy.request('xxxx').then((d) => console.log(d));
+基于WePY的代码:
+
+wepy.request('xxxx').then((d) => console.log(d))
 ```
 
 #### 优化事件参数传递
@@ -1365,7 +1367,8 @@ wepy.request('xxxx').then((d) => console.log(d));
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 原生的事件传参方式
+原生的事件传参方式:
+
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
 
 Page({
@@ -1374,10 +1377,11 @@ Page({
     console.log(event.currentTarget.dataset.title)// output: wepy
     console.log(event.currentTarget.dataset.other)// output: otherparams
   }
-});
+})
 
 
-// WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）
+WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）:
+
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 methods: {
@@ -1387,7 +1391,8 @@ methods: {
 }
 
 
-// WePY 1.1.8以后的版本，只允许传string
+WePY 1.1.8以后的版本，只允许传string：
+
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 methods: {
@@ -1407,7 +1412,8 @@ methods: {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 原生代码
+原生代码:
+
 <view> {{ message }} </view>
 
 onLoad: function () {
@@ -1415,7 +1421,8 @@ onLoad: function () {
 }
 
 
-// 基于WePY的代码
+基于WePY的代码:
+
 <view> {{ message }} </view>
 
 onLoad () {
@@ -1428,7 +1435,8 @@ onLoad () {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 原生代码
+原生代码:
+
 <!-- item.wxml -->
 <template name="item">
   <text>{{text}}</text>
@@ -1442,7 +1450,8 @@ onLoad () {
 var item = require('item.js')
 
 
-// 基于WePY的代码
+基于WePY的代码:
+
 <!-- /components/item.wpy -->
  <text>{{text}}</text>
 
