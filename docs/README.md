@@ -11,6 +11,9 @@ WePY的安装或更新都通过`npm`进行。
 ```bash
 npm install wepy-cli -g
 ```
+```
+&emsp;&emsp;注：安装了WePY命令行工具，就安装了整个WePY框架
+```
 
 **在开发目录中生成Demo开发项目**
 
