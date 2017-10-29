@@ -1348,7 +1348,7 @@ setTimeout(() => {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-原生代码:
+// 原生代码:
 
 wx.request({
     url: 'xxx',
@@ -1357,7 +1357,7 @@ wx.request({
     }
 })
 
-基于WePY的代码:
+// 基于WePY的代码:
 
 wepy.request('xxxx').then((d) => console.log(d))
 ```
@@ -1367,7 +1367,7 @@ wepy.request('xxxx').then((d) => console.log(d))
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-原生的事件传参方式:
+// 原生的事件传参方式:
 
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
 
@@ -1380,7 +1380,7 @@ Page({
 })
 
 
-WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）:
+// WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）:
 
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
@@ -1391,7 +1391,7 @@ methods: {
 }
 
 
-WePY 1.1.8以后的版本，只允许传string：
+// WePY 1.1.8以后的版本，只允许传string：
 
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
@@ -1412,7 +1412,7 @@ methods: {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-原生代码:
+// 原生代码:
 
 <view> {{ message }} </view>
 
@@ -1421,7 +1421,7 @@ onLoad: function () {
 }
 
 
-基于WePY的代码:
+// 基于WePY的代码:
 
 <view> {{ message }} </view>
 
@@ -1435,7 +1435,7 @@ onLoad () {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-原生代码:
+// 原生代码:
 
 <!-- item.wxml -->
 <template name="item">
@@ -1450,7 +1450,7 @@ onLoad () {
 var item = require('item.js')
 
 
-基于WePY的代码:
+// 基于WePY的代码:
 
 <!-- /components/item.wpy -->
  <text>{{text}}</text>
