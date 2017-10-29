@@ -11,9 +11,6 @@ WePY的安装或更新都通过`npm`进行。
 ```bash
 npm install wepy-cli -g
 ```
-```
-  注：安装了WePY命令行工具，就安装了整个WePY框架
-```
 
 **在开发目录中生成Demo开发项目**
 
@@ -37,7 +34,7 @@ wepy build --watch
 
 ```
 ├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
-├── node_modules           npm包目录（该目录存放使用WePY开发过程中所用到的npm包及相关的依赖包）
+├── node_modules           
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
 |   |   ├── com_a.wpy      可复用的WePY组件a
@@ -146,7 +143,7 @@ customFileTypes:
 
 ## 主要功能特性
 
-### 开发模式转换，更贴近于MVVM架构模式
+### 开发模式转换
 
 WePY框架在开发过程中参考了Vue等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于MVVM架构模式。以下是使用WePY前后的代码对比。
 
@@ -207,7 +204,7 @@ export default class Index extends wepy.page {
 }
 ```
 
-### 支持组件化开发，更利于项目的工程化
+### 支持组件化开发
 
 参见章节：[组件](#组件)
 
@@ -576,7 +573,7 @@ export default class Page extends wepy.page {
 | data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                                |
 | methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange`        |
 | events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
-| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
+| 其它        | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
 
@@ -938,9 +935,9 @@ project
     }
     ```
 
-#### props 传值
+#### props 单向传值
 
-props传值在WePY中属于父组件与子组件之间(包括页面与其组件之间)传值的一种机制，包括静态传值与动态传值。
+props传值在WePY中属于父组件与子组件之间(包括页面与其组件之间)单向传值的一种机制，包括静态传值与动态传值。
 
 在props对象中声明需要传递的值，静态传值与动态传值的声明略有不同，具体可参看下面的示例代码。
 
@@ -948,7 +945,7 @@ props传值在WePY中属于父组件与子组件之间(包括页面与其组件�
 
 静态传值为父组件向子组件单向静态传值，只能在子组件初始化的时候一次性传值，且只能传递String字符串类型，不能传递Number、Boolean、Object等其他类型的数据。
 
-因此，使用静态传值时，子组件只能接收到字符串的值。
+因此，使用静态传值时，子组件只能接收到字符串。
 
 在子组件`template`模板部分的组件标签中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
 
@@ -969,18 +966,20 @@ onLoad () {
 
 **动态传值**
 
-与静态传值只能通过父组件向子组件单向传值不同，动态传值包括了单向动态传值和双向动态传值。
+与静态传值只能通过父组件向子组件单向传值不同，动态传值包括了父组件向子组件单向动态传值和子组件向父组件单向动态传值。
 
-&emsp;&emsp;1. 单向动态传值：父组件向子组件单向动态传值(父组件可随时改变子组件中的值)。
+&emsp;&emsp;1. 父向子单向动态传值：父组件向子组件单向动态传值(即父组件可随时改变子组件中的值)。父组件data对象中某个属性值的修改会改变子组件props对象中对应属性的值。注意，父组件与子组件中的这两个属性其名称可以不一致，两者通过在父组件`template`模板部分中所插入的子组件标签的某个`.sync`属性进行绑定(即进行映射)。
 
-&emsp;&emsp;2. 双向动态传值：子组件props对象中某个属性值的修改会改变父组件data对象中对应属性的值(注意，父子组件中的这两个属性其名称可以不一致，两者通过在父组件wxml中插入子组件时在子组件标签的属性中进行映射关联)。
+&emsp;&emsp;2. 子向父单向动态传值：子组件向父组件单向动态传值(即子组件可随时改变父组件中的值)。子组件props对象中某个属性值的修改会改变父组件data对象中对应属性的值。注意，子组件与父组件中的这两个属性其名称可以不一致，两者通过在父组件`template`模板部分中所插入的子组件标签的某个`.sync`属性进行绑定(即进行映射)。
 
-在`template`模板部分的组件标签中，使用`:prop`属性（等价于Vue中的`v-bind:prop`属性）来进行动态传值。
+*注意*：下文示例中的`twoWay`为`true`时，表示子组件向父组件单向动态传值，而`twoWay`为`false`(默认值，可不写)时，则表示父组件向子组件单向动态传值。这是与Vue不一致的，而之所以仍然使用`twoWay`，只是为了保持与Vue一致的命名。因此，在WePY中，只有单向传值，没有双向传值。
+
+在父组件`template`模板部分所插入的子组件标签中，使用`:prop`属性（等价于Vue中的`v-bind:prop`属性）来进行动态传值。
 
 ```Javascript
 // parent.wpy
 
-<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
+<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle.sync="parentTitle"></child>
 
 data = {
     parentTitle: 'p-title'
@@ -992,12 +991,12 @@ data = {
 props = {
     // 静态传值
     title: String,
-    // 单向动态传值
+    // 父向子单向动态传值
     syncTitle: {
         type: String,
         default: 'null'
     },
-    // 双向动态传值（注意：当twoWay的值为false时，等同于单向动态传值）
+    // 子向父动态传值（注意：当twoWay的值为false时，等同于父向子单向动态传值）
     twoWayTitle: {
         type: Number,
         default: 50,
@@ -1028,7 +1027,7 @@ onLoad () {
 this.$emit('some-event', 1, 2, 3, 4);
 ```
 
-用于监听组件之间的通信与交互事件的事件处理函数需要写在`events`对象中，如：
+用于监听组件之间的通信与交互事件的事件处理函数需要写在组件和页面的`events`对象中，如：
 
 ```javascript
 import wepy from 'wepy'
@@ -1060,7 +1059,7 @@ export default class Com extends wepy.component {
 
 **$emit**
 
-`$emit`与`$broadcast`正好相反，事件发起组件的祖先组件(包括父组件、父组件的父组件...直到组件所在的页面)会依次接收到`$emit`事件，如上图，如果组件ComE发起一个`$emit`事件，那么接收到事件的先后顺序为：组件ComA、页面Page_Index。如下图：
+`$emit`与`$broadcast`正好相反，事件发起组件的所有祖先组件(包括父组件、父组件的父组件...直到组件所在的页面)会依次接收到`$emit`事件。如果组件ComE发起一个`$emit`事件，那么接收到事件的先后顺序为：组件ComA、页面Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
@@ -1068,7 +1067,7 @@ export default class Com extends wepy.component {
 
 **$invoke**
 
-`$invoke`是一个页面或组件对另一个组件中的方法的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
+`$invoke`是一个页面或组件对另一个页面或组件中的方法的直接调用，通过传入的页面或组件路径找到相应的页面或组件，然后再调用其方法。
 
 比如，想在页面`Page_Index`中调用组件ComA的某个方法：
 
@@ -1082,21 +1081,21 @@ this.$invoke('ComA', 'someMethod', 'someArgs');
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
-#### 组件自定义事件
+#### 组件自定义事件事件处理函数
 
 *1.4.8新增*
 
-可以在组件标签中使用类似`@customEvent.user`这样的属性绑定用户自定义的组件事件。
+可以在组件标签中使用类似`@customEvent.user`这样的属性绑定用户自定义的组件事件处理函数。
 
 其中，`@`表示事件修饰符，`customEvent` 表示事件名称，`.user`表示事件后缀。
 
-目前有三种后缀：
+这样，加上自定义事件后缀，目前总共就有了三种事件后缀：
 
-- `.default`: 绑定小程序冒泡事件，如`bindtap`，`.default`后缀可省略不写；
+- `.default`: 绑定小程序冒泡型事件的事件处理函数，如`bindtap`，`.default`后缀可省略不写；
 
-- `.stop`: 绑定小程序非冒泡事件，如`catchtap`；
+- `.stop`: 绑定小程序捕获型事件的事件处理函数，如`catchtap`；
 
-- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
+- `.user`: 绑定用户自定义组件事件的事件处理函数，通过`$emit`触发。
 
 示例如下：
 
