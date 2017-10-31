@@ -817,6 +817,8 @@ project
 </script>
 ```
 
+*注意*：WePY中，在父组件`template`模板部分插入驼峰式命名的子组件元素时，不能将驼峰式命名转换成短横杆式命名(比如将`childCom`转换成`child-com`)，这与Vue中的习惯是不一致。
+
 
 #### 组件的循环渲染
 
@@ -1298,35 +1300,51 @@ export default class Index extends wepy.page {
 // mixin tap
 ```
 
-### 拦截器
+### interceptor 拦截器
 
-可以使用全局拦截器配置API的config、fail、success、complete方法。参考示例：
+可以使用WePY提供的全局拦截器对原生API的请求进行拦截。可以拦截的API包括`request`、`uploadFile`、`downloadFile`、`connectSocket`、`sendSocketMessage`等。
+
+具体方法是配置API的config、fail、success、complete回调函数。参考示例：
 
 ```javascript
 import wepy from 'wepy'
 
 export default class extends wepy.app {
     constructor () {
+        //拦截request请求
         this.intercept('request', {
+            //发出请求时的回调函数
             config (p) {
+                //对所有request请求中的OBJECT对象参数统一附加时间戳属性
                 p.timestamp = +new Date()
+                console.log('config request: ', p)
+                //返回附加了时间戳属性的OBJECT对象参数
                 return p
             },
             
+            //请求成功后的回调函数
             success (p) {
-                console.log('request success')
+                //可以在这里对收到的响应数据对象进行加工处理
+                console.log('request success: ', p)
+                //返回请求成功后收到的响应数据对象
                 return p
             },
             
+            //请求失败后的回调函数
             fail (p) {
-                console.log('request error')
+                console.log('request fail: ', p)
+                //返回请求失败后收到的响应数据对象
                 return p
+            },
+
+            //请求完成时的回调函数(请求成功或失败都会被执行)
+            complete(p) {
+                console.log('request complete: ', p)
             }
         })
     }
 }
 ```
-
 
 ### 数据绑定
 
@@ -1348,7 +1366,7 @@ this.setData({title: 'this is title'});
 this.title = 'this is title';
 ```
 
-但需注意，如果在异步函数(包括async关键词修饰的函数)中修改了数据的话，必须手动调用`$apply`方法。如：
+但需注意，如果在异步函数(包括async关键词修饰的函数)中修改了数据的话，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
 
 ```javascript
 setTimeout(() => {
@@ -1375,7 +1393,7 @@ setTimeout(() => {
 // 原生代码:
 
 wx.request({
-    url: 'xxx',
+    url: 'xxxx',
     success: function (data) {
         console.log(data);
     }
@@ -1383,7 +1401,7 @@ wx.request({
 
 // 基于WePY的代码:
 
-wepy.request('xxxx').then((d) => console.log(d))
+wepy.request('xxxx').then((data) => console.log(data))
 ```
 
 #### 优化事件参数传递
@@ -1492,3 +1510,6 @@ var item = require('item.js')
 </script>
 ```
 
+## 其他
+
+更多细节，还可参看[API文档](https://wepyjs.github.io/wepy/#/api)。
