@@ -1315,10 +1315,10 @@ export default class extends wepy.app {
         this.intercept('request', {
             //发出请求时的回调函数
             config (p) {
-                //对所有request请求中的OBJECT对象参数统一附加时间戳属性
+                //对所有request请求中的OBJECT参数对象统一附加时间戳属性
                 p.timestamp = +new Date()
                 console.log('config request: ', p)
-                //返回附加了时间戳属性的OBJECT对象参数
+                //返回附加了时间戳属性的OBJECT参数对象
                 return p
             },
             
