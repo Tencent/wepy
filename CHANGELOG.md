@@ -1,4 +1,4 @@
-## 1.5.9 (2017-10-25) 
+## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
 * `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
 * `F` 修复了使用绝对路径跳转时，`onPrefetch`没被调用的问题。[ISSUE 244](https://github.com/wepyjs/wepy/issues/244)

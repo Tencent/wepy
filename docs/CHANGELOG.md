@@ -1,3 +1,24 @@
+## 1.6.0 (2017-10-25) 
+* `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
+* `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
+* `F` 修复了使用绝对路径跳转时，`onPrefetch`没被调用的问题。[ISSUE 244](https://github.com/wepyjs/wepy/issues/244)
+* `F` 修复了在组件中没有`<style>`节点报错的BUG。[ISSUE 160](https://github.com/wepyjs/wepy/issues/160)
+* `F` 修复了repeat中for变量为null或者undefined报错的问题。[PR 353](https://github.com/wepyjs/wepy/pull/353)
+* `A` 添加了computed的watch和sync功能。[ISSUE 318](https://github.com/wepyjs/wepy/issues/318)
+* `F` 修复了`--watch`模式下，修复外链文件可能不会触发编译的问题。
+* `F` 修复了repeat中传多个参数无效的BUG。[ISSUE 348](https://github.com/wepyjs/wepy/issues/348)
+* `D` 弃用babel-preset-2015。[ISSUE 407](https://github.com/wepyjs/wepy/issues/407)
+* `F` 修复引用第三方私有NPM组件编译报错的问题。[PR 398](https://github.com/wepyjs/wepy/pull/398)
+* `F` 修复getCurrentPages调用错误的问题。[PR 396](https://github.com/wepyjs/wepy/pull/396)
+* `F` 修复使用repeat时，默认数据为空引发的BUG。[PR 411](https://github.com/wepyjs/wepy/pull/411)
+* `F` 修复了使用第三方组件时，修改ouput属性导致引用错乱的BUG。[ISSUE 415](https://github.com/wepyjs/wepy/pull/415)
+* `A` 添加了`resolve`, `alias`的功能
+* `F` 修复了生成JSON时没有通过plugins处理的问题。[ISSUE 403](https://github.com/wepyjs/wepy/pull/403)
+* `F` 修复了组件中引用相对路径在某些情况下不准确的问题。[ISSUE 345](https://github.com/wepyjs/wepy/pull/345)
+* `F` 修复了repeat使用驼峰命名组件出现问题的BUG。[ISSUE 397](https://github.com/wepyjs/wepy/pull/397)
+* `F` 修复绑定多个事件传参时，参数混乱的问题。[ISSUE 385](https://github.com/wepyjs/wepy/pull/385)
+
+
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
 * `F` 修复了使用缩进的`sass`语法时编译报错的问题。[ISSUE 208](https://github.com/wepyjs/wepy/issues/208)
