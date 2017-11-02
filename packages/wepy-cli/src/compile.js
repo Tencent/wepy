@@ -146,7 +146,7 @@ export default {
         return loader.loadPlugin(plugins);
     },
 
-    wepyUpdate(required = '1.5.7') {
+    wepyUpdate(required = '1.6.0') {
         let o = resolve.getPkg('wepy') || {};
         let pkg = o.pkg || {version: '0.0.0'};
         return compareVersions(required, pkg.version) === 1;
