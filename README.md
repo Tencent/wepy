@@ -125,8 +125,8 @@ wepy build --watch
  
  WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
- ![image](https://user-images.githubusercontent.com/2182004/32309708-79b1b864-bfc8-11e7-897b-962fe345ae62.png)
- 
+ ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png)
+
 
 ### Links
 
