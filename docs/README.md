@@ -48,7 +48,7 @@ wepy build --watch
 
 ### 参考建议
 
-1. WePY借鉴了Vue.js（简称Vue）的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
+1. WePY借鉴了Vue.js（后文简称Vue）的语法风格和功能特性，如果你之前从未接触过Vue，建议先阅读Vue的[官方文档](https://cn.vuejs.org/v2/guide/)，以熟悉相关概念，否则在阅读WePY文档以及使用WePY进行开发的过程中，将会遇到比较多的障碍。
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
@@ -137,8 +137,8 @@ customFileTypes:
 6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
    
-7. 自定义组件命名应避开微信原生组件名称以及功能元素`<repeat>`。
-   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助元素`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
+   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
 ## 主要功能特性
@@ -469,9 +469,9 @@ if (prod) {
   <img src="https://cloud.githubusercontent.com/assets/2182004/22774706/422375b0-eee3-11e6-9046-04d9cd3aa429.png" alt="5 small">
 </p>
 
-一个`.wpy`文件可分为三大部分，各自对应于一个元素：
+一个`.wpy`文件可分为三大部分，各自对应于一个标签：
 
-1. 脚本部分，即`<script></script>`元素中的内容，又可分为两个部分：
+1. 脚本部分，即`<script></script>`标签中的内容，又可分为两个部分：
 
 &emsp;&emsp;&emsp;&emsp;逻辑部分，除了config对象之外的部分，对应于原生的`.js`文件；
 
@@ -481,7 +481,7 @@ if (prod) {
 
 3. 样式部分，即`<style></style>`样式部分，对应于原生的`.wxss`文件。
 
-其中，小程序入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个元素都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，会忽略内联代码。
+其中，小程序入口文件`app.wpy`不需要`template`，所以编译时会被忽略。`.wpy`文件中的`script`、`template`、`style`这三个标签都支持`lang`和`src`属性，`lang`决定了其代码编译过程，`src`决定是否外联代码，存在`src`属性且有效时，会忽略内联代码。
 
 示例如下：
 
@@ -493,9 +493,9 @@ if (prod) {
 </script>
 ```
 
-各元素对应的`lang`值如下表所示：
+各标签对应的`lang`值如下表所示：
 
-| 元素       | lang默认值 | lang支持值                      |
+| 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
 | style    | `css`   | `css`、`less`、`sass`、`stylus` |
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
@@ -573,7 +573,7 @@ export default class Page extends wepy.page {
 | data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                                |
 | methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange`        |
 | events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
-| 其它        | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
+| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
 
 #### 组件com.wpy
 
@@ -673,17 +673,17 @@ export default class MyComponent extends wepy.component {
 
     mixins = [];  // 声明页面所引用的Mixin实例
 
-    computed = {};  // 声明计算属性（详见后文介绍）
+    computed = {};  // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
 
     watch = {};  // 声明数据watcher（详见后文介绍）
 
-    methods = {};  // 声明页面wxml中元素的事件处理函数。注意，此处只用于声明页面wxml中元素的bind、catch事件，自定义方法需以自定义方法的方式声明
+    methods = {};  // 声明页面wxml中标签的事件处理函数。注意，此处只用于声明页面wxml中标签的bind、catch事件，自定义方法需以自定义方法的方式声明
 
     events = {};  // 声明组件之间的事件处理函数
 }
 ```
 
-注意，对于WePY中的methods属性，因为与Vue中的使用习惯不一致，非常容易造成误解，这里需要特别强调一下：WePY中的methods属性只能声明页面wxml元素的bind、catch事件，不能声明自定义方法，这与Vue中的用法是不一致的。示例如下：
+对于methods属性，因为与Vue的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
@@ -703,7 +703,7 @@ export default class MyComponent extends wepy.component {
         },
         
         //错误：普通自定义方法不能放在methods对象中
-        customFunction () {
+        commonFunc () {
             return 'sth.';
         }
     };
@@ -729,7 +729,7 @@ export default class MyComponent extends wepy.component {
     }
 
     //正确：普通自定义方法在methods对象外声明，与methods平级
-    customFunction () {
+    commonFunc () {
         return 'sth.';
     }
 
@@ -752,7 +752,7 @@ WePY编译组件的过程如下：
 
 #### 普通组件引用
 
-当页面需要引入组件或组件需要引入子组件时，必须在`.wpy`文件的`<script>`脚本部分先import组件文件，然后在`components`对象中给组件声明唯一的组件ID，接着在`<template>`模板部分中添加以`components`对象中所声明的组件ID进行命名的自定义元素以插入组件。如：
+当页面需要引入组件或组件需要引入子组件时，必须在`.wpy`文件的`<script>`脚本部分先import组件文件，然后在`components`对象中给组件声明唯一的组件ID，接着在`<template>`模板部分中添加以`components`对象中所声明的组件ID进行命名的自定义标签以插入组件。如：
 
 ```html
 /**
@@ -769,7 +769,7 @@ project
 // index.wpy
 
 <template>
-    <!-- 以`<script>`脚本部分中所声明的组件ID为名命名自定义元素，从而在`<template>`模板部分中插入组件 -->
+    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
     <child></child>
 </template>
 
@@ -817,48 +817,37 @@ project
 </script>
 ```
 
-*注意*：WePY中，在父组件`template`模板部分插入驼峰式命名的子组件元素时，不能将驼峰式命名转换成短横杆式命名(比如将`childCom`转换成`child-com`)，这与Vue中的习惯是不一致。
 
-
-#### 组件的循环渲染
+#### 循环列表组件引用
 
 *1.4.6新增*
 
-当需要循环渲染WePY组件时(类似于通过`wx:for`循环渲染原生的wxml元素)，必须使用WePY定义的辅助元素`<repeat>`，代码如下：
+当想在`wx:for`中使用组件时，需要使用辅助标签`<repeat>`，如下：
 
 ```Html
 /**
 project
 └── src
-    ├── components
+    ├── coms
     |   └── child.wpy
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
     └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
 **/
-
 // index.wpy
-
 <template>
-    <!-- 注意，使用for属性，而不是使用wx:for属性 -->
-    <repeat for="{{list}}" key="index" index="index" item="item">
-        <!-- 插入<script>脚本部分所声明的child组件，同时传入item -->
-        <child :item="item"></child>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+        <child :item="item"></child>
     </repeat>
 </template>
-
 <script>
     import wepy from 'wepy';
-    // 引入child组件文件
-    import Child from './coms/child';
-   
+    import Child from './coms/child';
     export default class Index extends wepy.component {
         components = {
-            // 声明页面中要使用到的Child组件的ID为child
-            child: Child
-        }
-   
+            child: Child
+        };
         data = {
             list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
         }
@@ -866,69 +855,56 @@ project
 </script>
 ```
 
-页面可以引入组件，而组件还可以引入子组件。一个页面引入若干组件后，组件结构如下图：
+
+页面和组件都可以引入子组件，引入若干组件后，如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
 </p>
 
-如上图所示，Page_Index页面引入了ComA、ComB、ComC三个组件，同时ComA组件和ComB组件又有自己的子组件ComD、ComE、ComF、ComG、ComH。
+Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
 
 #### computed 计算属性
 
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-
-计算属性在`computed`对象中声明，其本质上是一个应该有返回值的函数(没有返回值也不会报错，但这样就失去了其意义)，可以直接被当作绑定数据来使用，亦即可被看作是`data`对象中的属性值，因此类似于`data`对象中的属性，脚本中可通过`this.计算属性名`来引用，模板中也可通过`{{ 计算属性名 }}`来插值。
-
-只要计算属性所在的组件或页面中的数据发生了改变(也就是有脏数据)，从而触发了脏数据检查流程(详见后文有关`脏数据检查`的介绍)的运行，计算属性就会被重新计算(即被自动调用执行)。
-
-计算属性适用于其所在组件或页面中每当发生脏数据检查时需要进行某些额外处理的情形。
-
-需要注意的是，只要是计算属性所在的组件或页面中的数据发生了改变，从而引发了脏数据检查流程的运行，就会被重新计算，而跟其所引用的数据(比如`data`对象中的属性)本身是否发生改变无直接关系；换言之，计算属性中所引用的数据发生了改变，自然会导致其被重新计算，然而即便计算属性中所引用的数据未发生改变，而是其所在的组件或页面中的其他数据发生了改变，也会导致计算属性被重新计算。
+计算属性可以直接当作绑定数据，在每次脏检查周期中。在每次脏检查流程中，只要有脏数据，那么`computed` 属性就会重新计算。
 
 * **示例**：
 
     ```javascript
     data = {
         a: 1
-    }
+    };
 
-    // 计算属性aPlus，在脚本中可通过this.aPlus来引用，在模板中可通过{{ aPlus }}来插值
     computed = {
         aPlus () {
-            return this.a + 1
+            return this.a + 1;
         }
     }
     ```
 
-#### watcher 监听器
+#### watcher
 
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-
-通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就会被自动调用执行一次。
-
-监听器适用于当数值属性改变时需要进行某些额外处理的情形。
+通过`watcher`我们能监听到任何数值属性的数值更新。
 
 * **示例**：
 
     ```javascript
     data = {
         num: 1
-    }
+    };
 
-    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
-    // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
     watch = {
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
-    // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
             this.num++;
@@ -937,19 +913,11 @@ project
     }
     ```
 
-#### props 传值
-
-props传值在WePY中属于父组件与子组件之间(包括页面与其组件之间)传值的一种机制，包括静态传值(只可以单向传值)与动态传值(既可以单向传值，也可以双向传值)。
-
-在props对象中声明需要传递的值，静态传值与动态传值的声明略有不同，具体可参看下面的示例代码。
+#### Props 传值
 
 **静态传值**
 
-静态传值为父组件向子组件单向静态传值，只能在子组件初始化的时候一次性传值，且只能传递String字符串类型，不能传递Number、Boolean、Object等其他类型的数据。
-
-因此，使用静态传值时，子组件只能接收到字符串。
-
-在子组件`template`模板部分的组件元素中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
+使用静态传值时，子组件会接收到字符串的值。
 
 ```Javascript
 <child title="mytitle"></child>
@@ -964,28 +932,15 @@ onLoad () {
 }
 ```
 
-*注意*：再次提醒，静态传值只能传递String类型，不能传递Number、Boolean、Object等其他类型。
+*注意*：静态传值只能传递String类型，不存在Number，Boolean等类型。
 
 **动态传值**
 
-与静态传值只能通过父组件向子组件单向传值不同，动态传值稍微复杂些，既可以单向动态传值，也可以双向动态传值，而单向动态传值又包括了父组件向子组件单向动态传值和子组件向父组件单向动态传值。下面先介绍单向动态传值。
-
-&emsp;&emsp;1. 父向子单向动态传值：父组件向子组件单向动态传值(即父组件可随时改变子组件中的值)。父组件`data`对象中某个属性值的修改会改变子组件`props`对象中对应属性的值。注意，父组件与子组件中的这两个属性其名称可以不一致，两者就通过在父组件`template`模板部分中所插入的子组件元素中的属性(该属性即子组件`props`对象中的同名属性)进行绑定。要实现父向子单向动态传值，必须在子组件元素需要传值的属性后加上`.sync`后缀。
-
-&emsp;&emsp;2. 子向父单向动态传值：子组件向父组件单向动态传值(即子组件可随时改变父组件中的值)。子组件`props`对象中某个属性值的修改会改变父组件`data`对象中对应属性的值。注意，子组件与父组件中的这两个属性其名称可以不一致，两者通过在父组件`template`模板部分中所插入的子组件元素中的属性(该属性即子组件`props`对象中的同名属性)进行绑定。要实现子向父单向动态传值，还必须将子组件`props`中的该需要动态传值的同名对象属性中的`twoWay`属性的值设为`true`。
-
-那如果子组件元素中的属性后既加了`.sync`后缀，同时子组件`props`中对应的同名对象属性的`twoWay`属性的值又为`false`，就实现了双向动态传值。
-
-*注意*：下文示例中的`twoWay`为`true`时，表示子组件向父组件单向动态传值，而`twoWay`为`false`(默认值，可不写)时，则表示子组件不向父组件传值。这是与Vue不一致的地方，而这里之所以仍然使用`twoWay`，只是为了尽可能保持与Vue在标识符命名上的一致性。
-
-在父组件`template`模板部分所插入的子组件元素中，使用`:prop`属性（等价于Vue中的`v-bind:prop`属性）来进行动态传值。
+使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
 
 ```Javascript
 // parent.wpy
-
-// 下面child子组件元素的twoWayTitle属性，在子组件props的twoWayTitle对象中的twoWay属性为true的情况下，没有加.sync后缀，
-// 则只能子组件向父组件单向传值，而加了.sync后缀，则还可以实现父组件向子组件传值，从而实现父子组件相互间的双向动态传值
-<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle.sync="parentTitle"></child>
+<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
 
 data = {
     parentTitle: 'p-title'
@@ -993,22 +948,13 @@ data = {
 
 
 // child.wpy
-
 props = {
-    // 静态传值
-    title: String,
-    
-    // 父向子单向动态传值
-    syncTitle: {
+    title: String,
+    syncTitle: {
         type: String,
         default: 'null'
     },
-    
-    // 子向父动态传值（注意：当twoWay的值为false时，则子不会向父传值；而父向子传不传值，
-    // 取决于父组件template模板部分所插入的子组件元素的twoWayTitle属性有没有加.sync后缀，
-    // 加了则父会向子单向传值，没加则父不会向子传值。因此，如果twoWay为true，且子组件元素的
-    // twoWayTitle属性又加了.sync后缀，则可以实现父子组件相互间的双向动态传值）
-    twoWayTitle: {
+    twoWayTitle: {
         type: Number,
         default: 50,
         twoWay: true
@@ -1023,34 +969,31 @@ onLoad () {
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
     this.twoWayTitle = 60;
-    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
+    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props修改会改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     console.log(this.title); // 'p-title';
-    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
+    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props，当父组件改变时，会影响子组件的值。
 }
 ```
 
 #### 组件通信与交互
-
-`wepy.component`基类提供`$broadcast`、`$emit`、`$invoke`三个方法用于组件之间的通信和交互，因此任一页面或任一组件都可以调用上述三种方法实现相互之间的通信与交互。如：
+`wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
 
 ```javascript
 this.$emit('some-event', 1, 2, 3, 4);
 ```
 
-用于监听组件之间的通信与交互事件的事件处理函数需要写在组件和页面的`events`对象中，如：
+组件的事件监听需要写在`events`属性下，如：
 
 ```javascript
-import wepy from 'wepy'
-
+import wepy from 'wepy';
 export default class Com extends wepy.component {
+
     components = {};
 
     data = {};
-    
     methods = {};
 
-    // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
     events = {
         'some-event': (p1, p2, p3, $event) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
@@ -1062,7 +1005,7 @@ export default class Com extends wepy.component {
 
 **$broadcast**
 
-`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果页面`Page_Index`发起一个`$broadcast`事件，那么按先后顺序依次接收到该事件的组件为：ComA、ComB、ComC、ComD、ComE、ComF、ComG、ComH。如下图：
+`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
@@ -1070,7 +1013,7 @@ export default class Com extends wepy.component {
 
 **$emit**
 
-`$emit`与`$broadcast`正好相反，事件发起组件的所有祖先组件(包括父组件、父组件的父组件...直到组件所在的页面)会依次接收到`$emit`事件。如果组件ComE发起一个`$emit`事件，那么接收到事件的先后顺序为：组件ComA、页面Page_Index。如下图：
+`$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
@@ -1078,53 +1021,49 @@ export default class Com extends wepy.component {
 
 **$invoke**
 
-`$invoke`是一个页面或组件对另一个页面或组件中的方法的直接调用，通过传入的页面或组件路径找到相应的页面或组件，然后再调用其方法。
-
-比如，想在页面`Page_Index`中调用组件ComA的某个方法：
+`$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
+如果想在`Page_Index`中调用组件A的某个方法：
 
 ```Javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
 
-如果想在组件ComA中调用组件ComG的某个方法：
+如果想在组件A中调用组件G的某个方法：
 
 ```Javascript
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
-#### 组件自定义事件处理函数
+#### 组件自定义事件
 
 *1.4.8新增*
 
-可以在组件元素中使用类似`@customEvent.user`这样的属性绑定用户自定义的组件事件处理函数。
+可以使用`@customEvent.user`绑定用户自定义组件事件。
 
 其中，`@`表示事件修饰符，`customEvent` 表示事件名称，`.user`表示事件后缀。
 
-目前总共有三种事件后缀：
+目前有三种后缀：
 
-- `.default`: 绑定小程序冒泡型事件的事件处理函数，如`bindtap`，`.default`后缀可省略不写；
+- `.default`: 绑定小程序冒泡事件事件，如`bindtap`。
 
-- `.stop`: 绑定小程序捕获型事件的事件处理函数，如`catchtap`；
+- `.stop`: 绑定小程序非冒泡事件，如`catchtap`。
 
-- `.user`: 绑定用户自定义组件事件的事件处理函数，通过`$emit`触发。
+- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
 
 示例如下：
 
 ```Html
 // index.wpy
-
 <template>
     <child @childFn.user="parentFn"></child>
 </template>
-
 <script>
-    import wepy from 'wepy'
-    import Child from './coms/child'
-   
+    import wepy from 'wepy';
+    import Child from './coms/child';
     export default class Index extends wepy.page {
         components = {
             child: Child
-        }
+        };
 
         methods = {
             parentFn (num, evt) {
@@ -1136,19 +1075,16 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 
 // child.wpy
-
 <template>
     <view @tap="tap">Click me</view>
 </template>
-
 <script>
-    import wepy from 'wepy'
-   
+    import wepy from 'wepy';
     export default class Child extends wepy.component {
         methods = {
             tap () {
-                console.log('child is clicked')
-                this.$emit('childFn', 100)
+                console.log('child is clicked');
+                this.$emit('childFn', 100);
             }
         }
     }
@@ -1156,43 +1092,29 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
 
-#### slot 组件内容分发插槽
+#### 组件内容分发slot
 
-`slot`插槽，顾名思义，正如电脑中的板卡插槽作为扩展板卡的空间占位部件，便于通过对扩展板卡的插拔，更为灵活、方便地扩展电脑的功能一样，WePY中的`slot`插槽作为内容分发元素的空间占位元素，便于在父组件中通过对相当于扩展板卡的内容分发元素的“插拔”，更为灵活、方便地对子组件进行内容分发(比如父组件可对相同子组件的不同实例分发不同的内容)。
-
-具体使用方法是，首先在子组件`template`模板部分中声明`slot`元素作为内容插槽，同时必须在其`name`属性中指定插槽名称，还可设置默认的元素内容；然后在引入了该带有插槽的子组件的父组件`template`模板部分中声明用于“插拔”的内容分发元素。
-
-注意，这些父组件中的内容分发元素必须具有`slot`属性，并且其值为子组件中对应的插槽名称，这样父组件内容分发元素中的内容会覆盖掉子组件对应插槽中的默认内容(如果有默认内容的话，没有默认内容则相当于插入了父组件中的内容，或者说父组件中的内容覆盖掉了子组件中原来的空字符串)，这就是所谓的内容分发，实质上就是父组件向子组件传递数据(即传值)的一种形式。
-
-另外，要特别注意的是，父组件中一旦声明了对应于子组件插槽的内容分发元素，即便没有内容(即父组件中的内容分发元素为空元素)，子组件插槽中的默认内容也不会显示出来(相当于被空字符串覆盖了)，只有删除了父组件中对应的内容分发元素，才能显示出来。
-
-`slot`插槽与`props`传值都可以实现父组件向子组件传递数据，两者的区别在于：
-
-1. `props`传值既可动态传递数据也可静态传递数据，`slot`插槽只能静态传递数据；
-
-2. `props`传值通过对象的属性来定义需要传递的数据，当有比较长的大段内容需要传递时就不太方便了，尤其是涉及到html片段时，通过字符串来写是非常不方便的(比如没有自动完成、没有语法高亮等)，而通过`slot`插槽在传递html片段时直接就是在父组件的`template`元素中写html代码，这就简单方便多了。
-
-*注意*：WePY目前不支持没有指定名称的不具名插槽(即没有`name`属性或`name`属性的值为空字符串的匿名`slot`插槽)，这是与Vue不一致的地方。
-
-具体请参看以下示例：
+可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
 
 在`Panel`组件中有以下模板：
 
 ```html
 <view class="panel">
     <slot name="title">默认标题</slot>
-    <slot name="content">默认内容</slot>
+    <slot>
+        默认内容
+    </slot>
 </view>
 ```
 
-在父组件中使用`Pannel`子组件时，可以这样使用：
+在父组件使用`Pannel`组件时，可以这样使用：
 
 ```html
 <panel>
-    <view slot="title">新的标题</view>
-    <view slot="content">
-        <text>新的内容</text>
+    <view>
+        <text>这是我放到的内容</text>
     </view>
+    <view slot="title">Panel的Title</view>
 </panel>
 ```
 
@@ -1201,50 +1123,45 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
-### Mixin 混合
+### 混合
 
-混合可以将多个组件的JavaScript脚本中可复用的数据、事件处理函数以及其他方法等抽取出来，然后通过混合的方式，将这些数据、事件处理函数以及其他方法等注入到组件中。
-
-混合分分为两种：
+混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
 
 * 默认式混合
-
 * 兼容式混合
 
 #### 默认式混合
 
-对于组件(包括页面)中的`data`数据、`components`组件、`events`事件处理函数以及其它自定义方法采用**默认式混合**。
-
-所谓默认式混合，就是如果组件未声明该数据、组件、事件处理函数、自定义方法等属性，会将混合对象mixins中对应的属性自动注入组件之中。但对于组件已中声明的同名属性不受影响(相当于组件中已声明了的属性会覆盖混合对象所注入的相应同名属性)。
+对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
 
 ```Javascript
 // mixins/test.js
-
-import wepy from 'wepy'
+import wepy from 'wepy';
 
 export default class TestMixin extends wepy.mixin {
     data = {
-        foo: 'foo defined by mixin',
-        bar: 'bar defined by mixin'
+        foo: 'foo defined by page',
+        bar: 'bar defined by testMix'
+    };
+    methods: {
+    tap () {
+      console.log('mix tap');
     }
+  }
 }
 
-
 // pages/index.wpy
-
-import wepy from 'wepy'
-import TestMixin from './mixins/test'
+import wepy from 'wepy';
+import TestMixin from './mixins/test';
 
 export default class Index extends wepy.page {
     data = {
         foo: 'foo defined by index'
-    }
-    
-    mixins = [TestMixin ]
-    
+    };
+    mixins = [TestMixin ];
     onShow() {
-        console.log(this.foo);  // foo defined by index. 由于index.wpy中已经声明了this.foo，所以不是by mixin，而是by index
-        console.log(this.bar);  // foo defined by mixin. 由于index.wpy中没有声明this.bar，所以是by mixin
+        console.log(this.foo); // foo defined by index.
+        console.log(this.bar); // foo defined by testMix.
     }
 }
 ```
@@ -1252,121 +1169,96 @@ export default class Index extends wepy.page {
 
 #### 兼容式混合
 
-对于组件(包括页面)`methods`对象中的wxml元素事件处理函数，以及小程序页面事件处理函数(即页面生命周期函数)，将采用**兼容式混合**。
-
-所谓兼容式混合，也就是当组件中的事件发生时，先是组件本身相应的事件处理函数被触发执行，然后是混合对象所注入的相应事件处理函数被触发执行。换句话说，当组件中的事件发生时，组件本身相应的事件处理函数，以及混合对象所注入的相应事件处理函数，**都会**被触发执行，而且是**先后依次**被触发执行。
+对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
 
 ```Javascript
 // mixins/test.js
-
-import wepy from 'wepy'
+import wepy from 'wepy';
 
 export default class TestMixin extends wepy.mixin {
     methods = {
-        tap() {
-            console.log('mixin tap')
+        tap () {
+            console.log('mix tap');
         }
-    }
-    
+    };
     onShow() {
-        console.log('mixin onshow')
+        console.log('mix onshow');
     }
 }
-
 
 // pages/index.wpy
-
-import wepy from 'wepy'
-import TestMixin from './mixins/test'
+import wepy from 'wepy';
+import TestMixin from './mixins/test';
 
 export default class Index extends wepy.page {
-    mixins = [TestMixin]
-    
+
+    mixins = [TestMixin];
     methods = {
-        tap() {
-            console.log('index tap')
+        tap () {
+            console.log('index tap');
         }
-    }
-    
+    };
     onShow() {
-        console.log('index onshow')
+        console.log('index onshow');
     }
 }
+
 
 // index onshow
-// mixin onshow
+// mix onshow
 // ----- when tap
 // index tap
-// mixin tap
+// mix tap
 ```
 
-### interceptor 拦截器
+### 拦截器
 
-可以使用WePY提供的全局拦截器对原生API的请求进行拦截。可以拦截的API包括`request`、`uploadFile`、`downloadFile`、`connectSocket`、`sendSocketMessage`等。
-
-具体方法是配置API的config、fail、success、complete回调函数。参考示例：
+可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
 
 ```javascript
-import wepy from 'wepy'
+import wepy from 'wepy';
 
 export default class extends wepy.app {
-    constructor() {
-        //拦截request请求
-        this.intercept('request', {
-            //发出请求时的回调函数
-            config(p) {
-                //对所有request请求中的OBJECT参数对象统一附加时间戳属性
-                p.timestamp = +new Date()
-                console.log('config request: ', p)
-                //必须返回OBJECT参数对象，否则无法发送请求到服务端
-                return p
-            },
-            
-            //请求成功后的回调函数
-            success(p) {
-                //可以在这里对收到的响应数据对象进行加工处理
-                console.log('request success: ', p)
-                //必须返回响应数据对象，否则后续无法对响应数据进行处理
-                return p
-            },
-            
-            //请求失败后的回调函数
-            fail(p) {
-                console.log('request fail: ', p)
-                //必须返回响应数据对象，否则后续无法对响应数据进行处理
-                return p
-            },
 
-            //请求完成时的回调函数(请求成功或失败都会被执行)
-            complete(p) {
-                console.log('request complete: ', p)
+    constructor () {
+        this.intercept('request', {
+            config (p) {
+                p.timestamp = +new Date();
+                return p;
+            },
+            success (p) {
+                console.log('request success');
+                return p;
+            },
+            fail (p) {
+                console.log('request error');
+                return p;
             }
-        })
+        });
     }
 }
 ```
+
 
 ### 数据绑定
 
-#### 原生小程序的数据绑定方式
-
-原生小程序通过`Page`提供的`setData`方法来绑定数据，如：
+#### 小程序数据绑定方式
+小程序通过`Page`提供的`setData`方法去绑定数据，如：
 
 ```Javascript
 this.setData({title: 'this is title'});
 ```
 
-由于原生小程序本身架构设计上的原因，页面渲染层和JS逻辑层是分开在不同的进程中运行的，而setData操作实际上是JS逻辑层与页面渲染层两个进程之间的通信，因此通信成本较高，效率较低。而如果在同一个运行周期内多次执行`setData`操作时，通信的次数如果也是多次的话，其对性能的影响可想而知。当然，这具体取决于微信API本身的设计，不过[官方文档](https://mp.weixin.qq.com/debug/wxadoc/dev/framework/performance/tips.html#setdata)上明确表示，基于性能考虑不提倡频繁进行`setData`操作。
+因为小程序架构本身原因，页面渲染层和JS逻辑层分开的，setData操作实际就是JS逻辑层与页面渲染层之间的通信，那么如果在同一次运行周期内多次执行`setData`操作时，那么通信的次数是一次还是多次呢？这个取决于API本身的设计。
 
-#### WePY的数据绑定方式
-
-在WePY中，使用脏数据检查来实现数据绑定。WePY的脏数据检查对setData进行了封装，只在函数运行周期结束时才执行脏数据检查，这样一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁地去修改数据实现绑定，而不用重复地setData。代码如下：
+#### WePY数据绑定方式
+WePY使用脏数据检查对setData进行封装，在函数运行周期结束时执行脏数据检查，一来可以不用关心页面多次setData是否会有性能上的问题，二来可以更加简洁去修改数据实现绑定，不用重复去写setData方法。代码如下：
 
 ```javascript
 this.title = 'this is title';
 ```
 
-但需注意，如果在异步函数(包括async关键词修饰的函数)中修改了数据的话，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
+但需注意，在函数运行周期之外的函数里去修改数据需要手动调用`$apply`方法。如：
 
 ```javascript
 setTimeout(() => {
@@ -1375,9 +1267,8 @@ setTimeout(() => {
 }, 3000);
 ```
 
-#### WePY脏数据检查的流程
-
-在执行脏数据检查时，会通过`this.$$phase`标识当前检查状态，并且会保证在脏数据检查发生并发时，只有一个脏数据检查流程在运行。以下是执行脏数据检查的流程图：
+#### WePY脏数据检查流程
+在执行脏数据检查是，会通过`this.$$phase`标识当前检查状态，并且会保证在并发的流程当中，只会有一个脏数据检查流程在运行，以下是执行脏数据检查的流程图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554709/a0d8b1e8-b198-11e6-9034-0997b33bdf95.png">
@@ -1385,45 +1276,37 @@ setTimeout(() => {
 
 ### 其它优化细节
 
-#### wx.request 接收参数修改
-
+#### 1. wx.request 接收参数修改
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 原生代码:
-
+// 官方
 wx.request({
-    url: 'xxxx',
+    url: 'xxx',
     success: function (data) {
         console.log(data);
     }
-})
+});
 
-// 基于WePY的代码:
-
-wepy.request('xxxx').then((data) => console.log(data))
+// WePY 使用方式
+wepy.request('xxxx').then((d) => console.log(d));
 ```
 
-#### 优化事件参数传递
-
+#### 2. 优化事件参数传递
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 原生的事件传参方式:
-
+// 官方
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
-
 Page({
   tapName: function(event) {
     console.log(event.currentTarget.dataset.id)// output: 1
     console.log(event.currentTarget.dataset.title)// output: wepy
     console.log(event.currentTarget.dataset.other)// output: otherparams
   }
-})
+});
 
-
-// WePY建议的传参方式（只是建议，因此原生的事件传参方式仍然可用）:
-
+// WePY 建议传参方式
 <view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
 
 methods: {
@@ -1432,9 +1315,7 @@ methods: {
     }
 }
 
-
-// WePY 1.1.8以后的版本，只允许传string：
-
+// WePY 1.1.8以后的版本，只允许传string。
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 methods: {
@@ -1444,18 +1325,15 @@ methods: {
 }
 ```
 
-#### 改变数据绑定方式
-
+#### 3. 改变数据绑定方式
 保留setData方法，但不建议使用setData执行绑定，修复传入`undefined`的bug，并且修改入参支持：
-
 `this.setData(target, value)`
 `this.setData(object)`
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 原生代码:
-
+// 官方
 <view> {{ message }} </view>
 
 onLoad: function () {
@@ -1463,8 +1341,7 @@ onLoad: function () {
 }
 
 
-// 基于WePY的代码:
-
+// WePY
 <view> {{ message }} </view>
 
 onLoad () {
@@ -1472,13 +1349,12 @@ onLoad () {
 }
 ```
 
-#### 组件代替模板和模块
+#### 4. 组件代替模板和模块
 
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 原生代码:
-
+// 官方
 <!-- item.wxml -->
 <template name="item">
   <text>{{text}}</text>
@@ -1492,8 +1368,9 @@ onLoad () {
 var item = require('item.js')
 
 
-// 基于WePY的代码:
 
+
+// WePY
 <!-- /components/item.wpy -->
  <text>{{text}}</text>
 
@@ -1510,6 +1387,3 @@ var item = require('item.js')
 </script>
 ```
 
-## 其他
-
-更多细节，还可参看[API文档](https://wepyjs.github.io/wepy/#/api)。
