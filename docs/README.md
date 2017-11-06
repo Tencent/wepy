@@ -70,19 +70,23 @@ wepy build --watch
 
 - **Sublime**
 
-1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
-2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
-3. 关闭`.wpy`文件重新打开即可高亮。
+&emsp;&emsp;1. 打开`Sublime->Preferences->Browse Packages..`进入用户包文件夹。
+
+&emsp;&emsp;2. 在此文件夹下打开cmd，运行`git clone git@github.com:vuejs/vue-syntax-highlight.git`，无GIT用户可以直接下载[zip包](https://github.com/vuejs/vue-syntax-highlight/archive/master.zip)解压至当前文件夹。
+
+&emsp;&emsp;3. 关闭`.wpy`文件重新打开即可高亮。
 
 - **WebStorm/PhpStorm**
 
-1. 打开`Preferences`，搜索`Plugins`，搜索`Vue.js`插件并安装。
-2. 打开`Preferences`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
+&emsp;&emsp;1. 打开`Settings`，搜索`Plugins`，搜索`Vue.js`插件并安装。
+
+&emsp;&emsp;2. 打开`Settings`，搜索`File Types`，找到`Vue.js Template`，在`Registered Patterns`添加`*.wpy`，即可高亮。
 
 - **Atom**
 
-1. 在Atom里先安装Vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
-2. 打开`Atom -> Config`菜单。在`core`键下添加：
+&emsp;&emsp;1. 在Atom里先安装Vue的语法高亮 - `language-vue`，如果装过了就忽略这一步。
+
+&emsp;&emsp;2. 打开`Atom -> Config`菜单。在`core`键下添加：
 
 ```javascript
 customFileTypes:
@@ -93,16 +97,21 @@ customFileTypes:
 
 - **VS Code**
 
-1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
-2. 打开任意 `.wpy` 文件。
-3. 点击右下角的选择语言模式，默认为`纯文本`。
-4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
-5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
+&emsp;&emsp;1. 在 Code 里先安装 Vue 的语法高亮插件 `Vetur`。
+
+&emsp;&emsp;2. 打开任意 `.wpy` 文件。
+
+&emsp;&emsp;3. 点击右下角的选择语言模式，默认为`纯文本`。
+
+&emsp;&emsp;4. 在弹出的窗口中选择 `.wpy 的配置文件关联...`。
+
+&emsp;&emsp;5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
 - **VIM**
 
-1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
-2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
+&emsp;&emsp;1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+
+&emsp;&emsp;2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
     ```vim
     au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
@@ -664,7 +673,7 @@ export default class MyComponent extends wepy.component {
 
     mixins = [];  // 声明页面所引用的Mixin实例
 
-    computed = {};  // 声明[计算属性](https://wepyjs.github.io/wepy/#/?id=computed-%e8%ae%a1%e7%ae%97%e5%b1%9e%e6%80%a7)
+    computed = {};  // 声明计算属性（详见后文介绍）
 
     watch = {};  // 声明数据watcher（详见后文介绍）
 
@@ -674,7 +683,7 @@ export default class MyComponent extends wepy.component {
 }
 ```
 
-对于methods属性，因为与Vue的使用习惯不一致，非常容易造成误解。注意，WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue的用法是不一致的。示例如下：
+注意，对于WePY中的methods属性，因为与Vue中的使用习惯不一致，非常容易造成误解，这里需要特别强调一下：WePY中的methods属性只能声明页面wxml标签的bind、catch事件，不能声明自定义方法，这与Vue中的用法是不一致的。示例如下：
 
 ```javascript
 // 错误示例
@@ -694,7 +703,7 @@ export default class MyComponent extends wepy.component {
         },
         
         //错误：普通自定义方法不能放在methods对象中
-        commonFunc () {
+        customFunction () {
             return 'sth.';
         }
     };
@@ -720,7 +729,7 @@ export default class MyComponent extends wepy.component {
     }
 
     //正确：普通自定义方法在methods对象外声明，与methods平级
-    commonFunc () {
+    customFunction () {
         return 'sth.';
     }
 
