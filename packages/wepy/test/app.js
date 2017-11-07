@@ -243,8 +243,66 @@ describe('app.js', () => {
 
     });
 
+    it('api (upload/download)File support (upload/download)Task Object', () => {
+
+        const onProgressUpdate = (res) => {
+            assert.strictEqual(res.progress, 50, '(upload/download)Task success');
+            assert.strictEqual(res.totalBytesSent, 512, '(upload/download)Task success');
+            assert.strictEqual(res.totalBytesExpectedToSend, 1024, '(upload/download)Task success');
+        }
+
+        wepy.uploadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            filePath: 'tempFilePath',
+            name: 'file',
+            onProgressUpdate,
+            abort: true
+        })
+
+        wepy.downloadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            header: 'tempFilePath',
+            onProgressUpdate,
+            abort: true
+        })
+
+    });
+
+    it('api use promisify (upload/download)File support (upload/download)Task Object', () => {
+
+        app.use('promisify');
+
+        let actualRes = {}
+        const onProgressUpdate = (res) => {
+            actualRes = res
+        }
+
+        wepy.uploadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            filePath: 'tempFilePath',
+            name: 'file',
+            onProgressUpdate,
+            abort: true
+        }).then(function (res) {
+            assert.strictEqual(res.success, 'success', 'upload success');
+        });
+
+        wepy.downloadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            filePath: 'tempFilePath',
+            name: 'file',
+            onProgressUpdate,
+            abort: true
+        }).then(function (res) {
+            assert.strictEqual(res.success, 'success', 'download success');
+        });
+
+        assert.strictEqual(actualRes.progress, 50, '(upload/download)Task success');
+        assert.strictEqual(actualRes.totalBytesSent, 512, '(upload/download)Task success');
+        assert.strictEqual(actualRes.totalBytesExpectedToSend, 1024, '(upload/download)Task success');
 
 
+    });
 
 
 });

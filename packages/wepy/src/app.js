@@ -157,8 +157,13 @@ export default class {
                                     });
                                     if (self.$addons.requestfix && key === 'request') {
                                         RequestMQ.request(obj);
-                                    } else
-                                        wx[key](obj);
+                                    } else {
+                                      const task =  wx[key](obj);
+                                        if (key === 'uploadFile' || key === 'downloadFile') {
+                                            task.onProgressUpdate && obj.onProgressUpdate && task.onProgressUpdate(obj.onProgressUpdate);
+                                            task.abort && obj.abort && task.abort();
+                                        }
+                                    }
                                 });
                             } else {
                                 let bak = {};
@@ -173,8 +178,13 @@ export default class {
                                 });
                                 if (self.$addons.requestfix && key === 'request') {
                                     RequestMQ.request(obj);
-                                } else
-                                    wx[key](obj);
+                                } else{
+                                    const task =  wx[key](obj);
+                                    if (key === 'uploadFile' || key === 'downloadFile') {
+                                        task.onProgressUpdate && obj.onProgressUpdate && task.onProgressUpdate(obj.onProgressUpdate);
+                                        task.abort && obj.abort && task.abort();
+                                    }
+                                }
                             }
                         };
                     }
