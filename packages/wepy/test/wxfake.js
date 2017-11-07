@@ -48,7 +48,43 @@ module.exports = {
             },
             navigateBack: function () {
                 //console.log('navigateBack');
-            }
+            },
+            uploadFile: function (p) {
+                p.success({
+                    success: 'success'
+                });
+                p.complete({
+                    complete: 'complete'
+                });
+
+                const uploadTask = {
+                    onProgressUpdate: (callback) => callback({
+                        progress: 50,
+                        totalBytesSent: 512,
+                        totalBytesExpectedToSend: 1024
+                    }),
+                    abort: () => console.log('upload abort')
+                }
+                return uploadTask
+            },
+            downloadFile: function (p) {
+                p.success({
+                    success: 'success'
+                });
+                p.complete({
+                    complete: 'complete'
+                });
+
+                const downloadTask = {
+                    onProgressUpdate: (callback) => callback({
+                        progress: 50,
+                        totalBytesSent: 512,
+                        totalBytesExpectedToSend: 1024
+                    }),
+                    abort: () => console.log('download abort')
+                }
+                return downloadTask
+            },
         };
 
         global.getApp = function () { return {app:'app'}; };
