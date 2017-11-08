@@ -69,6 +69,9 @@ export default {
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
                 let o = resolve.walk(lib);
+                if (!o) {
+                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
+                }
                 source = path.join(o.modulePath, lib);
                 target = path.join(npmPath, lib);
                 ext = '';
