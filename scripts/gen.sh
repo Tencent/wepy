@@ -83,14 +83,14 @@ git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
 cd wepy-wechat-demo
 npm install
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 npm run build
 
 cd ..
 git clone https://github.com/wepyjs/wepy-weui-demo.git
 cd wepy-weui-demo
 npm install
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 npm run build
 
 # Cleanup
