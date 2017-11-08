@@ -84,27 +84,46 @@ export default class {
     $initAPI (wepy, noPromiseAPI) {
         const self = this;
         let noPromiseMethods = {
+            // 媒体
             stopRecord: true,
+            getRecorderManager: true,
             pauseVoice: true,
             stopVoice: true,
             pauseBackgroundAudio: true,
             stopBackgroundAudio: true,
-            showNavigationBarLoading: true,
-            hideNavigationBarLoading: true,
-            createAnimation: true,
-            createContext: true,
-            createCanvasContext: true,
-            createSelectorQuery: true,
+            getBackgroundAudioManager: true,
             createAudioContext: true,
             createInnerAudioContext: true,
             createVideoContext: true,
             createCameraContext: true,
+
+            // 位置
             createMapContext: true,
+
+            // 设备
+            canIUse: true,
+            startAccelerometer: true,
+            stopAccelerometer: true,
+            startCompass: true,
+            stopCompass: true,
+
+            // 界面
+            hideToast: true,
+            hideLoading: true,
+            showNavigationBarLoading: true,
+            hideNavigationBarLoading: true,
+            navigateBack: true,
+            createAnimation: true,
             pageScrollTo: true,
-            onBLEConnectionStateChange: true,
-            onBLECharacteristicValueChange: true,
-            hideKeyboard: true,
-            stopPullDownRefresh: true
+            createSelectorQuery: true,
+            createCanvasContext: true,
+            createContext: true,
+            drawCanvas: true,
+            stopPullDownRefresh: true,
+
+            // 拓展接口
+            arrayBufferToBase64: true,
+            base64ToArrayBuffer: true
         };
         if (noPromiseAPI) {
             if (Array.isArray(noPromiseAPI)) {
