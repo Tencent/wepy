@@ -14,7 +14,6 @@ let appPath, npmPath, src, dist;
 
 export default {
     resolveDeps (code, type, opath) {
-
         let params = cache.getParams();
         let config = cache.getConfig();
         let wpyExt = params.wpyExt;
@@ -22,7 +21,6 @@ export default {
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-
             let resolved = lib;
 
 
@@ -32,6 +30,7 @@ export default {
                 lib = 'wepy-ant';
             }
             lib = resolve.resolveAlias(lib);
+
             if (path.isAbsolute(lib)) {
                 source = lib;
                 target = util.getDistPath(source);
@@ -46,9 +45,9 @@ export default {
                     needCopy = false;
                 }
             } else if (lib.indexOf('/') === -1 || // require('asset');
-                lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
+                lib.lastIndexOf('/') === lib.length - 1 || // require('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
-            ) {  
+            ) {
 
                 let mainFile = resolve.getMainFile(lib);
 
@@ -98,6 +97,14 @@ export default {
             if (/\.wpy$/.test(resolved)) {
                 target = target.replace(/\.wpy$/, '') + '.js';
                 resolved = resolved.replace(/\.wpy$/, '') + '.js';
+                lib = resolved;
+            }
+
+            // 自定义后缀名
+            var suffixReg = new RegExp(`\\${wpyExt}$`)
+            if (suffixReg.test(resolved)) {
+                target = target.replace(suffixReg, '') + '.js';
+                resolved = resolved.replace(suffixReg, '') + '.js';
                 lib = resolved;
             }
 
