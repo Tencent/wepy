@@ -22,7 +22,9 @@ export default {
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-
+            if (lib === './_wepylogs.js') {
+                return match;
+            }
             let resolved = lib;
 
 
@@ -156,7 +158,6 @@ export default {
 
     compile (lang, code, type, opath) {
         let config = util.getConfig();
-
         src = cache.getSrc();
         dist = cache.getDist();
         npmPath = path.join(currentPath, dist, 'npm' + path.sep);
@@ -174,7 +175,6 @@ export default {
             return;
         }
 
-
         compiler(code, config.compilers[lang] || {}).then(compileResult => {
             let sourceMap;
             if (typeof(compileResult) === 'string') {
@@ -189,14 +189,17 @@ export default {
                         if (defaultExport === 'undefined') {
                             return '';
                         }
-
                         if (type === 'page') {
                             let pagePath = path.join(path.relative(appPath.dir, opath.dir), opath.name).replace(/\\/ig, '/');
                             return `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
                         } else {
                             appPath = opath;
                             let appConfig = JSON.stringify(config.appConfig || {});
-                            return `\nApp(require('wepy').default.$createApp(${defaultExport}, ${appConfig}));\n`;
+                            let appCode = `\nApp(require('wepy').default.$createApp(${defaultExport}, ${appConfig}));\n`;
+                            if (config.cliLogs) {
+                                appCode += 'require(\'./_wepylogs.js\')\n';
+                            }
+                            return appCode;
                         }
                     });
                 }
