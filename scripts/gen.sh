@@ -56,24 +56,24 @@ wepy new reduxdemo --redux
 wepy new nolintdemo --no-lint
 
 cd demo
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 
-wepy build --output web
+node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web
 
-wepy build --output web --platform qq
+node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web --platform qq
 
-wepy build --output web --platform wechat
+node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web --platform wechat
 
-wepy build --output ant
+node "$root_path"/packages/wepy-cli/bin/wepy.js build --output ant
 
 cd ../emptydemo
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 
 cd ../nolintdemo
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 
 cd ../reduxdemo
-wepy build
+node "$root_path"/packages/wepy-cli/bin/wepy.js build
 
 
 cd ..
