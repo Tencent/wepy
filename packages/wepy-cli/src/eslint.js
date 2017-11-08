@@ -16,6 +16,11 @@ export default function (filepath) {
             useEslintrc: true,
             extensions: ['.js', config.wpyExt || '.wpy']
         }, config.eslint === true ? {} : config.eslint);
-        compiler(esConfig, filepath);
+        esConfig.output = false;
+        let rst = compiler(esConfig, filepath);
+        if (rst) {
+            util.writeLog({stack: rst}, 'error');
+            console.log(rst);
+        }
     }
 };

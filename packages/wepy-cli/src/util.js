@@ -552,7 +552,7 @@ const utils = {
     removeLog () {
         let dist = dist || cache.getDist();
         let file = path.join(this.currentDir, dist, '_wepylogs.js');
-        fs.unlink(file);
+        this.unlink(file);
     },
     clearLog () {
         let dist = dist || cache.getDist();
