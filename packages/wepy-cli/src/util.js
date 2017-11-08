@@ -516,12 +516,14 @@ const utils = {
         });
     },
     error (msg) {
+        this.writeLog(msg, 'error');
         this.log(msg, 'error', false);
         if (!this.isWatch) {
             process.exit(0);
         }
     },
     warning (msg) {
+        this.writeLog(msg, 'warning');
         this.log(msg, 'warning', false);
     },
     log (msg, type, showTime = true) {
@@ -545,6 +547,33 @@ const utils = {
             }
         } else {
             console.log(dateTime + msg);
+        }
+    },
+    removeLog () {
+        let dist = dist || cache.getDist();
+        let file = path.join(this.currentDir, dist, '_wepylogs.js');
+        fs.unlink(file);
+    },
+    clearLog () {
+        let dist = dist || cache.getDist();
+        let file = path.join(this.currentDir, dist, '_wepylogs.js');
+        fs.writeFileSync(file, `console.log('WePY开启错误监控');\r\n`);
+    },
+    writeLog (msg, type) {
+        if (!this.cliLogs)
+            return;
+        let dist = dist || cache.getDist();
+        let file = path.join(this.currentDir, dist, '_wepylogs.js');
+        if (msg.stack) {
+            msg = msg.stack;
+            msg = msg.replace(/\\/g, '\\\\');
+            msg = msg.replace(/\u001b/g, '');
+            msg = msg.replace(/\[\d+m/g, '');
+        }
+        try {
+            fs.appendFileSync(file, `console.${type}(\`CLI报错：${msg}\`);\r\n`);
+        } catch (e) {
+            console.log(e);
         }
     },
     output (type, file, flag) {

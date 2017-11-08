@@ -300,6 +300,12 @@ export default {
             let ig = ignore().add(igfiles);
             files = ig.filter(files);
         }
+        if (wepyrc.cliLogs) {
+            util.cliLogs = true;
+            util.clearLog();
+        } else {
+            util.removeLog();
+        }
 
         if (config.output === 'web') {
             files.forEach((f, i) => {
@@ -321,7 +327,6 @@ export default {
                 }
             });
         }
-
         if (config.watch) {
             util.isWatch = true;
             this.watch(config);
