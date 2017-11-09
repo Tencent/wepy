@@ -938,11 +938,19 @@ project
     ```
 
 
-#### Props 传值
+#### props 传值
+
+props传值在WePY中属于父组件与子组件之间(包括页面与其组件之间)传值的一种机制，包括静态传值(只可以单向传值)与动态传值(既可以单向传值，也可以双向传值)。
+
+在props对象中声明需要传递的值，静态传值与动态传值的声明略有不同，具体可参看下面的示例代码。
 
 **静态传值**
 
-使用静态传值时，子组件会接收到字符串的值。
+静态传值为父组件向子组件单向静态传值，只能在子组件初始化的时候一次性传值，且只能传递String字符串类型，不能传递Number、Boolean、Object等其他类型的数据。
+
+因此，使用静态传值时，子组件只能接收到字符串。
+
+在子组件`template`模板部分的组件标签中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
 
 ```Javascript
 <child title="mytitle"></child>
@@ -957,15 +965,28 @@ onLoad () {
 }
 ```
 
-*注意*：静态传值只能传递String类型，不存在Number，Boolean等类型。
+*注意*：再次提醒，静态传值只能传递String类型，不能传递Number、Boolean、Object等其他类型。
 
 **动态传值**
 
-使用`:prop`（等价于`v-bind:prop`），代表动态传值，子组件会接收父组件的数据。
+与静态传值只能通过父组件向子组件单向传值不同，动态传值稍微复杂些，既可以单向动态传值，也可以双向动态传值，而单向动态传值又包括了父组件向子组件单向动态传值和子组件向父组件单向动态传值。下面先介绍单向动态传值。
+
+&emsp;&emsp;1. 父向子单向动态传值：父组件向子组件单向动态传值(即父组件可随时改变子组件中的值)。父组件`data`对象中某个属性值的修改会改变子组件`props`对象中对应属性的值。注意，父组件与子组件中的这两个属性其名称可以不一致，两者就通过在父组件`template`模板部分中所插入的子组件标签中的属性(该属性即子组件`props`对象中的同名属性)进行绑定。要实现父向子单向动态传值，必须在子组件标签需要传值的属性后加上`.sync`后缀。
+
+&emsp;&emsp;2. 子向父单向动态传值：子组件向父组件单向动态传值(即子组件可随时改变父组件中的值)。子组件`props`对象中某个属性值的修改会改变父组件`data`对象中对应属性的值。注意，子组件与父组件中的这两个属性其名称可以不一致，两者通过在父组件`template`模板部分中所插入的子组件标签中的属性(该属性即子组件`props`对象中的同名属性)进行绑定。要实现子向父单向动态传值，还必须将子组件`props`中的该需要动态传值的同名对象属性中的`twoWay`属性的值设为`true`。
+
+那如果子组件标签中的属性后既加了`.sync`后缀，同时子组件`props`中对应的同名对象属性的`twoWay`属性的值又为`false`，就实现了双向动态传值。
+
+*注意*：下文示例中的`twoWay`为`true`时，表示子组件向父组件单向动态传值，而`twoWay`为`false`(默认值，可不写)时，则表示子组件不向父组件传值。这是与Vue不一致的地方，而这里之所以仍然使用`twoWay`，只是为了尽可能保持与Vue在标识符命名上的一致性。
+
+在父组件`template`模板部分所插入的子组件标签中，使用`:prop`属性（等价于Vue中的`v-bind:prop`属性）来进行动态传值。
 
 ```Javascript
 // parent.wpy
-<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle="parentTitle"></child>
+
+// 下面child子组件标签的twoWayTitle属性，在子组件props的twoWayTitle对象中的twoWay属性为true的情况下，没有加.sync后缀，
+// 则只能子组件向父组件单向传值，而加了.sync后缀，则还可以实现父组件向子组件传值，从而实现父子组件相互间的双向动态传值
+<child :title="parentTitle" :syncTitle.sync="parentTitle" :twoWayTitle.sync="parentTitle"></child>
 
 data = {
     parentTitle: 'p-title'
@@ -973,13 +994,22 @@ data = {
 
 
 // child.wpy
+
 props = {
-    title: String,
-    syncTitle: {
+    // 静态传值
+    title: String,
+    
+    // 父向子单向动态传值
+    syncTitle: {
         type: String,
         default: 'null'
     },
-    twoWayTitle: {
+    
+    // 子向父动态传值（注意：当twoWay的值为false时，则子不会向父传值；而父向子传不传值，
+    // 取决于父组件template模板部分所插入的子组件标签的twoWayTitle属性有没有加.sync后缀，
+    // 加了则父会向子单向传值，没加则父不会向子传值。因此，如果twoWay为true，且子组件标签的
+    // twoWayTitle属性又加了.sync后缀，则可以实现父子组件相互间的双向动态传值）
+    twoWayTitle: {
         type: Number,
         default: 50,
         twoWay: true
@@ -994,31 +1024,34 @@ onLoad () {
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
     this.twoWayTitle = 60;
-    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props修改会改变父组件对应的值
+    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     console.log(this.title); // 'p-title';
-    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props，当父组件改变时，会影响子组件的值。
+    console.log(this.syncTitle); // 'p-title-changed' --- 有sync属性的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
 
 #### 组件通信与交互
-`wepy.component`基类提供三个方法`$broadcast`，`$emit`，`$invoke`，因此任一页面或任一组件都可以调用上述三种方法实现通信与交互，如：
+
+`wepy.component`基类提供`$broadcast`、`$emit`、`$invoke`三个方法用于组件之间的通信和交互，因此任一页面或任一组件都可以调用上述三种方法实现相互之间的通信与交互。如：
 
 ```javascript
 this.$emit('some-event', 1, 2, 3, 4);
 ```
 
-组件的事件监听需要写在`events`属性下，如：
+用于监听组件之间的通信与交互事件的事件处理函数需要写在组件和页面的`events`对象中，如：
 
 ```javascript
-import wepy from 'wepy';
-export default class Com extends wepy.component {
+import wepy from 'wepy'
 
+export default class Com extends wepy.component {
     components = {};
 
     data = {};
+    
     methods = {};
 
+    // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
     events = {
         'some-event': (p1, p2, p3, $event) => {
                console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
@@ -1030,7 +1063,7 @@ export default class Com extends wepy.component {
 
 **$broadcast**
 
-`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果`Page_Index`发起一个`$broadcast`事件，那么接收到事件的先后顺序为：A, B, C, D, E, F, G, H。如下图：
+`$broadcast`事件是由父组件发起，所有子组件都会收到此广播事件，除非事件被手动取消。事件广播的顺序为广度优先搜索顺序，如上图，如果页面`Page_Index`发起一个`$broadcast`事件，那么按先后顺序依次接收到该事件的组件为：ComA、ComB、ComC、ComD、ComE、ComF、ComG、ComH。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554688/800089e6-b198-11e6-84c5-352d2d0e2f7e.png">
@@ -1038,7 +1071,7 @@ export default class Com extends wepy.component {
 
 **$emit**
 
-`$emit`与`$broadcast`正好相反，事件发起组件的父组件会依次接收到`$emit`事件，如上图，如果E发起一个`$emit`事件，那么接收到事件的先后顺序为：A, Page_Index。如下图：
+`$emit`与`$broadcast`正好相反，事件发起组件的所有祖先组件(包括父组件、父组件的父组件...直到组件所在的页面)会依次接收到`$emit`事件。如果组件ComE发起一个`$emit`事件，那么接收到事件的先后顺序为：组件ComA、页面Page_Index。如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554704/9997932c-b198-11e6-9840-3edae2194f47.png">
@@ -1046,49 +1079,53 @@ export default class Com extends wepy.component {
 
 **$invoke**
 
-`$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
-如果想在`Page_Index`中调用组件A的某个方法：
+`$invoke`是一个页面或组件对另一个页面或组件中的方法的直接调用，通过传入的页面或组件路径找到相应的页面或组件，然后再调用其方法。
+
+比如，想在页面`Page_Index`中调用组件ComA的某个方法：
 
 ```Javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
 
-如果想在组件A中调用组件G的某个方法：
+如果想在组件ComA中调用组件ComG的某个方法：
 
 ```Javascript
 this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
-#### 组件自定义事件
+#### 组件自定义事件处理函数
 
 *1.4.8新增*
 
-可以使用`@customEvent.user`绑定用户自定义组件事件。
+可以在组件标签中使用类似`@customEvent.user`这样的属性绑定用户自定义的组件事件处理函数。
 
 其中，`@`表示事件修饰符，`customEvent` 表示事件名称，`.user`表示事件后缀。
 
-目前有三种后缀：
+目前总共有三种事件后缀：
 
-- `.default`: 绑定小程序冒泡事件事件，如`bindtap`。
+- `.default`: 绑定小程序冒泡型事件的事件处理函数，如`bindtap`，`.default`后缀可省略不写；
 
-- `.stop`: 绑定小程序非冒泡事件，如`catchtap`。
+- `.stop`: 绑定小程序捕获型事件的事件处理函数，如`catchtap`；
 
-- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
+- `.user`: 绑定用户自定义组件事件的事件处理函数，通过`$emit`触发。
 
 示例如下：
 
 ```Html
 // index.wpy
+
 <template>
     <child @childFn.user="parentFn"></child>
 </template>
+
 <script>
-    import wepy from 'wepy';
-    import Child from './coms/child';
+    import wepy from 'wepy'
+    import Child from './coms/child'
+   
     export default class Index extends wepy.page {
         components = {
             child: Child
-        };
+        }
 
         methods = {
             parentFn (num, evt) {
@@ -1100,16 +1137,19 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 
 // child.wpy
+
 <template>
     <view @tap="tap">Click me</view>
 </template>
+
 <script>
-    import wepy from 'wepy';
+    import wepy from 'wepy'
+   
     export default class Child extends wepy.component {
         methods = {
             tap () {
-                console.log('child is clicked');
-                this.$emit('childFn', 100);
+                console.log('child is clicked')
+                this.$emit('childFn', 100)
             }
         }
     }
@@ -1117,29 +1157,43 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 ```
 
 
-#### 组件内容分发slot
+#### slot 组件内容分发插槽
 
-可以使用`<slot>`元素作为组件内容插槽，在使用组件时，可以随意进行组件内容分发，参看以下示例：
+`slot`插槽，顾名思义，正如电脑中的板卡插槽作为扩展板卡的空间占位部件，便于通过对扩展板卡的插拔，更为灵活、方便地扩展电脑的功能一样，WePY中的`slot`插槽作为内容分发标签的空间占位标签，便于在父组件中通过对相当于扩展板卡的内容分发标签的“插拔”，更为灵活、方便地对子组件进行内容分发(比如父组件可对相同子组件的不同实例分发不同的内容)。
+
+具体使用方法是，首先在子组件`template`模板部分中声明`slot`标签作为内容插槽，同时必须在其`name`属性中指定插槽名称，还可设置默认的标签内容；然后在引入了该带有插槽的子组件的父组件`template`模板部分中声明用于“插拔”的内容分发标签。
+
+注意，这些父组件中的内容分发标签必须具有`slot`属性，并且其值为子组件中对应的插槽名称，这样父组件内容分发标签中的内容会覆盖掉子组件对应插槽中的默认内容(如果有默认内容的话，没有默认内容则相当于插入了父组件中的内容，或者说父组件中的内容覆盖掉了子组件中原来的空字符串)，这就是所谓的内容分发，实质上就是父组件向子组件传递数据(即传值)的一种形式。
+
+另外，要特别注意的是，父组件中一旦声明了对应于子组件插槽的内容分发标签，即便没有内容，子组件插槽中的默认内容也不会显示出来(相当于被空字符串覆盖了)，只有删除了父组件中对应的内容分发标签，才能显示出来。
+
+`slot`插槽与`props`传值都可以实现父组件向子组件传递数据，两者的区别在于：
+
+1. `props`传值既可动态传递数据也可静态传递数据，`slot`插槽只能静态传递数据；
+
+2. `props`传值通过对象的属性来定义需要传递的数据，当有比较长的大段内容需要传递时就不太方便了，尤其是涉及到html片段时，通过字符串来写是非常不方便的(比如没有自动完成、没有语法高亮等)，而通过`slot`插槽在传递html片段时直接就是在父组件的`template`标签中写html代码，这就简单方便多了。
+
+*注意*：WePY目前不支持没有指定名称的不具名插槽(即没有`name`属性或`name`属性的值为空字符串的匿名`slot`插槽)，这是与Vue不一致的地方。
+
+具体请参看以下示例：
 
 在`Panel`组件中有以下模板：
 
 ```html
 <view class="panel">
     <slot name="title">默认标题</slot>
-    <slot>
-        默认内容
-    </slot>
+    <slot name="content">默认内容</slot>
 </view>
 ```
 
-在父组件使用`Pannel`组件时，可以这样使用：
+在父组件中使用`Pannel`子组件时，可以这样使用：
 
 ```html
 <panel>
-    <view>
-        <text>这是我放到的内容</text>
+    <view slot="title">新的标题</view>
+    <view slot="content">
+        <text>新的内容</text>
     </view>
-    <view slot="title">Panel的Title</view>
 </panel>
 ```
 
