@@ -243,47 +243,65 @@ describe('app.js', () => {
 
     });
 
-    it('api (upload/download)File support (upload/download)Task Object', () => {
+    it('api support [upload/download]Task Object', () => {
 
-        const onProgressUpdate = (res) => {
-            assert.strictEqual(res.progress, 50, '(upload/download)Task success');
-            assert.strictEqual(res.totalBytesSent, 512, '(upload/download)Task success');
-            assert.strictEqual(res.totalBytesExpectedToSend, 1024, '(upload/download)Task success');
-        }
+        app.$addons.promisify = undefined;
 
-        wepy.uploadFile({
+        const uploadTask = wepy.uploadFile({
             url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
             filePath: 'tempFilePath',
             name: 'file',
-            onProgressUpdate,
-            abort: true
         })
+        // 返回的 task obj 应该有这两个方法
+        assert.strictEqual(typeof uploadTask.onProgressUpdate, 'function')
+        assert.strictEqual(typeof uploadTask.abort, 'function')
 
-        wepy.downloadFile({
-            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
-            header: 'tempFilePath',
-            onProgressUpdate,
-            abort: true
+        uploadTask.onProgressUpdate((res) => {
+            assert.strictEqual(res.progress, 50, 'progress should be 50');
+            assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512');
+            assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
+            assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
         })
+        // should console 'upload abort'
+        uploadTask.abort()
+
+
+        const downloadTask = wepy.downloadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            filePath: 'tempFilePath',
+            name: 'file',
+        })
+        assert.strictEqual(typeof downloadTask.onProgressUpdate, 'function')
+        assert.strictEqual(typeof downloadTask.abort, 'function')
+
+        downloadTask.onProgressUpdate((res) => {
+            assert.strictEqual(res.progress, 50, 'progress should be 50');
+            assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512');
+            assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
+            assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
+        })
+        // should console 'upload abort'
+        downloadTask.abort()
 
     });
 
-    it('api use promisify (upload/download)File support (upload/download)Task Object', () => {
+    it('use promisify api support [upload/download]Task Object with fluent methods', () => {
 
         app.use('promisify');
-
-        let actualRes = {}
-        const onProgressUpdate = (res) => {
-            actualRes = res
-        }
 
         wepy.uploadFile({
             url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
             filePath: 'tempFilePath',
             name: 'file',
-            onProgressUpdate,
-            abort: true
-        }).then(function (res) {
+        })
+        .progress(res => {
+            assert.strictEqual(res.progress, 50, 'progress should be 50');
+            assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512');
+            assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
+            assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
+        })
+        .abort(() => console.info('uploadFile abort custom'))
+        .then((res) => {
             assert.strictEqual(res.success, 'success', 'upload success');
         });
 
@@ -291,18 +309,16 @@ describe('app.js', () => {
             url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
             filePath: 'tempFilePath',
             name: 'file',
-            onProgressUpdate,
-            abort: true
-        }).then(function (res) {
+        })
+        .progress(res => {
+            assert.strictEqual(res.progress, 50, 'progress should be 50');
+            assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512');
+            assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
+            assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
+        })
+        .abort(() => console.info('downloadFile abort custom'))
+        .then((res) => {
             assert.strictEqual(res.success, 'success', 'download success');
         });
-
-        assert.strictEqual(actualRes.progress, 50, '(upload/download)Task success');
-        assert.strictEqual(actualRes.totalBytesSent, 512, '(upload/download)Task success');
-        assert.strictEqual(actualRes.totalBytesExpectedToSend, 1024, '(upload/download)Task success');
-
-
     });
-
-
 });
