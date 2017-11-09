@@ -769,7 +769,7 @@ project
 // index.wpy
 
 <template>
-    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
+    <!-- 以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件 -->
     <child></child>
 </template>
 
@@ -817,37 +817,48 @@ project
 </script>
 ```
 
+*注意*：WePY中，在父组件`template`模板部分插入驼峰式命名的子组件标签时，不能将驼峰式命名转换成短横杆式命名(比如将`childCom`转换成`child-com`)，这与Vue中的习惯是不一致。
 
-#### 循环列表组件引用
+
+#### 组件的循环渲染
 
 *1.4.6新增*
 
-当想在`wx:for`中使用组件时，需要使用辅助标签`<repeat>`，如下：
+当需要循环渲染WePY组件时(类似于通过`wx:for`循环渲染原生的wxml标签)，必须使用WePY定义的辅助标签`<repeat>`，代码如下：
 
 ```Html
 /**
 project
 └── src
-    ├── coms
+    ├── components
     |   └── child.wpy
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
     └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
 **/
+
 // index.wpy
+
 <template>
-    <repeat for="{{list}}" key="index" index="index" item="item">
-        <child :item="item"></child>
+    <!-- 注意，使用for属性，而不是使用wx:for属性 -->
+    <repeat for="{{list}}" key="index" index="index" item="item">
+        <!-- 插入<script>脚本部分所声明的child组件，同时传入item -->
+        <child :item="item"></child>
     </repeat>
 </template>
+
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    // 引入child组件文件
+    import Child from './coms/child';
+   
     export default class Index extends wepy.component {
         components = {
-            child: Child
-        };
+            // 声明页面中要使用到的Child组件的ID为child
+            child: Child
+        }
+   
         data = {
             list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
         }
@@ -855,56 +866,69 @@ project
 </script>
 ```
 
-
-页面和组件都可以引入子组件，引入若干组件后，如下图：
+页面可以引入组件，而组件还可以引入子组件。一个页面引入若干组件后，组件结构如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
 </p>
 
-Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+如上图所示，Page_Index页面引入了ComA、ComB、ComC三个组件，同时ComA组件和ComB组件又有自己的子组件ComD、ComE、ComF、ComG、ComH。
 
 #### computed 计算属性
 
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-计算属性可以直接当作绑定数据，在每次脏检查周期中。在每次脏检查流程中，只要有脏数据，那么`computed` 属性就会重新计算。
+
+计算属性在`computed`对象中声明，其本质上是一个应该有返回值的函数(没有返回值也不会报错，但这样就失去了其意义)，可以直接被当作绑定数据来使用，亦即可被看作是`data`对象中的属性值，因此类似于`data`对象中的属性，脚本中可通过`this.计算属性名`来引用，模板中也可通过`{{ 计算属性名 }}`来插值。
+
+只要计算属性所在的组件或页面中的数据发生了改变(也就是有脏数据)，从而触发了脏数据检查流程(详见后文有关`脏数据检查`的介绍)的运行，计算属性就会被重新计算(即被自动调用执行)。
+
+计算属性适用于其所在组件或页面中每当发生脏数据检查时需要进行某些额外处理的情形。
+
+需要注意的是，只要是计算属性所在的组件或页面中的数据发生了改变，从而引发了脏数据检查流程的运行，就会被重新计算，而跟其所引用的数据(比如`data`对象中的属性)本身是否发生改变无直接关系；换言之，计算属性中所引用的数据发生了改变，自然会导致其被重新计算，然而即便计算属性中所引用的数据未发生改变，而是其所在的组件或页面中的其他数据发生了改变，也会导致计算属性被重新计算。
 
 * **示例**：
 
     ```javascript
     data = {
         a: 1
-    };
+    }
 
+    // 计算属性aPlus，在脚本中可通过this.aPlus来引用，在模板中可通过{{ aPlus }}来插值
     computed = {
         aPlus () {
-            return this.a + 1;
+            return this.a + 1
         }
     }
     ```
 
-#### watcher
+#### watcher 监听器
 
 * **类型**: `{ [key: string]: Function }`
 
 * **详细**：
-通过`watcher`我们能监听到任何数值属性的数值更新。
+
+通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就会被自动调用执行一次。
+
+监听器适用于当数值属性改变时需要进行某些额外处理的情形。
 
 * **示例**：
 
     ```javascript
     data = {
         num: 1
-    };
+    }
 
+    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
+    // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
     watch = {
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
+    // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
             this.num++;
@@ -912,6 +936,7 @@ Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组�
         }, 1000)
     }
     ```
+
 
 #### Props 传值
 

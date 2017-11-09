@@ -36,11 +36,10 @@ export default {
             if (ext) {
                 f = util.isFile(tmp);
             } else {
-                tmp = filename + '.js';
-                f = util.isFile(tmp);
+                f = util.isFile(filename + '.js');
             }
             if (!f && util.isDir(tmp)) {
-                tmp = filename + path.sep + 'index.js'
+                tmp = path.join(filename, 'index.js');
                 f = util.isFile(tmp);
             }
             if (f) {

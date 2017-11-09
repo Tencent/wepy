@@ -22,7 +22,9 @@ export default {
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-
+            if (lib === './_wepylogs.js') {
+                return match;
+            }
             let resolved = lib;
 
 
@@ -69,6 +71,9 @@ export default {
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
                 let o = resolve.walk(lib);
+                if (!o) {
+                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
+                }
                 source = path.join(o.modulePath, lib);
                 target = path.join(npmPath, lib);
                 ext = '';
@@ -153,7 +158,6 @@ export default {
 
     compile (lang, code, type, opath) {
         let config = util.getConfig();
-
         src = cache.getSrc();
         dist = cache.getDist();
         npmPath = path.join(currentPath, dist, 'npm' + path.sep);
@@ -171,7 +175,6 @@ export default {
             return;
         }
 
-
         compiler(code, config.compilers[lang] || {}).then(compileResult => {
             let sourceMap;
             if (typeof(compileResult) === 'string') {
@@ -186,14 +189,17 @@ export default {
                         if (defaultExport === 'undefined') {
                             return '';
                         }
-
                         if (type === 'page') {
                             let pagePath = path.join(path.relative(appPath.dir, opath.dir), opath.name).replace(/\\/ig, '/');
                             return `\nPage(require('wepy').default.$createPage(${defaultExport} , '${pagePath}'));\n`;
                         } else {
                             appPath = opath;
                             let appConfig = JSON.stringify(config.appConfig || {});
-                            return `\nApp(require('wepy').default.$createApp(${defaultExport}, ${appConfig}));\n`;
+                            let appCode = `\nApp(require('wepy').default.$createApp(${defaultExport}, ${appConfig}));\n`;
+                            if (config.cliLogs) {
+                                appCode += 'require(\'./_wepylogs.js\')\n';
+                            }
+                            return appCode;
                         }
                     });
                 }

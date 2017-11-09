@@ -3,6 +3,8 @@ var prod = process.env.NODE_ENV === 'production'
 
 module.exports = {
   wpyExt: '.wpy',
+  eslint: true,
+  cliLogs: true,
   build: {
     web: {
       htmlTemplate: path.join('src', 'index.template.html'),
@@ -17,7 +19,6 @@ module.exports = {
     },
     modules: ['node_modules']
   },
-  eslint: true,
   compilers: {
     less: {
       compress: true
@@ -46,6 +47,8 @@ module.exports = {
 }
 
 if (prod) {
+
+  module.exports.cliLogs = false;
 
   delete module.exports.compilers.babel.sourcesMap;
   // 压缩sass
