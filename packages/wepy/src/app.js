@@ -166,8 +166,7 @@ export default class {
                                         task.onProgressUpdate(cb);
                                         return p;
                                     };
-                                    p.abort = (cb) => {
-                                        cb && cb();
+                                    p.abort = () => {
                                         task.abort();
                                         return p;
                                     }
