@@ -141,7 +141,8 @@ export default class {
                                 return wx[key](obj);
                             }
                             if (self.$addons.promisify) {
-                                return new Promise((resolve, reject) => {
+                                let task;
+                                const p = new Promise((resolve, reject) => {
                                     let bak = {};
                                     ['fail', 'success', 'complete'].forEach((k) => {
                                         bak[k] = obj[k];
@@ -158,13 +159,21 @@ export default class {
                                     if (self.$addons.requestfix && key === 'request') {
                                         RequestMQ.request(obj);
                                     } else {
-                                      const task =  wx[key](obj);
-                                        if (key === 'uploadFile' || key === 'downloadFile') {
-                                            task.onProgressUpdate && obj.onProgressUpdate && task.onProgressUpdate(obj.onProgressUpdate);
-                                            task.abort && obj.abort && task.abort();
-                                        }
+                                        task = wx[key](obj);
                                     }
                                 });
+                                if (key === 'uploadFile' || key === 'downloadFile') {
+                                    p.progress = (cb) => {
+                                        task.onProgressUpdate(cb)
+                                        return p
+                                    }
+                                    p.abort = (cb) => {
+                                        cb && cb()
+                                        task.abort()
+                                        return p
+                                    }
+                                }
+                                return p
                             } else {
                                 let bak = {};
                                 ['fail', 'success', 'complete'].forEach((k) => {
@@ -178,12 +187,8 @@ export default class {
                                 });
                                 if (self.$addons.requestfix && key === 'request') {
                                     RequestMQ.request(obj);
-                                } else{
-                                    const task =  wx[key](obj);
-                                    if (key === 'uploadFile' || key === 'downloadFile') {
-                                        task.onProgressUpdate && obj.onProgressUpdate && task.onProgressUpdate(obj.onProgressUpdate);
-                                        task.abort && obj.abort && task.abort();
-                                    }
+                                } else {
+                                    return wx[key](obj);
                                 }
                             }
                         };
