@@ -34,7 +34,6 @@ let RequestMQ = {
         }
     },
     request (obj) {
-        let me = this;
 
         obj = obj || {};
         obj = (typeof(obj) === 'string') ? {url: obj} : obj;
@@ -83,7 +82,7 @@ export default class {
     }
 
     $initAPI (wepy, noPromiseAPI) {
-        var self = this;
+        const self = this;
         let noPromiseMethods = {
             stopRecord: true,
             pauseVoice: true,
@@ -151,7 +150,7 @@ export default class {
                                                 res = self.$interceptors[key][k].call(self, res);
                                             }
                                             if (k === 'success')
-                                                resolve(res)
+                                                resolve(res);
                                             else if (k === 'fail')
                                                 reject(res);
                                         };
@@ -164,16 +163,16 @@ export default class {
                                 });
                                 if (key === 'uploadFile' || key === 'downloadFile') {
                                     p.progress = (cb) => {
-                                        task.onProgressUpdate(cb)
-                                        return p
-                                    }
+                                        task.onProgressUpdate(cb);
+                                        return p;
+                                    };
                                     p.abort = (cb) => {
-                                        cb && cb()
-                                        task.abort()
-                                        return p
+                                        cb && cb();
+                                        task.abort();
+                                        return p;
                                     }
                                 }
-                                return p
+                                return p;
                             } else {
                                 let bak = {};
                                 ['fail', 'success', 'complete'].forEach((k) => {
