@@ -769,7 +769,7 @@ project
 // index.wpy
 
 <template>
-    //以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件
+    <!-- 以`<script>`脚本部分中所声明的组件ID为名命名自定义标签，从而在`<template>`模板部分中插入组件 -->
     <child></child>
 </template>
 
@@ -817,37 +817,48 @@ project
 </script>
 ```
 
+*注意*：WePY中，在父组件`template`模板部分插入驼峰式命名的子组件标签时，不能将驼峰式命名转换成短横杆式命名(比如将`childCom`转换成`child-com`)，这与Vue中的习惯是不一致。
 
-#### 循环列表组件引用
+
+#### 组件的循环渲染
 
 *1.4.6新增*
 
-当想在`wx:for`中使用组件时，需要使用辅助标签`<repeat>`，如下：
+当需要循环渲染WePY组件时(类似于通过`wx:for`循环渲染原生的wxml标签)，必须使用WePY定义的辅助标签`<repeat>`，代码如下：
 
 ```Html
 /**
 project
 └── src
-    ├── coms
+    ├── components
     |   └── child.wpy
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
     |   └── log.wpy      log 页面配置、结构、样式、逻辑
     └──app.wpy           小程序配置项（全局样式配置、声明钩子等）
 **/
+
 // index.wpy
+
 <template>
-    <repeat for="{{list}}" key="index" index="index" item="item">
-        <child :item="item"></child>
+    <!-- 注意，使用for属性，而不是使用wx:for属性 -->
+    <repeat for="{{list}}" key="index" index="index" item="item">
+        <!-- 插入<script>脚本部分所声明的child组件，同时传入item -->
+        <child :item="item"></child>
     </repeat>
 </template>
+
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    // 引入child组件文件
+    import Child from './coms/child';
+   
     export default class Index extends wepy.component {
         components = {
-            child: Child
-        };
+            // 声明页面中要使用到的Child组件的ID为child
+            child: Child
+        }
+   
         data = {
             list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
         }
@@ -855,14 +866,13 @@ project
 </script>
 ```
 
-
-页面和组件都可以引入子组件，引入若干组件后，如下图：
+页面可以引入组件，而组件还可以引入子组件。一个页面引入若干组件后，组件结构如下图：
 
 <p align="center">
   <img src="https://cloud.githubusercontent.com/assets/2182004/20554681/796da1ae-b198-11e6-91ab-e90f485c594d.png">
 </p>
 
-Index页面引入A，B，C三个组件，同时组件A和B又有自己的子组件D，E，F，G，H。
+如上图所示，Page_Index页面引入了ComA、ComB、ComC三个组件，同时ComA组件和ComB组件又有自己的子组件ComD、ComE、ComF、ComG、ComH。
 
 #### computed 计算属性
 
