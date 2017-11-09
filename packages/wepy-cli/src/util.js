@@ -557,7 +557,7 @@ const utils = {
     clearLog () {
         let dist = dist || cache.getDist();
         let file = path.join(this.currentDir, dist, '_wepylogs.js');
-        fs.writeFileSync(file, `console.log('WePY开启错误监控');\r\n`);
+        this.writeFile(file, `console.log('WePY开启错误监控');\r\n`);
     },
     writeLog (msg, type) {
         if (!this.cliLogs)
