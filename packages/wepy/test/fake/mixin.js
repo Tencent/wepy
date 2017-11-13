@@ -27,8 +27,12 @@ module.exports = class Mix extends wepy.mixin {
 	}
 
     onShow () {
-
+		this.valueChangedAt = 'mixin onShow'
     }
+
+    onRoute () {
+		this.valueChangedAt = 'mixin onRoute'
+	}
 
 	onShareAppMessage () {
         this.valueChangedAt = 'mixin onShareAppMessage'
