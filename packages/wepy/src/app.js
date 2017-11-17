@@ -107,6 +107,8 @@ export default class {
             stopAccelerometer: true,
             startCompass: true,
             stopCompass: true,
+            onBLECharacteristicValueChange: true,
+            onBLEConnectionStateChange: true,
 
             // 界面
             hideToast: true,
@@ -120,6 +122,7 @@ export default class {
             createCanvasContext: true,
             createContext: true,
             drawCanvas: true,
+            hideKeyboard: true,
             stopPullDownRefresh: true,
 
             // 拓展接口
