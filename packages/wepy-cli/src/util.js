@@ -523,7 +523,7 @@ const utils = {
         }
     },
     warning (msg) {
-        this.writeLog(msg, 'warning');
+        this.writeLog(msg, 'warn');
         this.log(msg, 'warning', false);
     },
     log (msg, type, showTime = true) {
