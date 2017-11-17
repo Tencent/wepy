@@ -1,0 +1,456 @@
+@charset "UTF-8";
+body,
+ul,
+ol,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+form,
+fieldset,
+legend,
+input,
+button,
+textarea,
+p,
+blockquote,
+table,
+th,
+td,
+menu {
+  margin: 0;
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+ul,
+ol,
+menu {
+  list-style: none;
+}
+fieldset,
+img {
+  border: none;
+}
+img,
+object,
+select,
+input,
+textarea,
+button {
+  vertical-align: middle;
+}
+input,
+textarea,
+select,
+address,
+caption,
+cite,
+code,
+dfn,
+em,
+i,
+b,
+strong,
+small,
+th,
+var,
+abbr {
+  font-size: 100%;
+  font-style: normal;
+}
+caption,
+th {
+  text-align: left;
+}
+article,
+aside,
+footer,
+header,
+hgroup,
+nav,
+section,
+figure,
+figcaption {
+  display: block;
+}
+code,
+kbd,
+pre,
+samp,
+tt {
+  font-family: Consolas, "Courier New", Courier, monospace;
+}
+address,
+cite,
+dfn,
+em,
+var,
+i {
+  font-style: normal;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+a {
+  color: #06f;
+  text-decoration: none;
+  cursor: pointer;
+}
+a:link,
+a:visited,
+a:active {
+  color: #06f;
+}
+a:hover,
+a:focus {
+  color: #f60;
+  text-decoration: underline;
+  outline: none;
+}
+a,
+a span,
+a i,
+a em,
+a u,
+a strong,
+a b,
+a p,
+a img,
+a ul,
+a li,
+a div,
+a dd,
+a dt,
+a dl,
+a ol,
+a table,
+a th,
+a td,
+a h1,
+a h2,
+a h3,
+a h4,
+a h5,
+a h6,
+a input,
+a textarea,
+a button,
+a small,
+a select {
+  cursor: pointer;
+  -webkit-transition: all 0.25s ease-in-out;
+  -moz-transition: all 0.25s ease-in-out;
+  -o-transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+abbr[title],
+acronym[title] {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+html {
+  min-width: 1200px;
+  overflow-y: scroll;
+}
+body {
+  font-size: 13px;
+  color: #555;
+  line-height: 2;
+}
+body,
+button,
+input,
+select,
+textarea {
+  font-family: tahoma, Helvetica, Arial, "\5FAE\8F6F\96C5\9ED1";
+  *font-family: "\5FAE\8F6F\96C5\9ED1";
+}
+h1 {
+  font-size: 23px;
+}
+h2 {
+  font-size: 21px;
+}
+h3 {
+  font-size: 19px;
+}
+h4 {
+  font-size: 17px;
+}
+h5 {
+  font-size: 15px;
+}
+h6 {
+  font-size: 13px;
+}
+hr {
+  border: none;
+  height: 1px;
+  background: #d4d4d4;
+}
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.tl {
+  text-align: left;
+}
+.tr {
+  text-align: right;
+}
+.tc {
+  text-align: center;
+}
+.cf:before,
+.cf:after,
+.web:before,
+.web:after,
+.web_:before,
+.web_:after {
+  content: "";
+  display: table;
+}
+.cf:after,
+.web:after,
+.web_:after {
+  clear: both;
+}
+.cf {
+  zoom: 1;
+}
+.web {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  zoom: 1;
+}
+.web_ {
+  min-width: 1200px;
+  width: 100%;
+  zoom: 1;
+}
+.block {
+  display: block;
+}
+.none {
+  display: none;
+}
+.clear {
+  clear: both;
+}
+body {
+  background-color: #ccc;
+}
+a:link,
+a:visited,
+a:active {
+  color: #fff;
+}
+a:hover {
+  text-decoration: none;
+}
+.container {
+  margin: auto;
+  padding: 0px;
+  height: 100%;
+  width: 960px;
+  background-color: #fafbfb;
+}
+.header {
+  height: 220px;
+  background-image: url(../img/head.png);
+  position: relative;
+}
+.header .github-corner {
+  border-bottom: 0;
+  position: absolute;
+  right: 0;
+  text-decoration: none;
+  top: 0;
+  z-index: 1;
+}
+.header .github-corner svg {
+  color: #fff;
+  fill: #42b983;
+  fill: var(--theme-color, #42b983);
+  height: 80px;
+  width: 80px;
+}
+.header .logo {
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  width: 135px;
+  height: 50px;
+  background-image: url(../img/logo.png);
+}
+.header .banner {
+  padding-top: 25px;
+  padding-left: 400px;
+  color: #fff;
+  font-size: 14px;
+}
+.header .banner ul li {
+  float: left;
+  display: block;
+  padding: 3px 10px;
+  text-align: center;
+  line-height: 28px;
+}
+.header .banner ul li:hover {
+  background-color: #18a508;
+  border-radius: 5px;
+}
+.header .banner ul li.active {
+  background-color: #5daa54;
+  border-radius: 5px;
+}
+.header .banner ul:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.header .banner .split {
+  width: 1px;
+  height: 30px;
+  border-left: 1px solid #ccc;
+  margin-left: 10px;
+  padding: 3px;
+}
+.header .banner .desc {
+  display: block;
+  font-size: 24px;
+  margin-top: 30px;
+  margin-left: 100px;
+}
+.start {
+  display: -webkit-flex;
+  /* Safari */
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+.start .button {
+  text-align: center;
+  margin-left: 80px;
+}
+.start .button a {
+  background-color: #17a23a;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  display: block;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 8px;
+}
+.start .flag {
+  margin-left: 20px;
+}
+.main {
+  margin-top: 60px;
+}
+.main .why {
+  text-align: center;
+}
+.main .why .title {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #343332;
+  font-size: 28px;
+}
+.main .why .desc {
+  font-size: 16px;
+  color: #a19f9b;
+}
+.main ul {
+  margin: 30px 0px;
+}
+.main ul li {
+  float: left;
+  display: block;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  margin-left: 25px;
+  margin-top: 10px;
+  position: relative;
+  height: 100px;
+  background-color: #fff;
+}
+.main ul li .icon {
+  position: absolute;
+  display: block;
+  top: 15px;
+  left: 25px;
+  width: 60px;
+  height: 60px;
+}
+.main ul li .title {
+  position: absolute;
+  top: 75px;
+  left: 25px;
+  display: block;
+  width: 65px;
+  text-align: center;
+  height: 30px;
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+}
+.main ul li .desc {
+  padding-top: 10px;
+  padding-left: 100px;
+  width: 320px;
+  display: block;
+  float: right;
+}
+.main ul:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.main .example {
+  text-align: center;
+}
+.main .example .title {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #343332;
+  font-size: 28px;
+}
+.footer {
+  height: 100px;
+  background-image: url(../img/footer.png);
+  position: relative;
+}
+.footer .copyright {
+  color: #fff;
+  position: absolute;
+  top: 60px;
+  left: 50px;
+  font-size: 13px;
+}
