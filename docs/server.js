@@ -5,6 +5,7 @@ var fs = require('fs');
 http.createServer(function (req, res) {
   serveStatic('.')(req, res, function () {
     res.writeHead(404, { 'Content-Type': 'text/html' })
+    console.log(req);
     res.end(fs.readFileSync('./index.html'))
   })
 }).listen(3030, '0.0.0.0')
