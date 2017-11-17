@@ -165,6 +165,7 @@ export default {
             util.log('检测到wepy版本不符合要求，正在尝试更新，请稍等。', '信息');
             util.exec(`npm install wepy --save`).then(d => {
                 util.log(`已完成更新，重新启动编译。`, '完成');
+                config.cache = false;
                 this.build(config);
             }).catch(e => {
                 util.log(`安装wepy失败，请尝试运行命令 "npm install wepy --save" 进行安装。`, '错误');
