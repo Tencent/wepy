@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 22 28">
-  <defs>
-    <linearGradient id="icon_npm_fature-a" x1="10.232%" x2="89.768%" y1="9.787%" y2="85.708%">
-      <stop offset="0%" stop-color="#369CDC"/>
-      <stop offset="100%" stop-color="#AA56D0"/>
-    </linearGradient>
-  </defs>
-  <polygon fill="url(#icon_npm_fature-a)" fill-rule="evenodd" points="19 16 19 44 20.546 44 20.546 17.922 20.625 17.922 39.097 44 41 44 41 16 39.454 16 39.454 41.922 39.375 41.922 20.982 16" transform="translate(-19 -16)"/>
-</svg>
