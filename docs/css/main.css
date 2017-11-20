@@ -877,7 +877,7 @@ select[multiple] {
   }
 }
 body {
-  background-color: #eef2f5;
+  background-color: #F4F4F4;
   font-family: Arial;
   font-weight: 400;
   font-size: 14px;
@@ -887,7 +887,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 a {
-  color: #49555f;
+  color: #1F9948;
   text-decoration: none;
   transition: opacity .2s ease;
 }
@@ -914,7 +914,7 @@ a {
   transform: translate3d(0, 0, 0) scale(0.99);
 }
 .button:hover {
-  background-color: #84cfff;
+  background-color: #9ae8a3;
 }
 .button.button--disabled {
   color: rgba(255, 255, 255, 0.5);
@@ -1019,7 +1019,7 @@ a.logo {
   font-size: 15px;
   line-height: 25px;
   color: white;
-  opacity: .5;
+  opacity: .8;
 }
 .shares {
   width: 260px;
@@ -1043,18 +1043,19 @@ li.social-link a {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #3F4A97;
+  background: rgba(255, 255, 255, 0.2);
   background-repeat: no-repeat;
   background-size: 20px;
   background-position: center;
   transition: transform .2s ease;
   cursor: pointer;
-  box-shadow: 0 10px 10px 0 rgba(62, 76, 167, 0.25);
 }
 .social-link.social-link--wx a {
+  color: #1F9948;
   background-image: url(../img/icon_wechat.svg);
 }
 .social-link.social-link--gh a {
+  color: #343332;
   background-image: url(../img/icon_gh.svg);
 }
 .social-link:hover a {
@@ -1064,7 +1065,7 @@ li.social-link a {
 .container-wrap {
   z-index: 2;
   margin-bottom: 160px;
-  background-color: #eef2f5;
+  background-color: #F4F4F4;
   box-shadow: 0 0 30px 0 rgba(54, 69, 79, 0.86);
 }
 .container {
@@ -1098,13 +1099,13 @@ li.social-link a {
   text-align: center;
 }
 .slide__title {
-  font-family: Arial;
+  color: #000;
   font-size: 24px;
   line-height: 30px;
   margin: 0 0 15px 0;
 }
 .slide__description {
-  color: #70808D;
+  color: #353535;
   font-size: 14px;
   line-height: 25px;
 }
@@ -1128,13 +1129,23 @@ li.social-link a {
   position: relative;
   margin: 40px 0 0 0;
   height: 720px;
-  background-color: #4957B8;
+  background-color: #1F9948;
   border-radius: 10px;
   transform: translate3d(0, 0, 0);
   transition: transform .6s ease, opacity .3s ease;
-  background-image: linear-gradient(55deg, #4957B8 0, #6E97E9 77%);
-  background-image: url(../img/pattern.png);
+  /* slide__one--base: */
+  background-image: linear-gradient(180deg, #1F9948 0%, #2CDA9C 77%);
   box-shadow: 0 10px 18px 0 rgba(122, 135, 142, 0.33);
+}
+.slide.slide--one .slide__bg-image {
+  width: 814px;
+  height: 519px;
+  background-image: url(../img/lines@2x.png);
+  background-size: 814px;
+  position: absolute;
+  left: 12.5%;
+  top: 0;
+  margin: 0 0 0 -408px;
 }
 .tagline {
   display: -ms-flexbox;
@@ -1155,6 +1166,8 @@ li.social-link a {
   color: white;
   font-size: 25px;
   line-height: 35px;
+  letter-spacing: 1px;
+  font-weight: 500;
   margin: 0 0 5px 0;
   opacity: 0;
   transform: translate3d(0, 20px, 0);
@@ -1163,9 +1176,9 @@ li.social-link a {
 }
 .tagline .tagline__body {
   color: white;
-  opacity: .6;
   font-size: 18px;
   line-height: 25px;
+  letter-spacing: 1px;
   margin: 0 0 20px 0;
   opacity: 0;
   transform: translate3d(0, 20px, 0);
@@ -1177,7 +1190,7 @@ li.social-link a {
   transform: translate3d(0, 0, 0);
 }
 .shown .tagline__body {
-  opacity: .6;
+  opacity: .8;
   transform: translate3d(0, 0, 0);
 }
 .shown .tagline__shieds {
@@ -1197,11 +1210,12 @@ li.social-link a {
   transition-delay: .3s;
 }
 .tagline__button .button.button--secondary {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px 0 0 8px;
-  box-shadow: none;
-  border-radius: 8px;
+  font-size: 16px;
+  border: #fff 2px solid;
+  color: #000000;
+  background-color: white;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1), 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  border-radisu: 8px;
   width: 110px;
 }
 .tagline__shieds {
@@ -1235,12 +1249,11 @@ li.social-link a {
   opacity: 0;
 }
 .button.button--secondary {
-  color: #6370CA;
-  background-color: rgba(99, 112, 202, 0.1);
   box-shadow: none;
 }
 .button.button--secondary:hover {
-  background-color: rgba(99, 112, 202, 0.2);
+  color: white;
+  background-color: rgba(99, 112, 202, 0.1);
 }
 .button.button--more {
   padding: 0 35px;
@@ -1437,7 +1450,7 @@ li.social-link a {
 }
 .slide.slide--five .slide__bg-icon {
   position: absolute;
-  top: 38px;
+  top: 35px;
   left: 50%;
   margin: 0 0 0 -75px;
   height: 150px;
@@ -1446,6 +1459,7 @@ li.social-link a {
 .slide__bg-area {
   position: absolute;
   background-color: white;
+  opacity: 0;
   left: 50%;
   top: -88px;
   margin: 0 0 0 -200px;
@@ -1634,20 +1648,21 @@ li.social-link a {
   font-size: 24px;
   padding: 16px 0 24px 0;
   position: relative;
+  color: #1F9948;
 }
 .section h2::before {
   content: "";
   position: absolute;
   width: 32px;
   height: 4px;
-  background-color: #4957b8;
+  background-color: #1F9948;
   top: -4px;
   left: 0;
 }
 .section .text {
   font-size: 18px;
   line-height: 26px;
-  color: #8d99a4;
+  color: #353535;
 }
 .section .text p {
   padding: 0;
@@ -1676,13 +1691,12 @@ li.social-link a {
 .feature-title {
   font-size: 16px;
   font-weight: 500;
-  font-family: font_family_1;
+  color: #000;
 }
 .feature-text {
   font-size: 14px;
   line-height: 26px;
-  font-family: font_family_1;
-  color: #8d99a4;
+  color: #353535;
   padding: 0 32px 0 0;
   min-height: 78px;
 }
@@ -1690,7 +1704,7 @@ li.social-link a {
   width: 160px;
   line-height: 44px;
   box-shadow: none;
-  background-color: #4957B8;
+  background-color: #1F9948;
   color: white;
   margin: 24px 0 0 0;
 }
@@ -1706,42 +1720,42 @@ li.social-link a {
 .feature-icon--style {
   width: 38px;
   height: 46px;
-  background-image: url(../img/fatures/icon_style_fature.svg);
+  background-image: url(../img/fatures/icon_feature_style.svg);
 }
 .feature-icon--component {
   width: 34px;
   height: 46px;
-  background-image: url(../img/fatures/icon_component_fature.svg);
+  background-image: url(../img/fatures/icon_feature_component.svg);
 }
 .feature-icon--npm {
   width: 34px;
   height: 46px;
-  background-image: url(../img/fatures/icon_npm_fature.svg);
+  background-image: url(../img/fatures/icon_feature_npm.svg);
 }
 .feature-icon--promise {
   width: 34px;
   height: 46px;
-  background-image: url(../img/fatures/icon_promise_fature.svg);
+  background-image: url(../img/fatures/icon_feature_promise.svg);
 }
 .feature-icon--optimize {
   width: 34px;
   height: 46px;
-  background-image: url(../img/fatures/icon_optimize_fature.svg);
+  background-image: url(../img/fatures/icon_feature_optimize.svg);
 }
 .feature-icon--compile {
   width: 34px;
   height: 40px;
-  background-image: url(../img/fatures/icon_compile_fature.svg);
+  background-image: url(../img/fatures/icon_feature_compile.svg);
 }
 .feature-icon--plugin {
   width: 21px;
   height: 32px;
-  background-image: url(../img/fatures/icon_plugin_fature.svg);
+  background-image: url(../img/fatures/icon_feature_plugin.svg);
 }
 .feature-icon--size {
   width: 32px;
   height: 32px;
-  background-image: url(../img/fatures/icon_size_feature.svg);
+  background-image: url(../img/fatures/icon_feature_size.svg);
 }
 @media (max-width: 1140px) {
   .header {
@@ -2153,4 +2167,63 @@ li.social-link a {
   .section:first-child {
     padding-top: 60px;
   }
+}
+/** https://github.com/codrops/TooltipAnimations **/
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+.tooltip__trigger {
+  cursor: pointer;
+  position: relative;
+}
+.tooltip__trigger-text {
+  display: block;
+  padding: 0.85em;
+  pointer-events: none;
+}
+.tooltip__base {
+  position: absolute;
+  bottom: 2em;
+  left: 50%;
+  margin-left: -420px;
+  width: 420px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+.tooltip__content {
+  color: #323232;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 320px;
+  padding: 0 1em;
+  opacity: 0;
+  flex-direction: column;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+.tooltip__content .qrcode {
+  width: 123px;
+  height: 123px;
+  position: relative;
+  justify-content: center;
+  display: inline-block;
+  float: left;
+}
+.tooltip__shape,
+.tooltip__deco {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.tooltip__shape {
+  fill: rgba(255, 255, 255, 0.85);
 }

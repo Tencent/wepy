@@ -29,7 +29,7 @@
                                 <span class="logo__icon"></span>
                                 <div class="logo_text">
                                     <span class="logo__title">WePY</span>
-                                    <span class="logo__description"><span> </span>小程序组件化开发框架</span>
+                                    <span class="logo__description"><span> </span>帮你快速开发小程序</span>
                                 </div>
                             </a>
 
@@ -44,8 +44,17 @@
 
                             <div class="shares">
                                 <ul class="social-links">
-                                    <li class="social-link social-link--wx">
-                                        <a href="#communtify"></a>
+                                    <li class="social-link social-link--wx tooltip tooltip--indis "  data-type="indis" role="tooltip">
+                                        <a href="#" class="tooltip__trigger" role="tooltip" aria-describedby="info-indis"></a>
+                                        <div class="tooltip__base">
+                                            <svg class="tooltip__shape" width="100%" height="100%" viewBox="0 0 400 300">
+                                                <path d="M 44.5,24 C 138,4.47 246,-6.47 356,24 367,26.9 376,32.9 376,44 L 376,256 C 376,267 367,279 356,276 231,240 168,241 44.5,276 33.8,279 24.5,267 24.5,256 L 24.5,44 C 24.5,32.9 33.6,26.3 44.5,24 Z"/>
+                                            </svg>
+                                            <div class="tooltip__content" id="info-indis">
+                                                我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
+                                                <img class="qrcode" src="img/qrcode.png">
+                                            </div>
+                                        </div>
                                     </li>
                                     <li class="social-link social-link--gh">
                                         <a href="https://github.com/wepyjs/wepy" target="_blank"></a>
@@ -89,6 +98,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="slide__bg-image">
+                    <div class="slide__bg-area"></div>
                 </div>
             </div>
 
@@ -253,46 +265,6 @@
                 </div>
             </div>
 
-            <div class="slide slide--five" id="communtify">
-                <div class="slide__inner">
-                    <div class="slide__header slide__header--inversed">
-                        <h2 class="slide__title">一个社区驱动的项目</h2>
-                        <p class="slide__description">我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复
-                            wepy 按照指引进群。</p>
-                    </div>
-                    <div class="slide__bg-image">
-                        <div class="slide__bg-area"></div>
-                        <img src="./img/qrcode.png" class="slide__bg-icon">
-                    </div>
-                    <div class="contributors">
-                        <h5 class="contributors__title">核心贡献者:</h5>
-                        <ul class="contributors__list">
-
-                            <li class="contributor contributor--gcaufy">
-                                <div class="contributor__pic"></div>
-                                <div class="contributor__info">
-                                    <div class="contributor__info__name">Gcaufy</div>
-                                    <div class="contributor__info__position">Gcaufy</div>
-                                </div>
-                            </li>
-                            <li class="contributor contributor--sail">
-                                <div class="contributor__pic"></div>
-                                <div class="contributor__info">
-                                    <div class="contributor__info__name">Sail</div>
-                                    <div class="contributor__info__position">dlhandsome</div>
-                                </div>
-                            </li>
-                            <li class="contributor contributor--bruce">
-                                <div class="contributor__pic"></div>
-                                <div class="contributor__info">
-                                    <div class="contributor__info__name">Bruce Xiong</div>
-                                    <div class="contributor__info__position">brucx</div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
 
             <div class="slide slide--four">
                 <div class="slide__inner">
@@ -315,5 +287,8 @@
         </div>
     </div>
 </div>
+<script src="js/anime.min.js"></script>
+<script src="js/charming.min.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
