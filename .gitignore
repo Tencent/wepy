@@ -10,3 +10,5 @@ coverage
 lerna-debug.log
 /packages/*/lib
 .DS_Store
+.idea
+/yarn.lock

@@ -12,7 +12,12 @@ var chalk   = require("chalk");
 var gulpif = require('gulp-if');
 var mkdirp = require('mkpath');
 
+// for docs
+var gulp = require('gulp'),
+    less = require('gulp-less');
+
 var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue', './packages/wepy-web/src/apis/*.js', './packages/wepy-web/src/components/styles/*/*.less'];
+var docs = ['docs/less/**/*.less'];
 var bins = "./packages/*/bin/**/*";
 var srcEx, libFragment;
 
@@ -61,6 +66,12 @@ gulp.task("build", ['lec'], function () {
     }), babel()))
     .pipe(gulp.dest(dest));
 });
+
+gulp.task('doc-watch', function () {
+    gulp.src('docs/less/style.less')
+    .pipe(less())
+    .pipe(gulp.dest('docs/css'));
+})
 gulp.task("build-watch", function () {
     return gulp.src(scripts)
         .pipe(plumber({
@@ -88,8 +99,11 @@ gulp.task("build-watch", function () {
         .pipe(gulp.dest(dest));
 });
 
-gulp.task("watch", ["build-watch"], function (callback) {
+gulp.task("watch", ['build-watch', 'doc-watch'], function (callback) {
     watch(scripts, {debounceDelay: 200}, function () {
         gulp.start("build-watch");
+    });
+    watch(docs, {debounceDelay: 200}, function () {
+        gulp.start("doc-watch");
     });
 });

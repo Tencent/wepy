@@ -1,33 +1,381 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>wepyjs - 小程序组件化开发框架</title>
-    <link rel="icon" href="favicon.ico">
-    <meta name="description" content="小程序组件化开发框架">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
-</head>
-<body>
-    <header>
-        <div class="container">
-            <nav class="a123">
-                <a href="#/">首页</a>
-                <a href="#/api">API文档</a>
-                <!-- <a href="#/getstart">快速入门</a>
-                <a href="#/document">文档</a>
-                <a href="#/api">API</a> -->
-                <a href="#/CHANGELOG">CHANGELOG</a>
-            </nav>
-        </div>
-    </header>
-        <div id="app"></div>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>WePY | 小程序组件化开发框架</title>
+    <meta name=keywords content="WePY, 小程序, 组件化, ES6, ES7, Promise">
+    <meta name="description"
+          content="小程序组件化开发框架">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- favicon.ico in the root directory -->
+    <link rel="stylesheet" href="./css/style.css">
+    <meta property="og:title" content="WePy 小程序组件化开发框架">
+    <link rel="stylesheet" href="./less/test.css">
+</head>
+<body class="shown">
+<div class="container-wrap">
+    <div class="container">
+        <div class="slides">
+            <div class="slide slide--one">
+                <div class="slide__inner">
+                    <div class="header">
+                        <div class="header__inner">
+                            <a class="logo" href="/">
+                                <span class="logo__icon"></span>
+                                <div class="logo_text">
+                                    <span class="logo__title">WePY</span>
+                                    <span class="logo__description"><span> </span>帮你快速开发小程序</span>
+                                </div>
+                            </a>
+
+                            <div class="nav">
+                                <a class="nav__item nav__item--home" target="_blank"
+                                   href="#/">首页</a>
+                                <a class="nav__item nav__item--document" target="_blank" href="./document.html">使用手册</a>
+                                <a class="nav__item nav__item--api" target="_blank"
+                                   href="./document.html#/api">API 说明</a>
+                                <a class="nav__item nav__item--logs" target="_blank" href="./document.html#/CHANGELOG">版本日志</a>
+                            </div>
+
+                            <div class="shares">
+                                <ul class="social-links">
+                                    <li class="social-link social-link--wx tooltip tooltip--indis " data-type="indis"
+                                        role="tooltip">
+                                        <a href="#" class="tooltip__trigger" role="tooltip"
+                                           aria-describedby="info-indis"></a>
+                                        <div class="tooltip__base">
+                                            <svg class="tooltip__shape" width="100%" height="100%"
+                                                 viewBox="0 0 400 300">
+                                                <path d="M 44.5,24 C 138,4.47 246,-6.47 356,24 367,26.9 376,32.9 376,44 L 376,256 C 376,267 367,279 356,276 231,240 168,241 44.5,276 33.8,279 24.5,267 24.5,256 L 24.5,44 C 24.5,32.9 33.6,26.3 44.5,24 Z"/>
+                                            </svg>
+                                            <div class="tooltip__content" id="info-indis">
+                                                我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy
+                                                按照指引进群。
+                                                <img class="qrcode" src="img/qrcode.png">
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="social-link social-link--gh">
+                                        <a href="https://github.com/wepyjs/wepy" target="_blank"></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tagline">
+                        <h2 class="tagline__title">让小程序支持组件化开发的框架</h2>
+                        <div class="tagline__body">一个最受欢迎的小程序框架.</div>
+                        <div class="tagline__button">
+                            <a class="button button--secondary" href="./document.html">从这里开始</a>
+                        </div>
+                        <div class="tagline__shieds">
+                            <div class="tagline__shieds--social">
+                                <a><img src="https://img.shields.io/github/forks/wepyjs/wepy.svg?style=social&label=Fork"></a>
+                                <a><img src="https://img.shields.io/github/stars/wepyjs/wepy.svg?style=social&label=Star"></a>
+                                <a><img src="https://img.shields.io/github/watchers/wepyjs/wepy.svg?style=social&label=Watch"></a>
+                            </div>
+                            <a href="https://badge.fury.io/js/wepy"><img
+                                    data-src="https://camo.githubusercontent.com/fdb99ae00102d3376f9c500a0505411d7037333b/68747470733a2f2f62616467652e667572792e696f2f6a732f776570792e737667"
+                                    alt="npm version" src="https://badge.fury.io/js/wepy.svg"
+                                    style="max-width:100%;"></a>
+                            <a href="https://travis-ci.org/wepyjs/wepy"><img
+                                    data-src="https://camo.githubusercontent.com/e32bbc2f8619b7408d917253244d0c119af5bdba/68747470733a2f2f7472617669732d63692e6f72672f776570796a732f776570792e7376673f6272616e63683d6d6173746572"
+                                    alt="travis-ci" src="https://travis-ci.org/wepyjs/wepy.svg?branch=master"
+                                    style="max-width:100%;"></a>
+                            <a href="https://coveralls.io/github/wepyjs/wepy?branch=master"><img
+                                    data-src="https://camo.githubusercontent.com/b9c60c722e692ddf5e85dd91cbbcc841633bed9f/68747470733a2f2f636f766572616c6c732e696f2f7265706f732f6769746875622f776570796a732f776570792f62616467652e7376673f6272616e63683d6d6173746572"
+                                    alt="Coverage Status"
+                                    src="https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master"
+                                    style="max-width:100%;"></a>
+                            <a href="https://david-dm.org/wepyjs/wepy"><img
+                                    data-src="https://camo.githubusercontent.com/d3197e1930cec8f270b89fcff34d093d918b33b0/68747470733a2f2f64617669642d646d2e6f72672f776570796a732f776570792e737667"
+                                    alt="Dependency Status" src="https://david-dm.org/wepyjs/wepy.svg"
+                                    style="max-width:100%;"></a>
+                        </div>
+                        <div class="tagline__footer">
+                            <div class="tagline__footer-inner">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide__bg-image">
+                    <div class="slide__bg-area"></div>
+                </div>
+            </div>
+
+            <div class="slide slide--features">
+                <div class="slide__inner">
+                    <div class="section section--enter">
+                        <h2>为什么要选择WePY？</h2>
+                        <div class="text">
+                            <p>
+                                目前已有超过 1000 位开发者使用或了解本框架, 拥有众多的开发特性和优化方案.
+                            </p>
+                        </div>
+
+                        <div class="features">
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--style"></div>
+                                </div>
+                                <h3 class="feature-title">开发风格</h3>
+                                <div class="feature-text">接近于 Vue.js，支持组件 Props
+                                    传值，自定义事件、组件分布式复用Mixin、计算属性函数computed、模板内容分发slot等等
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--component"></div>
+                                </div>
+                                <h3 class="feature-title">组件化</h3>
+                                <div class="feature-text">组件化开发，完美解决组件隔离，组件嵌套，组件通信等问题</div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--npm"></div>
+                                </div>
+                                <h3 class="feature-title">NPM</h3>
+                                <div class="feature-text">支持使用第三方 npm 资源，自动处理 npm 资源之间的依赖关系，完美兼容所有无平台依赖的 npm 资源包</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--promise"></div>
+                                </div>
+                                <h3 class="feature-title">Promise</h3>
+                                <div class="feature-text">通过 polyfill 让小程序完美支持 Promise，解决回调烦恼</div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--npm"></div>
+                                </div>
+                                <h3 class="feature-title">ES2015</h3>
+                                <div class="feature-text">可使用 Generator Fu-nction / Class / Async Function 等特性，大大提升开发效率
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--optimize"></div>
+                                </div>
+                                <h3 class="feature-title">优化</h3>
+                                <div class="feature-text">对小程序本身的优化，如请求列对处理，优雅的事件处理，生命周期的补充，性能的优化等等
+                                </div>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--compile"></div>
+                                </div>
+                                <h3 class="feature-title">编译器</h3>
+                                <div class="feature-text">
+                                    支持样式编译器：Less/Sass/Styus，模板编译器：wx-ml/Pug，代码编译器：Bable/Typescript。
+                                </div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--plugin"></div>
+                                </div>
+                                <h3 class="feature-title">插件</h3>
+                                <div class="feature-text">支持多种插件处理，如文件压缩，图片压缩，内容替换等，扩展简单,使用方便</div>
+                            </div>
+
+                            <div class="feature-item">
+                                <div class="feature-icon-wrap">
+                                    <div class="feature-icon feature-icon--size"></div>
+                                </div>
+                                <h3 class="feature-title">框架大小</h3>
+                                <div class="feature-text">支持第三方 npm 资源，自动处理 npm 资源之间的依赖关系，完美兼容所有无平台依赖的 npm 资源包</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide slide--gist">
+                <div class="slide__inner">
+                    <div class="slide__header">
+                        <h2 class="slide__title">主要功能特性</h2>
+                        <p class="slide__description">
+                            WePY 框架在开发过程中参考了 Vue 等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于 MVVM 架构模式, 并支持ES6/7的一些新特性。以下是使用 WePY 前后的代码对比与组件化示例。</p>
+                    </div>
+                    <div class="slide__body">
+                        <article class="gallery ">
+                            <figure class="gist window" data-nlcst="ignore">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">原生代码 index.js</span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+//获取应用实例
+var app = getApp()
+
+//通过Page构造函数创建页面逻辑
+Page({
+    //可用于页面模板绑定的数据
+    data: {
+        motto: 'Hello World',
+        userInfo: {}
+    },
+
+    //事件处理函数
+    bindViewTap: function() {
+        console.log('button clicked')
+    },
+
+    //页面的生命周期函数
+    onLoad: function () {
+        console.log('onLoad')
+    }
+})
+                                </code></pre>
+                            </figure>
+                            <figure class="gist window">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">index.wpy 中的 &lt;script &gt;部分
+                                </span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+import wepy from 'wepy';
+
+//通过继承自wepy.page的类创建页面逻辑
+export default class Index extends wepy.page {
+    //可用于页面模板绑定的数据
+    data = {
+        motto: 'Hello World',
+        userInfo: {}
+    };
+
+    //事件处理函数(集中保存在methods对象中)
+    methods = {
+        bindViewTap () {
+            console.log('button clicked');
+        }
+    };
+
+    //页面的生命周期函数
+    onLoad() {
+        console.log('onLoad');
+    };
+}
+                                </code></pre>
+                            </figure>
+
+                            <figure  class="gist window">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">支持ES6/7的一些新特性</span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+
+import wepy from 'wepy';
+
+export default class Index extends wepy.page {
+    getData() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve({data: 123});
+            }, 3000);
+        });
+    };
+
+    async onLoad() {
+        let data = await this.getData();
+        console.log(data.data);
+    };
+}
+             </code></pre>
+                            </figure>
+                        </article>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide slide--examples slide--shown">
+                <div class="slide__inner">
+                    <div class="slide__header">
+                        <h2 class="slide__title">应用案例</h2>
+                        <p class="slide__description">
+                            阅邻二手书、
+                            <a href="https://github.com/jas0ncn/szushudong">深大的树洞</a>、
+                            手机充值+、
+                            爱羽客羽毛球、
+                            小小羽球、
+                            七弦琴大数据、
+                            七弦琴小助手、
+                            培恩医学、
+                            公务员朝夕刷题、
+                            独角兽公司、
+                            逛人备忘、
+                            英语助手君、
+                            农资优选、
+                            花花百科、
+                            斑马小店、
+                            鲜花说小店、
+                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg">趣店招聘</a>、
+                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg">满
+                                <g-emoji alias="bear"
+                                         fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f43b.png"
+                                         ios-version="6.0">🐻
+                                </g-emoji>
+                                阅读</a> + 代码简例<a
+                                href="https://github.com/Thunf/wepy-demo-bookmall">wepy-demo-bookmall</a>、
+                            <a href="https://miniapp.ourauto.club/qrcode.jpg">平行进口报价内参</a>、
+                            <a href="https://github.com/KingJeason/wepy-books">求知微阅读(完全开源)</a>
+                            ...
+                        </p>
+                    </div>
+                    <!-- 应用案例 -->
+                    <div class="examples carousel" data-flickity='{"initialIndex": 1 }'>
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">趣店招聘</h3>
+                                <div class="example__image"
+                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg')"></div>
+                            </div>
+                        </a>
+
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">满熊阅读</h3>
+                                <div class="example__image"
+                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg')"></div>
+                            </div>
+                        </a>
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">平行进口报价内参</h3>
+                                <div class="example__image"
+                                     style="background-image: url('https://miniapp.ourauto.club/qrcode.jpg');"></div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="slide__footer"></div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="footer-inner">
+        <div class="footer--copyright">
+            Copyright © 2017 THL A29 Limited a Tencent company All rights reserved
+        </div>
+    </div>
+</div>
+<script src="js/anime.min.js"></script>
+<script src="js/charming.min.js"></script>
+<script src="js/flickity.pkgd.min.js"></script>
+<script src="js/main.js"></script>
+<script src="js/prism.js"></script>
 </body>
-<script
-    src="//unpkg.com/docsify/lib/docsify.min.js"
-    data-repo="wepyjs/wepy"
-    data-max-level="4"
-    data-sidebar-toggle
-    data-router></script>
 </html>
