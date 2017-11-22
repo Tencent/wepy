@@ -20,6 +20,17 @@ a {
   transition: opacity .2s ease;
 }
 
+a.cases {
+  color: #000;
+  font-weight: normal;
+  cursor: default;
+  &.islink {
+    color: @primary;
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
 .container-wrap {
   z-index: 2;
   margin-bottom: 160px;
