@@ -81,6 +81,7 @@ export default {
             opath = path.parse(xml);
             filepath = xml;
         }
+        filepath = path.resolve(filepath); // to fixed windows path bug
         let content = util.readFile(filepath);
 
         if (content === null) {
