@@ -259,7 +259,7 @@ export default class Index extends wepy.page {
     };
 
     //页面的生命周期函数
-    onLoad() {
+    onLoad () {
         console.log('onLoad');
     };
 }
@@ -284,7 +284,7 @@ export default class Index extends wepy.page {
         });
     };
 
-    async onLoad() {
+    async onLoad () {
         let data = await this.getData();
         console.log(data.data);
     };
@@ -302,9 +302,11 @@ export default class Index extends wepy.page {
                     <div class="slide__header">
                         <h2 class="slide__title">应用案例</h2>
                         <p class="slide__description">
+                            手机充值+、
+                            手机流量充值优惠券、
+                            手机余额查询、
                             阅邻二手书、
                             <a href="https://github.com/jas0ncn/szushudong">深大的树洞</a>、
-                            手机充值+、
                             爱羽客羽毛球、
                             小小羽球、
                             七弦琴大数据、
@@ -333,6 +335,27 @@ export default class Index extends wepy.page {
                     </div>
                     <!-- 应用案例 -->
                     <div class="examples carousel" data-flickity='{"initialIndex": 1 }'>
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">手机充值+</h3>
+                                <div class="example__image"
+                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113445-5512185c-cf93-11e7-9c07-b8bc25db448f.jpg')"></div>
+                            </div>
+                        </a>
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">手机流量充值优惠券</h3>
+                                <div class="example__image"
+                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113446-5543e062-cf93-11e7-85d7-166c9f36e31d.jpg')"></div>
+                            </div>
+                        </a>
+                        <a href="" target="_blank" class="example carousel-cell">
+                            <div class="example__inner">
+                                <h3 class="example__title">手机余额查询</h3>
+                                <div class="example__image"
+                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113447-5573e460-cf93-11e7-80cf-a53583644589.jpg')"></div>
+                            </div>
+                        </a>
                         <a href="" target="_blank" class="example carousel-cell">
                             <div class="example__inner">
                                 <h3 class="example__title">趣店招聘</h3>
