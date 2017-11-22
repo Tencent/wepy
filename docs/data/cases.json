@@ -89,6 +89,9 @@
         "email": "",
         "opensource": 1,
         "link": "https://github.com/KingJeason/wepy-books"
+    }, {
+        "name": "育儿柚道",
+        "email": ""
     }],
     "roll_cases": [{
         "name": "手机充值+",
@@ -114,5 +117,9 @@
         "name": "平行进口报价内参",
         "email": "",
         "qr_code": "https://miniapp.ourauto.club/qrcode.jpg"
+    }, {
+       "name": "育儿柚道",
+        "email": "",
+        "qr_code": "https://github.com/baisheng/podcast/raw/master/doc/wechat.jpg?raw=true"
     }]
 }
