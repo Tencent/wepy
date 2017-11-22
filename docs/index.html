@@ -12,12 +12,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- favicon.ico in the root directory -->
-    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/style.css">
     <meta property="og:title" content="WePy 小程序组件化开发框架">
-
+    <link rel="stylesheet" href="./less/test.css">
 </head>
-<body class="shown" style="zoom: 1;">
-
+<body class="shown">
 <div class="container-wrap">
     <div class="container">
         <div class="slides">
@@ -44,14 +43,18 @@
 
                             <div class="shares">
                                 <ul class="social-links">
-                                    <li class="social-link social-link--wx tooltip tooltip--indis "  data-type="indis" role="tooltip">
-                                        <a href="#" class="tooltip__trigger" role="tooltip" aria-describedby="info-indis"></a>
+                                    <li class="social-link social-link--wx tooltip tooltip--indis " data-type="indis"
+                                        role="tooltip">
+                                        <a href="#" class="tooltip__trigger" role="tooltip"
+                                           aria-describedby="info-indis"></a>
                                         <div class="tooltip__base">
-                                            <svg class="tooltip__shape" width="100%" height="100%" viewBox="0 0 400 300">
+                                            <svg class="tooltip__shape" width="100%" height="100%"
+                                                 viewBox="0 0 400 300">
                                                 <path d="M 44.5,24 C 138,4.47 246,-6.47 356,24 367,26.9 376,32.9 376,44 L 376,256 C 376,267 367,279 356,276 231,240 168,241 44.5,276 33.8,279 24.5,267 24.5,256 L 24.5,44 C 24.5,32.9 33.6,26.3 44.5,24 Z"/>
                                             </svg>
                                             <div class="tooltip__content" id="info-indis">
-                                                我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
+                                                我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy
+                                                按照指引进群。
                                                 <img class="qrcode" src="img/qrcode.png">
                                             </div>
                                         </div>
@@ -168,7 +171,8 @@
                                     <div class="feature-icon feature-icon--compile"></div>
                                 </div>
                                 <h3 class="feature-title">编译器</h3>
-                                <div class="feature-text">支持样式编译器：Less/Sass/Styus，模板编译器：wx-ml/Pug，代码编译器：Bable/Typescript。
+                                <div class="feature-text">
+                                    支持样式编译器：Less/Sass/Styus，模板编译器：wx-ml/Pug，代码编译器：Bable/Typescript。
                                 </div>
                             </div>
 
@@ -192,11 +196,111 @@
                     </div>
                 </div>
             </div>
-
-            <div class="slide slide--two slide--shown">
+            <div class="slide slide--gist">
                 <div class="slide__inner">
                     <div class="slide__header">
-                        <h2 class="slide__title">使用案例</h2>
+                        <h2 class="slide__title">主要功能特性</h2>
+                        <p class="slide__description">
+                            WePY 框架在开发过程中参考了 Vue 等现有框架的一些语法风格和功能特性，对原生小程序的开发模式进行了再次封装，更贴近于 MVVM 架构模式, 并支持ES6/7的一些新特性。以下是使用 WePY 前后的代码对比与组件化示例。</p>
+                    </div>
+                    <div class="slide__body">
+                        <article class="gallery ">
+                            <figure class="gist window" data-nlcst="ignore">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">原生代码 index.js</span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+//获取应用实例
+var app = getApp()
+
+//通过Page构造函数创建页面逻辑
+Page({
+    //可用于页面模板绑定的数据
+    data: {
+        motto: 'Hello World',
+        userInfo: {}
+    },
+
+    //事件处理函数
+    bindViewTap: function() {
+        console.log('button clicked')
+    },
+
+    //页面的生命周期函数
+    onLoad: function () {
+        console.log('onLoad')
+    }
+})
+                                </code></pre>
+                            </figure>
+                            <figure class="gist window">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">index.wpy 中的 &lt;script &gt;部分
+                                </span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+import wepy from 'wepy';
+
+//通过继承自wepy.page的类创建页面逻辑
+export default class Index extends wepy.page {
+    //可用于页面模板绑定的数据
+    data = {
+        motto: 'Hello World',
+        userInfo: {}
+    };
+
+    //事件处理函数(集中保存在methods对象中)
+    methods = {
+        bindViewTap () {
+            console.log('button clicked');
+        }
+    };
+
+    //页面的生命周期函数
+    onLoad() {
+        console.log('onLoad');
+    };
+}
+                                </code></pre>
+                            </figure>
+
+                            <figure  class="gist window">
+                                <figcaption><span class="chrome btn close"></span><span
+                                        class="chrome btn minimize"></span><span
+                                        class="chrome btn fullscreen"></span><span
+                                        class="chrome title">支持ES6/7的一些新特性</span></figcaption>
+                                <pre class="language-js" data-start="100"><code>
+
+import wepy from 'wepy';
+
+export default class Index extends wepy.page {
+    getData() {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve({data: 123});
+            }, 3000);
+        });
+    };
+
+    async onLoad() {
+        let data = await this.getData();
+        console.log(data.data);
+    };
+}
+             </code></pre>
+                            </figure>
+                        </article>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide slide--examples slide--shown">
+                <div class="slide__inner">
+                    <div class="slide__header">
+                        <h2 class="slide__title">应用案例</h2>
                         <p class="slide__description">
                             阅邻二手书、
                             <a href="https://github.com/jas0ncn/szushudong">深大的树洞</a>、
@@ -228,54 +332,35 @@
                         </p>
                     </div>
                     <!-- 应用案例 -->
-                    <div class="examples">
-                        <a href="" target="_blank" class="example">
+                    <div class="examples carousel" data-flickity='{"initialIndex": 1 }'>
+                        <a href="" target="_blank" class="example carousel-cell">
                             <div class="example__inner">
                                 <h3 class="example__title">趣店招聘</h3>
                                 <div class="example__image"
                                      style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg')"></div>
                             </div>
                         </a>
-                        <a href="" target="_blank" class="example">
+
+                        <a href="" target="_blank" class="example carousel-cell">
                             <div class="example__inner">
                                 <h3 class="example__title">满熊阅读</h3>
                                 <div class="example__image"
                                      style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg')"></div>
                             </div>
                         </a>
-                        <a href="" target="_blank" class="example example--seven">
+                        <a href="" target="_blank" class="example carousel-cell">
                             <div class="example__inner">
                                 <h3 class="example__title">平行进口报价内参</h3>
                                 <div class="example__image"
                                      style="background-image: url('https://miniapp.ourauto.club/qrcode.jpg');"></div>
                             </div>
                         </a>
-
-                        <div class="example example--plus">
-                            <a class="example--plus__link" href="mailto:gcaufy@gmail.com?subject=WePY应用案例">
-                                <div class="example__icon">
-                                    <div class="example__icon-inner"></div>
-                                </div>
-                                <p class="example__description">如果您的产品在使用 WePY, 欢迎加入（小程序码）</p>
-                            </a>
-                        </div>
-
                     </div>
                     <div class="slide__footer"></div>
                 </div>
             </div>
 
 
-            <div class="slide slide--four">
-                <div class="slide__inner">
-                    <div class="slide__header">
-                        <h2 class="slide__title">支持 WePY 的开发</h2>
-                        <p class="slide__description">WePY 是采用 MIT 许可的开源项目，使用完全免费。
-                            但是随着项目规模的增长，也需要有相应的资金支持才能持续项目的维护的开发。你可以通过下列的方法来赞助 WePY 的开发。</p>
-                    </div>
-                    <a href="#" target="_blank" class="button">支持我们</a>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -289,6 +374,8 @@
 </div>
 <script src="js/anime.min.js"></script>
 <script src="js/charming.min.js"></script>
+<script src="js/flickity.pkgd.min.js"></script>
 <script src="js/main.js"></script>
+<script src="js/prism.js"></script>
 </body>
 </html>

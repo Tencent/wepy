@@ -1,0 +1,84 @@
+@media (max-width: 922px) {
+  .contributors {
+    width: 100%;
+  }
+  .contributors__list {
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  .contributor {
+    width: 160px;
+  }
+  .section {
+    &:first-child {
+      padding-top: 60px;
+    }
+  }
+}
+@media (max-width: 767px) {
+  .container-wrap {
+    margin-bottom: 0;
+  }
+}
+
+.contributors {
+  width: 870px;
+  margin: 0 auto;
+  padding: 80px 0 0 0;
+}
+.contributors__title {
+  text-align: center;
+  color: @color_2;
+  opacity: .6;
+  padding: 24px 0;
+}
+.contributors__list {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+.contributor {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 210px;
+  height: 92px;
+}
+.contributor__pic {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px 0 #394C97;
+  background-size: cover;
+}
+.contributor--gcaufy {
+  .contributor__pic {
+    background-image: url(../img/contributors/gcaufy.png);
+  }
+}
+.contributor--bruce {
+  .contributor__pic {
+    background-image: url(../img/contributors/bruce.png);
+  }
+}
+.contributor--sail {
+  .contributor__pic {
+    background-image: url(../img/contributors/sail.png);
+  }
+}
+.contributor__info {
+  padding: 0 0 0 16px;
+  color: @color_2;
+}
+.contributor__info__name {
+  font-family: font_family_1;
+  line-height: 16px;
+}
+.contributor__info__position {
+  font-size: 14px;
+  color: @color_8;
+}

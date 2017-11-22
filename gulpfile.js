@@ -68,7 +68,7 @@ gulp.task("build", ['lec'], function () {
 });
 
 gulp.task('doc-watch', function () {
-    gulp.src('docs/less/**/*.less')
+    gulp.src('docs/less/style.less')
     .pipe(less())
     .pipe(gulp.dest('docs/css'));
 })
