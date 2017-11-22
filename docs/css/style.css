@@ -152,6 +152,16 @@ a {
   font-weight: bold;
   transition: opacity .2s ease;
 }
+a.cases {
+  color: #000;
+  font-weight: normal;
+  cursor: default;
+}
+a.cases.islink {
+  color: #1F9948;
+  font-weight: bold;
+  cursor: pointer;
+}
 .container-wrap {
   z-index: 2;
   margin-bottom: 160px;

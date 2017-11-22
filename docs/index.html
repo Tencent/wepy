@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="./less/test.css">
 </head>
 <body class="shown">
-<div class="container-wrap">
+<div class="container-wrap" id="app">
     <div class="container">
         <div class="slides">
             <div class="slide slide--one">
@@ -141,7 +141,7 @@
                                     <div class="feature-icon feature-icon--npm"></div>
                                 </div>
                                 <h3 class="feature-title">NPM</h3>
-                                <div class="feature-text">支持使用第三方 npm 资源，自动处理 npm 资源之间的依赖关系，完美兼容所有无平台依赖的 npm 资源包</div>
+                                <div class="feature-text">支持使用第三方 npm 资源，自动处理 npm 资源之间的依赖关系，完美兼容所有平台依赖的 npm 资源包</div>
                             </div>
                             <div class="feature-item">
                                 <div class="feature-icon-wrap">
@@ -302,80 +302,18 @@ export default class Index extends wepy.page {
                     <div class="slide__header">
                         <h2 class="slide__title">应用案例</h2>
                         <p class="slide__description">
-                            手机充值+、
-                            手机流量充值优惠券、
-                            手机余额查询、
-                            阅邻二手书、
-                            <a href="https://github.com/jas0ncn/szushudong">深大的树洞</a>、
-                            爱羽客羽毛球、
-                            小小羽球、
-                            七弦琴大数据、
-                            七弦琴小助手、
-                            培恩医学、
-                            公务员朝夕刷题、
-                            独角兽公司、
-                            逛人备忘、
-                            英语助手君、
-                            农资优选、
-                            花花百科、
-                            斑马小店、
-                            鲜花说小店、
-                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg">趣店招聘</a>、
-                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg">满
-                                <g-emoji alias="bear"
-                                         fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f43b.png"
-                                         ios-version="6.0">🐻
-                                </g-emoji>
-                                阅读</a> + 代码简例<a
-                                href="https://github.com/Thunf/wepy-demo-bookmall">wepy-demo-bookmall</a>、
-                            <a href="https://miniapp.ourauto.club/qrcode.jpg">平行进口报价内参</a>、
-                            <a href="https://github.com/KingJeason/wepy-books">求知微阅读(完全开源)</a>
+                            <span v-for="item in textCases" style="display: none" v-show="textCases.length">
+                                <a class="cases" :href="item.link ? item.link : 'javascript:;'" :class="{'islink': item.link}">{{item.name}}{{item.opensource == 1 ? '(开源)' : ''}}</a>、
+                            </span>
                             ...
                         </p>
                     </div>
                     <!-- 应用案例 -->
-                    <div class="examples carousel" data-flickity='{"initialIndex": 1 }'>
-                        <a href="" target="_blank" class="example carousel-cell">
+                    <div class="examples carousel">
+                        <a href="" target="_blank" class="example carousel-cell" v-for="item in rollCases" style="display: none" v-show="rollCases.length">
                             <div class="example__inner">
-                                <h3 class="example__title">手机充值+</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113445-5512185c-cf93-11e7-9c07-b8bc25db448f.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">手机流量充值优惠券</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113446-5543e062-cf93-11e7-85d7-166c9f36e31d.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">手机余额查询</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113447-5573e460-cf93-11e7-80cf-a53583644589.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">趣店招聘</h3>
-                                <div class="example__image"
-                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg')"></div>
-                            </div>
-                        </a>
-
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">满熊阅读</h3>
-                                <div class="example__image"
-                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">平行进口报价内参</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://miniapp.ourauto.club/qrcode.jpg');"></div>
+                                <h3 class="example__title" v-text="item.name"></h3>
+                                <div class="example__image" :style="{ backgroundImage: 'url(\'' + item.qr_code + '\')'}" ></div>
                             </div>
                         </a>
                     </div>
@@ -400,5 +338,30 @@ export default class Index extends wepy.page {
 <script src="js/flickity.pkgd.min.js"></script>
 <script src="js/main.js"></script>
 <script src="js/prism.js"></script>
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    textCases: [],
+    rollCases: []
+  },
+  created: function () {
+    let self = this;
+    axios.get('./data/cases.json').then(res => {
+      if (res && res.data) {
+        self.rollCases = res.data.roll_cases;
+        self.textCases = res.data.text_cases;
+        Vue.nextTick(function () {
+          var flkty = new Flickity( '.carousel', {
+            initialIndex: 1
+          });
+        });
+      }
+    });
+  }
+});
+</script>
 </body>
 </html>
