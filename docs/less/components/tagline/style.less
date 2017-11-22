@@ -1,69 +1,4 @@
-@media (max-width: 1220px) {
-  .tagline {
-    left: 65px;
-  }
-}
-@media (max-width: 1030px) {
-  .tagline {
-    width: 300px;
-    top: 230px;
-  }
-}
-@media (max-width: 1140px) {
-  .tagline {
-    -ms-flex-pack: start;
-    justify-content: flex-start;
-    text-align: left;
-    left: 40px;
-  }
-}
-@media (max-width: 960px) {
-  .tagline {
-    width: 280px;
-  }
-}
-@media (max-width: 922px) {
-  .tagline {
-    width: 260px;
-    top: 180px;
-  }
-}
-@media (max-width: 840px) {
-  .tagline {
-    left: 30px;
-    width: 246px;
-    .tagline__title {
-      font-size: 21px;
-      line-height: 35px;
-      margin: 0 0 0 0;
-    }
-    .tagline__body {
-      font-size: 16px;
-      line-height: 24px;
-      margin: 0 0 10px 0;
-    }
-  }
-}
-@media (max-width: 767px) {
-  .tagline {
-    position: static;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    width: auto;
-    left: 0;
-    top: 0;
-    margin: 110px 0 0px 0;
-    padding: 0 20px;
-    width: auto;
-    .tagline__body {
-      margin: 0 0 10px 0;
-    }
-  }
-  .tagline__footer {
-    display: block;
-    margin-top: 24px;
-  }
-}
+
 .tagline {
   display: -ms-flexbox;
   display: flex;
@@ -187,5 +122,72 @@
   transition: transform .2s ease, background-color .2s ease;
   &:active {
     transform: translate3d(-50%, 0, 0) scale(0.99);
+  }
+}
+
+@media (max-width: 1220px) {
+  .tagline {
+    left: 65px;
+  }
+}
+@media (max-width: 1030px) {
+  .tagline {
+    width: 300px;
+    top: 230px;
+  }
+}
+@media (max-width: 1140px) {
+  .tagline {
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    text-align: left;
+    left: 40px;
+  }
+}
+@media (max-width: 960px) {
+  .tagline {
+    width: 280px;
+  }
+}
+@media (max-width: 922px) {
+  .tagline {
+    width: 260px;
+    top: 180px;
+  }
+}
+@media (max-width: 840px) {
+  .tagline {
+    left: 30px;
+    width: 246px;
+    .tagline__title {
+      font-size: 21px;
+      line-height: 35px;
+      margin: 0 0 0 0;
+    }
+    .tagline__body {
+      font-size: 16px;
+      line-height: 24px;
+      margin: 0 0 10px 0;
+    }
+  }
+}
+@media (max-width: 767px) {
+  .tagline {
+    position: static;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    width: auto;
+    left: 0;
+    top: 0;
+    margin: 110px 0 0px 0;
+    padding: 0 20px;
+    width: auto;
+    .tagline__body {
+      margin: 0 0 10px 0;
+    }
+  }
+  .tagline__footer {
+    display: block;
+    margin-top: 24px;
   }
 }
