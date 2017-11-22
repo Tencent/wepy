@@ -7,13 +7,35 @@
     display: flex;
     flex-direction: column;
     .slide__body {
-      max-width: 50rem;
+      //max-width: 50rem;
       position: relative;
       margin: 0 auto;
-      padding: 2rem;
+      //padding: 2rem;
     }
   }
 
   article {
+  }
+}
+@media (max-width: 767px) {
+  .slide.slide--gist {
+    padding: 40px 0 40px;
+    h2 {
+      display: block;
+      font-size: 1.5em;
+      -webkit-margin-before: 0.5em;
+      -webkit-margin-after: 0.5em;
+      -webkit-margin-start: 0px;
+      -webkit-margin-end: 0px;
+      font-weight: bold;
+    }
+    .slide__inner {
+      padding: 30px 0;
+      width: 100%;
+      border-radius: 0;
+    }
+  }
+  article.gallery {
+    width: 350px;
   }
 }
