@@ -96,6 +96,10 @@
         "name": "坚橙",
         "email": "",
         "link": "https://zhanart.com/wepy.html"
+    },{
+       "name": "天天跟我买",
+        "email": "",
+        "link": "http://www.xiaohongchun.com.cn/index" 
     }],
     "roll_cases": [{
         "name": "手机充值+",
@@ -129,5 +133,9 @@
         "name": "坚橙",
         "email": "",
         "qr_code": "https://static.crandom.com/code/wepy.jpeg"
+    },{
+        "name": "天天跟我买",
+        "email": "",
+        "qr_code": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg"
     }]
 }
