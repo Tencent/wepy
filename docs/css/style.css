@@ -1697,6 +1697,7 @@ li.social-link a {
   border-radius: 8px;
   position: relative;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  margin-bottom: 20px;
 }
 .feature-title {
   font-size: 16px;
