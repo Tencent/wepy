@@ -360,7 +360,7 @@ export default {
 
         if (rst.style.some(v => v.scoped) && rst.template.code) {
             // 存在有 scoped 部分就需要 更新 template.code
-            var node = this.createParser().parseFromString(rst.template.code);
+            var node = this.createParser(opath).parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
             // 更新 template.code
             rst.template.code = node.toString();
