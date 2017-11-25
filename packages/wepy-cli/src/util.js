@@ -479,7 +479,7 @@ const utils = {
         return this.isFile(ignoreFile) ? this.readFile(ignoreFile) : '';
     },
     getPkg () {
-        let pkgFile = path.join(this.currentDir, path.sep, '.package.json');
+        let pkgFile = path.join(this.currentDir, path.sep, 'package.json');
         return this.isFile(pkgFile) ? this.readFile(pkgFile) : '{}';
     },
     getFiles (dir = process.cwd(), prefix = '') {
