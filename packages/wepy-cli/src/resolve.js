@@ -5,40 +5,40 @@ export default {
     init (config) {
         this.modules = config.modules || ['node_modules'];
         this.alias = config.alias;
-        this.aliasFields = config.aliasFields || ['weapp', 'web', 'ant']
+        this.aliasFields = config.aliasFields || ['weapp', 'web', 'ant'];
       
         if (typeof aliasFields === 'string') {
-          this.aliasFields = [aliasFields]
+          this.aliasFields = [aliasFields];
         }
   
-        let pkgFile = util.getPkg()
-        let pkg = JSON.parse(pkgFile)
+        let pkgFile = util.getPkg();
+        let pkg = JSON.parse(pkgFile);
       
-        this.fieldsAlias = {}
+        this.fieldsAlias = {};
         this.aliasFields.filter((fileds) => {
-            return pkg.hasOwnProperty(fileds)
+            return pkg.hasOwnProperty(fileds);
         }).forEach(fields => {
-            let currentField = pkg[fields]
+            let currentField = pkg[fields];
           
             if (util.isObject(currentField)) {
                 Object.keys(currentField).forEach(key => {
-                    let source = key
-                    let target = path.resolve(util.currentDir, currentField[key])
-                    let sourceExt = path.extname(source)
-                    let targetExt = path.extname(target)
+                    let source = key;
+                    let target = path.resolve(util.currentDir, currentField[key]);
+                    let sourceExt = path.extname(source);
+                    let targetExt = path.extname(target);
                   
-                    target = target.replace(targetExt, '')
+                    target = target.replace(targetExt, '');
                   
                     if (!sourceExt && key.indexOf('/') === -1) {
                         // module name
                         this.alias = util.isObject(this.alias)
                             ? Object.assign({}, this.alias, { [source]: target })
-                            : { [source]: target }
+                            : { [source]: target };
                     }
                     if (sourceExt && key[0] === '.') {
                         // ./something
-                        source = path.resolve(util.currentDir, key).replace(sourceExt, '')
-                        this.fieldsAlias[source] = target
+                        source = path.resolve(util.currentDir, key).replace(sourceExt, '');
+                        this.fieldsAlias[source] = target;
                     }
                 })
             }
