@@ -5,9 +5,45 @@ export default {
     init (config) {
         this.modules = config.modules || ['node_modules'];
         this.alias = config.alias;
+        this.aliasFields = config.aliasFields || ['weapp', 'web', 'ant']
+      
+        if (typeof aliasFields === 'string') {
+          this.aliasFields = [aliasFields]
+        }
+  
+        let pkgFile = util.getPkg()
+        let pkg = JSON.parse(pkgFile)
+      
+        this.fieldsAlias = {}
+        this.aliasFields.forEach(fields => {
+            let currentField = pkg[fields]
+          
+            if (util.isObject(currentField)) {
+                Object.keys(currentField).forEach(key => {
+                    let source = key
+                    let target = path.resolve(util.currentDir, currentField[key])
+                    let sourceExt = path.extname(source)
+                    let targetExt = path.extname(target)
+                  
+                    target = target.replace(targetExt, '')
+                  
+                    if (!sourceExt && key.indexOf('/') === -1) {
+                        // module name
+                        this.alias = util.isObject(this.alias)
+                            ? Object.assign({}, this.alias, { [source]: target })
+                            : { [source]: target }
+                    }
+                    if (sourceExt && key[0] === '.') {
+                        // ./something
+                        source = path.resolve(util.currentDir, key).replace(sourceExt, '')
+                        this.fieldsAlias[source] = target
+                    }
+                })
+            }
+        })
 
         if (typeof this.modules === 'string') {
-            this.modules = [this.modules];
+          this.modules = [this.modules];
         }
 
         let cwd = process.cwd();
@@ -96,6 +132,16 @@ export default {
             dir: o.dir
         };
     },
+  
+    resolveFieldsAlias (lib) {
+        if (
+            lib && util.isObject(this.fieldsAlias) && (lib in this.fieldsAlias)
+        ) {
+            return this.fieldsAlias[lib];
+        } else {
+            return lib;
+        }
+    },
 
     resolveAlias (lib) {
         if (!this.alias)
@@ -125,6 +171,8 @@ export default {
         if (!this._cacheAlias[lib]) {
             this._cacheAlias[lib] = lib;
         }
+        // replace field alias
+        this._cacheAlias[lib] = this.resolveFieldsAlias(this._cacheAlias[lib]);
         return this._cacheAlias[lib];
     }   
 }
