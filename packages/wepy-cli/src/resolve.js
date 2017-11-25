@@ -45,7 +45,7 @@ export default {
         })
 
         if (typeof this.modules === 'string') {
-          this.modules = [this.modules];
+            this.modules = [this.modules];
         }
 
         let cwd = process.cwd();
