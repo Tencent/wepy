@@ -8,6 +8,9 @@
     "build": "cross-env NODE_ENV=production wepy build --no-cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "weapp": {
+    "list": "./src/components/list.wpy"
+  },
   "author": "",
   "license": "MIT"
 }
