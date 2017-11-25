@@ -15,7 +15,9 @@ export default {
         let pkg = JSON.parse(pkgFile)
       
         this.fieldsAlias = {}
-        this.aliasFields.forEach(fields => {
+        this.aliasFields.filter((fileds) => {
+            return pkg.hasOwnProperty(fileds)
+        }).forEach(fields => {
             let currentField = pkg[fields]
           
             if (util.isObject(currentField)) {

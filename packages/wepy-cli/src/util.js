@@ -468,6 +468,10 @@ const utils = {
         let ignoreFile = path.join(this.currentDir, path.sep, '.wepyignore');
         return this.isFile(ignoreFile) ? this.readFile(ignoreFile) : '';
     },
+    getPkg () {
+        let pkgFile = path.join(this.currentDir, path.sep, '.package.json');
+        return this.isFile(pkgFile) ? this.readFile(pkgFile) : '{}';
+    },
     getFiles (dir = process.cwd(), prefix = '') {
         let cfiles = cache.getFileList(dir);
         if (cfiles)
