@@ -84,12 +84,31 @@ export default {
         filepath = path.resolve(filepath); // to fixed windows path bug
         let content = util.readFile(filepath);
 
+
+        const moduleId = util.genId(filepath);
+
+        let rst = {
+            moduleId: moduleId,
+            style: [],
+            template: {
+                code: '',
+                src: '',
+                type: ''
+            },
+            script: {
+                code: '',
+                src: '',
+                type: ''
+            }
+        };
+
         if (content === null) {
-            util.error('打开文件失败: ' + filepath)
-            return null;
+            util.error('打开文件失败: ' + filepath);
+            return rst;
         }
         if (content === '') {
-            return null;
+            util.warning('发现空文件: ' + filepath);
+            return rst;
         }
 
         let startlen = content.indexOf('<script') + 7;
@@ -112,26 +131,11 @@ export default {
             });
         })*/
 
-        content = util.attrReplace(content);
+        if (content.indexOf('<template') !== -1) {
+            content = util.attrReplace(content);
+        }
 
         xml = this.createParser(opath).parseFromString(content);
-
-        const moduleId = util.genId(filepath);
-
-        let rst = {
-            moduleId: moduleId,
-            style: [],
-            template: {
-                code: '',
-                src: '',
-                type: ''
-            },
-            script: {
-                code: '',
-                src: '',
-                type: ''
-            }
-        };
 
         [].slice.call(xml.childNodes || []).forEach((child) => {
             const nodeName = child.nodeName;
@@ -176,7 +180,6 @@ export default {
                     rstTypeObj.src = path.join(opath.dir, opath.name + opath.ext);
             }
         });
-        //util.mergeWpy(rst);
 
         /*
         Use components instead
@@ -360,7 +363,7 @@ export default {
 
         if (rst.style.some(v => v.scoped) && rst.template.code) {
             // 存在有 scoped 部分就需要 更新 template.code
-            var node = this.createParser().parseFromString(rst.template.code);
+            var node = this.createParser(opath).parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
             // 更新 template.code
             rst.template.code = node.toString();
@@ -439,7 +442,7 @@ export default {
             this.remove(opath, 'json');
         }
 
-        if (wpy.style.length || (wpy.template && Object.keys(wpy.template.components).length)) {
+        if (wpy.style.length || (wpy.template  && wpy.template.components && Object.keys(wpy.template.components).length)) {
             let requires = [];
             let k, tmp;
             if (wpy.template) {
