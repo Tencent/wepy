@@ -30,11 +30,16 @@ cd myproject
 wepy build --watch
 ```
 
+**上线前压缩代码**
+```bash
+npm run build
+```
+
 ### WePY项目的目录结构
 
 ```
 ├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
-├── node_modules           
+├── node_modules          
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
 |   |   ├── com_a.wpy      可复用的WePY组件a
@@ -121,22 +126,22 @@ customFileTypes:
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
    以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
-   
+
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
    具体请参考[wpy文件说明](#wpy文件说明)。
-   
+  
 3. 使用ES6语法开发。
    框架在ES6下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
-   
+
 4. 使用Promise。
    框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：WePY 1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，如果不在意该问题可手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
-   
+
 5. 事件绑定语法使用优化语法代替。
    原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
-   
+
 6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
-   
+
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
    不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
@@ -162,12 +167,12 @@ Page({
         motto: 'Hello World',
         userInfo: {}
     },
-    
+
     //事件处理函数
     bindViewTap: function() {
         console.log('button clicked')
     },
-    
+
     //页面的生命周期函数
     onLoad: function () {
         console.log('onLoad')
@@ -189,14 +194,14 @@ export default class Index extends wepy.page {
         motto: 'Hello World',
         userInfo: {}
     };
-    
+
     //事件处理函数(集中保存在methods对象中)
     methods = {
         bindViewTap () {
             console.log('button clicked');
         }
     };
-    
+
     //页面的生命周期函数
     onLoad() {
         console.log('onLoad');
@@ -236,7 +241,7 @@ export default class Index extends wepy.page {
     config = {
         "navigationBarTitleText": "test"
     };
-   
+
     //声明页面中将要使用到的组件
     components = {
         panel: Panel,
@@ -244,7 +249,7 @@ export default class Index extends wepy.page {
         counter2: Counter,
         list: List
     };
-   
+
     //可用于页面模板中绑定的数据
     data = {
         myNum: 50,
@@ -320,7 +325,7 @@ export default class Index extends wepy.page {
             }, 3000);
         });
     };
-    
+
     async onLoad() {
         let data = await this.getData();
         console.log(data.data);
@@ -539,7 +544,7 @@ export default class extends wepy.app {
 <script>
 import wepy from 'wepy';
 import Counter from '../components/counter';
-   
+
 export default class Page extends wepy.page {
     config = {};
     components = {counter1: Counter};
@@ -639,7 +644,7 @@ export default class MyAPP extends wepy.app {
     onShow () {}
 
     config = {}  // 对应 app.json 文件
-    
+
     globalData = {}
 }
 ```
@@ -666,7 +671,7 @@ export default class MyComponent extends wepy.component {
     onShow () {}  // 只在Page中存在的页面生命周期函数
 
     config = {};  // 只在Page实例中存在的配置数据，对应于原生的page.json文件
-    
+
     data = {};  // 页面所需数据均需在这里声明，可用于模板数据绑定
 
     components = {};  // 声明页面中所引用的组件，或声明组件中所引用的子组件
@@ -696,12 +701,12 @@ export default class MyComponent extends wepy.component {
             let rst = this.commonFunc();
             // doSomething
         },
-        
+
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
         },
-        
+
         //错误：普通自定义方法不能放在methods对象中
         customFunction () {
             return 'sth.';
@@ -721,7 +726,7 @@ export default class MyComponent extends wepy.component {
             let rst = this.commonFunc();
             // doSomething
         },
-        
+
         bindinput () {
             let rst = this.commonFunc();
             // doSomething
@@ -777,7 +782,7 @@ project
     import wepy from 'wepy';
     //引入组件文件
     import Child from './coms/child';
-   
+
     export default class Index extends wepy.component {
         //声明组件，分配组件id为child
         components = {
@@ -796,7 +801,7 @@ project
     <view class="child1">
         <child></child>
     </view>
-   
+
     <view class="child2">
         <anotherchild></anotherchild>
     </view>
@@ -806,7 +811,7 @@ project
 <script>
     import wepy from 'wepy';
     import Child from './coms/child';
-   
+
     export default class Index extends wepy.component {
         components = {
             //为两个相同组件的不同实例分配不同的组件ID，从而避免数据同步变化的问题
@@ -852,13 +857,13 @@ project
     import wepy from 'wepy';
     // 引入child组件文件
     import Child from './coms/child';
-   
+
     export default class Index extends wepy.component {
         components = {
             // 声明页面中要使用到的Child组件的ID为child
             child: Child
         }
-   
+
         data = {
             list: [{id: 1, title: 'title1'}, {id: 2, title: 'title2'}]
         }
@@ -984,7 +989,7 @@ data = {
 props = {
     // 静态传值
     title: String,
-    
+
     // 父向子单向动态传值
     syncTitle: {
         type: String,
@@ -1032,7 +1037,7 @@ export default class Com extends wepy.component {
     components = {};
 
     data = {};
-    
+
     methods = {};
 
     // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
@@ -1105,7 +1110,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 <script>
     import wepy from 'wepy'
     import Child from './coms/child'
-   
+
     export default class Index extends wepy.page {
         components = {
             child: Child
@@ -1128,7 +1133,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 <script>
     import wepy from 'wepy'
-   
+
     export default class Child extends wepy.component {
         methods = {
             tap () {

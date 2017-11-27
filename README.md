@@ -48,7 +48,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
     import mycom from '../components/mycom';
 
     export default class Index extends wepy.page {
-        
+
         components = { mycom };
         data = {
             myprop: {}
@@ -89,6 +89,11 @@ wepy new myproject
 wepy build --watch
 ```
 
+#### 上线前压缩代码
+```console
+npm run build
+```
+
 #### 开发者工具使用
 
 1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
@@ -123,7 +128,7 @@ wepy build --watch
 ...
 
 ### 交流群
- 
+
  WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
  ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png)
