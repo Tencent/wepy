@@ -436,7 +436,13 @@ export default class Index extends wepy.page {
           self.textCases = res.data.text_cases;
           Vue.nextTick(function () {
             var flkty = new Flickity( '.carousel', {
-              initialIndex: 1
+              initialIndex: 0,
+              cellAlign: 'left',
+              autoPlay: true,
+              pauseAutoPlayOnHover: true,
+              autoPlay: 1500,
+              pageDots: false,
+              wrapAround: true
             });
           });
         }
