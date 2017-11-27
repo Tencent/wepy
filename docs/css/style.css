@@ -151,6 +151,7 @@ a {
   text-decoration: none;
   font-weight: bold;
   transition: opacity .2s ease;
+  outline: 0px;
 }
 a.cases {
   color: #000;
@@ -769,6 +770,7 @@ a.cases.islink {
 }
 .header .nav a {
   color: white;
+  outline: 0px;
 }
 .header .nav a.nav__item--blog::before {
   content: "";
