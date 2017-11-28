@@ -336,21 +336,6 @@ a.cases.islink {
   color: white;
   outline: 0px;
 }
-.header .nav a.nav__item--blog::before {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background-image: url(../img/icon_external.png);
-  background-size: 16px;
-  opacity: 0;
-  transform: translate3d(5px, 0, 0) rotate(5deg);
-  margin: 0 10px 0 0;
-  transition: transform .2s ease, opacity .2s ease;
-}
-.header .nav a.nav__item--blog:hover::before {
-  transform: translate3d(0, 0, 0) rotate(0deg);
-  opacity: .4;
-}
 .header__inner {
   width: 1012px;
   display: -ms-flexbox;
@@ -468,9 +453,6 @@ li.social-link a {
   }
 }
 @media (max-width: 960px) {
-  .nav {
-    display: none;
-  }
   a.logo {
     width: auto;
   }
@@ -488,6 +470,7 @@ li.social-link a {
     margin: 20px 20px 20px 17px;
     -ms-flex-align: start;
     align-items: flex-start;
+    display: inline-block;
   }
   .header-wrap {
     height: 92px;
@@ -514,6 +497,21 @@ li.social-link a {
   }
   .logo_text {
     margin: 0px 0 0 4px;
+  }
+  .nav a {
+    padding: 5px;
+    font-size: .82em;
+  }
+  .tagline__title {
+    display: none;
+  }
+  .tagline__body {
+    display: none;
+  }
+  .shares {
+    justify-content: center;
+    display: flex;
+    margin-bottom: 50px;
   }
   .shares .social-links li.social-link {
     margin: 0 0 0 7px;
@@ -691,7 +689,7 @@ li.social-link a {
     flex-direction: column;
     left: 0;
     top: 0;
-    margin: 110px 0 0px 0;
+    margin: 180px 0 0px 0;
     padding: 0 20px;
     width: auto;
   }
