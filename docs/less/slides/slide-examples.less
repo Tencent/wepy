@@ -1,52 +1,75 @@
 .slide.slide--examples {
-  padding: 40px 0 40px 0;
-  margin-bottom: 80px;
-  margin-top: -50px;
-
+    padding: 40px 0 40px 0;
+    margin-bottom: 80px;
 }
 
 .slide.slide--examples h2 {
-  display: block;
-  font-size: 1.5em;
-  -webkit-margin-before: 0.5em;
-  -webkit-margin-after: 0.5em;
-  -webkit-margin-start: 0px;
-  -webkit-margin-end: 0px;
-  font-weight: bold;
+    display: block;
+    font-size: 1.5em;
+    -webkit-margin-before: 0.5em;
+    -webkit-margin-after: 0.5em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    font-weight: bold;
 }
-@media (max-width: 767px) {
 
-  .carousel {
-    //background: #FAFAFA;
-    //margin-bottom: 30px;
-    //counter-reset: carousel-cell;
-  }
-  .carousel-cell {
-    width: 66%;
-    height: 210px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-  }
-  .slide.slide--examples {
-    padding: 0;
-  }
-  .examples {
-    margin: 20px auto 10px;
-    width: auto;
-    padding: 0 10px;
-  }
-  .example__inner {
-    margin: 5px;
-    height: 180px;
-    padding: 15px;
-  }
-  .example {
-    width: auto;
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-  .example__image {
-    width: 160px;
-    height: 160px;
-  }
+.examples__pr {
+    margin-top: 30px;
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-pack: center;
+    align-self: center;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    .button.button--pr {
+      background: @primary;
+      box-shadow: none;
+      width: 80px;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      &:hover {
+        // background: rgba(31, 153, 72, 0.60);
+        box-shadow: 0 8px 30px 2px rgba(28, 216, 87, 0.50);
+      }
+    }
+}
+
+@media (max-width: 767px) {
+    .carousel {
+        //background: #FAFAFA;
+        //margin-bottom: 30px;
+        //counter-reset: carousel-cell;
+    }
+    .carousel-cell {
+        width: 66%;
+        height: 210px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+    .slide.slide--examples {
+        padding: 0;
+    }
+    .examples {
+        margin: 20px auto 10px;
+        width: auto;
+        padding: 0 10px;
+    }
+    .example__inner {
+        margin: 5px;
+        height: 180px;
+        padding: 15px;
+    }
+    .example {
+        width: auto;
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+    .example__image {
+        width: 160px;
+        height: 160px;
+    }
 }

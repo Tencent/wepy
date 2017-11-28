@@ -350,6 +350,8 @@ code {
   border-radius: 4px;
   font-size: 14px;
   box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.10);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  // 0px 2px 4px 0px rgba(0, 0, 0, 0.1)
 }
 
 .window figcaption {
@@ -567,8 +569,8 @@ code {
 
 .gallery .window:first-child pre,
 .gallery .window:last-child pre {
-  height: 500px;
-  opacity: 0.5;
+  height: 420px;
+  opacity: 0.8;
   overflow: hidden;
 }
 
@@ -576,7 +578,6 @@ code {
   transform: scale(0.7) translate(-98%, 5%);
   transform-origin: 0% 0%;
 }
-
 .gallery .window:last-child {
   transform: scale(0.7) translate(130%, 5%);
   transform-origin: 100% 0%;

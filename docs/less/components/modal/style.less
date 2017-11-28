@@ -1,0 +1,37 @@
+.modal-container {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    cursor: pointer;
+    overflow-y: auto;
+    z-index: 3;
+    font-family: 'Lato', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif';
+    font-size: 14px;
+    -webkit-transition: all 0.25s linear;
+    -moz-transition: all 0.25s linear;
+    -o-transition: all 0.25s linear;
+    -ms-transition: all 0.25s linear;
+    transition: all 0.25s linear;
+}
+.modal-container.active {
+    opacity: 1;
+    visibility: visible;
+}
+.modal-container .qr-modal {
+    border-radius: 8px;
+    box-shadow: 0 24px 80px -2px rgb(6, 122, 31)!important;
+    transition: box-shadow 1s;
+    position: relative;
+    margin: 50px auto;
+    width: 90%;
+    padding: 20px;
+    max-width: 380px;
+    text-align: center;
+    font-weight: bold;
+    background-color: #f6f6f6;
+    cursor: initial;
+}
