@@ -12,18 +12,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- favicon.ico in the root directory -->
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/main.css">
     <meta property="og:title" content="WePy 小程序组件化开发框架">
 </head>
 <body class="shown">
-<div class="container-wrap">
+<div class="container-wrap" id="app">
 
     <div class="container">
         <div class="slides">
             <div class="slide slide--one">
-                <div class="slide__bg-image">
-                    <div class="slide__bg-area"></div>
-                </div>
                 <div class="slide__inner">
                     <div class="header">
                         <div class="header__inner">
@@ -36,31 +33,18 @@
                             </a>
 
                             <div class="nav">
-                                <a class="nav__item nav__item--home" target="_blank"
-                                   href="#/">首页</a>
+                                <a class="nav__item nav__item--home" href="#/">首页</a>
                                 <a class="nav__item nav__item--document" target="_blank" href="./document.html">使用手册</a>
                                 <a class="nav__item nav__item--api" target="_blank"
                                    href="./document.html#/api">API 说明</a>
                                 <a class="nav__item nav__item--logs" target="_blank" href="./document.html#/changelog">版本日志</a>
+                                <a class="nav__item nav__item--donate" href="./donate.html">Donate</a>
                             </div>
 
                             <div class="shares">
                                 <ul class="social-links">
-                                    <li class="social-link social-link--wx tooltip tooltip--indis " data-type="indis"
-                                        role="tooltip">
-                                        <a href="#" class="tooltip__trigger" role="tooltip"
-                                           aria-describedby="info-indis"></a>
-                                        <div class="tooltip__base">
-                                            <svg class="tooltip__shape" width="100%" height="100%"
-                                                 viewBox="0 0 400 300">
-                                                <path d="M 44.5,24 C 138,4.47 246,-6.47 356,24 367,26.9 376,32.9 376,44 L 376,256 C 376,267 367,279 356,276 231,240 168,241 44.5,276 33.8,279 24.5,267 24.5,256 L 24.5,44 C 24.5,32.9 33.6,26.3 44.5,24 Z"/>
-                                            </svg>
-                                            <div class="tooltip__content" id="info-indis">
-                                                我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy
-                                                按照指引进群。
-                                                <img class="qrcode" src="img/qrcode.png">
-                                            </div>
-                                        </div>
+                                    <li class="social-link social-link--wx tooltip tooltip--indis" >
+                                        <a href="#" @mouseenter="wxEnter"></a>
                                     </li>
                                     <li class="social-link social-link--gh">
                                         <a href="https://github.com/wepyjs/wepy" target="_blank"></a>
@@ -203,98 +187,21 @@
                     </div>
                     <div class="slide__body">
                         <article class="gallery ">
-                            <figure class="gist window" data-nlcst="ignore">
+                            <figure class="gist window" :style="item.style" v-for="(item, index) in gists" :key="index" @mouseenter="codeEnter(item)" @mouseleave="codeLeave(item)">
                                 <figcaption><span class="chrome btn close"></span><span
                                         class="chrome btn minimize"></span><span
                                         class="chrome btn fullscreen"></span><span
-                                        class="chrome title">原生代码 index.js</span></figcaption>
+                                        class="chrome title">{{item.title}}</span></figcaption>
                                 <pre class="language-js" data-start="100"><code>
-//获取应用实例
-var app = getApp()
-
-//通过Page构造函数创建页面逻辑
-Page({
-    //可用于页面模板绑定的数据
-    data: {
-        motto: 'Hello World',
-        userInfo: {}
-    },
-
-    //事件处理函数
-    bindViewTap: function() {
-        console.log('button clicked')
-    },
-
-    //页面的生命周期函数
-    onLoad: function () {
-        console.log('onLoad')
-    }
-})
+                                    {{item.code}}
                                 </code></pre>
-                            </figure>
-                            <figure class="gist window">
-                                <figcaption><span class="chrome btn close"></span><span
-                                        class="chrome btn minimize"></span><span
-                                        class="chrome btn fullscreen"></span><span
-                                        class="chrome title">index.wpy 中的 &lt;script &gt;部分
-                                </span></figcaption>
-                                <pre class="language-js" data-start="100"><code>
-import wepy from 'wepy';
-
-//通过继承自wepy.page的类创建页面逻辑
-export default class Index extends wepy.page {
-    //可用于页面模板绑定的数据
-    data = {
-        motto: 'Hello World',
-        userInfo: {}
-    };
-
-    //事件处理函数(集中保存在methods对象中)
-    methods = {
-        bindViewTap () {
-            console.log('button clicked');
-        }
-    };
-
-    //页面的生命周期函数
-    onLoad () {
-        console.log('onLoad');
-    };
-}
-                                </code></pre>
-                            </figure>
-
-                            <figure  class="gist window">
-                                <figcaption><span class="chrome btn close"></span><span
-                                        class="chrome btn minimize"></span><span
-                                        class="chrome btn fullscreen"></span><span
-                                        class="chrome title">支持ES6/7的一些新特性</span></figcaption>
-                                <pre class="language-js" data-start="100"><code>
-
-import wepy from 'wepy';
-
-export default class Index extends wepy.page {
-    getData() {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve({data: 123});
-            }, 3000);
-        });
-    };
-
-    async onLoad () {
-        let data = await this.getData();
-        console.log(data.data);
-    };
-}
-             </code></pre>
                             </figure>
                         </article>
 
                     </div>
                 </div>
             </div>
-            <div class="slide slide--examples slide--shown" id="app">
+            <div class="slide slide--examples slide--shown">
                 <div class="slide__inner">
                     <div class="slide__header">
                         <h2 class="slide__title">应用案例</h2>
@@ -304,7 +211,12 @@ export default class Index extends wepy.page {
                             </span>
                             ...
                         </p>
+                        <div class="examples__pr">
+                            <a class="button button--pr" href="https://github.com/wepyjs/wepy/edit/master/docs/data/cases.json" target="_blank"> 
+                                <strong style="font-size: 20px;">+</strong> 案例</a>
+                        </div> 
                     </div>
+
                     <!-- 应用案例 -->
                     <div class="examples carousel">
                         <a href="" target="_blank" class="example carousel-cell" v-for="item in rollCases" style="display: none" v-show="rollCases.length">
@@ -317,96 +229,18 @@ export default class Index extends wepy.page {
                     <div class="slide__footer"></div>
                 </div>
             </div>
-            <!--
-            <div class="slide slide--examples slide--shown">
-                <div class="slide__inner">
-                    <div class="slide__header">
-                        <h2 class="slide__title">应用案例</h2>
-                        <p class="slide__description">
-                            手机充值+、
-                            手机流量充值优惠券、
-                            手机余额查询、
-                            阅邻二手书、
-                            <a href="https://github.com/jas0ncn/szushudong">深大的树洞</a>、
-                            爱羽客羽毛球、
-                            小小羽球、
-                            七弦琴大数据、
-                            七弦琴小助手、
-                            培恩医学、
-                            公务员朝夕刷题、
-                            独角兽公司、
-                            逛人备忘、
-                            英语助手君、
-                            农资优选、
-                            花花百科、
-                            斑马小店、
-                            鲜花说小店、
-                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg">趣店招聘</a>、
-                            <a href="http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg">满
-                                <g-emoji alias="bear"
-                                         fallback-src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f43b.png"
-                                         ios-version="6.0">🐻
-                                </g-emoji>
-                                阅读</a> + 代码简例<a
-                                href="https://github.com/Thunf/wepy-demo-bookmall">wepy-demo-bookmall</a>、
-                            <a href="https://miniapp.ourauto.club/qrcode.jpg">平行进口报价内参</a>、
-                            <a href="https://github.com/KingJeason/wepy-books">求知微阅读(完全开源)</a>
-                            ...
-                        </p>
-                    </div>
-                    <div class="examples carousel" data-flickity='{"initialIndex": 1 }'>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">手机充值+</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113445-5512185c-cf93-11e7-9c07-b8bc25db448f.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">手机流量充值优惠券</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113446-5543e062-cf93-11e7-85d7-166c9f36e31d.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">手机余额查询</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://user-images.githubusercontent.com/2182004/33113447-5573e460-cf93-11e7-80cf-a53583644589.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">趣店招聘</h3>
-                                <div class="example__image"
-                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_300.jpg')"></div>
-                            </div>
-                        </a>
-
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">满熊阅读</h3>
-                                <div class="example__image"
-                                     style="background-image: url('http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg')"></div>
-                            </div>
-                        </a>
-                        <a href="" target="_blank" class="example carousel-cell">
-                            <div class="example__inner">
-                                <h3 class="example__title">平行进口报价内参</h3>
-                                <div class="example__image"
-                                     style="background-image: url('https://miniapp.ourauto.club/qrcode.jpg');"></div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="slide__footer"></div>
-                </div>
-            </div>
-            -->
-
         </div>
     </div>
+    <div class="modal-container" :class="isQrShow ? 'active' : ''" @click="modalClick"> 
+            <div class="qr-modal">
+                <div style="padding: 10px;">
+                    我们是完全开源的，任何人都可以免费投稿。WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 wepy 按照指引进群。
+                </div> 
+                <img style="width: 200px;" src="img/qrcode.png">
+            </div>
+    </div>
 </div>
+
 <div class="footer">
     <div class="footer-inner">
         <div class="footer--copyright">
@@ -414,10 +248,7 @@ export default class Index extends wepy.page {
         </div>
     </div>
 </div>
-<script src="js/anime.min.js"></script>
-<script src="js/charming.min.js"></script>
 <script src="js/flickity.pkgd.min.js"></script>
-<script src="js/main.js"></script>
 <script src="js/prism.js"></script>
 <script src="https://unpkg.com/vue"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -426,7 +257,81 @@ export default class Index extends wepy.page {
     el: '#app',
     data: {
       textCases: [],
-      rollCases: []
+      rollCases: [],
+      isQrShow: false,
+      gists: [{
+        id: 1,
+        title: '原生代码 index.js',
+        lang: 'language-js',
+        style: '',
+        code: `
+import wepy from 'wepy';
+        
+export default class Index extends wepy.page {
+getData() {
+return new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve({data: 123});
+  }, 3000);
+});
+};
+        
+async onLoad () {
+let data = await this.getData();
+console.log(data.data);
+};
+}`
+    }, {
+        id: 2,
+        title: `index.wpy 中的 <script> 部分`,
+        lang: 'language-js',
+        style: '',
+        code: `
+import wepy from 'wepy';
+        
+// 通过继承自wepy.page的类创建页面逻辑
+export default class Index extends wepy.page {
+//可用于页面模板绑定的数据
+data = {
+motto: 'Hello World',
+userInfo: {}
+};
+     
+//事件处理函数(集中保存在methods对象中)
+methods = {
+bindViewTap () {
+  console.log('button clicked');
+}
+};
+        
+//页面的生命周期函数
+onLoad () {
+console.log('onLoad');
+};
+}`
+    }, {
+        id: 3,
+        title: `支持ES6/7的一些新特性`,
+        lang: 'language-js',
+        style: '',
+        code: `
+import wepy from 'wepy';
+        
+export default class Index extends wepy.page {
+getData() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve({data: 123});
+    }, 3000);
+  });
+};
+        
+async onLoad () {
+ let data = await this.getData();
+ console.log(data.data);
+};
+}`
+    }]
     },
     created: function () {
       let self = this;
@@ -447,8 +352,32 @@ export default class Index extends wepy.page {
           });
         }
       });
+    },
+    methods: {
+        wxEnter: function () {
+            this.isQrShow = true
+        },
+        modalClick: function () {
+            this.isQrShow = false
+        },
+        codeEnter: function (item, $evt) {
+            switch (item.id) {
+                case 1: {
+                  item.style = 'z-index: 3; transform: scale(1) translate(-95%, 0%); transform-origin: 0% 0%; font-weight: 500;'
+                  break;
+                }
+                case 3: {
+                  item.style = 'z-index: 3; transform: scale(1) translate(120%, 0%); transform-origin: 100% 0%; font-weight: 500;'
+                  break;
+                }
+            }
+        },
+        codeLeave: function (item) {
+          item.style = 'z-index: -1;'
+        }
     }
   });
+
 </script>
 <script>
 var _hmt = _hmt || [];
