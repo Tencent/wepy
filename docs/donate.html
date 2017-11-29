@@ -33,7 +33,7 @@
                             </a>
 
                             <div class="nav">
-                                <a class="nav__item nav__item--home" href="/">首页</a>
+                                <a class="nav__item nav__item--home" href="#/">首页</a>
                                 <a class="nav__item nav__item--document" target="_blank" href="./document.html">使用手册</a>
                                 <a class="nav__item nav__item--api" target="_blank" href="./document.html#/api">API 说明</a>
                                 <a class="nav__item nav__item--logs" target="_blank" href="./document.html#/changelog">版本日志</a>
@@ -59,15 +59,13 @@
                     <div class="actions">
 
                         <div class="action">
-                            <img src="https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png">
-                            <h1>wePay</h1>
-                            <h2>微信宝捐赠</h2>
+                            <img src="https://raw.githubusercontent.com/wepyjs/wepy/master/docs/img/donate/wechat.png" />
+                            <h2>微信捐赠WePY</h2>
                         </div>
 
                         <div class="action">
-                            <img src="https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png">
-                            <h1>AliPay</h1>
-                            <h2>支付宝捐赠</h2>
+                            <img src="https://raw.githubusercontent.com/wepyjs/wepy/master/docs/img/donate/alipay.png" />
+                            <h2>支付宝捐赠WePY</h2>
 
                         </div>
 
@@ -96,20 +94,10 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td data-th="时间">2017/11/11</td>
-                                                <td data-th="姓名">Dora</td>
-                                                <td data-th="金额">￥ 188.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td data-th="时间">2017/11/11</td>
-                                                <td data-th="姓名">Dora</td>
-                                                <td data-th="金额">￥ 188.00</td>
-                                            </tr>
-                                            <tr>
-                                                <td data-th="时间">2017/11/11</td>
-                                                <td data-th="姓名">Dora</td>
-                                                <td data-th="金额">￥ 188.00</td>
+                                            <tr v-for="item in donates">
+                                                <td data-th="时间">{{item.date}}</td>
+                                                <td data-th="姓名">{{item.name}}</td>
+                                                <td data-th="金额">￥ {{item.amount}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -145,11 +133,13 @@
     </div>
 
     <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
         var app = new Vue({
             el: '#app',
             data: {
-                isQrShow: false
+                isQrShow: false,
+                donates: []
             },
             methods: {
                 wxEnter: function () {
@@ -158,6 +148,14 @@
                 modalClick: function () {
                     this.isQrShow = false
                 }
+            },
+            created: {
+                let self = this;
+                axios.get('./data/donates.json').then(res => {
+                    if (res && res.data) {
+                      self.donates = res.data.donates;
+                    }
+                });
             }
         })
     </script>
