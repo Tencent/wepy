@@ -1,21 +1,82 @@
-MIT License
+Tencent is pleased to support the open source community by making WePY available.  
+Copyright (C) 2017 THL A29 Limited, a Tencent company.  All rights reserved.
+If you have downloaded a copy of the WePY binary from Tencent, please note that the WePY binary is licensed under the MIT License.
+If you have downloaded a copy of the WePY source code from Tencent, please note that WePY source code is licensed under the MIT License, except for the third-party components listed below which are subject to different license terms.  Your integration of WePY into your own projects may require compliance with the MIT License, as well as the other licenses applicable to the third-party components included within WePY.
+A copy of the MIT License is included in this file.
 
-Copyright (c) 2016 wepyjs
+Other dependencies and licenses:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Open Source Software Licensed Under the BSD 3-Clause License: 
+----------------------------------------------------------------------------------------
+1. istanbul  0.4.5
+Copyright 2012 Yahoo! Inc.
+All rights reserved.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Terms of the BSD 3-Clause License:
+--------------------------------------------------------------------
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+Neither the name of [copyright holder] nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+Open Source Software Licensed Under the MIT License: 
+----------------------------------------------------------------------------------------
+1. bable  6.5.2
+Copyright (c) 2014-2016 Sebastian McKenzie <sebmck@gmail.com>
+
+2. eslint  3.11.1
+Copyright JS Foundation and other contributors, https://js.foundation
+
+3. gulp  3.9.1
+Copyright (c) 2013-2016 Fractal <contact@wearefractal.com>
+
+4. lerna  2.0.0
+Copyright (c) 2015-2016 Sebastian McKenzie <sebmck@gmail.com>
+
+5. mocha  3.2.0
+Copyright (c) 2016 JS Foundation and contributors, https://js.foundation
+
+6. promise-polyfill  6.0.2
+Copyright (c) 2014 Taylor Hakes
+Copyright (c) 2014 Forbes Lindesay
+
+7. postcss  5.2.16
+Copyright 2013 Andrey Sitnik <andrey@sitnik.ru>
+
+8. node-sass  4.0.0
+Copyright (c) 2013-2016 Andrew Nesbitt
+
+9. stylus  0.54.5
+Copyright (c) Automattic <developer.wordpress.com>
+
+10. imagemin  5.2.2
+Copyright (c) imagemin (github.com/imagemin)
+
+11. redux  2.0.0
+Copyright (c) 2015 Dan Abramov
+
+12. axios  0.16.1
+Copyright (c) 2014 Matt Zabriskie
+
+13. vue  1.0.28
+Copyright (c) 2013-2016 Yuxi Evan You
+
+14. xmldom  0.1.27
+Copyright (c) jindw <jindw@xidea.org> (http://www.xidea.org)
+
+15. pug  2.0.0-beta6
+Copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>
+
+
+Terms of the MIT License:
+---------------------------------------------------
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
