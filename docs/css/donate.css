@@ -136,6 +136,53 @@ input[type="radio"],
 input[type="checkbox"] {
   -webkit-appearance: none;
 }
+.button {
+  display: block;
+  height: 44px;
+  line-height: 43px;
+  padding: 0 20px;
+  font-family: Helvetica, Arial, "Hiragino Sans GB", "Source Han Sans CN", Roboto, "Microsoft Yahei", sans-serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 1px;
+  color: white;
+  background-color: #68c0f8;
+  box-shadow: 0 8px 14px 0 #DEE2E5;
+  border-radius: 8px;
+  transform: translate3d(0, 0, 0) scale(1);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.button:active {
+  transform: translate3d(0, 0, 0) scale(0.99);
+}
+.button:hover {
+  background-color: #9ae8a3;
+}
+.button.button--disabled {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: default;
+}
+.button.button--secondary {
+  box-shadow: none;
+}
+.button.button--secondary:hover {
+  color: white;
+  background-color: rgba(99, 112, 202, 0.1);
+}
+.button.button--more {
+  padding: 0 35px;
+  transform: translate3d(-50%, 0, 0);
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.button.button--more:active {
+  transform: translate3d(-50%, 0, 0) scale(0.99);
+}
 table.table {
   line-height: 26px;
   width: 100%;
@@ -825,6 +872,40 @@ li.social-link a {
   -ms-flex-align: center;
   align-items: center;
 }
+.slide__text h2 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 2;
+  text-align: center;
+  color: #42505c;
+}
+.slide__text .text {
+  max-width: 520px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.65;
+  text-align: center;
+}
+.slide__text strong {
+  color: #1F9948;
+}
+.slide__text .button {
+  display: inline-block;
+  width: 180px;
+  height: 45px;
+  margin-top: 16px;
+  border-radius: 8px;
+  background-color: #57a7ed;
+  transition: opacity .2s ease;
+}
+.slide__text .button--pr {
+  background: #1F9948;
+  box-shadow: none;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.slide__text .button--pr:hover {
+  box-shadow: 0 8px 30px 2px rgba(28, 216, 87, 0.5);
+}
 .slide--hidden {
   display: none;
 }
@@ -842,6 +923,10 @@ li.social-link a {
   align-items: center;
   -ms-flex-direction: column;
   flex-direction: column;
+}
+.slide.slide--three .slide__inner {
+  text-align: center;
+  margin: 0 0 60px 0;
 }
 .hero-image-wrap {
   width: 300px;
