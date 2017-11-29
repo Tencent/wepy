@@ -529,6 +529,10 @@ a.cases.islink {
   background-repeat: repeat;
   padding-bottom: 134px;
 }
+.header-pattern img {
+  width: 160px;
+  height: 160px;
+}
 @media (min-width: 1230px) {
   .header {
     margin: 0 auto;
