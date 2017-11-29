@@ -268,18 +268,18 @@
 import wepy from 'wepy';
         
 export default class Index extends wepy.page {
-getData() {
-return new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve({data: 123});
-  }, 3000);
-});
-};
+    getData() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({data: 123});
+        }, 3000);
+      });
+    };
         
-async onLoad () {
-let data = await this.getData();
-console.log(data.data);
-};
+    async onLoad () {
+      let data = await this.getData();
+      console.log(data.data);
+    };
 }`
     }, {
         id: 2,
@@ -291,23 +291,23 @@ import wepy from 'wepy';
         
 // 通过继承自wepy.page的类创建页面逻辑
 export default class Index extends wepy.page {
-//可用于页面模板绑定的数据
-data = {
-motto: 'Hello World',
-userInfo: {}
-};
+    //可用于页面模板绑定的数据
+    data = {
+      motto: 'Hello World',
+      userInfo: {}
+    };
      
-//事件处理函数(集中保存在methods对象中)
-methods = {
-bindViewTap () {
-  console.log('button clicked');
-}
-};
+    //事件处理函数(集中保存在methods对象中)
+    methods = {
+      bindViewTap () {
+        console.log('button clicked');
+      }
+    };
         
-//页面的生命周期函数
-onLoad () {
-console.log('onLoad');
-};
+    //页面的生命周期函数
+    onLoad () {
+      console.log('onLoad');
+    };
 }`
     }, {
         id: 3,
@@ -318,18 +318,18 @@ console.log('onLoad');
 import wepy from 'wepy';
         
 export default class Index extends wepy.page {
-getData() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve({data: 123});
-    }, 3000);
-  });
-};
+    getData() {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve({data: 123});
+        }, 3000);
+      });
+    };
         
-async onLoad () {
- let data = await this.getData();
- console.log(data.data);
-};
+    async onLoad () {
+      let data = await this.getData();
+      console.log(data.data);
+    };
 }`
     }]
     },
