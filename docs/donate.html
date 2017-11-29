@@ -88,9 +88,10 @@
                                     <table class="table border stripe responsive">
                                         <thead>
                                             <tr>
-                                                <th>时间</th>
-                                                <th>姓名</th>
-                                                <th>金额</th>
+                                                <th style="width: 130px;">时间</th>
+                                                <th style="width: 200px;">姓名</th>
+                                                <th style="width: 150px;">金额</th>
+                                                <th>备注</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -98,6 +99,7 @@
                                                 <td data-th="时间">{{item.date}}</td>
                                                 <td data-th="姓名">{{item.name}}</td>
                                                 <td data-th="金额">￥ {{item.amount}}</td>
+                                                <td data-th="备注">{{item.desc}}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -149,9 +151,9 @@
                     this.isQrShow = false
                 }
             },
-            created: {
-                let self = this;
-                axios.get('./data/donates.json').then(res => {
+            created: function () {
+                var self = this;
+                axios.get('./data/donate.json').then(function (res) {
                     if (res && res.data) {
                       self.donates = res.data.donates;
                     }

@@ -334,8 +334,8 @@ export default class Index extends wepy.page {
     }]
     },
     created: function () {
-      let self = this;
-      axios.get('./data/cases.json').then(res => {
+      var self = this;
+      axios.get('./data/cases.json').then(function (res) {
         if (res && res.data) {
           self.rollCases = res.data.roll_cases;
           self.textCases = res.data.text_cases;
