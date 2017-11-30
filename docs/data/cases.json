@@ -12,6 +12,10 @@
         "email": "",
         "link": ""
     }, {
+        "name": "众安保险福利",
+        "email": "447587073@qq.com",
+        "link": ""
+    }, {
         "name": "阅邻二手书",
         "email": "",
         "link": ""
@@ -133,11 +137,11 @@
         "name": "坚橙",
         "email": "",
         "qr_code": "https://static.crandom.com/code/wepy.jpeg"
-    },{
+    }, {
         "name": "天天跟我买",
         "email": "",
         "qr_code": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg"
-    },{
+    }, {
         "name": "众安保险福利",
         "email": "447587073@qq.com",
         "qr_code": "https://cdn-qcloud.zhongan.com/a00000/InsuWelfare_Prod/imgs/logo.jpg"
