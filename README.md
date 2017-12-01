@@ -131,9 +131,9 @@ wepy build --watch
 
 ### Links
 
-[Documentation](https://wepyjs.github.io/wepy/)
+[Documentation](https://tencent.github.io/wepy/)
 
-[Changelog](https://wepyjs.github.io/wepy/#/CHANGELOG)
+[Changelog](https://tencent.github.io/wepy/#/CHANGELOG)
 
 [Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
 
