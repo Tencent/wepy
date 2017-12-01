@@ -1489,4 +1489,4 @@ var item = require('item.js')
 
 ## 其他
 
-更多细节，还可参看[API文档](https://wepyjs.github.io/wepy/#/api)。
+更多细节，还可参看[API文档](https://tencent.github.io/wepy/#/api)。
