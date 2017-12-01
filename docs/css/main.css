@@ -430,7 +430,6 @@ li.social-link a {
   background-image: url(../img/icon_wechat.svg);
 }
 .social-link.social-link--gh a {
-  color: #343332;
   background-image: url(../img/icon_gh.svg);
 }
 .social-link:hover a {
