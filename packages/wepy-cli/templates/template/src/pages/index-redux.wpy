@@ -83,7 +83,7 @@
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux'
-  import List from '../components/list'
+  import List from 'list' // aliasFields example
   import Panel from '../components/panel'
   import Counter from 'counter' // alias example
   import Group from '../components/group'

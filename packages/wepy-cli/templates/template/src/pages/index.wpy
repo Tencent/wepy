@@ -79,7 +79,7 @@
 
 <script>
   import wepy from 'wepy'
-  import List from '../components/list'
+  import List from 'list' // aliasFields example
   import Panel from '@/components/panel' // alias example
   import Counter from 'counter' // alias example
   import Group from '../components/group'
