@@ -2,6 +2,7 @@
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
 * `F` 修复了源码目录里有空内容组件编译报错的问题。[ISSUE 538](https://github.com/wepyjs/wepy/issues/538)
+* `F` 修复了当模板格式错误时，编译报错的问题。
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
