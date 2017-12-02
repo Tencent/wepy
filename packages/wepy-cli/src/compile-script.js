@@ -43,8 +43,10 @@ export default {
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
             }
-            lib = resolve.resolveAlias(lib);
-            if (path.isAbsolute(lib)) {
+            lib = resolve.resolveAlias(lib, opath);
+            if (lib === 'false') {
+                return `{}`
+            } else if (path.isAbsolute(lib)) {
                 source = lib;
                 target = util.getDistPath(source);
             } else if (lib[0] === '.') { // require('./something'');
