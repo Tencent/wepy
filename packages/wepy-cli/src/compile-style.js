@@ -99,7 +99,7 @@ export default {
                 requires.forEach((r) => {
                     let comsrc = null;
                     isNPM = false;
-                    let lib = resolve.resolveAlias(r, opath, ext);
+                    let lib = resolve.resolveAlias(r, opath);
   
                     if (path.isAbsolute(lib)) {
                         if (path.extname(lib) === '' && util.isFile(lib + ext)) {

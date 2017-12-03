@@ -43,29 +43,29 @@ export default {
                     // => "xyz"、"xyz-xyz"
                     let value;
                     if (!pkg[fields][key]) {
-                        value = 'false'
+                        value = 'false';
                     } else {
-                        value = path.resolve(cwd, pkg[fields][key])
+                        value = path.resolve(cwd, pkg[fields][key]);
                     }
                   
                     // fields中key或value路径后缀与配置缺省值相同时，replace后缀
                     if (path.extname(value) === ext)
-                        value = value.replace(ext, '')
+                        value = value.replace(ext, '');
                   
                     this.alias = Object.assign({}, { [key]: value }, this.alias || {});
                 }
                 // fields转换："./src/index.wpy" => "src/index.wpy"后合并至fieldsAlias中
-                if (!path.isAbsolute(key) && path.extname(key)) {
+                if (!path.isAbsolute(key)) {
                     // => "./src/xyz.js"、"src/xyz.js"
-                    let value = path.resolve(cwd, pkg[fields][key])
-                    key = path.resolve(cwd, key)
+                    let value = path.resolve(cwd, pkg[fields][key]);
+                    key = path.resolve(cwd, key);
                   
                     // fields中key或value路径后缀与配置缺省值相同时，replace后缀
                     if (path.extname(key) === ext)
-                        key = key.replace(ext, '')
+                        key = key.replace(ext, '');
                   
                     if (path.extname(value) === ext)
-                        value = value.replace(ext, '')
+                        value = value.replace(ext, '');
                   
                     this.fieldsAlias = Object.assign({}, { [key]: value }, this.fieldsAlias || {});
                 }
@@ -176,7 +176,7 @@ export default {
         let absolutePath;
         
         if (path.isAbsolute(currentAlias)) {
-            absolutePath = currentAlias
+            absolutePath = currentAlias;
           
             currentAlias = this.resolveFieldsAlias(absolutePath) !== absolutePath
                 ? this.resolveFieldsAlias(absolutePath)
@@ -234,7 +234,7 @@ export default {
             this._cacheAlias[lib] = lib;
         }
         // replace field alias
-        this._cacheAlias[lib] = this.replaceFieldsAlias(this._cacheAlias[lib], opath)
+        this._cacheAlias[lib] = this.replaceFieldsAlias(this._cacheAlias[lib], opath);
         return this._cacheAlias[lib];
     }   
 }
