@@ -53,10 +53,8 @@ export default {
                         value = value.replace(ext, '');
                   
                     this.alias = Object.assign({}, { [key]: value }, this.alias || {});
-                }
-                // fields转换："./src/index.wpy" => "src/index.wpy"后合并至fieldsAlias中
-                if (!path.isAbsolute(key)) {
-                    // => "./src/xyz.js"、"src/xyz.js"
+                } else if (!path.isAbsolute(key)) {
+                    // relative path
                     let value = path.resolve(cwd, pkg[fields][key]);
                     key = path.resolve(cwd, key);
                   
