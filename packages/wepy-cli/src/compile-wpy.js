@@ -254,8 +254,7 @@ export default {
         (() => {
             let coms = {};
             rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/\@]*)['"]/ig, (match, com, path) => {
-                if (path !== 'false')
-                    coms[com] = path;
+                coms[com] = path;
             });
 
             let match = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
