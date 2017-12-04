@@ -1362,15 +1362,6 @@ Page({
   }
 });
 
-// WePY 建议传参方式
-<view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
-
-methods: {
-    tapName (id, title, other, event) {
-        console.log(id, title, other)// output: 1, wepy, otherparams
-    }
-}
-
 // WePY 1.1.8以后的版本，只允许传string。
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
