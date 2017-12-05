@@ -135,7 +135,7 @@ wepy build --watch
 
 [Changelog](https://tencent.github.io/wepy/#/CHANGELOG)
 
-[Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
+[Contributing](https://github.com/tencent/wepy/blob/master/CONTRIBUTING.md)
 
-[License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+[License MIT](https://github.com/tencent/wepy/blob/master/LICENSE)
 
