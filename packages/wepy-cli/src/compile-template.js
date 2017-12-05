@@ -117,7 +117,7 @@ export default {
                 if (ignores[w] || this.isInQuote(matchs, n)) {
                     return match;
                 } else {
-                    if (mapping.items && mapping.items[w]) {
+                    if (mapping.items && mapping.items[w] && mapping.items[w].bind) {
                         // prefix 减少一层
                         let upper = prefix.split(PREFIX);
                         upper.pop();
