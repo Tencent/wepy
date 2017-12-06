@@ -1,9 +1,9 @@
 ## WePY
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
-[![travis-ci](https://travis-ci.org/wepyjs/wepy.svg?branch=master)](https://travis-ci.org/wepyjs/wepy)
-[![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
-[![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
+[![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=master)](https://travis-ci.org/wepyjs/wepy)
+[![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
+[![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/wepyjs/wepy)
 
 ### 介绍
 
