@@ -145,5 +145,11 @@
         "name": "众安保险福利",
         "email": "447587073@qq.com",
         "qr_code": "https://cdn-qcloud.zhongan.com/a00000/InsuWelfare_Prod/imgs/logo.jpg"
+    }, {
+        "name": "素洁商城",
+        "email": "490844594@qq.com",
+        "opensource": 1,
+        "link": "https://github.com/dyq086/wxYuHanStore",
+        "qr_code": "https://github.com/dyq086/wxYuHanStore/raw/master/screenshots/qr.jpg"
     }]
 }
