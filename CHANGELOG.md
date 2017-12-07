@@ -3,6 +3,7 @@
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
 * `F` 修复了源码目录里有空内容组件编译报错的问题。[ISSUE 538](https://github.com/wepyjs/wepy/issues/538)
 * `F` 修复了当模板格式错误时，编译报错的问题。
+* `F` 修复了引用带路径的NPM模块时，编译报错的问题。
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
