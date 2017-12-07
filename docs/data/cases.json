@@ -151,5 +151,10 @@
         "opensource": 1,
         "link": "https://github.com/dyq086/wxYuHanStore",
         "qr_code": "https://github.com/dyq086/wxYuHanStore/raw/master/screenshots/qr.jpg"
+    }, {
+        "name": "给你的 iPhone X 换个发型",
+        "email": "",
+        "link": "https://bangs.baran.wang/",
+        "qr_code": "https://img.bangs.baran.wang/img/qrcode_wechat_app.jpg"
     }]
 }
