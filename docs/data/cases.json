@@ -151,5 +151,9 @@
         "opensource": 1,
         "link": "https://github.com/dyq086/wxYuHanStore",
         "qr_code": "https://github.com/dyq086/wxYuHanStore/raw/master/screenshots/qr.jpg"
+    }, {
+        "name": "群内交易助手",
+        "email": "",
+        "qr_code": "http://public-1253854453.cossh.myqcloud.com/res/gh_814621e1c74c_258-2.jpg"
     }]
 }
