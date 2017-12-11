@@ -5,6 +5,7 @@
 * `F` 修复了当模板格式错误时，编译报错的问题。
 * `F` 修复了引用带路径的NPM模块时，编译报错的问题。
 * `A` 配置文件中添加了`watchOption`参数。
+* `F` 修复了repeat中，使用静态props异常的问题。[PR 538](https://github.com/Tencent/wepy/pull/605)
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
