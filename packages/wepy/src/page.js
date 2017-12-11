@@ -63,6 +63,7 @@ export default class extends component {
         // __route__ will be undefined if it called from onLoad
         if (!this.$parent.__route__) {
             this.$parent.__route__ = getCurrentPages()[0].__route__;
+            this.$parent.__wxWebviewId__ = getCurrentPages()[0].__wxWebviewId__;
         }
         let absoluteRoute = this.$parent.__route__[0] !== '/' ? ('/' + this.$parent.__route__) : this.$parent.__route__;
         let realPath = util.$resolvePath(absoluteRoute, url.url.split('?')[0]);

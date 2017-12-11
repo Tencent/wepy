@@ -256,7 +256,8 @@ export default class {
             let noPrefix = t.replace(reg, '');
             this.$data[noPrefix] = util.$copy(k[t], true);
         }
-        return this.$wxpage.setData(k);
+        // In the same page redirection, $wxpage does not update, so use the page $wxpage
+        return this.$root.$wxpage.setData(k);
     }
 
     getWxPage () {
