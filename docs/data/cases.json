@@ -156,5 +156,9 @@
         "email": "",
         "link": "https://bangs.baran.wang/",
         "qr_code": "https://img.bangs.baran.wang/img/qrcode_wechat_app.jpg"
+    }, {
+        "name": "群脱单",
+        "email": "davylaker@163.com",
+        "qr_code": "http://deep2.cn/res/quntuodan.jpg"
     }]
 }
