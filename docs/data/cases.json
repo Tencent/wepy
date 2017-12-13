@@ -104,6 +104,10 @@
        "name": "天天跟我买",
         "email": "",
         "link": "http://www.xiaohongchun.com.cn/index" 
+    },{
+       "name": "GitHub掘金版",
+        "email": "",
+        "link": "" 
     }],
     "roll_cases": [{
         "name": "手机充值+",
@@ -160,5 +164,10 @@
         "name": "群脱单",
         "email": "davylaker@163.com",
         "qr_code": "https://raw.githubusercontent.com/davylaker/wepy-wechat-demo/697292c4767dd08e5f50ada95e295d2c37ac05c2/quntuodan.jpg"
+    },{
+        "name": "GitHub 掘金版,
+        "email": "",
+        "link": "",
+        "qr_code": "https://raw.githubusercontent.com/1003865572/static/master/public/img/gh_3687b5344359_258.jpg"
     }]
 }
