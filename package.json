@@ -42,6 +42,7 @@
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.11",
     "istanbul": "^0.4.5",
+    "jsonlint": "^1.6.2",
     "lerna": "2.0.0-beta.31",
     "less": "^2.7.3",
     "mkpath": "^1.0.0",
