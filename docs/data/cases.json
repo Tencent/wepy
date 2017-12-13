@@ -108,6 +108,10 @@
        "name": "GitHub掘金版",
         "email": "",
         "link": "" 
+    },{
+       "name": "帮助圈",
+        "email": "191100479@qq.com",
+        "link": "https://github.com/jingxinxin/jacks/issues/4"
     }],
     "roll_cases": [{
         "name": "手机充值+",
@@ -173,5 +177,9 @@
         "name": "米淘联盟",
         "email": "hello_undefined@icloud.com",
         "qr_code": "http://xiaoma.aldwx.com/public/image/code/1513146352_1.png"
+    },{
+        "name": "帮助圈",
+        "email": "191100479@qq.com",
+        "qr_code": "https://user-images.githubusercontent.com/6293249/33943820-20a6ea84-e055-11e7-85c7-49e9cf60ce40.jpg"
     }]
 }
