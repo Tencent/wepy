@@ -8,24 +8,24 @@
 *Please make sure you understand the following points:*
 
 
-1. 必须是一个bug或者功能新增。
+* 必须是一个bug或者功能新增。
 
-1. *It must be a bug or a feature request*
-
-
-2. 必须是WePY相关问题，原生小程序问题去[开发者论坛](https://developers.weixin.qq.com/)。
-
-2. *It must be a WePY issue.*
+* *It must be a bug or a feature request*
 
 
-3. 已经在issue中搜索过，并且没有找到相似的issue或者解决方案。
+* 必须是WePY相关问题，原生小程序问题去[开发者论坛](https://developers.weixin.qq.com/)。
 
-3. *I searched issue already but I did't find any relevant issues or solutions.*
+* *It must be a WePY issue.*
 
 
-4. 完善下面模板中的信息
+* 已经在issue中搜索过，并且没有找到相似的issue或者解决方案。
 
-4. *Please filled out the following template*
+* *I searched issue already but I did't find any relevant issues or solutions.*
+
+
+* 完善下面模板中的信息
+
+* *Please filled out the following template*
 
 
 
