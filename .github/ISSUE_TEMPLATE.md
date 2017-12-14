@@ -1,29 +1,39 @@
 提交ISSUE前请确保已认真阅读以下内容
+
 *Please read the following information carefully before you open an issue.*
 
 
 在提交issue之前必须确认以下问题：
+
 *Please make sure you understand the following points:*
 
+
 1. 必须是一个bug或者功能新增。
-*1. It must be a bug or a feature request*
+
+1. *It must be a bug or a feature request*
+
 
 2. 必须是WePY相关问题，原生小程序问题去[开发者论坛](https://developers.weixin.qq.com/)。
-*2. It must be a WePY issue.*
+
+2. *It must be a WePY issue.*
+
 
 3. 已经在issue中搜索过，并且没有找到相似的issue或者解决方案。
-*3. I searched issue already but I did't find any relevant issues or solutions.*
+
+3. *I searched issue already but I did't find any relevant issues or solutions.*
+
 
 4. 完善下面模板中的信息
-*4. Please filled out the following template*
+
+4. *Please filled out the following template*
 
 
 
 阅读完后请在提交的issue中删除以上内容，包括分割线
+
 DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISSUE
+
 ------------------------
-
-
 ### Description
 
   [问题描述：站在其它人的角度尽可能清晰地、简洁地把问题描述清楚]
