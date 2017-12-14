@@ -51,16 +51,19 @@ DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISS
 ### Reproduce
 
   [如何重现问题]
+  
   [How to reproduce the issue]
 
 #### Observed Results
 
   [实际表现]
+  
   [Observed Results]
   
 #### Expected Results
 
   [期望表现]
+  
   [Expected Results]
   
 
