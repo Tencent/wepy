@@ -34,12 +34,12 @@
 DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISSUE
 
 ------------------------
-### Description
+## Description
 
   [问题描述：站在其它人的角度尽可能清晰地、简洁地把问题描述清楚]
   [Description of the issue]
 
-### Environment
+## Environment
 
   * Platform: [开发者工具/iOS/Andriod/Web]
   * Platform version: [对应工具或者iOS或者Andriod的版本号]
@@ -48,26 +48,26 @@ DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISS
   * wepy version: [在package.json里]
   * other version: [如果是插件问题，请列出问题插件的版本号]
   
-### Reproduce
+## Reproduce
 
   [如何重现问题]
   
   [How to reproduce the issue]
 
-#### Observed Results
+### Observed Results
 
   [实际表现]
   
   [Observed Results]
   
-#### Expected Results
+### Expected Results
 
   [期望表现]
   
   [Expected Results]
   
 
-#### Relevant Code / Logs
+## Relevant Code / Logs
 
   ```
   // TODO(you): code or logs ohere to reproduce the problem
