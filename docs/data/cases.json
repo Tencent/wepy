@@ -108,10 +108,15 @@
        "name": "GitHub掘金版",
         "email": "",
         "link": "" 
-    },{
+    }, {
        "name": "帮助圈",
         "email": "191100479@qq.com",
         "link": ""
+    }, {
+        "name": "友福图书馆",
+        "email": "glore@ufutx.com",
+        "opensource": 1,
+        "link": "https://github.com/glore/library"
     }],
     "roll_cases": [{
         "name": "手机充值+",
@@ -184,7 +189,6 @@
     },{
         "name": "友福图书馆",
         "email": "glore@ufutx.com",
-        "qr_code": "https://library.ufutx.com/imgs/mp_library.jpg",
-        "link": "https://github.com/glore/library"
+        "qr_code": "https://library.ufutx.com/imgs/mp_library.jpg"
     }]
 }
