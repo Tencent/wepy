@@ -180,6 +180,8 @@
     },{
         "name": "帮助圈",
         "email": "191100479@qq.com",
-        "qr_code": "https://user-images.githubusercontent.com/6293249/33993933-97a39268-e113-11e7-85b9-dd762c19c0e1.jpg"
+        "qr_code": "https://user-images.githubusercontent.com/6293249/33993933-97a39268-e113-11e7-85b9-dd762c19c0e1.jpg",
+        "opensource": 1,
+        "link": "https://library.ufutx.com"
     }]
 }
