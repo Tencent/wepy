@@ -776,7 +776,7 @@ project
 <script>
     import wepy from 'wepy';
     //引入组件文件
-    import Child from './coms/child';
+    import Child from '../coms/child';
    
     export default class Index extends wepy.component {
         //声明组件，分配组件id为child
