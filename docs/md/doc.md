@@ -758,7 +758,7 @@ WePY编译组件的过程如下：
 /**
 project
 └── src
-    ├── coms
+    ├── components
     |   └── child.wpy
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
@@ -776,7 +776,7 @@ project
 <script>
     import wepy from 'wepy';
     //引入组件文件
-    import Child from '../coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         //声明组件，分配组件id为child
@@ -805,7 +805,7 @@ project
 
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         components = {
@@ -851,7 +851,7 @@ project
 <script>
     import wepy from 'wepy';
     // 引入child组件文件
-    import Child from './coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         components = {
@@ -1104,7 +1104,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 <script>
     import wepy from 'wepy'
-    import Child from './coms/child'
+    import Child from '../components/child'
    
     export default class Index extends wepy.page {
         components = {
