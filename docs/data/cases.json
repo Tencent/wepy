@@ -189,6 +189,8 @@
     },{
         "name": "友福图书馆",
         "email": "glore@ufutx.com",
-        "qr_code": "https://library.ufutx.com/imgs/mp_library.jpg"
+        "qr_code": "https://library.ufutx.com/imgs/mp_library.jpg", 
+        "opensource": 1,
+        "link": "https://github.com/glore/library"
     }]
 }
