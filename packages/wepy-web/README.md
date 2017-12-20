@@ -1,5 +1,18 @@
 ## Todo list for wepy-web
 
+### 使用
+
+```
+# 生成web版本
+$ wepy build --output web
+
+# 生成微信浏览器版本
+$ wepy build --output web --platform wechat
+
+# 生成QQ浏览器版本
+$ wepy build --output web --platform qq
+```
+
 
 ### 优先需求
 
