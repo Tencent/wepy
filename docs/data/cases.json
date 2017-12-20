@@ -190,5 +190,10 @@
         "name": "友福图书馆",
         "email": "glore@ufutx.com",
         "qr_code": "https://library.ufutx.com/imgs/mp_library.jpg"
+    },{
+        "name": "西安找拼车",
+        "email": "chenqing_19@163.com",
+        "link": "https://github.com/chenqingspring",
+        "qr_code": "http://ac-ao4nzbtt.clouddn.com/a682ccd4e95e42049745.jpg"
     }]
 }
