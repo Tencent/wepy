@@ -117,6 +117,11 @@
         "email": "glore@ufutx.com",
         "opensource": 1,
         "link": "https://github.com/glore/library"
+    }, {
+        "name": "西安找拼车",
+        "email": "chenqing_19@163.com",
+        "link": "https://github.com/chenqingspring",
+        "opensource": 1
     }],
     "roll_cases": [{
         "name": "手机充值+",
