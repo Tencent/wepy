@@ -120,6 +120,11 @@
     },{
         "name": "班级群管",
         "email": "zoeice211@gmail.com"
+    }, {
+        "name": "西安找拼车",
+        "email": "chenqing_19@163.com",
+        "link": "https://github.com/chenqingspring",
+        "opensource": 1
     }],
     "roll_cases": [{
         "name": "手机充值+",
