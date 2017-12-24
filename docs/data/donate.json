@@ -1,4 +1,7 @@
 {
+    "/*": "****",
+    " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E6%8D%90%E8%B5%A0-pr-%E8%AF%B4%E6%98%8E",
+    " */": "****",
     "donates": [{
         "date": "2017/12/25",
         "name": "李乾坤",
