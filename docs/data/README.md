@@ -1,8 +1,10 @@
-# 应用案例 PR 说明
+# 数据 PR 说明
+
+## 应用案例 PR 说明
 
 ### 如何填加
 
-添加案例时请在`cases.json`中添加以下几个字段
+在`cases.json`中添加案例时，请先准备以下几个字段：
 
 * `name`: 小程序可被搜索到的名称
 * `email`: 能够联系到小程序作者的邮箱
@@ -11,6 +13,7 @@
 * `qrcode`: 小程序的二维码地址，推荐使用github issue上传图片，图片使用320*320的透明背景png
 * `company`: 该小程序所在的公司
 
+点击[这里](https://github.com/Tencent/wepy/edit/master/docs/data/cases.json)添加案例。
 
 ### 排序规则计算
 
@@ -24,3 +27,8 @@
 5. 填写了email字段的，权重 +10
 
 剩下权重计算 `name` 字段，encode 后取前8位，并转化成10进制作为权重的小数部分。
+
+
+## 捐赠 PR 说明
+
+感谢您对WePY的支持，点击[这里](https://github.com/Tencent/wepy/edit/master/docs/data/donate.json)添加捐赠记录。
