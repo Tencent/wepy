@@ -119,7 +119,8 @@ wepy build --watch
 [满🐻阅读](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg) + 代码简例[wepy-demo-bookmall](https://github.com/Thunf/wepy-demo-bookmall)、
 [平行进口报价内参](https://miniapp.ourauto.club/qrcode.jpg)、
 [求知微阅读(完全开源)](https://github.com/KingJeason/wepy-books)、
-[坚橙](https://zhanart.com/wepy.html)
+[坚橙](https://zhanart.com/wepy.html)、
+[NewsLite](https://github.com/yshkk/shanbay-mina)
 ...
 
 ### 交流群
