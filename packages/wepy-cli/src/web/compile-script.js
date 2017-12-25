@@ -41,8 +41,8 @@ export default {
 
         let depences = [];
 
+        // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
         wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-
             if (lib === 'wepy') 
                 lib = 'wepy-web';
 

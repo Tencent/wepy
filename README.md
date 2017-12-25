@@ -1,9 +1,9 @@
 ## WePY
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
-[![travis-ci](https://travis-ci.org/wepyjs/wepy.svg?branch=master)](https://travis-ci.org/wepyjs/wepy)
-[![Coverage Status](https://coveralls.io/repos/github/wepyjs/wepy/badge.svg?branch=master)](https://coveralls.io/github/wepyjs/wepy?branch=master)
-[![Dependency Status](https://david-dm.org/wepyjs/wepy.svg)](https://david-dm.org/wepyjs/wepy)
+[![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=master)](https://travis-ci.org/Tencent/wepy)
+[![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=master)](https://coveralls.io/github/Tencent/wepy?branch=master)
+[![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/Tencent/wepy)
 
 ### 介绍
 
@@ -119,7 +119,8 @@ wepy build --watch
 [满🐻阅读](http://7xrhcw.com1.z0.glb.clouddn.com/wechat_default_344.jpg) + 代码简例[wepy-demo-bookmall](https://github.com/Thunf/wepy-demo-bookmall)、
 [平行进口报价内参](https://miniapp.ourauto.club/qrcode.jpg)、
 [求知微阅读(完全开源)](https://github.com/KingJeason/wepy-books)、
-[坚橙](https://zhanart.com/wepy.html)
+[坚橙](https://zhanart.com/wepy.html)、
+[NewsLite](https://github.com/yshkk/shanbay-mina)
 ...
 
 ### 交流群
@@ -135,7 +136,7 @@ wepy build --watch
 
 [Changelog](https://tencent.github.io/wepy/#/CHANGELOG)
 
-[Contributing](https://github.com/wepyjs/wepy/blob/master/CONTRIBUTING.md)
+[Contributing](https://github.com/tencent/wepy/blob/master/CONTRIBUTING.md)
 
-[License MIT](https://github.com/wepyjs/wepy/blob/master/LICENSE)
+[License MIT](https://github.com/tencent/wepy/blob/master/LICENSE)
 

@@ -425,7 +425,7 @@ wepyjs 允许使用基于wepyjs开发的第三方组件，开发第三方组件�
 
 ### 混合
 
-混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
+混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分为两种：
 
 * 默认式混合
 * 兼容式混合
@@ -443,7 +443,7 @@ export default class TestMixin extends wepy.mixin {
         foo: 'foo defined by page',
         bar: 'bar defined by testMix'
     };
-    methods: {
+    methods = {
     tap () {
       console.log('mix tap');
     }
@@ -458,7 +458,7 @@ export default class Index extends wepy.page {
     data = {
         foo: 'foo defined by index'
     };
-    mixins = [TestMixin ];
+    mixins = [TestMixin];
     onShow() {
         console.log(this.foo); // foo defined by index.
         console.log(this.bar); // foo defined by testMix.

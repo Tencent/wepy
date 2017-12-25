@@ -758,7 +758,7 @@ WePY编译组件的过程如下：
 /**
 project
 └── src
-    ├── coms
+    ├── components
     |   └── child.wpy
     ├── pages
     |   ├── index.wpy    index 页面配置、结构、样式、逻辑
@@ -776,7 +776,7 @@ project
 <script>
     import wepy from 'wepy';
     //引入组件文件
-    import Child from './coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         //声明组件，分配组件id为child
@@ -805,7 +805,7 @@ project
 
 <script>
     import wepy from 'wepy';
-    import Child from './coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         components = {
@@ -851,7 +851,7 @@ project
 <script>
     import wepy from 'wepy';
     // 引入child组件文件
-    import Child from './coms/child';
+    import Child from '../components/child';
    
     export default class Index extends wepy.component {
         components = {
@@ -945,7 +945,7 @@ props传值在WePY中属于父子组件之间传值的一种机制，包括静�
 静态传值为父组件向子组件传递常量数据，因此只能传递String字符串类型。
 
 
-在子组件`template`模板部分的组件标签中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
+在父组件`template`模板部分的组件标签中，使用子组件props对象中所声明的属性名作为其属性名来接收父组件传递的值。
 
 ```Javascript
 <child title="mytitle"></child>
@@ -1104,7 +1104,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 <script>
     import wepy from 'wepy'
-    import Child from './coms/child'
+    import Child from '../components/child'
    
     export default class Index extends wepy.page {
         components = {
@@ -1361,15 +1361,6 @@ Page({
     console.log(event.currentTarget.dataset.other)// output: otherparams
   }
 });
-
-// WePY 建议传参方式
-<view data-wepy-params="{{index}}-wepy-otherparams" bindtap="tapName"> Click me! </view>
-
-methods: {
-    tapName (id, title, other, event) {
-        console.log(id, title, other)// output: 1, wepy, otherparams
-    }
-}
 
 // WePY 1.1.8以后的版本，只允许传string。
 <view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>

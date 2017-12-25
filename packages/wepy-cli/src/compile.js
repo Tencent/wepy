@@ -122,9 +122,7 @@ export default {
         let wepyrc = util.getConfig();
         let src = config.source || wepyrc.src || 'src';
         let dist = config.output || wepyrc.output || 'dist';
-        chokidar.watch(`.${path.sep}${src}`, {
-            depth: 99
-        }).on('all', (evt, filepath) => {
+        chokidar.watch(`.${path.sep}${src}`, config.watchOption || {}).on('all', (evt, filepath) => {
             if ((evt === 'change' || evt === 'add') && watchReady && !preventDup[filepath]) {
                 preventDup[filepath] = evt;
                 config.file = path.join('..', filepath);

@@ -3,6 +3,12 @@
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
 * `F` 修复了源码目录里有空内容组件编译报错的问题。[ISSUE 538](https://github.com/wepyjs/wepy/issues/538)
 * `F` 修复了当模板格式错误时，编译报错的问题。
+* `F` 修复了引用带路径的NPM模块时，编译报错的问题。
+* `A` 配置文件中添加了`watchOption`参数。
+* `F` 修复了repeat中，使用静态props异常的问题。[PR 538](https://github.com/Tencent/wepy/pull/605)
+* `F` 修复了同页面跳转，可能会导致数据绑定失效的问题。[ISSUE 621](https://github.com/wepyjs/wepy/issues/621)
+* `F` 修复了使用sass语法时，首行不能缩进的问题。[ISSUE 663](https://github.com/wepyjs/wepy/issues/663)
+* `F` 修复了引用多个组件实例造成的style重复引用的问题。[ISSUE 639](https://github.com/wepyjs/wepy/issues/639)
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
