@@ -102,6 +102,7 @@ export default {
         Promise.all(allPromises).then((rets) => {
             let allContent = rets.join('');
             if (requires && requires.length) {
+                let requirePath = {};
                 requires.forEach((r) => {
                     let comsrc = null;
                     isNPM = false;
@@ -145,7 +146,9 @@ export default {
                                 relative = relative.replace(/\.wpy$/, '.' + outputExt);
                             }
                             relative = relative.replace(ext, '.' + outputExt).replace(/\\/ig, '/').replace('../', './');
-                            allContent = '@import "' + relative + '";\n' + allContent;
+                            if (!requirePath[relative])
+                                allContent = '@import "' + relative + '";\n' + allContent;
+                            requirePath[relative] = 1;
                         }
                     }
                 });
