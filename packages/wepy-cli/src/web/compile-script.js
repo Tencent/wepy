@@ -40,6 +40,7 @@ export default {
         let wpyExt = params.wpyExt;
 
         let depences = [];
+
         // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
         wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
             if (lib === 'wepy') 
@@ -51,13 +52,34 @@ export default {
 
             let dep = {}, npmInfo;
 
-            lib = resolve.resolveAlias(lib);
+            lib = resolve.resolveAlias(lib, opath);
 
-            if (path.isAbsolute(lib)) {
+            if (lib === 'false') {
+                return '{}';
+            } else if (path.isAbsolute(lib)) {
                 source = lib;
             } else if (lib[0] === '.') { // require('./something'');
-                source = path.join(opath.dir, lib);  // e:/src/util
+                let resolvedLib;
+                if (wpy.npm && wpy.npm.pkg._activeFields.length) {
+                    resolvedLib = resolve.resolveSelfFields(wpy.npm.dir, wpy.npm.pkg, path.join(path.relative(wpy.npm.dir, opath.dir), lib));
+                }
+                if (resolvedLib) {
+                    source = path.join(wpy.npm.dir, resolvedLib);
+                    lib = path.relative(opath.dir, source);
+                    if (lib[0] !== '.') {
+                        lib = './' + lib;
+                    }
+                } else {
+                    source = path.join(opath.dir, lib);
+                }
+                npmInfo = wpy.npm;  // relative path in npm package
             } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
+
+                // require('stream') -> browsers: emitter->emitter-component;
+                if (wpy.npm && wpy.npm.pkg._activeFields.length) {
+                    let resolvedLib = resolve.resolveSelfFields(wpy.npm.dir, wpy.npm.pkg, lib);
+                    lib = resolvedLib ? resolvedLib : lib;
+                }
 
                 let o = resolve.getMainFile(lib);
                 if (!o) {
@@ -66,16 +88,24 @@ export default {
                 }
                 let pkg = o.pkg;
                 let main = pkg.main || 'index.js';
+
+                let resolvedFile;
+                if (o.pkg && o.pkg._activeFields.length) {
+                    resolvedFile = resolve.resolveSelfFields(o.dir, o.pkg, o.file);
+                }
+                resolvedFile = resolvedFile ? resolvedFile : o.file;
+
+
                 if (lib === 'axios') {
-                    main = path.join('dist', 'axios.js');
+                    resolvedFile = path.join('dist', 'axios.js');
                 } else if (lib === 'vue') {
-                    main = path.join('dist', 'vue.js');
+                    resolvedFile = path.join('dist', 'vue.js');
                 }
                 if (pkg.browser && typeof pkg.browser === 'string') {
-                    main = pkg.browser;
+                    resolvedFile = pkg.browser;
                 }
-                source = path.join(o.dir, main);
-                lib += path.sep + main;
+                source = path.join(o.dir, resolvedFile);
+                lib += path.sep + resolvedFile;
                 npmInfo = o;
             } else { // require('babel-runtime/regenerator')
                 //console.log('3: ' + lib);
@@ -95,6 +125,8 @@ export default {
                     source += wpyExt;
                 } else if (util.isFile(source + '.js')) {
                     source += '.js';
+                } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
+                    source += path.sep + 'index.js';
                 } else {
                     source = null;
                 }

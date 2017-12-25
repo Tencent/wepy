@@ -24,31 +24,44 @@ let appPath, npmPath, src, dist;
 
 export default {
     resolveDeps (code, type, opath) {
-
         let params = cache.getParams();
         let config = cache.getConfig();
         let wpyExt = params.wpyExt;
-        let npmInfo = opath.npm;
 
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+            let npmInfo = opath.npm;
+            
             if (lib === './_wepylogs.js') {
                 return match;
             }
             let resolved = lib;
-
 
             let target = '', source = '', ext = '', needCopy = false;
 
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
             }
-            lib = resolve.resolveAlias(lib);
-            if (path.isAbsolute(lib)) {
+            lib = resolve.resolveAlias(lib, opath);
+            if (lib === 'false') {
+                return `{}`
+            } else if (path.isAbsolute(lib)) {
                 source = lib;
                 target = util.getDistPath(source);
             } else if (lib[0] === '.') { // require('./something'');
-                source = path.join(opath.dir, lib);  // e:/src/util
+                let resolvedLib;
+                if (npmInfo && npmInfo.pkg._activeFields.length) {
+                    resolvedLib = resolve.resolveSelfFields(npmInfo.dir, npmInfo.pkg, path.join(path.relative(npmInfo.dir, opath.dir), lib));
+                }
+                if (resolvedLib) {
+                    source = path.join(npmInfo.dir, resolvedLib);
+                    lib = path.relative(opath.dir, source);
+                    if (lib[0] !== '.') {
+                        lib = './' + lib;
+                    }
+                } else {
+                    source = path.join(opath.dir, lib);
+                }
                 if (type === 'npm') {
                     target = path.join(npmPath, path.relative(npmInfo.modulePath, source));
                     needCopy = true;
@@ -61,6 +74,11 @@ export default {
                 lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
             ) {  
+                // require('stream') -> browsers: emitter->emitter-component;
+                if (npmInfo && npmInfo.pkg._activeFields.length) {
+                    let resolvedLib = resolve.resolveSelfFields(npmInfo.dir, npmInfo.pkg, lib);
+                    lib = resolvedLib ? resolvedLib : lib;
+                }
 
                 let mainFile = resolve.getMainFile(lib);
 
@@ -71,12 +89,19 @@ export default {
                     lib: lib,
                     dir: mainFile.dir,
                     modulePath: mainFile.modulePath,
-                    file: mainFile.file
+                    file: mainFile.file,
+                    pkg: mainFile.pkg
                 };
-                source = path.join(mainFile.dir, mainFile.file);
-                target = path.join(npmPath, lib, mainFile.file);
 
-                lib += path.sep + mainFile.file;
+                let resolvedFile;
+                if (mainFile.pkg && mainFile.pkg._activeFields.length) {
+                    resolvedFile = resolve.resolveSelfFields(mainFile.dir, mainFile.pkg, mainFile.file);
+                }
+                resolvedFile = resolvedFile ? resolvedFile : mainFile.file;
+                source = path.join(mainFile.dir, resolvedFile);
+                target = path.join(npmPath, lib, resolvedFile);
+
+                lib += path.sep + resolvedFile;
                 ext = '';
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
