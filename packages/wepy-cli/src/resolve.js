@@ -22,7 +22,7 @@ export default {
         this.modules = config.modules || DEFAULT_MODULES;
         this.aliasFields = config.aliasFields || DEFAULT_ALIASFIELDS;
         this.mainFields = config.mainFields || DEFAULT_MAINFIELDS;
-        
+
         ['modules', 'aliasFields', 'mainFields'].forEach(opt => {
             typeof this[opt] === 'string' && (
                 this[opt] = [].concat(this[opt])
@@ -131,6 +131,14 @@ export default {
         }
         if (!pkg)
             return null;
+
+        // make sure fields is used in this package.
+        pkg._activeFields = [];
+        this.aliasFields.forEach(field => {
+            if (pkg[field]) {
+                pkg._activeFields.push(field);
+            }
+        });
         return {
             pkg: pkg,
             modulePath: o.modulePath,
@@ -162,6 +170,26 @@ export default {
             pkg: o.pkg,
             dir: o.dir
         };
+    },
+
+    /*
+    resolve package with contains different fields
+     */
+    resolveSelfFields (dir, pkg, lib) {
+        for (let i = 0, l = pkg._activeFields.length; i < l; i++) {
+            let field = pkg[pkg._activeFields[i]];
+            if (field) {
+                for (let k in field) {
+                    // in Window, path may be dist\a\b, but in package.json it is ./dist/a/b, so can not just simply use ===
+                    let matchPath = path.join(dir, k);
+                    let requirePath = path.join(dir, lib);
+                    if (matchPath === requirePath || matchPath === requirePath + path.extname(matchPath)) {
+                        return field[k];
+                    }
+                }
+            }
+        }
+        return null;
     },
   
     resolveFieldsAlias (lib) {
