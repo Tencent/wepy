@@ -50,7 +50,7 @@ export default {
                 reg = new RegExp('\\' + ext + '$');
                 if (!reg.test(importpath))
                     importpath = importpath + ext;
-                let resolved = resolve.resolveAlias(importpath);
+                let resolved = resolve.resolveAlias(importpath, opath);
                 let compath;
                 if (path.isAbsolute(resolved)) {
                     compath = path.resolve(resolved);
