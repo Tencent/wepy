@@ -105,12 +105,22 @@ export default {
                 ext = '';
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
-                let o = resolve.walk(lib);
-                if (!o) {
+                let requieInfo = lib.split('/');
+                let mainFile = resolve.getMainFile(requieInfo[0]);
+
+                if (!mainFile) {
                     throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
                 }
-                source = path.join(o.modulePath, lib);
-                target = path.join(npmPath, lib);
+                npmInfo = {
+                    lib: requieInfo[0],
+                    dir: mainFile.dir,
+                    modulePath: mainFile.modulePath,
+                    file: mainFile.file
+                };
+                requieInfo.shift();
+
+                source = path.join(mainFile.dir, requieInfo.join('/'));
+                target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
                 ext = '';
                 needCopy = true;
             }

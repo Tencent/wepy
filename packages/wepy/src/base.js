@@ -166,10 +166,14 @@ export default {
 
             let pages = getCurrentPages();
             let pageId = pages[pages.length - 1].__route__;
+            let webViewId = pages[pages.length - 1].__wxWebviewId__;
 
-            if (self.$instance.__route__ !== pageId) {
+            if (self.$instance.__wxWebviewId__ !== webViewId) { // if same page redirect, pageId will be the same, so changed to use webview Id
+
+                page.$wxpage = this; // same page redirect, have to update the $wxpage, otherwise setData will goes to the old view
 
                 self.$instance.__route__ = pageId;
+                self.$instance.__wxWebviewId__ = webViewId;
 
                 page.onRoute && page.onRoute.apply(page, args);
 

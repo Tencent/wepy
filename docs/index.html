@@ -207,12 +207,13 @@
                         <h2 class="slide__title">应用案例</h2>
                         <p class="slide__description">
                             <span v-for="item in textCases" style="display: none" v-show="textCases.length">
-                                <a class="cases" :href="item.link ? item.link : 'javascript:;'" :class="{'islink': item.link}">{{item.name}}{{item.opensource == 1 ? '(开源)' : ''}}</a>、
+                                <a class="cases" :href="item.link ? item.link : 'javascript:;'" :class="{'islink': item.link}">{{item.name}}</a>
+                                <a class="opensource cases islink" :href="item.opensource ? item.opensource : 'javascript:;'" v-show="item.opensource">（开源）</a>、
                             </span>
                             ...
                         </p>
                         <div class="examples__pr">
-                            <a class="button button--pr" href="https://github.com/wepyjs/wepy/edit/master/docs/data/cases.json" target="_blank"> 
+                            <a class="button button--pr" href="https://github.com/Tencent/wepy/tree/master/docs/data" target="_blank"> 
                                 <strong style="font-size: 20px;">+</strong> 案例</a>
                         </div> 
                     </div>
@@ -222,7 +223,7 @@
                         <a href="" target="_blank" class="example carousel-cell" v-for="item in rollCases" style="display: none" v-show="rollCases.length">
                             <div class="example__inner">
                                 <h3 class="example__title" v-text="item.name"></h3>
-                                <div class="example__image" :style="{ backgroundImage: 'url(\'' + item.qr_code + '\')'}" ></div>
+                                <div class="example__image" :style="{ backgroundImage: 'url(\'' + item.qrcode + '\')'}" ></div>
                             </div>
                         </a>
                     </div>
@@ -253,6 +254,20 @@
 <script src="https://unpkg.com/vue"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
+  var calcWeight = function (item) {
+    var weight = 0;
+
+    (item.email) && (weight += 10);
+    (item.company) && (weight += 20);
+    (item.link) && (weight += 50);
+    (item.qrcode) && (weight += 100);
+    (item.opensource) && (weight += 500);
+
+    (item.company === 'Tencent') && (weight += 1000);
+    var nameWeight = '0.' + parseInt(encodeURIComponent(item.name).replace(/%/g, '').substring(0, 8), 16);
+    return (+nameWeight + weight);
+  };
+
   var app = new Vue({
     el: '#app',
     data: {
@@ -337,8 +352,14 @@ export default class Index extends wepy.page {
       var self = this;
       axios.get('./data/cases.json').then(function (res) {
         if (res && res.data) {
-          self.rollCases = res.data.roll_cases;
-          self.textCases = res.data.text_cases;
+          let cases = res.data.cases;
+          cases = cases.sort(function (a, b) {
+            return calcWeight(b) - calcWeight(a);
+          });
+          self.rollCases = cases.filter(function (v) {
+            return !!v.qrcode;
+          });
+          self.textCases = cases;
           Vue.nextTick(function () {
             var flkty = new Flickity( '.carousel', {
               initialIndex: 0,
