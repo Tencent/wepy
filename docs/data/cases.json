@@ -202,10 +202,10 @@
         }, {
             "name": "友福图书馆",
             "email": "glore@ufutx.com",
-            "link": "",
-            "opensource": "",
+            "link": "https://library.ufutx.com",
+            "opensource": "https://github.com/glore/library",
             "qrcode": "https://library.ufutx.com/imgs/mp_library.jpg",
-            "company": ""
+            "company": "深圳市友福同享信息科技有限公司"
         }, {
             "name": "米淘联盟",
             "link": "",
