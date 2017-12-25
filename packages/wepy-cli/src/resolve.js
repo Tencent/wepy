@@ -253,6 +253,9 @@ export default {
             } else {
                 if ((lib.indexOf(k) === 0 && lib === k) || (lib !== k && lib.indexOf(k + '/') === 0)) {
                     this._cacheAlias[lib] = lib.replace(k, alias);
+                    if (this._cacheAlias[lib] !== 'false') {
+                        this._cacheAlias[lib] = path.resolve(this._cacheAlias[lib]);
+                    }
                 }
             }
         }
