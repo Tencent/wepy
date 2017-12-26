@@ -9,7 +9,10 @@ module.exports = {
     web: {
       htmlTemplate: path.join('src', 'index.template.html'),
       htmlOutput: path.join('web', 'index.html'),
-      jsOutput: path.join('web', 'index.js')
+      jsOutput: path.join('web', 'index.js'),
+      resolve: {
+        aliasFields: ['browser']
+      }
     }
   },
   resolve: {
@@ -17,6 +20,7 @@ module.exports = {
       counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
+    aliasFields: ['wepy', 'weapp'],
     modules: ['node_modules']
   },
   compilers: {
