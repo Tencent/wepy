@@ -29,9 +29,9 @@ export default {
             );
         });
   
-        let pkgFile = util.getPkg();
-        let pkg = JSON.parse(pkgFile);
-        let cwd = util.currentDir;
+        let pkgOption = this.getPkg();
+        let pkg = pkgOption.pkg;
+        let cwd = pkgOption.dir;
         let ext = cache.getExt();
         
         // 优先级递减
@@ -116,8 +116,18 @@ export default {
     },
 
     getPkg (lib) {
-        let pkg = null, dir = null;
-        let o = this.walk(lib + path.sep + 'package.json');
+        let pkg = null, dir = null, o = null;
+        if (lib) {
+            o = this.walk(lib + path.sep + 'package.json');
+        } else {
+            let filename = path.join(util.currentDir, 'package.json');
+            if (util.isFile(filename)) {
+                o = {
+                    modulePath: util.currentDir,
+                    file: filename
+                };
+            }
+        }
         if (!o)
             return null;
 
@@ -132,17 +142,19 @@ export default {
         if (!pkg)
             return null;
 
-        // make sure fields is used in this package.
-        pkg._activeFields = [];
-        this.aliasFields.forEach(field => {
-            if (pkg[field]) {
-                pkg._activeFields.push(field);
-            }
-        });
+        if (lib) {
+            // make sure fields is used in this package.
+            pkg._activeFields = [];
+            this.aliasFields.forEach(field => {
+                if (pkg[field]) {
+                    pkg._activeFields.push(field);
+                }
+            });
+        }
         return {
             pkg: pkg,
             modulePath: o.modulePath,
-            dir: path.join(o.modulePath, lib)
+            dir: path.join(o.modulePath, lib ? lib : '')
         };
     },
 
