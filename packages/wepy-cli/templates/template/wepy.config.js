@@ -17,7 +17,6 @@ module.exports = {
       counter: path.join(__dirname, 'src/components/counter'),
       '@': path.join(__dirname, 'src')
     },
-    aliasFields: ['wepy'],
     modules: ['node_modules']
   },
   compilers: {
