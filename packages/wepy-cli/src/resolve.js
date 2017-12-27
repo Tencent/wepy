@@ -14,7 +14,7 @@ import cache from './cache'
 
 const DEFAULT_MODULES = ['node_modules'];
 const DEFAULT_ALIASFIELDS = ['wepy', 'weapp', 'browser'];
-const DEFAULT_MAINFIELDS = ['wepy', 'weapp', 'browser', 'module', 'main'];
+const DEFAULT_MAINFIELDS = ['wepy', 'weapp', 'browser', 'main'];
 
 export default {
     init (config) {
