@@ -125,7 +125,7 @@ export default {
         chokidar.watch(`.${path.sep}${src}`, config.watchOption || {}).on('all', (evt, filepath) => {
             if ((evt === 'change' || evt === 'add') && watchReady && !preventDup[filepath]) {
                 preventDup[filepath] = evt;
-                config.file = path.join('..', filepath);
+                config.file = _path2.default.relative(src, filepath);
                 util.log('文件: ' + filepath, '变更');
                 this.build(config);
                 setTimeout(() => {
