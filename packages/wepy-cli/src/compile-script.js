@@ -130,7 +130,7 @@ export default {
             } else if (util.isFile(source + '.js')) {
                 ext = '.js';
             } else if (util.isFile(source + '.ts')) {
-          			ext = '.ts';
+                ext = '.ts';
             } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
                 ext = path.sep + 'index.js';
             }else if (util.isFile(source)) {
@@ -144,9 +144,9 @@ export default {
             resolved = lib;
             
             //typescript .ts file
-        	  if (ext === '.ts') {
-          			target = target.replace(/\.ts$/, '') + '.js';
-        	  }
+            if (ext === '.ts') {
+                target = target.replace(/\.ts$/, '') + '.js';
+            }
 
             // 第三方组件
             if (/\.wpy$/.test(resolved)) {
