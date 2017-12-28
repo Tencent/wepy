@@ -126,7 +126,7 @@ export default {
                 } else if (util.isFile(source + '.js')) {
                     source += '.js';
                 } else if (util.isFile(source + '.ts')) {
-            		source += '.js';
+                    source += '.js';
                 } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
                     source += path.sep + 'index.js';
                 } else {
