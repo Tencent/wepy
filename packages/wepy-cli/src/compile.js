@@ -382,6 +382,9 @@ export default {
             case '.js':
                 cScript.compile('babel', null, 'js', opath);
                 break;
+            case '.ts':
+                cScript.compile('typescript', null, 'ts', opath);
+                break;    
             default:
                 util.output('拷贝', path.join(opath.dir, opath.base));
 
