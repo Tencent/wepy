@@ -115,7 +115,8 @@ export default {
                     lib: requieInfo[0],
                     dir: mainFile.dir,
                     modulePath: mainFile.modulePath,
-                    file: mainFile.file
+                    file: mainFile.file,
+                    pkg: mainFile.pkg
                 };
                 requieInfo.shift();
 
