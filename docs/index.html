@@ -254,6 +254,20 @@
 <script src="https://unpkg.com/vue"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script>
+
+  var toNumber = function (str) {
+    str = encodeURIComponent(str).replace(/%/ig, '').substring(0, 8);
+    var hex = '';
+    for (var i in str) {
+      var char = str[i].toUpperCase().charCodeAt(0);
+      if ((char >= 65 && char <= 70) || (char >= 48 && char <= 57)) {
+        hex += '' + str[i];
+      } else {
+        hex += '' + char;
+      }
+    }
+    return parseInt(hex.substring(0, 8), 16);
+  }
   var calcWeight = function (item) {
     var weight = 0;
 
@@ -264,7 +278,7 @@
     (item.opensource) && (weight += 500);
 
     (item.company === 'Tencent') && (weight += 1000);
-    var nameWeight = '0.' + parseInt(encodeURIComponent(item.name).replace(/%/g, '').substring(0, 8), 16);
+    var nameWeight = '0.' + toNumber(item.name);
     return (+nameWeight + weight);
   };
 
