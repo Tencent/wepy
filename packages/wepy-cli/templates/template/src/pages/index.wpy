@@ -179,6 +179,9 @@
           console.log('toast done')
         })
       },
+      handleViewTap () {
+        console.log('log from handleViewTap ' + this.$name)
+      },
       tap () {
         console.log('do noting from ' + this.$name)
       },
