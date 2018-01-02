@@ -190,6 +190,29 @@ export class App extends wepy.app {
     });
     ```
 
+* `$nextTick([func:Function])`：组件数据绑定完成后的回调事件，v1.6.1以上可用。
+
+数据绑定后的回调事件，在不传入function时，返回一个promise对象
+
+使用方法如下:
+
+```javascript
+this.userName = 'Gcaufy';
+this.$nextTick(function () {
+    console.log('UI updated');
+});
+```
+
+或者：
+
+```javascript
+this.userName = 'Gcaufy';
+this.$nextTick().then(function () {
+    console.log('UI updated');
+});
+```
+
+
 ### wepy.page Class
 
 页面类，继承自`wepy.component`，拥有页面所有的属性与方法。
