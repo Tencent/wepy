@@ -104,7 +104,12 @@ module.exports = {
     getWxPage: function () {
         return {
             $root: { '$wxapp': { app: 'app' } },
-            setData: function (v) { return v; },
+            setData: function (v, fn) {
+                if (typeof fn === 'function') {
+                    fn();
+                }
+                return v;
+            },
             $coma$comaa$tap: function () {
                 return arguments;
             }
