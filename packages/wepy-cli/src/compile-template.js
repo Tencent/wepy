@@ -26,7 +26,7 @@ export default {
     comCount: 0,
     getPrefix (prefix) {
         if (!this.comPrefix[prefix]) {
-            this.comPrefix[prefix] = util.camelize(prefix || '');;
+            this.comPrefix[prefix] = util.camelize(prefix || '');
         }
         return this.comPrefix[prefix];
     },
@@ -232,6 +232,29 @@ export default {
     },
 
     updateBind (node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
+        //导入模板（import template）：导入的模板实际为直接复制到当前文件，使用当前文件的作用域，这不同于具有独立作用域的
+        //WePY组件模板与小程序原生模板。这一点与JavaScript的import、less/sass/scss的import保持了一致。
+        //语法：<template import src="../relative/path/to/template.wpy" />
+        //     其中import属性也可写成import="true"
+        //     除了import属性与src属性，不支持其他属性
+        [].slice.call(node.childNodes || []).forEach(function (child) {
+            if (child.tagName === 'template' && child.hasAttribute('import') && child.getAttribute('src')) {
+                let childSrcResolved = path.resolve(template.src, '..' + path.sep + child.getAttribute('src'));
+                if (childSrcResolved) {
+                    cache.setNoWriteFile(childSrcResolved);
+                    let importAttribute = child.getAttribute('import');
+                    if (importAttribute === 'import' || importAttribute === 'true') {
+                        let content = util.attrReplace(util.readFile(childSrcResolved).replace(/^\s*<template[^>]*>|<\/template>\s*$/ig, ''));
+                        node.replaceChild(cWpy.createParser().parseFromString(content), child);
+                        //console.log('成功导入模板：' + childSrcResolved)
+                    } else {
+                        //console.log('模板import属性不为true，不导入模板：' + childSrcResolved)
+                    }
+                } else {
+                    //console.log('导入模板前src路径解析错误');
+                }
+            }
+        });
 
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
@@ -543,6 +566,8 @@ export default {
                     util.output(p.action, p.file);
                 },
                 done (rst) {
+                    if (cache.getNoWriteFile(opath.dir + path.sep + opath.base) > -1) return;
+
                     util.output('写入', rst.file);
                     rst.code = self.replaceBooleanAttr(rst.code);
                     util.writeFile(target, rst.code);
