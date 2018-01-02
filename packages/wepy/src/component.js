@@ -561,23 +561,25 @@ export default class {
             if (Object.keys(readyToSet).length) {
                 this.setData(readyToSet, () => {
                     if (this.$$nextTick) {
-                        if (this.$$nextTick.promise) {
-                            this.$$nextTick();
+                        let $$nextTick = this.$$nextTick;
+                        this.$$nextTick = null;
+                        if ($$nextTick.promise) {
+                            $$nextTick();
                         } else {
-                            this.$$nextTick.call(this);
+                            $$nextTick.call(this);
                         }
                     }
-                    this.$$nextTick = null;
                 });
             } else {
                 if (this.$$nextTick) {
-                    if (this.$$nextTick.promise) {
-                        this.$$nextTick();
+                    let $$nextTick = this.$$nextTick;
+                    this.$$nextTick = null;
+                    if ($$nextTick.promise) {
+                        $$nextTick();
                     } else {
-                        this.$$nextTick.call(this);
+                        $$nextTick.call(this);
                     }
                 }
-                this.$$nextTick = null;
             }
             this.$$phase = (this.$$phase === '$apply') ? '$digest' : false;
         }

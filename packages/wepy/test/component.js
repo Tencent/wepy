@@ -162,6 +162,23 @@ describe('component.js', () => {
     });
 
 
+    it('$nextTick do apply', function (done) {
+        //this.timeout(1500);
+        com.a = +new Date();
+        com.$nextTick(function () {
+            assert.strictEqual(this, com, 'setData callback use this');
+            com.a = +new Date();
+            com.$apply();
+            com.$nextTick(function () {
+                assert.strictEqual(this, com, 'setData callback use this');
+                com.a = +new Date();
+                com.$apply();
+                done();
+            });
+        });
+        com.$apply();
+    });
+
     it('computed test', () => {
         com.num = 11;
         com.$apply();
