@@ -109,6 +109,58 @@ describe('component.js', () => {
 
     });
 
+    it('$nextTick', function (done) {
+        //this.timeout(1500);
+        com.a = +new Date();
+        com.$nextTick(function () {
+            assert.strictEqual(this, com, 'setData callback use this');
+            setTimeout(function () {
+                assert.strictEqual(com.$$nextTick, null, '$$nextTick should be cleared');
+                done();
+            }, 100);
+        });
+        com.$apply();
+    });
+
+    it('$nextTick using promise', function (done) {
+        //this.timeout(1500);
+        com.a = +new Date();
+        com.$nextTick().then(function () {
+            setTimeout(function () {
+                assert.strictEqual(com.$$nextTick, null, '$$nextTick should be cleared');
+                done();
+            }, 100);
+        });
+        com.$apply();
+    });
+
+    it('$nextTick callback for clear data', function (done) {
+        //this.timeout(1500);
+        com.a = +new Date();
+        com.$apply();
+        com.$nextTick(function () {
+            assert.strictEqual(this, com, 'setData callback use this');
+            setTimeout(function () {
+                assert.strictEqual(com.$$nextTick, null, '$$nextTick should be cleared');
+                done();
+            }, 100);
+        });
+        com.$apply();
+    });
+
+    it('$nextTick using promise for clear data', function (done) {
+        //this.timeout(1500);
+        com.a = +new Date();
+        com.$apply();
+        com.$nextTick().then(function () {
+            setTimeout(function () {
+                assert.strictEqual(com.$$nextTick, null, '$$nextTick should be cleared');
+                done();
+            }, 100);
+        });
+        com.$apply();
+    });
+
 
     it('computed test', () => {
         com.num = 11;
