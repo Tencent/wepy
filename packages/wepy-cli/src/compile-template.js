@@ -251,7 +251,7 @@ export default {
                         //console.log('模板import属性不为true，不导入模板：' + childSrcResolved)
                     }
                 } else {
-                    //console.log('导入模板前src路径解析错误，src路径为：'， child.getAttribute('src'));
+                    //console.log('导入模板前src路径解析错误，src路径为：', child.getAttribute('src'));
                 }
             }
         });
