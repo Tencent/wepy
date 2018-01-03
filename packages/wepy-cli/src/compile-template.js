@@ -1,12 +1,13 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://opensource.org/licenses/MIT
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+ *
+ * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You
+ * may obtain a copy of the License at http://opensource.org/licenses/MIT Unless required by applicable law or agreed
+ * to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
  */
-
 
 import {DOMParser, DOMImplementation} from 'xmldom';
 import path from 'path';
@@ -24,13 +25,13 @@ const BOOLEAN_ATTRS = ['a:else', 'wx:else', 'show-info', 'active', 'controls', '
 export default {
     comPrefix: {},
     comCount: 0,
-    getPrefix (prefix) {
+    getPrefix(prefix) {
         if (!this.comPrefix[prefix]) {
             this.comPrefix[prefix] = util.camelize(prefix || '');
         }
         return this.comPrefix[prefix];
     },
-    getTemplate (content) {
+    getTemplate(content) {
         content = `<template>${content}</template>`;
         content = util.attrReplace(content);
         let doc = new DOMImplementation().createDocument();
@@ -43,7 +44,7 @@ export default {
         return doc;
     },
 
-    isInQuote (str, n) {
+    isInQuote(str, n) {
         let firstIndex = str.search(/"|'/);
         if (firstIndex === -1 || firstIndex > n) return false;
         let char = '';
@@ -62,7 +63,7 @@ export default {
         return char !== '';
     },
 
-    getFunctionInfo (str) {
+    getFunctionInfo(str) {
         let rst = {name: '', params: []}, char = '', tmp = '', stack = [];
         for (let i = 0, len = str.length; i < len; i++) {
             char = str[i];
@@ -103,7 +104,7 @@ export default {
         return code;
     },
 
-    parseExp (content, prefix, ignores, mapping) {
+    parseExp(content, prefix, ignores, mapping) {
         if (!prefix)
             return content;
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
@@ -135,7 +136,7 @@ export default {
      * Get :class expression
      * e.g. getClassExp('{"abc": num < 1}');
      */
-    parseClassExp (exp) {
+    parseClassExp(exp) {
         exp = exp.replace(/^\s/ig, '').replace(/\s$/ig, '');
         if (exp[0] === '{' && exp[exp.length - 1] === '}') {
             exp = exp.substring(1, exp.length - 1);
@@ -174,7 +175,8 @@ export default {
                     continue;
                 }
                 if (exp[i] === ',' && flag === 'expression' && flagStack.length === 0) {
-                    result[classNames[classNames.length - 1]] = str.replace(/^\s/ig, '').replace(/\s$/ig, '');;
+                    result[classNames[classNames.length - 1]] = str.replace(/^\s/ig, '').replace(/\s$/ig, '');
+                    ;
                     str = '';
                     flag = 'start';
                     continue;
@@ -182,12 +184,12 @@ export default {
                 // get rid of the begining space
                 if (!str.length && exp[i] === ' ')
                     continue;
-     
+
                 // not started with '', like {abc: num < 1}
                 if (flag === 'start') {
                     flag = 'class';
                 }
-     
+
                 if (flag === 'class' || flag === 'expression') {
                     str += exp[i];
                 }
@@ -201,9 +203,8 @@ export default {
         }
     },
 
-
     // 通过mapping一层层映射，反应到属性上
-    getMappingIndex (mapping, arr) {
+    getMappingIndex(mapping, arr) {
         if (!arr)
             arr = [];
 
@@ -218,7 +219,7 @@ export default {
     /**
      * 组件图片引用会被直接编译进页面，因此需要对组件中的相对路径进行路径修正
      */
-    fixRelativePath (node, template, parentTemplate) {
+    fixRelativePath(node, template, parentTemplate) {
         if (node.nodeName === 'image' && parentTemplate) {
             let src = node.getAttribute('src')
             if (src[0] === '.') {
@@ -231,27 +232,25 @@ export default {
         return node;
     },
 
-    updateBind (node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
-        //导入模板（import template）：导入的模板实际为直接复制到当前文件，使用当前文件的作用域，这不同于具有独立作用域的
-        //WePY组件模板与小程序原生模板。这一点与JavaScript的import、less/sass/scss的import保持了一致。
-        //语法：<template import src="../relative/path/to/template.wpy" />
-        //     其中import属性也可写成import="true"
-        //     除了import属性与src属性，不支持其他属性
+    updateBind(node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
+        //include模板：include进来的模板实际为直接复制合并到当前文件，使用当前文件的作用域，这不同于具有独立作用域的WePY组件模板
+        //与小程序原生import模板。这与小程序原生include模板功能类似，但也有明显区别：小程序原生include只是“相当于”复制合并到当前文件，
+        //而这里的include是实际会复制合并到当前文件，这样做的目的在于使得复制合并过来的wepy模板能够参与当前文件作用域，这对于在wepy
+        //组件模板部分中include模板很有用。
+        //语法：<include src="../relative/path/to/template.wpy" />
+        //注意：1）与小程序原生include的区别在于所导入的文件后缀为.wpy，因此这里的文件后缀名不能省略，否则在wepy编译时将不会被复制合并；
+        //     2）template.wpy模板文件顶层只能含有template标签，不能含有script标签和style标签，否则可能会引发不可知的异常；
+        //     3）template.wpy模板文件中不能再嵌套wepy组件，否则可能会引发不可知的异常。
         [].slice.call(node.childNodes || []).forEach(function (child) {
-            if (child.tagName === 'template' && child.hasAttribute('import') && child.getAttribute('src')) {
+            if (child.tagName === 'include' && /\.wpy$/.test(child.getAttribute('src'))) {
                 let childSrcResolved = path.resolve(template.src, '..' + path.sep + child.getAttribute('src'));
                 if (childSrcResolved) {
                     cache.setFileNotWritten(childSrcResolved);
-                    let importAttr = child.getAttribute('import');
-                    if (importAttr === 'import' || importAttr === 'true') {
-                        let content = util.attrReplace(util.readFile(childSrcResolved).replace(/^\s*<template[^>]*>|<\/template>\s*$/ig, ''));
-                        node.replaceChild(cWpy.createParser().parseFromString(content), child);
-                        //console.log('成功导入模板：' + childSrcResolved)
-                    } else {
-                        //console.log('模板import属性不为true，不导入模板：' + childSrcResolved)
-                    }
+                    let content = util.attrReplace(util.readFile(childSrcResolved).replace(/^\s*<template[^>]*>|<\/template>\s*$/ig, ''));
+                    node.replaceChild(cWpy.createParser().parseFromString(content), child);
+                    //console.log('成功include模板：' + childSrcResolved)
                 } else {
-                    //console.log('导入模板前src路径解析错误，src路径为：', child.getAttribute('src'));
+                    //console.log('include模板前src路径解析错误，src路径为：', child.getAttribute('src'));
                 }
             }
         });
@@ -301,7 +300,7 @@ export default {
                 if (
                     (config.output !== 'ant' && (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0)) ||
                     (config.output === 'ant' && (attr.name.indexOf('on') === 0 || attr.name.indexOf('catch') === 0))
-                    ) {
+                ) {
                     // added index for all events;
                     if (mapping.items && mapping.items.length > 0) {
                         // prefix 减少一层
@@ -334,7 +333,7 @@ export default {
         return node;
     },
 
-    updateSlot (node, childNodes) {
+    updateSlot(node, childNodes) {
         let slots = {}, has;
         if (!childNodes || childNodes.length === 0)
             slots = {};
@@ -374,7 +373,7 @@ export default {
         return node;
     },
 
-    compileXML (node, template, parentTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
+    compileXML(node, template, parentTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
         this.updateSlot(node, childNodes);
@@ -401,7 +400,7 @@ export default {
             // <repeat for="xxx" index="idx" item="xxx" key="xxx"></repeat>
             //                    To
             // <block wx:for="xxx" wx:for-index="xxx" wx:for-item="xxx" wx:key="xxxx"></block>
-            repeat.tagName = 'block'; 
+            repeat.tagName = 'block';
             let val = repeat.getAttribute('for');
             if (val) {
                 repeat.setAttribute(tagprefix + ':for', val);
@@ -438,7 +437,6 @@ export default {
                     let name = attr.name;
 
                     let prop = template.props[com.tagName], tmp = {};
-
 
                     if (name.indexOf('v-bind') === 0) {
                         tmp.bind = true;
@@ -503,14 +501,14 @@ export default {
             } else {
                 let comWpy = cWpy.resolveWpy(src);
                 let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
-                
+
                 node.replaceChild(newnode, com);
             }
         });
         return node;
     },
 
-    compile (template) {
+    compile(template) {
         let lang = template.type;
         let content = util.attrReplace(template.code);
 
@@ -557,10 +555,10 @@ export default {
                 type: 'wxml',
                 code: util.decode(node.toString()),
                 file: target,
-                output (p) {
+                output(p) {
                     util.output(p.action, p.file);
                 },
-                done (rst) {
+                done(rst) {
                     if (cache.getFileNotWritten(opath.dir + path.sep + opath.base) > -1) return;
 
                     util.output('写入', rst.file);
