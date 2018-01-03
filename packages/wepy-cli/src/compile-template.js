@@ -234,8 +234,8 @@ export default {
     updateBind (node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
         //include模板：include进来的模板实际为直接复制合并到当前文件，使用当前文件的作用域，这不同于具有独立作用域的WePY组件模板
         //与小程序原生import模板。这与小程序原生include模板功能类似，但也有明显区别：小程序原生include只是“相当于”复制合并到当前文件，
-        //而这里的include是实际会复制合并到当前文件，这样做的目的在于使得复制合并过来的wepy模板能够参与当前文件作用域，这对于在wepy
-        //组件模板部分中include模板很有用。
+        //而这里的include是实际会复制合并到当前文件，这样做的目的在于可以使得使用wepy语法的模板被wepy编译；同时也使得复制合并过来的
+        //wepy模板能够参与当前文件作用域，这对于在wepy组件模板部分中include模板很有用。
         //语法：<include src="../relative/path/to/template.wpy" />
         //注意：1）与小程序原生include的区别在于src中的文件后缀为.wpy，因此文件后缀名不能省略，否则在wepy编译时将不会被复制合并；
         //     2）template.wpy模板文件顶层只能含有template标签，不能含有script标签和style标签，否则可能会引发不可知的异常；
