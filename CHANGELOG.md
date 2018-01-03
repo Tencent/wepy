@@ -10,6 +10,8 @@
 * `F` 修复了使用sass语法时，首行不能缩进的问题。[ISSUE 663](https://github.com/wepyjs/wepy/issues/663)
 * `F` 修复了引用多个组件实例造成的style重复引用的问题。[ISSUE 639](https://github.com/wepyjs/wepy/issues/639)
 * `A` 添加了$nextTick方法，用于作为setData的回调方法。[ISSUE 712](https://github.com/Tencent/wepy/issues/712)
+`npm install wepy-cli@1.6.1-alpha3`
+
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
