@@ -237,7 +237,7 @@ export default {
         //而这里的include是实际会复制合并到当前文件，这样做的目的在于使得复制合并过来的wepy模板能够参与当前文件作用域，这对于在wepy
         //组件模板部分中include模板很有用。
         //语法：<include src="../relative/path/to/template.wpy" />
-        //注意：1）与小程序原生include的区别在于所导入的文件后缀为.wpy，因此这里的文件后缀名不能省略，否则在wepy编译时将不会被复制合并；
+        //注意：1）与小程序原生include的区别在于src中的文件后缀为.wpy，因此文件后缀名不能省略，否则在wepy编译时将不会被复制合并；
         //     2）template.wpy模板文件顶层只能含有template标签，不能含有script标签和style标签，否则可能会引发不可知的异常；
         //     3）template.wpy模板文件中不能再嵌套wepy组件，否则可能会引发不可知的异常。
         [].slice.call(node.childNodes || []).forEach(function (child) {
