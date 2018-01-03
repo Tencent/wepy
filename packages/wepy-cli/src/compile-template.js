@@ -241,9 +241,9 @@ export default {
             if (child.tagName === 'template' && child.hasAttribute('import') && child.getAttribute('src')) {
                 let childSrcResolved = path.resolve(template.src, '..' + path.sep + child.getAttribute('src'));
                 if (childSrcResolved) {
-                    cache.setNoWriteFile(childSrcResolved);
-                    let importAttribute = child.getAttribute('import');
-                    if (importAttribute === 'import' || importAttribute === 'true') {
+                    cache.setFileNotWritten(childSrcResolved);
+                    let importAttr = child.getAttribute('import');
+                    if (importAttr === 'import' || importAttr === 'true') {
                         let content = util.attrReplace(util.readFile(childSrcResolved).replace(/^\s*<template[^>]*>|<\/template>\s*$/ig, ''));
                         node.replaceChild(cWpy.createParser().parseFromString(content), child);
                         //console.log('成功导入模板：' + childSrcResolved)
@@ -251,7 +251,7 @@ export default {
                         //console.log('模板import属性不为true，不导入模板：' + childSrcResolved)
                     }
                 } else {
-                    //console.log('导入模板前src路径解析错误');
+                    //console.log('导入模板前src路径解析错误，src路径为：'， child.getAttribute('src'));
                 }
             }
         });
@@ -375,7 +375,6 @@ export default {
     },
 
     compileXML (node, template, parentTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
-
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
         this.updateSlot(node, childNodes);
@@ -395,8 +394,6 @@ export default {
 
         let repeats = util.elemToArray(node.getElementsByTagName('repeat'));
 
-
-        
         let forDetail = {};
         template.props = {};
         repeats.forEach(repeat => {
@@ -473,7 +470,6 @@ export default {
             });
         });
 
-
         let componentElements = util.elemToArray(node.getElementsByTagName('component'));
         let customElements = [];
         Object.keys(template.components).forEach((com) => {
@@ -523,7 +519,6 @@ export default {
         let dist = cache.getDist();
         let self = this;
 
-
         let compiler = loader.loadCompiler(lang);
 
         if (!compiler) {
@@ -566,7 +561,7 @@ export default {
                     util.output(p.action, p.file);
                 },
                 done (rst) {
-                    if (cache.getNoWriteFile(opath.dir + path.sep + opath.base) > -1) return;
+                    if (cache.getFileNotWritten(opath.dir + path.sep + opath.base) > -1) return;
 
                     util.output('写入', rst.file);
                     rst.code = self.replaceBooleanAttr(rst.code);
@@ -576,7 +571,6 @@ export default {
         }).catch((e) => {
             console.log(e);
         });
-
         //util.log('WXML: ' + path.relative(process.cwd(), target), '写入');
         //util.writeFile(target, util.decode(node.toString()));
     }

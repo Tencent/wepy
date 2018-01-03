@@ -16,12 +16,11 @@ let _cacheChanged = false;
 let _filelistCache = {};
 
 export default {
-    setNoWriteFile: function setNoWriteFile(v) {
-        this._noWriteFileList = this._noWriteFileList || [];
-        this._noWriteFileList = this._noWriteFileList.concat(v);
+    setFileNotWritten: function setFileNotWritten(v) {
+        this._filesNotWritten = (this._filesNotWritten || []).concat(v);
     },
-    getNoWriteFile: function getNoWriteFile(v) {
-        return this._noWriteFileList ? this._noWriteFileList.indexOf(v) : -1;
+    getFileNotWritten: function getFileNotWritten(v) {
+        return this._filesNotWritten ? this._filesNotWritten.indexOf(v) : -1;
     },
     setParams (v) {
         this._params = v;
