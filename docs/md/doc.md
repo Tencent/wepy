@@ -905,9 +905,9 @@ project
 
 * **详细**：
 
-通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就会被自动调用执行一次。
+通过监听器`watcher`能够监听到任何属性的更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的属性同名，每当被监听的属性改变一次，监听器函数就会被自动调用执行一次。
 
-监听器适用于当数值属性改变时需要进行某些额外处理的情形。
+监听器适用于当属性改变时需要进行某些额外处理的情形。
 
 * **示例**：
 
@@ -916,15 +916,15 @@ project
         num: 1
     }
 
-    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
-    // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
     watch = {
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
-    // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
+    // 每当被监听的属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
             this.num++;
@@ -1010,7 +1010,7 @@ onLoad () {
     console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     this.$parent.$apply();
-    console.log(this.title); // 'p-title';
+    console.log(this.title); // 'c-title';
     console.log(this.syncTitle); // 'p-title-changed' --- 有.sync修饰符的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
@@ -1038,7 +1038,7 @@ export default class Com extends wepy.component {
     // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
     events = {
         'some-event': (p1, p2, p3, $event) => {
-               console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+               console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`);
         }
     };
     // Other properties
@@ -1091,7 +1091,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 - `.stop`: 绑定小程序捕获型事，如`catchtap`；
 
-- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
+- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。**注意，如果用了自定义事件，则events中对应的监听函数不会再执行。**
 
 示例如下：
 
@@ -1225,7 +1225,7 @@ export default class Index extends wepy.page {
 
 #### 兼容式混合
 
-对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
+对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。**注意，这里事件的执行顺序跟Vue中相反，[Vue中是先执行mixin中的函数， 再执行组件本身的函数](https://vuejs.org/v2/guide/mixins.html#Option-Merging)。**
 
 ```Javascript
 // mixins/test.js
