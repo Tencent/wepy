@@ -135,7 +135,7 @@ export default class {
                                 obj = (typeof(obj) === 'string') ? {url: obj} : obj;
                             }
                             if (key === 'getAuthCode') {
-                                obj.scopes = 'auth_user'
+                                obj.scopes = obj.scopes || 'auth_user'
                             }
                             if (typeof obj === 'string') {
                                 return my[key](obj);
