@@ -260,14 +260,18 @@ export default {
                 };
             });
 
-            let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com].lib}";`).join('\r\n');
+            let vars = Object.keys(coms).map((com, i) => `var ${com} = {name: "${com}", lib: "${coms[com].lib}"};`).join('\r\n');
 
             let comMatch = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
             comMatch = comMatch ? comMatch[0] : undefined;
             let components = comMatch ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(comMatch) + comMatch.length) : false;
             try {
                 if (components) {
-                    rst.template.components = new Function(`${vars}\r\nreturn ${components}`)();
+                    rst.template.components = {};
+                    let comObj = new Function(`${vars}\r\nreturn ${components}`)();
+                    for (let k in comObj) {
+                        rst.template.components[k] = comObj[k].lib;
+                    }
                 } else {
                     rst.template.components = {};
                 }
@@ -297,8 +301,8 @@ export default {
             if (wxs) {
                 let wxsCode = '';
                 for (let k in wxs) {
-                    rst.script.code = rst.script.code.replace(coms[k].code, '/* ' + coms[k].code + ' */');
-                    wxsCode += `<wxs src="${wxs[k]}" module="${k}"/>\r\n`;
+                    rst.script.code = rst.script.code.replace(coms[wxs[k].name].code, '/* ' + coms[wxs[k].name].code + ' */');
+                    wxsCode += `<wxs src="${wxs[k].lib}" module="${k}"/>\r\n`;
                 }
                 rst.script.code = rst.script.code.replace(wxsMatch, '/* ' + wxsMatch + ' */');
                 rst.template.code = wxsCode + rst.template.code;
