@@ -233,7 +233,7 @@ let upgrade = (name) => {
 
 
 let checkUpdates = () => {
-    util.timeoutExec(2, 'npm info wepy-cli', true).then(d => {
+    util.timeoutExec(3, 'npm info wepy-cli', true).then(d => {
     //util.exec('npm info wepy-cli', true).then(d => {
         let last = d.match(/latest\:\s\'([\d\.]*)\'/);
         last = last ? last[1] : undefined;
@@ -243,13 +243,22 @@ let checkUpdates = () => {
             let meArr = me.split('.');
             let lastBig = lastArr[0] + '.' + lastArr[1];
             let meBig = meArr[0] + '.' + meArr[1];
+            let fixedLast = lastArr[2];
+            let fixedMe = meArr[2];
 
-            util.warning(`当前版本${me}，最新版本${last}`);
             if (lastBig - meBig > 0) {
+                util.warning(`当前版本${me}，最新版本${last}`);
                 util.warning('跨版本升级可能不去向下兼容，升级前请查看CHANGLOG了解所有更新。');
             } else {
-                util.warning('请关注版本更新日志：https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md');
-                util.warning('升级命令：npm install wepy-cli -g');
+                if (parseInt(fixedLast) - parseInt(fixedMe) >= 0) {
+                    util.warning(`当前版本${me}，最新版本${last}`);
+                    util.warning('请关注版本更新日志：https://github.com/wepyjs/wepy/blob/master/CHANGELOG.md');
+                    util.warning('升级命令：npm install wepy-cli -g');
+                } else {
+                    let tag = fixedMe.replace(/\d/g, '').replace(/-/, '');
+                    util.warning(`当前使用的是${tag}版本${me}，无特殊情况建议使用正式版本${last}`);
+                    util.warning(`升级正式版命令：npm install wepy-cli@${last} -g`);
+                }
             }
         }
     }).catch(e => {});
