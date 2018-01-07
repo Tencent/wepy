@@ -102,7 +102,6 @@ export default {
         filepath = path.resolve(filepath); // to fixed windows path bug
         let content = util.readFile(filepath);
 
-
         const moduleId = util.genId(filepath);
 
         let rst = {
@@ -253,14 +252,19 @@ export default {
         // get imports
         (() => {
             let coms = {};
-            rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/\@]*)['"]/ig, (match, com, path) => {
-                coms[com] = path;
+            rst.script.code.replace(/import\s*([\w\-\_]*)\s*from\s*['"]([\w\-\_\.\/\@]*)['"];*/ig, (match, com, lib, pos) => {
+                coms[com] = {
+                    pos: pos,
+                    lib: lib,
+                    code: match
+                };
             });
 
-            let match = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
-            match = match ? match[0] : undefined;
-            let components = match ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(match) + match.length) : false;
-            let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com]}";`).join('\r\n');
+            let vars = Object.keys(coms).map((com, i) => `var ${com} = "${coms[com].lib}";`).join('\r\n');
+
+            let comMatch = rst.script.code.match(/[\s\r\n]components\s*=[\s\r\n]*/);
+            comMatch = comMatch ? comMatch[0] : undefined;
+            let components = comMatch ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(comMatch) + comMatch.length) : false;
             try {
                 if (components) {
                     rst.template.components = new Function(`${vars}\r\nreturn ${components}`)();
@@ -271,6 +275,35 @@ export default {
                 util.output('错误', path.join(opath.dir, opath.base));
                 util.error(`解析components出错，报错信息：${e}\r\n${vars}\r\nreturn ${components}`);
             }
+
+            let wxsMatch = rst.script.code.match(/[\s\r\n]wxs\s*=[\s\r\n]*/);
+            wxsMatch = wxsMatch ? wxsMatch[0] : undefined;
+            let wxs = wxsMatch ? this.grabConfigFromScript(rst.script.code, rst.script.code.indexOf(wxsMatch) + wxsMatch.length) : false;
+
+            try {
+                if (wxs) {
+                    rst.template.wxs = new Function(`${vars}\r\nreturn ${wxs}`)();
+                    rst.script.code = rst.script.code.replace(wxs, '/* ' + wxs + ' */');
+                } else {
+                    rst.template.wxs = false;
+                }
+            } catch (e) {
+                util.output('错误', path.join(opath.dir, opath.base));
+                util.error(`解析wxs出错，报错信息：${e}\r\n${vars}\r\nreturn ${wxs}`);
+            }
+            wxs = rst.template.wxs;
+
+            // if wxs is used, then get rid of the import and wxs
+            if (wxs) {
+                let wxsCode = '';
+                for (let k in wxs) {
+                    rst.script.code = rst.script.code.replace(coms[k].code, '/* ' + coms[k].code + ' */');
+                    wxsCode += `<wxs src="${wxs[k]}" module="${k}"/>\r\n`;
+                }
+                rst.script.code = rst.script.code.replace(wxsMatch, '/* ' + wxsMatch + ' */');
+                rst.template.code = wxsCode + rst.template.code;
+            }
+
         })();
 
 
