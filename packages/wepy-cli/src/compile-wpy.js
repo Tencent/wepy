@@ -475,7 +475,16 @@ export default {
         }
 
         if (type === 'app') { // 第一个编译
-            cache.setPages(wpy.config.pages.map(v => path.join(src, v + wpyExt)));
+            let mainPages = wpy.config.pages.map(v => path.join(src, v + wpyExt));
+            let subPages = [];
+            if (wpy.config.subPackages) {
+                wpy.config.subPackages.forEach(sub => {
+                    sub.pages.forEach(v => {
+                        subPages.push(path.join(src, sub.root || '', v + wpyExt));
+                    });
+                });
+            }
+            cache.setPages(mainPages.concat(subPages));
 
             // scoped 设置无效
             wpy.style.forEach(rst => rst.scoped = false);
