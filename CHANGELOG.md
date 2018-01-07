@@ -13,6 +13,7 @@
 `npm install wepy-cli@1.6.1-alpha3`
 * `A` 加入了对小程序分包功能的支持。[ISSUE 707](https://github.com/Tencent/wepy/issues/707)
 * `A` 加入了对原生小程序wxs的支持。[ISSUE 713](https://github.com/Tencent/wepy/issues/713)
+`npm install wepy-cli@1.6.1-alpha4`
 
 
 ## 1.6.0 (2017-10-25) 
