@@ -993,7 +993,7 @@ props = {
     
     twoWayTitle: {
         type: Number,
-        default: 50,
+        default: 'nothing',
         twoWay: true
     }
 };
@@ -1001,13 +1001,13 @@ props = {
 onLoad () {
     console.log(this.title); // p-title
     console.log(this.syncTitle); // p-title
-    console.log(this.twoWayTitle); // 50
+    console.log(this.twoWayTitle); // p-title
 
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
-    this.twoWayTitle = 60;
+    this.twoWayTitle = 'two-way-title';
     this.$apply();
-    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
+    console.log(this.$parent.parentTitle); // two-way-title.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     this.$parent.$apply();
     console.log(this.title); // 'c-title';
