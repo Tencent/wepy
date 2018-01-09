@@ -17,6 +17,8 @@
 
 `npm install wepy-cli@1.6.1-alpha4`
 
+* `F` 修复了template中只有注释会导致终止编译的BUG。[6bbb304](https://github.com/Tencent/wepy/commit/6bbb304e06c28cd9309b17f97c6f6426a075ea99)
+
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
