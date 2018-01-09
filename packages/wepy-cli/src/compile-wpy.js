@@ -420,6 +420,11 @@ export default {
             // 存在有 scoped 部分就需要 更新 template.code
             var node = this.createParser(opath).parseFromString(rst.template.code);
             walkNode(node, rst.moduleId);
+
+            // fixed https://github.com/jindw/xmldom/blob/master/dom.js#L915
+            if (node.nodeType === 9 && !node.documentElement) {
+                node.documentElement = node;
+            }
             // 更新 template.code
             rst.template.code = node.toString();
         }
