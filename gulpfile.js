@@ -7,29 +7,31 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-var fs      = require('fs');
-var path    = require("path");
-var watch = require("gulp-watch");
-var newer = require('gulp-newer');
-var lec = require('gulp-line-ending-corrector');
-var plumber = require("gulp-plumber");
-var babel   = require("gulp-babel");
-var gutil   = require("gulp-util");
-var through = require("through2");
-var gulp    = require("gulp");
-var chalk   = require("chalk");
-var gulpif = require('gulp-if');
-var mkdirp = require('mkpath');
+const fs               =             require('fs');
+const path             =             require("path");
+const eventStream      =             require('event-stream');
+const watch            =             require("gulp-watch");
+const newer            =             require('gulp-newer');
+const lec              =             require('gulp-line-ending-corrector');
+const plumber          =             require("gulp-plumber");
+const babel            =             require("gulp-babel");
+const gutil            =             require("gulp-util");
+const through          =             require("through2");
+const gulp             =             require("gulp");
+const chalk            =             require("chalk");
+const mkdirp           =             require('mkpath');
+const clean            =             require('gulp-clean');
 
 // for docs
-var gulp = require('gulp'),
-    less = require('gulp-less');
+const less             =             require('gulp-less');
 
-var scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/components/*.vue', './packages/wepy-web/src/apis/*.vue', './packages/wepy-web/src/apis/*.js', './packages/wepy-web/src/components/styles/*/*.less'];
-var docs = ['docs/less/**/*.less'];
-var bins = "./packages/*/bin/**/*";
+const scripts = ['./packages/*/src/**/*.js', './packages/wepy-web/src/apis/*.js'];
+const copyFiles = ['packages/wepy-web/src/components/', 'packages/wepy-web/src/apis/'];
+const docs = ['docs/less/**/*.less'];
+const bins = "./packages/*/bin/**/*";
+const dest = "packages";
+
 var srcEx, libFragment;
-
 
 if (path.win32 === path) {
     srcEx = /(packages\\[^\\]+)\\src\\/;
@@ -39,80 +41,62 @@ if (path.win32 === path) {
     libFragment = "$1/lib/";
 }
 
+const mapToDest = (path) => path.replace(srcEx, libFragment);
 
-var mapToDest = function (path) { return path.replace(srcEx, libFragment); };
-var dest = "packages";
+const filelog = (title) => {
+    return through.obj((file, enc, callback) => {
+        file.path = file.path.replace(srcEx, libFragment);
+        gutil.log(title, "'" + chalk.cyan(path.relative(process.cwd(), file.path)));
+        callback(null, file);
+    });
+}
 
 gulp.task("default", ["build"]);
 
-gulp.task('lec', function () {
-    return gulp.src(bins, { base: "./" }).pipe(lec({eolc: 'LF', encoding:'utf8'})).pipe(gulp.dest('.'));
-});
+gulp.task('clean', () => gulp.src('packages/**/lib', {read: false}).pipe(clean()));
 
-gulp.task("build", ['lec'], function () {
-  return gulp.src(scripts)
-    .pipe(plumber({
-        errorHandler: function (err) {
-            gutil.log(err.stack);
-        }
-    }))
-    .pipe(newer({map: mapToDest}))
-    .pipe(through.obj(function (file, enc, callback) {
-        file._path = file.path;
-        file.path = file.path.replace(srcEx, libFragment);
-        callback(null, file);
-    }))
-    .pipe(gulpif((file) => !/\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
-        gutil.log("Compiling", "'" + chalk.cyan(file.path) + "'...");
-        callback(null, file);
-    })))
-    // If it's vue, then copy only, else babel it.
-    .pipe(gulpif((file) => /\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
-        gutil.log("Copy Vue Component", "'" + chalk.cyan(file._path) + "'...");
-        mkdirp.sync(path.parse(file.path).dir);
-        fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));
-        callback(null, file);
-    }), babel()))
-    .pipe(gulp.dest(dest));
-});
+gulp.task('lec', () => gulp.src(bins, { base: "./" }).pipe(filelog('Bin')).pipe(lec({eolc: 'LF', encoding:'utf8'})).pipe(gulp.dest('.')));
 
-gulp.task('doc-watch', function () {
-    gulp.src(['docs/less/main.less', 'docs/less/donate.less'])
-    .pipe(less())
-    .pipe(gulp.dest('docs/css'));
-})
-gulp.task("build-watch", function () {
+gulp.task('copy', () => eventStream.concat.apply(eventStream, copyFiles.map(dir => {
+        let dest = dir.replace('src', 'lib');
+        return gulp.src([`${dir}**.vue`, `${dir}**/**.less`])
+            .pipe(newer(dest))
+            .pipe(filelog('Copy'))
+            .pipe(gulp.dest(dest))
+    })
+));
+
+gulp.task("build", ['lec', 'copy'], () => {
     return gulp.src(scripts)
-        .pipe(plumber({
-            errorHandler: function (err) {
-                gutil.log(err.stack);
-            }
-        }))
+        .pipe(plumber({ errorHandler (err) { gutil.log(err.message + '\r\n' + err.codeFrame); }}))
+        .pipe(newer({map: mapToDest}))
+        .pipe(filelog('Compile'))
+        .pipe(babel())
+        .pipe(gulp.dest(dest));
+});
+
+gulp.task('doc-watch', () => {
+    gulp.src(['docs/less/main.less', 'docs/less/donate.less'])
+        .pipe(less())
+        .pipe(filelog('Less'))
+        .pipe(gulp.dest('docs/css'));
+});
+gulp.task("build-watch", () => {
+    return gulp.src(scripts)
+        .pipe(plumber({ errorHandler (err) { gutil.log(err.message + '\r\n' + err.codeFrame); }}))
         .pipe(through.obj(function (file, enc, callback) {
             file._path = file.path;
             file.path = file.path.replace(srcEx, libFragment);
             callback(null, file);
         }))
         .pipe(newer(dest))
-        .pipe(gulpif((file) => !/\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
-            gutil.log("Compiling", "'" + chalk.cyan(file._path) + "'...");
-            callback(null, file);
-        })))
-        // If it's vue, then copy only, else babel it.
-        .pipe(gulpif((file) => /\.vue|\.less/.test(path.parse(file.path).ext), through.obj(function (file, enc, callback) {
-            gutil.log("Copy Vue Component", "'" + chalk.cyan(file._path) + "'...");
-            mkdirp.sync(path.parse(file.path).dir);
-            fs.createReadStream(file._path).pipe(fs.createWriteStream(file.path));
-            callback(null, file);
-        }), babel()))
+        .pipe(filelog('Compile'))
+        .pipe(babel())
         .pipe(gulp.dest(dest));
 });
 
-gulp.task("watch", ['build-watch', 'doc-watch'], function (callback) {
-    watch(scripts, {debounceDelay: 200}, function () {
-        gulp.start("build-watch");
-    });
-    watch(docs, {debounceDelay: 200}, function () {
-        gulp.start("doc-watch");
-    });
+gulp.task("watch", ['build-watch', 'doc-watch'], (callback) => {
+    watch(scripts, {debounceDelay: 200}, () => gulp.start("build-watch"));
+    watch(docs, {debounceDelay: 200}, () => gulp.start("doc-watch"));
+    watch(copyFiles, {debounceDelay: 200}, () => gulp.start("copy"));
 });
