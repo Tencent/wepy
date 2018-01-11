@@ -270,45 +270,36 @@ if (Number(process.version.match(/^v(\d+\.\d+)/)[1]) < 5) {
     process.exit(1);
 }
 
-
-
-
-
 commander.usage('[command] <options ...>');
 commander.option('-v, --version', '显示版本号', () => {
   displayVersion();
 });
-commander.option('-V', '显示版本号', () => {
-  displayVersion();
-});
-commander.option('-s, --source <source>', '源码目录');
-commander.option('-t, --target <target>', '生成代码目录');
-commander.option('-f, --file <file>', '待编译wpy文件');
-commander.option('-o, --output <type>', '编译类型：web，weapp。默认为weapp');
-commander.option('-p, --platform <type>', '编译平台：browser, wechat，qq。默认为browser');
-commander.option('--no-cache', '对于引用到的文件，即使无改动也会再次编译');
-commander.option('--empty', '使用new生成项目时，生成空项目内容');
-commander.option('--no-lint', '使用new生成项目时，禁用eslint');
-commander.option('--redux', '使用new生成项目时，增加redux相关内容');
-commander.option('-w, --watch', '监听文件改动');
 
-commander.command('build').description('编译项目').action(projectPath => {
-
-    if (compile.init(commander)) {
-        compile.build(commander);
+commander.command('build')
+    .description('编译项目')
+    .option('-f, --file <file>', '待编译wpy文件')
+    .option('-s, --source <source>', '源码目录')
+    .option('-t, --target <target>', '生成代码目录')
+    .option('-o, --output <type>', '编译类型：web，weapp。默认为weapp')
+    .option('-p, --platform <type>', '编译平台：browser, wechat，qq。默认为browser')
+    .option('-w, --watch', '监听文件改动')
+    .option('--no-cache', '对于引用到的文件，即使无改动也会再次编译')
+    .action(cmd => {
+        if (compile.init(cmd)) {
+            compile.build(cmd);
+        }
     }
-    /*if (!util.isDir(path.join(util.currentDir, 'node_modules'))) {
-        util.error('请先执行npm install安装所需依赖', '错误');
-        return;
-    } else {
-        compile.build(commander);
-    }*/
-});
+);
 
-commander.command('new <projectName>').description('生成项目').action(name => {
-    generateProject(name || 'temp', commander);
-});
-
+commander.command('new <projectName>')
+    .description('生成项目')
+    .option('--empty', '使用new生成项目时，生成空项目内容')
+    .option('--no-lint', '使用new生成项目时，禁用eslint')
+    .option('--redux', '使用new生成项目时，增加redux相关内容')
+    .action((name, cmd) => {
+        generateProject(name || 'temp', cmd);
+    }
+);
 
 commander.command('upgrade').description('升级wepyjs版本').action(name => {
     upgrade();
