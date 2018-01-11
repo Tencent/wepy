@@ -1423,7 +1423,7 @@ var item = require('item.js')
 
 <!-- index.wpy -->
 <template>
-    <component id="item"></component>
+    <components id="item"></components>
 </template>
 <script>
     import wepy from 'wepy';
