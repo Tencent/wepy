@@ -507,7 +507,12 @@ export default class {
         let k;
         let originData = this.$data;
         this.$$phase = '$digest';
+        this.$$dc = 0;
         while (this.$$phase) {
+            this.$$dc++;
+            if (this.$$dc >= 3) {
+                throw new Error('Can not call $apply in $apply process');
+            }
             let readyToSet = {};
             if (this.computed) {
                 for (k in this.computed) { // If there are computed property, calculated every times
