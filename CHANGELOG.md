@@ -18,6 +18,7 @@
 `npm install wepy-cli@1.6.1-alpha4`
 
 * `F` 修复了template中只有注释会导致终止编译的BUG。[6bbb304](https://github.com/Tencent/wepy/commit/6bbb304e06c28cd9309b17f97c6f6426a075ea99)
+* `F` 修复了在onLaunch阶段获取不到`getApp()`的BUG。[ISSUE 753](https://github.com/Tencent/wepy/issues/753)
 
 
 ## 1.6.0 (2017-10-25) 
