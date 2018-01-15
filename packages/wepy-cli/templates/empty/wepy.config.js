@@ -1,18 +1,18 @@
-var prod = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
-  cliLogs: true,
+  cliLogs: !isProd,
   compilers: {
     less: {
-      'compress': true
+      'compress': isProd
     },
-    /*sass: {
-      outputStyle: 'compressed'
-    },*/
+    // sass: {
+    //   outputStyle: 'compressed'
+    // },
     babel: {
-      'sourceMap': true,
+      'sourceMap': !isProd,
       'presets': [
         'env'
       ],
@@ -23,32 +23,10 @@ module.exports = {
       ]
     }
   },
-  plugins: {
-  },
-  appConfig: {
-    noPromiseAPI: ['createSelectorQuery']
-  }
-}
-
-if (prod) {
-
-  module.exports.cliLogs = false;
-
-  delete module.exports.compilers.babel.sourcesMap;
-  // 压缩sass
-  // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
-
-  // 压缩less
-  module.exports.compilers['less'] = {
-    compress: true
-  }
-
-  // 压缩js
-  module.exports.plugins = {
+  plugins: !isProd ? {} : {
     uglifyjs: {
       filter: /\.js$/,
-      config: {
-      }
+      config: {}
     },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,
@@ -61,5 +39,8 @@ if (prod) {
         }
       }
     }
+  },
+  appConfig: {
+    noPromiseAPI: ['createSelectorQuery']
   }
 }
