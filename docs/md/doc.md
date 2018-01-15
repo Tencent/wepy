@@ -497,7 +497,7 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`、`less`、`sass`、`stylus` |
+| style    | `css`   | `css`、`less`、`scss`、`stylus` |
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
 | script   | `babel` | `babel`、`TypeScript`         |
 
