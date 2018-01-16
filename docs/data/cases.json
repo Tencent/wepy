@@ -4,7 +4,14 @@
     " */": "****",
     "cases": [
         {
-            "name": "手机充值+",
+            "name": "话费送好友",
+            "email": "",
+            "link": "",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/34989744-a97f1002-fafe-11e7-85aa-2845143ceeb8.png",
+            "company": "Tencent"
+        }, {
+            "name": "腾讯手机充值",
             "email": "",
             "link": "",
             "opensource": "",
