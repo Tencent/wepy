@@ -3,6 +3,11 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E6%8D%90%E8%B5%A0-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "donates": [{
+        "date": "2018/01/16",
+        "name": "沈扬东",
+        "amount": "6.66",
+        "desc": "支持一哈。希望框架尽快跟上小程序新的api和组件；文档最好有基础库兼容性提示"
+    },{
         "date": "2018/01/11",
         "name": "Eli",
         "amount": "77.77",
