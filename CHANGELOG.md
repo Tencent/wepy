@@ -19,6 +19,8 @@
 
 * `F` 修复了template中只有注释会导致终止编译的BUG。[6bbb304](https://github.com/Tencent/wepy/commit/6bbb304e06c28cd9309b17f97c6f6426a075ea99)
 * `F` 修复了在onLaunch阶段获取不到`getApp()`的BUG。[ISSUE 753](https://github.com/Tencent/wepy/issues/753)
+* `F` 在apply进入死循环时，进行报错提示。[ISSUE 723](https://github.com/Tencent/wepy/issues/723)
+* `F` 修复了在使用多级目录作为src目录时，watch会提示找不到文件的问题。[ISSUE 696](https://github.com/Tencent/wepy/issues/696)
 
 
 ## 1.6.0 (2017-10-25) 
