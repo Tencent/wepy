@@ -251,8 +251,8 @@ this.$nextTick().then(function () {
     });
     ```
 
-* `$navigate(url:String|Object, [params:Object])`：`wx.navigateTo`的封装方法
-* `$switch(url:String|Object)`：`wx.switchTab`的封装方法
+* `$navigateTo(url:String|Object, [params:Object])`：`wx.navigateTo`的封装方法
+* `$switchTab(url:String|Object)`：`wx.switchTab`的封装方法
 
 
 
