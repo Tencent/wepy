@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "骑电单车",
+            "email": "margox@foxmail.com",
+            "link": "http://www.qeebike.com/",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/7866354/35085621-701f3460-fc64-11e7-9f65-629ba5b02235.jpg",
+            "company": "杭州骑迹科技"
+        },
+        {
             "name": "话费送好友",
             "email": "",
             "link": "",
