@@ -1216,8 +1216,8 @@ export default class Index extends wepy.page {
     };
     mixins = [TestMixin ];
     onShow() {
-        console.log(this.foo); // foo defined by index.
-        console.log(this.bar); // foo defined by testMix.
+        console.log(this.foo); // foo defined by index
+        console.log(this.bar); // bar defined by testMix
     }
 }
 ```
