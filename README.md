@@ -118,7 +118,7 @@ wepy build --watch
 阅邻二手书、
 趣店招聘、
 育儿柚道、
-满熊阅读、
+[满熊阅读](https://github.com/Thunf/wepy-demo-bookmall)[（开源）](https://github.com/Thunf/wepy-demo-bookmall)
 平行进口报价内参、
 GitHub掘金版、
 班级群管、
