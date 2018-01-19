@@ -1,6 +1,6 @@
 {
   "name": "wepy-cli",
-  "version": "1.6.1-alpha3",
+  "version": "1.6.1-alpha4",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/wepyjs/wepy#readme",
   "devDependencies": {
-    "babel": "^6.5.2",
+    "babel": "^6.23.0",
     "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-1": "^6.16.0"

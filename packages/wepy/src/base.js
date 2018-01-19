@@ -109,6 +109,7 @@ export default {
         APP_EVENT.forEach((v) => {
             config[v] = (...args) => {
                 let rst;
+                !app.$wxapp && (app.$wxapp = getApp());
                 app[v] && (rst = app[v].apply(app, args));
                 return rst;
             };

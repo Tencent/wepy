@@ -219,7 +219,7 @@ export default {
      * 组件图片引用会被直接编译进页面，因此需要对组件中的相对路径进行路径修正
      */
     fixRelativePath (node, template, parentTemplate) {
-        if (node.nodeName === 'image' && parentTemplate) {
+        if ((node.nodeName === 'wxs' || node.nodeName === 'image') && parentTemplate) {
             let src = node.getAttribute('src')
             if (src[0] === '.') {
                 let realpath = path.join(path.parse(template.src).dir, node.getAttribute('src'));
@@ -237,6 +237,13 @@ export default {
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
 
         node = this.fixRelativePath(node, template, parentTemplate);
+
+        // If it's a wxs module, then do not parse it
+        if (template.wxs) {
+            for (let k in template.wxs) {
+                ignores[k] = true;
+            }
+        }
 
         if (node.nodeName === '#text' && prefix) {
             if (node.data && node.data.indexOf('{{') > -1) {
