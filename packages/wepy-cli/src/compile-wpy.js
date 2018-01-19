@@ -24,6 +24,7 @@ import cTemplate from './compile-template';
 import cScript from './compile-script';
 import toWeb from './web/index';
 import loader from './loader';
+import resolve from './resolve';
 
 export default {
     _cacheWpys: {},
@@ -174,7 +175,8 @@ export default {
                 }
 
                 if (rstTypeObj.src) {
-                    rstTypeObj.src = path.resolve(opath.dir, rstTypeObj.src);
+                    // rstTypeObj.src = path.resolve(opath.dir, rstTypeObj.src);
+                    rstTypeObj.src = resolve.resolveAlias(rstTypeObj.src, opath);
                     rstTypeObj.link = true;
                 } else {
                     rstTypeObj.link = false;
