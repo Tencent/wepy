@@ -181,6 +181,7 @@ describe('component.js', () => {
 
     it('computed test', () => {
         com.num = 11;
+        com.$$phase = null;
         com.$apply();
 
         assert.strictEqual(com.computedNum, 11 * 2, 'test computed');
