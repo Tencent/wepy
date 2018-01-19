@@ -69,6 +69,7 @@ export class App extends wepy.app {
         this.intercept('request', {
             config (p) {
                 p.timestamp = +new Date();
+                return p;
             },
             success (obj) {
                 console.log('request success');
