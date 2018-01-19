@@ -11,8 +11,8 @@
 import event from './event';
 import util from './util';
 
-const PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage', 'onPageScroll', 'onTabItemTap'];
-const APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
+let PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage', 'onPageScroll', 'onTabItemTap'];
+let APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
 
 
 let $bindEvt = (config, com, prefix) => {
