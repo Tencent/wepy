@@ -497,7 +497,7 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`、`less`、`sass`、`stylus` |
+| style    | `css`   | `css`、`less`、`scss`、`stylus` |
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
 | script   | `babel` | `babel`、`TypeScript`         |
 
@@ -905,9 +905,9 @@ project
 
 * **详细**：
 
-通过监听器`watcher`能够监听到任何数值属性的数值更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的数值属性同名，每当被监听的数值属性改变一次，监听器函数就会被自动调用执行一次。
+通过监听器`watcher`能够监听到任何属性的更新。监听器在`watch`对象中声明，类型为函数，函数名与需要被监听的`data`对象中的属性同名，每当被监听的属性改变一次，监听器函数就会被自动调用执行一次。
 
-监听器适用于当数值属性改变时需要进行某些额外处理的情形。
+监听器适用于当属性改变时需要进行某些额外处理的情形。
 
 * **示例**：
 
@@ -916,15 +916,15 @@ project
         num: 1
     }
 
-    // 监听器函数名必须跟需要被监听的data对象中的数值属性num同名，
-    // 其参数中的newValue为数值属性改变后的新值，oldValue为改变前的旧值
+    // 监听器函数名必须跟需要被监听的data对象中的属性num同名，
+    // 其参数中的newValue为属性改变后的新值，oldValue为改变前的旧值
     watch = {
         num (newValue, oldValue) {
             console.log(`num value: ${oldValue} -> ${newValue}`)
         }
     }
 
-    // 每当被监听的数值属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
+    // 每当被监听的属性num改变一次，对应的同名监听器函数num()就被自动调用执行一次
     onLoad () {
         setInterval(() => {
             this.num++;
@@ -963,7 +963,7 @@ onLoad () {
 **动态传值**
 
 
-动态传值是指父组件向子组件传递动态数据内容，父子组件数据完全独立互不干扰。但可以通过使用`.sync`修饰符来达到父组件数据绑定至子组件的效果，也可以通过设置子组件props的`twoWay: true`来达到子组件数据绑定至父组件的效果。那如果即使用`.sync`修饰符，同时子组件`props`中添加的`twoWay: true`时，就可以实现数据的双向绑定了。
+动态传值是指父组件向子组件传递动态数据内容，父子组件数据完全独立互不干扰。但可以通过使用`.sync`修饰符来达到父组件数据绑定至子组件的效果，也可以通过设置子组件props的`twoWay: true`来达到子组件数据绑定至父组件的效果。那如果既使用`.sync`修饰符，同时子组件`props`中添加的`twoWay: true`时，就可以实现数据的双向绑定了。
 
 *注意*：下文示例中的`twoWay`为`true`时，表示子组件向父组件单向动态传值，而`twoWay`为`false`(默认值，可不写)时，则表示子组件不向父组件传值。这是与Vue不一致的地方，而这里之所以仍然使用`twoWay`，只是为了尽可能保持与Vue在标识符命名上的一致性。
 
@@ -993,7 +993,7 @@ props = {
     
     twoWayTitle: {
         type: Number,
-        default: 50,
+        default: 'nothing',
         twoWay: true
     }
 };
@@ -1001,16 +1001,16 @@ props = {
 onLoad () {
     console.log(this.title); // p-title
     console.log(this.syncTitle); // p-title
-    console.log(this.twoWayTitle); // 50
+    console.log(this.twoWayTitle); // p-title
 
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
-    this.twoWayTitle = 60;
+    this.twoWayTitle = 'two-way-title';
     this.$apply();
-    console.log(this.$parent.parentTitle); // 60.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
+    console.log(this.$parent.parentTitle); // two-way-title.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     this.$parent.$apply();
-    console.log(this.title); // 'p-title';
+    console.log(this.title); // 'c-title';
     console.log(this.syncTitle); // 'p-title-changed' --- 有.sync修饰符的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
@@ -1038,7 +1038,7 @@ export default class Com extends wepy.component {
     // events对象中所声明的函数为用于监听组件之间的通信与交互事件的事件处理函数
     events = {
         'some-event': (p1, p2, p3, $event) => {
-               console.log(`${this.name} receive ${$event.name} from ${$event.source.name}`);
+               console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`);
         }
     };
     // Other properties
@@ -1091,7 +1091,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 - `.stop`: 绑定小程序捕获型事，如`catchtap`；
 
-- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。
+- `.user`: 绑定用户自定义组件事件，通过`$emit`触发。**注意，如果用了自定义事件，则events中对应的监听函数不会再执行。**
 
 示例如下：
 
@@ -1216,8 +1216,8 @@ export default class Index extends wepy.page {
     };
     mixins = [TestMixin ];
     onShow() {
-        console.log(this.foo); // foo defined by index.
-        console.log(this.bar); // foo defined by testMix.
+        console.log(this.foo); // foo defined by index
+        console.log(this.bar); // bar defined by testMix
     }
 }
 ```
@@ -1225,7 +1225,7 @@ export default class Index extends wepy.page {
 
 #### 兼容式混合
 
-对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。
+对于组件`methods`响应事件，以及小程序页面事件将采用**兼容式混合**，即先响应组件本身响应事件，然后再响应混合对象中响应事件。**注意，这里事件的执行顺序跟Vue中相反，[Vue中是先执行mixin中的函数， 再执行组件本身的函数](https://vuejs.org/v2/guide/mixins.html#Option-Merging)。**
 
 ```Javascript
 // mixins/test.js

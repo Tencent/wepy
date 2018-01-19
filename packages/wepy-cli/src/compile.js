@@ -116,18 +116,18 @@ export default {
         }
         return this._cacheReferences[filepath] || [];
     },
-    watch (config) {
-        config.watch = false;
+    watch (cmd) {
+        cmd.watch = false;
 
         let wepyrc = util.getConfig();
-        let src = config.source || wepyrc.src || 'src';
-        let dist = config.output || wepyrc.output || 'dist';
+        let src = cmd.source || wepyrc.src || 'src';
+        let dist = cmd.target || wepyrc.target || 'dist';
         chokidar.watch(`.${path.sep}${src}`, wepyrc.watchOption || {}).on('all', (evt, filepath) => {
             if ((evt === 'change' || evt === 'add') && watchReady && !preventDup[filepath]) {
                 preventDup[filepath] = evt;
-                config.file = path.join('..', filepath);
+                cmd.file = path.relative(src, filepath);
                 util.log('文件: ' + filepath, '变更');
-                this.build(config);
+                this.build(cmd);
                 setTimeout(() => {
                     preventDup[filepath] = false;
                 }, 500);
@@ -253,13 +253,13 @@ export default {
         return true;
     },
 
-    build (config) {
+    build (cmd) {
 
         let wepyrc = util.getConfig();
 
-        let src = config.source || wepyrc.src;
-        let dist = config.output || wepyrc.output;
-        let ext = config.wpyExt || wepyrc.wpyExt;
+        let src = cmd.source || wepyrc.src;
+        let dist = cmd.target || wepyrc.target;
+        let ext = cmd.wpyExt || wepyrc.wpyExt;
 
         if (src === undefined)
             src = 'src';
@@ -268,20 +268,20 @@ export default {
         if (ext === undefined)
             ext = '.wpy';
 
-        config.source = src;
-        config.dist = dist;
-        config.wpyExt = ext;
+        cmd.source = src;
+        cmd.dist = dist;
+        cmd.wpyExt = ext;
 
         if (ext.indexOf('.') === -1)
             ext = '.' + ext;
 
         // WEB 模式下，不能指定文件编译
-        let file = (config.output !== 'web') ? config.file : '';
+        let file = (cmd.output !== 'web') ? cmd.file : '';
 
         let current = process.cwd();
         let files = file ? [file] : util.getFiles(src);
 
-        cache.setParams(config);
+        cache.setParams(cmd);
         cache.setSrc(src);
         cache.setDist(dist);
         cache.setExt(ext);
@@ -289,9 +289,9 @@ export default {
 
         // If dist/npm/wepy is not exsit, then clear the build cache.
         if (!util.isDir(path.join(util.currentDir, dist, 'npm', 'wepy'))) {
-            config.cache = false;
+            cmd.cache = false;
         }
-        if (!config.cache) {
+        if (!cmd.cache) {
             cache.clearBuildCache();
         }
 
@@ -330,10 +330,10 @@ export default {
             util.removeLog();
         }
 
-        if (config.output === 'web') {
+        if (cmd.output === 'web') {
             files.forEach((f, i) => {
                 if (i === 0) {
-                    toWeb.toWeb(f, config.platform || 'browser');
+                    toWeb.toWeb(f, cmd.platform || 'browser');
                 } else {
                     toWeb.copy(path.join(util.currentDir, src, f));
                 }
@@ -350,9 +350,9 @@ export default {
                 }
             });
         }
-        if (config.watch) {
+        if (cmd.watch) {
             util.isWatch = true;
-            this.watch(config);
+            this.watch(cmd);
         }
     },
     compile(opath) {

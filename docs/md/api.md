@@ -231,7 +231,7 @@ this.$nextTick().then(function () {
 
     ```javascript
     // page1.js
-    this.$preload('userName': 'Gcaufy');
+    this.$preload('userName', 'Gcaufy');
     this.$redirect('./page2');
 
     // page2.js
