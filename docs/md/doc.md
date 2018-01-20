@@ -113,9 +113,9 @@ customFileTypes:
 
 &emsp;&emsp;2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
-    ```vim
-    au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
-    ```
+ ```vim
+ au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
+ ```
 
 ### 代码规范
 
