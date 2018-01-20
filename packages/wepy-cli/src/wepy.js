@@ -119,7 +119,11 @@ let generateProject = (name, config) => {
 
     const copyFn = function (sourcePath) {
         return function (file) {
-            let target = path.join(util.currentDir, file);
+            // https://github.com/npm/npm/issues/12917
+            // npm will exclude .gitignore when packaging
+            // so rename '.gitignore' to 'gitignore' and rename back when copy
+            let append = file === 'gitignore' ? '.' : '';
+            let target = path.join(util.currentDir, append + file);
 
             // --on-lint will not copy eslint config
             if (['.editorconfig', '.eslintignore', '.eslintrc'].indexOf(file) !== -1 && !config.lint)
