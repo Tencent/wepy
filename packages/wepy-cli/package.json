@@ -4,7 +4,11 @@
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
-    "wepy": "bin/wepy.js"
+    "wepy": "bin/wepy.js",
+    "wepy-init": "bin/wepy-init.js",
+    "wepy-list":"bin/wepy-list.js",
+    "wepy-build":"bin/wepy-build.js",
+    "wepy-upgrade":"bin/wepy-upgrade.js"
   },
   "scripts": {
     "prepublish": "npm run build",
@@ -30,17 +34,28 @@
     "babel-preset-stage-1": "^6.16.0"
   },
   "dependencies": {
+    "async": "^2.6.0",
+    "chalk": "^2.3.0",
     "chokidar": "^1.6.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "compare-versions": "^3.0.0",
+    "consolidate": "^0.15.0",
+    "download": "^6.2.5",
+    "handlebars": "^4.0.11",
     "hash-sum": "^1.0.2",
     "ignore": "^3.2.0",
     "js-base64": "^2.1.9",
     "mkdirp": "^0.5.1",
     "postcss": "^5.2.16",
     "postcss-selector-parser": "^2.2.3",
+    "read-metadata": "^1.0.0",
+    "request": "^2.67.0",
     "update-notifier": "^1.0.2",
+    "validate-npm-package-name": "^3.0.0",
     "xmldom": "^0.1.27"
+  },
+  "engines": {
+    "node": ">=5.0.0"
   }
 }

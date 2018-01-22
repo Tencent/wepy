@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require('../lib/wepy');
+require('../lib/bin/wepy.js')
