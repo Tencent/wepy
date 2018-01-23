@@ -252,9 +252,14 @@ export default class {
             return this.$wxpage.setData(k);
         }
         let t = null, reg = new RegExp('^' + this.$prefix.replace(/\$/g, '\\$'), 'ig');
+
         for (t in k) {
             let noPrefix = t.replace(reg, '');
             this.$data[noPrefix] = util.$copy(k[t], true);
+            // 1.9.2 do not allow to set a undefined value
+            if (k[t] === undefined) {
+                delete k[t];
+            }
         }
 
         // In the same page redirection, $wxpage does not update, so use the page $wxpage
