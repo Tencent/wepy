@@ -67,7 +67,7 @@
     <panel>
       <view class="title" slot="title">测试组件Repeat</view>
       <repeat for="{{groupList}}" index="index" item="item" key="key">
-        <group :grouplist="item" :indexa="index"></group>
+        <group :grouplist="item" :gindex="index"></group>
       </repeat>
     </panel>
 
