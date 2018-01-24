@@ -6,7 +6,6 @@ import tildify from 'tildify';
 import inquirer from 'inquirer';
 import home from 'user-home';
 import program from 'commander';
-import unzip from 'unzip';
 import { sync as rm } from 'rimraf';
 import download from '../cli/download';
 import localPath from '../cli/local-path';
