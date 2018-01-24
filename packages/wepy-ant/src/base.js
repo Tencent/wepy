@@ -50,8 +50,8 @@ let $bindEvt = (config, com, prefix) => {
             let wepyParams = [], paramsLength = 0, tmp, p, comIndex;
             if (e.currentTarget && e.currentTarget.dataset) {
                 tmp = e.currentTarget.dataset;
-                while(tmp['wepyParams' + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
-                    wepyParams.push(tmp['wepyParams' + p]);
+                while(tmp['wpy' + method.toLowerCase() + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
+                    wepyParams.push(tmp['wpy' + method.toLowerCase() + p]);
                 }
                 if (tmp.comIndex !== undefined) {
                     comIndex = tmp.comIndex;
