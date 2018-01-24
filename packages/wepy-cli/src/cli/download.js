@@ -7,10 +7,10 @@ import downloadGitRepo from 'download-git-repo';
  * @param {*} template template name
  */
 export default {
-    downloadOfficialZip (template) {
+    downloadOfficialZip (template, dist, options) {
         const templateName = template.split('#')[0];
         const branch = template.split('#')[1] || 'master';
-        return download(`https://raw.githubusercontent.com/wepyjs/wepy_templates/${branch}/zips/${templateName}.zip`);
+        return download(`https://raw.githubusercontent.com/wepyjs/wepy_templates/${branch}/zips/${templateName}.zip`, dist, options);
     },
     downloadRepo (...args) {
         return downloadGitRepo(...args);
