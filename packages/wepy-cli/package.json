@@ -52,7 +52,6 @@
     "postcss-selector-parser": "^2.2.3",
     "read-metadata": "^1.0.0",
     "request": "^2.67.0",
-    "unzip": "^0.1.11",
     "update-notifier": "^1.0.2",
     "validate-npm-package-name": "^3.0.0",
     "xmldom": "^0.1.27"
