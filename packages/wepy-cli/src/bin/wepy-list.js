@@ -9,16 +9,22 @@ request({
         'User-Agent': 'wepy-cli'
     }
 }, (err, res, body) => {
-    const requestBody = JSON.parse(body);
-    if (Array.isArray(requestBody)) {
+    if (body.message) {
+        console.error(body.messge);
+    }
+    try {
+        body = JSON.parse(body);
+    } catch (e) {
+        console.error('Something wrong with your network');
+    }
+    if (Array.isArray(body)) {
         console.log('  Available official templates:\n');
-        requestBody.forEach(repo => {
+        body.forEach(repo => {
             console.log(
         '  ' + chalk.yellow('★') +
         '  ' + chalk.blue(repo.name) +
         ' - ' + repo.description);
         });
-    } else {
-        console.error(requestBody.message);
+        console.log('\n');
     }
 });
