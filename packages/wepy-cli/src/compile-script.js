@@ -134,7 +134,9 @@ export default {
                 ext = '.ts';
             } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
                 ext = path.sep + 'index.js';
-            }else if (util.isFile(source)) {
+            } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.ts')) {
+                ext = path.sep + 'index.ts';
+            } else if (util.isFile(source)) {
                 ext = '';
             } else {
                 throw ('找不到文件: ' + source);
@@ -144,8 +146,8 @@ export default {
             lib += ext;
             resolved = lib;
             
-            //typescript .ts file
-            if (ext === '.ts') {
+            // typescript .ts file
+            if (/\.ts$/.test(ext)) {
                 target = target.replace(/\.ts$/, '') + '.js';
             }
 
