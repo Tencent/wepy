@@ -108,15 +108,16 @@ function downloadAndGenerate (template) {
     }
 
     if (!hasSlash) {
-    // use official template
-        download.downloadOfficialZip(template)
-      .pipe(unzip.Extract({ path: tmp }))
-      .on('close', () => {
-          spinner.stop();
-          gen(tmp);
-      })
-      .on('error', (err) => {
-          logger.fatal('Failed to download repo ' + template + ': ' + err.message.trim());
+      // use official template
+      download.downloadOfficialZip(template, tmp, { extract: true }).then(() => {
+        spinner.stop()
+        gen(tmp);
+      }).catch(e => {
+        if (e.statusCode === 404) {
+          logger.fatal(`Unrecongnized template: "${template}". Try "wepy list" to show all available templates `);
+        } else if (e) {
+          logger.fatal('Failed to download repo ' + template + ': ' + e.message.trim());
+        }
       });
     } else {
     // use third party template
