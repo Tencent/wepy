@@ -15,7 +15,7 @@ exports = module.exports = (program) => {
             console.error(body.messge);
         }
         try {
-            body = JSON.parse(body);
+            body = JSON.parse(body).official;
         } catch (e) {
             console.error('Something wrong with your network');
         }
