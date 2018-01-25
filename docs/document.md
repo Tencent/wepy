@@ -379,30 +379,12 @@ export default class Com extends wepy.component {
 
 **$invoke**
 
-`$invoke`是一个组件对另一个组件的直接调用，通过传入的字符串(像路径),找到相应组件，然后再调用其方法。
-传入字符串 应为 "../", "./" or "../../" + "定义在componets 中的 组件key({a:A}) a"
-形似路径的字符串，会被解析b, 调用当前组件的 components 或者 $parent 的components 中组件
-
-**注意第一个参数是不是文件真实路径**
-
-```js
-    import A from "./a" //调用 组件 A
-    class Example extends wepy.component {
-        components = {
-            a: A
-        }
-        //this.$invoke("/a", "someMethod")
-
-    }
-```
-
+`$invoke`是一个组件对另一个组件的直接调用，通过传入的组件路径找到相应组件，然后再调用其方法。
 如果想在`Page_Index`中调用组件A的某个方法：
 
 ```javascript
 this.$invoke('ComA', 'someMethod', 'someArgs');
 ```
-
-
 
 如果想在组件A中调用组件G的某个方法：
 
