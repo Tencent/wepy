@@ -1,14 +1,11 @@
 language: node_js
 
 node_js:
-  - "5"
   - "6"
 
 matrix:
   include:
     - os: linux
-      services: docker
-      env: CONTAINER=ubuntu:latest
     - os: osx
 
 sudo: false
