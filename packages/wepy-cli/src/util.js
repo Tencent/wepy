@@ -307,7 +307,10 @@ const utils = {
                     type = '.once';
                 return ` v-bind:${name}${type}=`;
             }).replace(/\s+\@([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace @change => v-on:change
-                let prefix = type !== '.user' ? (type === '.stop' ? 'catch' : 'bind') : 'v-on:';
+                let prefix = type !== '.user' ? (type.indexOf('.stop') === type.length - 5 ? 'catch' : 'bind') : 'v-on:';
+                if(type.indexOf('.capture') === 0){
+                    prefix = `capture-${prefix}:`
+                }
                 if (config.output === 'ant' && prefix === 'bind') {
                     prefix = 'on';
                     name = name[0].toUpperCase() + name.substring(1);
