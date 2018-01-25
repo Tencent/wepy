@@ -344,7 +344,7 @@ export default class {
                             com = this.$getComponent(s);
                         }
                     } else if (s) {
-                        const key = Object.keys(com.$com || {}).find(i=>i.toLowerCase().replace('', '')===s.toLowerCase().replace('-', ''))
+                        const key = Object.keys(com.$com || {}).find(i=>i.toLowerCase().replace('-', '')===s.toLowerCase().replace('-', ''))
                         com = com.$com[s] || com.$com[key];
                     }
                 });
