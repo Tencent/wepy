@@ -324,8 +324,8 @@ export default class {
     $getComponent(com) {
         if (typeof(com) === 'string') {
             if (com.indexOf('/') === -1) {
-                const key = Object.keys(this.$com || {}).find(i=>i.toLowerCase().replace('-', '') === s.toLowerCase())
-                return this.$com[com] || this.$com[key] ;
+                const key = Object.keys(this.$com || {}).find(i=>i.toLowerCase().replace('-', '') === com.toLowerCase())
+                return this.$com[com] //|| this.$com[key] ;
             } else if (com === '/') {
                 return this.$parent;
             } else {
@@ -346,6 +346,7 @@ export default class {
                     } else if (s) {
                         const key = Object.keys(com.$com).find(i=>i.toLowerCase().replace('-', '') === s.toLowerCase())
                         com = com.$com[s] || com.$com[key];
+                        console.log(com)
                     }
                 });
             }
