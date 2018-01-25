@@ -1,13 +1,8 @@
-import program from 'commander';
 import {exec} from 'child_process';
 import util from '../util';
 
-program
-    .option('--cli', 'upgrade wepy-cli')
-    .option('--wepy', 'upgrade wepy')
-    .parse(process.argv);
 
-upgrade(program);
+
 
 function upgradeCLI (cb) {
     let cmd = 'npm install wepy-cli -g';
@@ -45,8 +40,10 @@ function upgradeWepy (cb) {
     });
 }
 
-function upgrade (program) {
-    program.cli
-    ? upgradeCLI()
-    : upgradeWepy();
-}
+exports = module.exports = (program) => {
+    if (program.cli) {
+        upgradeCLI();
+    } else {
+        upgradeWepy();
+    }
+};
