@@ -267,6 +267,9 @@ describe('component.js', () => {
 
         page.$invoke('./coma/comaa', 'testInvoke', 'arg1', 'arg2');
         page.$invoke('./coma/comaa', 'testCustomInvoke', 'arg1', 'arg2');
+        page.$invoke('./Coma/Comaa', 'testInvoke', 'arg1', 'arg2');
+        page.$invoke('./Coma/Comaa', 'testCustomInvoke', 'arg1', 'arg2');
+        page.$invoke('./Com-a/Comaa', 'testCustomInvoke', 'arg1', 'arg2');
 
     });
 
