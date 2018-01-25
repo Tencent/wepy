@@ -44,19 +44,22 @@ root_path=$PWD
 
 npm link packages/wepy-cli
 
-
 wepy -v
 
-wepy new demo
+wepy list
 
-wepy new emptydemo --empty
+exps="${root_path}/scripts/exps"
+for exp in ${exps}/*; do  
+    name=$(basename $exp .exp)
+	expect "$root_path"/scripts/exps/"$name".exp "/tmp/templates/${name}"
 
-wepy new reduxdemo --redux
+	cd "/tmp/templates/${name}"
+	npm install
+	node "$root_path"/packages/wepy-cli/bin/wepy.js build
+done
 
-wepy new nolintdemo --no-lint
-
-cd demo
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
+# Build multiple version for standard project.
+cd /tmp/templates/standard
 
 node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web
 
@@ -66,18 +69,9 @@ node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web --platform we
 
 node "$root_path"/packages/wepy-cli/bin/wepy.js build --output ant
 
-cd ../emptydemo
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
 
-cd ../nolintdemo
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
-
-cd ../reduxdemo
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
-
-
-cd ..
 # Test build demos
+cd /tmp/templates
 
 git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
