@@ -38,6 +38,7 @@ export default function generate (name, src, dest, done) {
 
     // This is a github project, and there is no meta.json or meta.js
     if (opts.status === false) {
+        // Directly copy the project to dest.
         ncp.ncp(src, dest, function (err) {
           done(err);
         });

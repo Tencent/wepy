@@ -40,7 +40,9 @@ program
 program
     .command('list')
     .description('list available official templates')
-    .action(require('./wepy-list'));
+    .action(require('./wepy-list'))
+
+    .option('-g, --github', 'list all registered github projects');
 
 program
     .command('upgrade')
