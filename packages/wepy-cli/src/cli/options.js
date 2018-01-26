@@ -33,18 +33,21 @@ export default function options (name, dir) {
  */
 
 function getMetadata (dir) {
-    const json = path.join(dir, 'meta.json')
-    const js = path.join(dir, 'meta.js')
-    let opts = {}
+    const json = path.join(dir, 'meta.json');
+    const js = path.join(dir, 'meta.js');
+    let opts = {};
+    opts.status = true;
 
     if (exists(json)) {
-        opts = metadata.sync(json)
+        opts = metadata.sync(json);
     } else if (exists(js)) {
-        const req = require(path.resolve(js))
+        const req = require(path.resolve(js));
         if (req !== Object(req)) {
-            throw new Error('meta.js needs to expose an object')
+            throw new Error('meta.js needs to expose an object');
         }
-        opts = req
+        opts = req;
+    } else {
+      opts.status = false;
     }
 
     return opts
