@@ -1010,7 +1010,7 @@ onLoad () {
     console.log(this.$parent.parentTitle); // two-way-title.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
     this.$parent.parentTitle = 'p-title-changed';
     this.$parent.$apply();
-    console.log(this.title); // 'c-title';
+    console.log(this.title); // 'p-title';
     console.log(this.syncTitle); // 'p-title-changed' --- 有.sync修饰符的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
