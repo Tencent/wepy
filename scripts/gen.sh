@@ -49,7 +49,7 @@ wepy -v
 wepy list
 
 exps="${root_path}/scripts/exps"
-for exp in ${exps}/*; do  
+for exp in ${exps}/*; do
     name=$(basename $exp .exp)
 	expect "$root_path"/scripts/exps/"$name".exp "/tmp/templates/${name}"
 
@@ -73,7 +73,9 @@ node "$root_path"/packages/wepy-cli/bin/wepy.js build --output ant
 # Test build demos
 cd /tmp/templates
 
-git clone https://github.com/wepyjs/wepy-wechat-demo.git
+wepy init wepyjs/wepy-wechat-demo wepy-wechat-demo
+
+# git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
 cd wepy-wechat-demo
 npm install
@@ -81,7 +83,9 @@ node "$root_path"/packages/wepy-cli/bin/wepy.js build
 npm run build
 
 cd ..
-git clone https://github.com/wepyjs/wepy-weui-demo.git
+
+wepy init wepyjs/wepy-weui-demo wepy-weui-demo
+# git clone https://github.com/wepyjs/wepy-weui-demo.git
 cd wepy-weui-demo
 npm install
 node "$root_path"/packages/wepy-cli/bin/wepy.js build
