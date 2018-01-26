@@ -2,6 +2,7 @@ import chalk from 'chalk';
 import Metalsmith from 'metalsmith';
 import Handlebars from 'handlebars';
 import async from 'async';
+import ncp from 'ncp';
 import { handlebars } from 'consolidate';
 import path from 'path';
 import multimatch from 'multimatch';
@@ -34,6 +35,14 @@ Handlebars.registerHelper('unless_eq', function (a, b, opts) {
 
 export default function generate (name, src, dest, done) {
     const opts = getOptions(name, src);
+
+    // This is a github project, and there is no meta.json or meta.js
+    if (opts.status === false) {
+        ncp.ncp(src, dest, function (err) {
+          done(err);
+        });
+        return {};
+    }
     const metalsmith = Metalsmith(path.join(src, 'template'));
     const data = Object.assign(metalsmith.metadata(), {
         destDirName: name,
