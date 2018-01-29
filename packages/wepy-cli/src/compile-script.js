@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -31,7 +31,7 @@ export default {
 
         return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
             let npmInfo = opath.npm;
-            
+
             if (lib === './_wepylogs.js') {
                 return match;
             }
@@ -73,7 +73,7 @@ export default {
             } else if (lib.indexOf('/') === -1 || // require('asset');
                 lib.indexOf('/') === lib.length - 1 || // reqiore('a/b/something/')
                 (lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) // require('@abc/something')
-            ) {  
+            ) {
                 // require('stream') -> browsers: emitter->emitter-component;
                 if (npmInfo && npmInfo.pkg._activeFields.length) {
                     let resolvedLib = resolve.resolveSelfFields(npmInfo.dir, npmInfo.pkg, lib);
@@ -124,6 +124,11 @@ export default {
                 target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
                 ext = '';
                 needCopy = true;
+
+                // It's a node_module component.
+                if (path.extname(mainFile.file) === '.wpy') {
+                    source += '.wpy';
+                }
             }
 
             if (util.isFile(source + wpyExt)) {
@@ -143,7 +148,7 @@ export default {
             target += ext;
             lib += ext;
             resolved = lib;
-            
+
             //typescript .ts file
             if (ext === '.ts') {
                 target = target.replace(/\.ts$/, '') + '.js';
