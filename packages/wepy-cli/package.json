@@ -1,13 +1,12 @@
 {
   "name": "wepy-cli",
-  "version": "1.6.1-alpha5",
+  "version": "1.6.1-alpha7",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
     "wepy": "bin/wepy.js"
   },
   "scripts": {
-    "prepublish": "npm run build",
     "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run build -- --watch",
     "watch": "npm run watch-compile",
