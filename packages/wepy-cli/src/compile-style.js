@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -58,7 +58,7 @@ export default {
             if (lang === 'sass' || lang === 'scss') {
                 let indentedSyntax = false;
                 options = Object.assign({}, config.compilers.sass || {});
-                
+
                 if (lang === 'sass') { // sass is using indented syntax
                     indentedSyntax = true;
                     // fix indent for sass, https://github.com/wepyjs/wepy/issues/663
@@ -107,7 +107,7 @@ export default {
                     let comsrc = null;
                     isNPM = false;
                     let lib = resolve.resolveAlias(r, opath);
-  
+
                     if (path.isAbsolute(lib)) {
                         if (path.extname(lib) === '' && util.isFile(lib + ext)) {
                             comsrc = lib + ext;
@@ -117,11 +117,22 @@ export default {
                         if (path.isAbsolute(lib)) {
                             comsrc = lib;
                         } else {
-                            let o = resolve.getMainFile(r);
-                            comsrc = path.join(o.dir, o.file);
+                            let mainFile = null;
+                            let sepIndex = lib.indexOf(path.sep);
+                            if (sepIndex > 0) {
+                                let tmp = lib;
+                                lib = tmp.substring(0, sepIndex);
+                                mainFile = tmp.substring(sepIndex + 1, tmp.length);
+                            }
+                            let o = resolve.getMainFile(lib);
+                            if (mainFile) {
+                                comsrc = path.join(o.dir, mainFile);
+                            } else {
+                                comsrc = path.join(o.dir, o.file);
+                            }
                             let newOpath = path.parse(comsrc);
                             newOpath.npm = {
-                                lib: r,
+                                lib: lib,
                                 dir: o.dir,
                                 file: o.file,
                                 modulePath: o.modulePath

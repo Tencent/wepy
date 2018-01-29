@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -91,10 +91,10 @@ const utils = {
         });
     },
     timeoutExec(sec, cmd, quite) {
-        let timeout = new Promise(function(resolve, reject) { 
+        let timeout = new Promise(function(resolve, reject) {
             setTimeout(() => {
                 reject('timeout');
-            }, sec * 1000); 
+            }, sec * 1000);
         });
         let task = this.exec(cmd, quite);
         return Promise.race([timeout, task]);
@@ -135,21 +135,33 @@ const utils = {
         if (com.indexOf(path.sep) !== -1 && com.indexOf('@') === -1) {
             if (this.isFile(com + wpyExt)) {
                 src = com + wpyExt;
+                return src;
+            }
+        }
+        let lib = com, main = null;
+        if (com.indexOf(path.sep) > 0) {
+            let sepIndex = com.indexOf(path.sep);
+            lib = com.substring(0, sepIndex);
+            main = com.substring(sepIndex + 1, com.length);
+        }
+        let o = resolve.getMainFile(lib);
+        if (o) {
+            if (main) {
+                src = path.join(o.dir, main);
+            } else {
+                src = path.join(o.dir, o.file);
+            }
+            if (path.extname(src) === '') {
+                src += wpyExt;
             }
         } else {
-            let o = resolve.getMainFile(com);
-            
-            if (o) {
-                src = path.join(o.dir, o.file);
-            } else {
-                let comPath = resolve.resolveAlias(com);
-                if (this.isFile(comPath + wpyExt)) {
-                    src = comPath + wpyExt;
-                } else if (this.isFile(comPath + '/index' + wpyExt)) {
-                    src = comPath + '/index' + wpyExt;
-                } else if (this.isFile(comPath + '/' + com + wpyExt)) {
-                    src = comPath + '/' + com + wpyExt;
-                }
+            let comPath = resolve.resolveAlias(com);
+            if (this.isFile(comPath + wpyExt)) {
+                src = comPath + wpyExt;
+            } else if (this.isFile(comPath + '/index' + wpyExt)) {
+                src = comPath + '/index' + wpyExt;
+            } else if (this.isFile(comPath + '/' + com + wpyExt)) {
+                src = comPath + '/' + com + wpyExt;
             }
         }
         return src;
@@ -277,7 +289,7 @@ const utils = {
 
             // 地图
             'map',
-            
+
             // 画布
             'canvas',
 
@@ -297,7 +309,7 @@ const utils = {
             content = content.replace(/\s+wx\:(\w+)/ig, (match, name) => {
                 return ' a:' + name;
             });
-        } 
+        }
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
