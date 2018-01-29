@@ -6,7 +6,7 @@
   "scripts": {
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
-    "bootstrap": "sh ./scripts/bootstrap.sh && npm run build",
+    "bootstrap": "sh ./scripts/clean.sh && sh ./scripts/bootstrap.sh --only=dev && npm run build && sh ./scripts/clean.sh --production && sh ./scripts/bootstrap.sh --production",
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
