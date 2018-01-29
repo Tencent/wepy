@@ -57,6 +57,7 @@
     "time-ago": "^0.2.1",
     "tty-table": "^2.5.5",
     "update-notifier": "^1.0.2",
+    "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
     "xmldom": "^0.1.27"
   },
