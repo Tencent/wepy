@@ -25,7 +25,7 @@
 * `F` 处理小程序版本库`1.9.0`中不再允许设置undefined值的问题。[ISSUE 819](https://github.com/Tencent/wepy/issues/819)
 * `A` 添加了`wepy init`和`wepy list`功能，允许使用模板。[PR 833](https://github.com/Tencent/wepy/pull/833)
 
-`npm install wepy-cli@1.6.1-alpha5`
+`npm install wepy-cli@1.6.1-alpha7`
 
 
 ## 1.6.0 (2017-10-25) 
