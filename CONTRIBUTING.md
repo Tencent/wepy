@@ -30,6 +30,9 @@ cd wepy
 # This command will generate `wepy-dev` and `wepy-debug` command for you
 npm run bootstrap
 
+# You can either use `bootstrap` or `bootstrap:prod`, `bootstrap:prod` will generate a pure npm package for you. `devDependences` won't be installed, that means you can not run build or test cases.
+# npm run botstrap:prod
+
 
 # Build code
 npm run build
