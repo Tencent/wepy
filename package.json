@@ -17,14 +17,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:wepyjs/wepy.git"
+    "url": "git@github.com:Tencent/wepy.git"
   },
   "author": "Gcaufy",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wepyjs/wepy/issues"
+    "url": "https://github.com/Tencent/wepy/issues"
   },
-  "homepage": "https://github.com/wepyjs/wepy#readme",
+  "homepage": "https://github.com/Tencent/wepy#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.18.0",
