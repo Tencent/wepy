@@ -111,10 +111,26 @@ module.exports = class Index extends wepy.page {
             }
         };
     }
+
+    onLoad () {
+        assert.strictEqual(this.valueChangedAt, 'mixin onLoad', 'mixin\'s lifecycle executed before page\'s lifecycle')
+    }
+
     onShow (args) {
+        assert.strictEqual(this.valueChangedAt, 'mixin onShow', 'mixin\'s lifecycle executed before page\'s lifecycle')
+
         assert.strictEqual(this instanceof Index, true, 'page onShow triggered, this is self');
         assert.strictEqual(args.p, 1, 'page onShow triggered with params');
     }
+
+    onRoute () {
+        assert.strictEqual(this.valueChangedAt, 'mixin onRoute', 'mixin\'s lifecycle executed before page\'s lifecycle')
+    }
+
+    onShareAppMessage () {
+        assert.notStrictEqual(this.valueChangedAt, 'mixin onShareAppMessage', 'ignore mixin\'s `onShareAppMessage` lifecyle')
+    }
+
     custom (arg) {
         assert.strictEqual(this instanceof Index, true, 'page custom method triggered, this is self');
         assert.strictEqual(arg, 'user_custom', 'page custom method triggered with params');
