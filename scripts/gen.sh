@@ -73,7 +73,7 @@ node "$root_path"/packages/wepy-cli/bin/wepy.js build --output ant
 # Test build demos
 cd /tmp/templates
 
-wepy init wepyjs/wepy-wechat-demo wepy-wechat-demo
+node "$root_path"/packages/wepy-cli/bin/wepy.js init wepyjs/wepy-wechat-demo wepy-wechat-demo
 
 # git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
@@ -84,7 +84,7 @@ npm run build
 
 cd ..
 
-wepy init wepyjs/wepy-weui-demo wepy-weui-demo
+node "$root_path"/packages/wepy-cli/bin/wepy.js init wepyjs/wepy-weui-demo wepy-weui-demo
 # git clone https://github.com/wepyjs/wepy-weui-demo.git
 cd wepy-weui-demo
 npm install
