@@ -199,14 +199,13 @@ export default class {
         let coms = Object.getOwnPropertyNames(this.$com);
         if (coms.length) {
             coms.forEach((name) => {
-                const com = this.$com[name]
-				com.$init(this.getWxPage(), $root, this);
+                const com = this.$com[name];
+                com.$init(this.getWxPage(), $root, this);
 
-				[].concat(com.$mixins, com).forEach((mix) => {
+                [].concat(com.$mixins, com).forEach((mix) => {
                     mix['onLoad'] && mix['onLoad'].call(com);
                 });
-
-				com.$apply();
+                com.$apply();
             });
         }
     }
