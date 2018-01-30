@@ -62,6 +62,7 @@ exports = module.exports = (program) => {
                 borderStyle: 2
             });
             console.log(`     e.g., wepy init ${rows[0][0]} myproject`);
+            console.log(process.stdout.columns);
             console.log(offical.render());
         }
         if (Array.isArray(github)) {
