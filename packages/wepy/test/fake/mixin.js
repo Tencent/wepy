@@ -31,11 +31,19 @@ module.exports = class Mix extends wepy.mixin {
         return 'mixin-func2';
     }
 
-    onLoad() {
-
+    onLoad () {
+        this.valueChangedAt = 'mixin onLoad'
     }
 
     onShow () {
+        this.valueChangedAt = 'mixin onShow'
+    }
 
+    onRoute () {
+        this.valueChangedAt = 'mixin onRoute'
+    }
+
+    onShareAppMessage () {
+        this.valueChangedAt = 'mixin onShareAppMessage'
     }
 }

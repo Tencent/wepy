@@ -150,9 +150,8 @@ export default {
                 page.$prefetchData = {};
             }
             args.push(secParams);
-            page.onLoad && page.onLoad.apply(page, args);
 
-            page.$mixins.forEach((mix) => {
+            [].concat(page.$mixins, page).forEach((mix) => {
                 mix['onLoad'] && mix['onLoad'].apply(page, args);
             });
 
@@ -163,9 +162,7 @@ export default {
 
             self.$instance.__prevPage__ = page;
 
-            page.onShow && page.onShow.apply(page, args);
-
-            page.$mixins.forEach((mix) => {
+            [].concat(page.$mixins, page).forEach((mix) => {
                 mix['onShow'] && mix['onShow'].apply(page, args);
             });
 
@@ -180,9 +177,7 @@ export default {
                 self.$instance.__route__ = pageId;
                 self.$instance.__wxWebviewId__ = webViewId;
 
-                page.onRoute && page.onRoute.apply(page, args);
-
-                page.$mixins.forEach((mix) => {
+                [].concat(page.$mixins, page).forEach((mix) => {
                     mix['onRoute'] && mix['onRoute'].apply(page, args);
                 });
             }
@@ -194,12 +189,13 @@ export default {
             if (v !== 'onLoad' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
-                    page[v] && (rst = page[v].apply(page, args));
 
-                    if (v === 'onShareAppMessage')
-                        return rst;
+                    if (v === 'onShareAppMessage') {
+						page[v] && (rst = page[v].apply(page, args));
+						return rst;
+                    }
 
-                    page.$mixins.forEach((mix) => {
+                    [].concat(page.$mixins, page).forEach((mix) => {
                         mix[v] && mix[v].apply(page, args);
                     });
 
