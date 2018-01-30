@@ -1267,6 +1267,62 @@ export default class Index extends wepy.page {
 // mixin tap
 ```
 
+### WXS (WeiXin Script)
+
+WePY 从`1.7.x` 版本开始支持 wxs 语法，但语法与原生 wxs 稍有出入。
+
+```
+/**
+project
+└── src
+    ├── wxs
+    |   └── mywxs.wxs      wxs 文件 
+    ├── pages
+    |   └── index.wpy      页面
+    └──app.wpy           
+**/
+
+// mywxs.wxs
+
+modules.exports = {
+  text: 'This is from wxs',
+  filter: function (num) {
+    return num.toFixed(2);
+  }
+};
+
+// index.wpy
+
+<template>
+  <text>{{m1.text}}</text>
+  <text>{{m1.filter(num)}}</text>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mywxs from '../wxs/mywxs.wxs';
+
+  export default class Index extends wepy.page {
+    
+    data = {
+      num: 10
+    };
+
+    wxs = {
+      m1: mywxs
+    }
+
+  };
+</script>
+```
+
+*注意*
+
+1. wxs是基于原生的wxs去实现的，只是通过编译把现在的语法编译为原生语法。
+2. wxs必须是外链文件。并且后缀为`.wxs`。
+3. wxs引入后只能在template中使用，不能在script中使用。
+
+
 ### interceptor 拦截器
 
 可以使用WePY提供的全局拦截器对原生API的请求进行拦截。
