@@ -7,7 +7,7 @@ import ta from 'time-ago';
 
 exports = module.exports = (program) => {
     request({
-        url: 'https://raw.githubusercontent.com/wepyjs/wepy_templates/master/templates.json',
+        url: 'https://raw.githubusercontent.com/wepyjs/wepy-templates/master/meta.json',
         headers: {
             'User-Agent': 'wepy-cli'
         }
@@ -62,6 +62,11 @@ exports = module.exports = (program) => {
                 borderStyle: 2
             });
             console.log(`     e.g., wepy init ${rows[0][0]} myproject`);
+            // TravisCI osx System process.stdout.columns is 0, it will trigger a bug of tty-table.
+            // TravisCI ubuntu System process.stdout.columns is 80.
+            if (process.stdout.columns === 0) {
+              process.stdout.columns = 80;
+            }
             console.log(offical.render());
         }
         if (Array.isArray(github)) {

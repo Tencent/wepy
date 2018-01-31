@@ -16,8 +16,12 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx"                        ]] ; then brew update                    ; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx"   && ! $(which expect) ]] ; then brew install expect            ; fi
 
+install:
+    - "npm run bootstrap"
+
 script:
     - "npm run test"
+    - "npm run bootstrap:prod"
     - "bash ./scripts/gen.sh"
     
 after_script: "npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"

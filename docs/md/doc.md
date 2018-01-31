@@ -129,10 +129,12 @@ customFileTypes:
    框架在ES6(ECMAScript 6)下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
    
 4. 使用Promise。
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发（注意：WePY 1.4.1以后的版本默认不支持async/await语法，因为可能导致iOS 10.0.1崩溃，如果不在意该问题可手动开启，具体可参看[这里](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)）。
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
    
 5. 事件绑定语法使用优化语法代替。
-   原`bindtap="click"`替换为`@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+   * 原 `bindtap="click"` 替换为 `@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。
+   * 原 `capture-bind:tap="click"` 替换为 `@tap.capture="click"`，原`capture-catch:tap="click"`替换为`@tap.capture.stop="click"`。
+   * 更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
    
 6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
@@ -1179,7 +1181,7 @@ WePY中的`slot`插槽作为内容分发标签的空间占位标签，便于在�
 WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范请参考<a href="https://github.com/wepyjs/wepy-com-toast" target="_blank">wepy-com-toast</a>。
 
 
-### 混合
+### Mixin 混合
 
 混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
 
@@ -1234,11 +1236,11 @@ import wepy from 'wepy';
 export default class TestMixin extends wepy.mixin {
     methods = {
         tap () {
-            console.log('mix tap');
+            console.log('mixin tap');
         }
     };
     onShow() {
-        console.log('mix onshow');
+        console.log('mixin onshow');
     }
 }
 
@@ -1261,34 +1263,107 @@ export default class Index extends wepy.page {
 
 
 // index onshow
-// mix onshow
+// mixin onshow
 // ----- when tap
 // index tap
-// mix tap
+// mixin tap
 ```
 
-### 拦截器
+### WXS (WeiXin Script)
 
-可以使用全域拦截器配置API的config、fail、success、complete方法，参考示例：
+WePY 从`1.7.x` 版本开始支持 wxs 语法，但语法与原生 wxs 稍有出入。
+
+```
+/**
+project
+└── src
+    ├── wxs
+    |   └── mywxs.wxs      wxs 文件 
+    ├── pages
+    |   └── index.wpy      页面
+    └──app.wpy           
+**/
+
+// mywxs.wxs
+
+modules.exports = {
+  text: 'This is from wxs',
+  filter: function (num) {
+    return num.toFixed(2);
+  }
+};
+
+// index.wpy
+
+<template>
+  <text>{{m1.text}}</text>
+  <text>{{m1.filter(num)}}</text>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import mywxs from '../wxs/mywxs.wxs';
+
+  export default class Index extends wepy.page {
+    
+    data = {
+      num: 10
+    };
+
+    wxs = {
+      m1: mywxs
+    }
+
+  };
+</script>
+```
+
+*注意*
+
+1. wxs是基于原生的wxs去实现的，只是通过编译把现在的语法编译为原生语法。
+2. wxs必须是外链文件。并且后缀为`.wxs`。
+3. wxs引入后只能在template中使用，不能在script中使用。
+
+### interceptor 拦截器
+
+可以使用WePY提供的全局拦截器对原生API的请求进行拦截。
+
+具体方法是配置API的config、fail、success、complete回调函数。参考示例：
 
 ```javascript
 import wepy from 'wepy';
 
 export default class extends wepy.app {
-
     constructor () {
+        //拦截request请求
         this.intercept('request', {
+            // 发出请求时的回调函数
             config (p) {
+                // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
                 p.timestamp = +new Date();
+                console.log('config request: ', p);
+                // 必须返回OBJECT参数对象，否则无法发送请求到服务端
                 return p;
             },
+            
+            // 请求成功后的回调函数
             success (p) {
-                console.log('request success');
+                // 可以在这里对收到的响应数据对象进行加工处理
+                console.log('request success: ', p);
+                // 必须返回响应数据对象，否则后续无法对响应数据进行处理
                 return p;
             },
+            
+            //请求失败后的回调函数
             fail (p) {
-                console.log('request error');
+                console.log('request fail: ', p);
+                // 必须返回响应数据对象，否则后续无法对响应数据进行处理
                 return p;
+            },
+
+            // 请求完成时的回调函数(请求成功或失败都会被执行)
+            complete (p) {
+                console.log('request complete: ', p);
             }
         });
     }
@@ -1298,8 +1373,9 @@ export default class extends wepy.app {
 
 ### 数据绑定
 
-#### 小程序数据绑定方式
-小程序通过`Page`提供的`setData`方法去绑定数据，如：
+#### 原生小程序的数据绑定方式
+
+原生小程序通过`Page`提供的`setData`方法来绑定数据，如：
 
 ```Javascript
 this.setData({title: 'this is title'});
@@ -1314,7 +1390,7 @@ WePY使用脏数据检查对setData进行封装，在函数运行周期结束时
 this.title = 'this is title';
 ```
 
-但需注意，在函数运行周期之外的函数里去修改数据需要手动调用`$apply`方法。如：
+需注意的是，在异步函数中更新数据的时，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
 
 ```javascript
 setTimeout(() => {
@@ -1336,7 +1412,8 @@ setTimeout(() => {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 官方
+// 原生代码:
+
 wx.request({
     url: 'xxx',
     success: function (data) {
@@ -1352,18 +1429,21 @@ wepy.request('xxxx').then((d) => console.log(d));
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
 
 ```javascript
-// 官方
+// 原生的事件传参方式:
+
 <view data-id="{{index}}" data-title="wepy" data-other="otherparams" bindtap="tapName"> Click me! </view>
+
 Page({
-  tapName: function(event) {
-    console.log(event.currentTarget.dataset.id)// output: 1
-    console.log(event.currentTarget.dataset.title)// output: wepy
-    console.log(event.currentTarget.dataset.other)// output: otherparams
-  }
+    tapName: function (event) {
+        console.log(event.currentTarget.dataset.id)// output: 1
+        console.log(event.currentTarget.dataset.title)// output: wepy
+        console.log(event.currentTarget.dataset.other)// output: otherparams
+    }
 });
 
 // WePY 1.1.8以后的版本，只允许传string。
-<view bindtap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
+
+<view @tap="tapName({{index}}, 'wepy', 'otherparams')"> Click me! </view>
 
 methods: {
     tapName (id, title, other, event) {
@@ -1380,7 +1460,8 @@ methods: {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 官方
+// 原生代码:
+
 <view> {{ message }} </view>
 
 onLoad: function () {
@@ -1401,7 +1482,8 @@ onLoad () {
 点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
 
 ```html
-// 官方
+// 原生代码:
+
 <!-- item.wxml -->
 <template name="item">
   <text>{{text}}</text>
@@ -1433,4 +1515,3 @@ var item = require('item.js')
     }
 </script>
 ```
-

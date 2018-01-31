@@ -6,24 +6,25 @@
   "scripts": {
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
-    "bootstrap": "sh ./scripts/bootstrap.sh && npm run build",
+    "bootstrap": "./scripts/clean.sh && ./scripts/bootstrap.sh && npm run build",
+    "bootstrap:prod": "./scripts/clean.sh && ./scripts/bootstrap.sh --only=dev && npm run build && ./scripts/clean.sh --production && ./scripts/bootstrap.sh --production",
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
-    "test": "sh ./scripts/test.sh",
-    "clean": "sh ./scripts/clean.sh",
-    "publish": "npm run clean && npm run build && npm run test && sh ./node_modules/.bin/lerna publish --only-explicit-updates"
+    "test": "./scripts/test.sh",
+    "clean": "./scripts/clean.sh",
+    "publish": "npm run clean && npm run build && npm run test && ./node_modules/.bin/lerna publish --only-explicit-updates"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:wepyjs/wepy.git"
+    "url": "git@github.com:Tencent/wepy.git"
   },
   "author": "Gcaufy",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wepyjs/wepy/issues"
+    "url": "https://github.com/Tencent/wepy/issues"
   },
-  "homepage": "https://github.com/wepyjs/wepy#readme",
+  "homepage": "https://github.com/Tencent/wepy#readme",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.18.0",

@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -182,12 +182,12 @@ export default {
                 // get rid of the begining space
                 if (!str.length && exp[i] === ' ')
                     continue;
-     
+
                 // not started with '', like {abc: num < 1}
                 if (flag === 'start') {
                     flag = 'class';
                 }
-     
+
                 if (flag === 'class' || flag === 'expression') {
                     str += exp[i];
                 }
@@ -300,7 +300,11 @@ export default {
                         let funcInfo = this.getFunctionInfo(attr.value);
                         attr.value = funcInfo.name;
                         funcInfo.params.forEach((p, i) => {
-                            node.setAttribute('data-wpy' + funcInfo.name.toLowerCase() + '-' + String.fromCharCode(97 + i), p);
+                            let paramAttr = 'data-wpy' + funcInfo.name.toLowerCase() + '-' + String.fromCharCode(97 + i);
+                            if (paramAttr.length > 31) {
+                              util.warning(`Function name is too long, it may cause an Error. "${funcInfo.name}"`);
+                            }
+                            node.setAttribute(paramAttr, p);
                         });
                     }
                     if (prefix)
@@ -380,7 +384,7 @@ export default {
         let repeats = util.elemToArray(node.getElementsByTagName('repeat'));
 
 
-        
+
         let forDetail = {};
         template.props = {};
         repeats.forEach(repeat => {
@@ -388,7 +392,7 @@ export default {
             // <repeat for="xxx" index="idx" item="xxx" key="xxx"></repeat>
             //                    To
             // <block wx:for="xxx" wx:for-index="xxx" wx:for-item="xxx" wx:key="xxxx"></block>
-            repeat.tagName = 'block'; 
+            repeat.tagName = 'block';
             let val = repeat.getAttribute('for');
             if (val) {
                 repeat.setAttribute(tagprefix + ':for', val);
@@ -491,7 +495,7 @@ export default {
             } else {
                 let comWpy = cWpy.resolveWpy(src);
                 let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
-                
+
                 node.replaceChild(newnode, com);
             }
         });

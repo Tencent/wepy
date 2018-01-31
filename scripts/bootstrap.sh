@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 set -e
+
+prod=$1
 
 info() {
     printf "\e[34m[➧]\e[0m ${1}\n"
@@ -24,9 +26,9 @@ function toPosixPath() {
 # Install packages, if yarn is installed then use yarn to install packages.
 function installPackage() {
     if type yarn >/dev/null 2>&1; then
-        yarn
+        yarn install $prod
     else
-        npm install
+        npm install $prod
     fi
 }
 
@@ -45,14 +47,18 @@ if [ "$uname"x = "Darwin"x ]; then
     globalDirForPosix="$globalDirForPosix/bin"
 fi
 
+
+if [ "$prod"x = "--production"x ]; then
+
 # Generate dev and debug bin file
-array=( dev debug )
-for mod in "${array[@]}"
-do
+  array=( dev debug )
+  for mod in "${array[@]}"
+  do
     params=""
     if [ "$mod"x = "debug"x ]; then
         params=" --inspect-brk"
     fi
+
     cat > "$globalDirForPosix/wepy-$mod" <<- EOF
 #!/bin/sh
 basedir=\$(dirname "\$(echo "\$0" | sed -e 's,\\\\,/,g')")
@@ -64,21 +70,21 @@ esac
 if [ -x "\$basedir/node" ]; then
   "\$basedir/node"$params "$currentDirForPosix/packages/wepy-cli/bin/wepy.js" "\$@"
   ret=\$?
-else 
+else
   node$params "$currentDirForPosix/packages/wepy-cli/bin/wepy.js" "\$@"
   ret=\$?
 fi
 exit \$ret
 EOF
 
-chmod +x "$globalDirForPosix/wepy-$mod"
-success "generated: $globalDirForPosix/wepy-$mod"
+    chmod +x "$globalDirForPosix/wepy-$mod"
+    success "generated: $globalDirForPosix/wepy-$mod"
 
 
     # If it's win then generate cmd file
     if [ "$os"x = "win"x  ]; then
 
-        cat > "$globalDirForPosix/wepy-$mod.cmd" <<- EOF
+      cat > "$globalDirForPosix/wepy-$mod.cmd" <<- EOF
 @IF EXIST "%~dp0\node.exe" (
   "%~dp0\node.exe"$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
 ) ELSE (
@@ -89,12 +95,12 @@ success "generated: $globalDirForPosix/wepy-$mod"
 )
 EOF
 
-        success "generated: $globalDirForPosix/wepy-$mod.cmd"
+      success "generated: $globalDirForPosix/wepy-$mod.cmd"
 
     fi
-done
+  done
 
-
+fi
 
 cd $currentDirForPosix
 

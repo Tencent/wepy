@@ -23,6 +23,9 @@
 * `F` 修复了在使用多级目录作为src目录时，watch会提示找不到文件的问题。[ISSUE 696](https://github.com/Tencent/wepy/issues/696)
 * `A` 添加了`onPageScroll`, `onTabItemTap`两个事件，并且可以在config中配置。[ISSUE 793](https://github.com/Tencent/wepy/issues/793)
 * `F` 处理小程序版本库`1.9.0`中不再允许设置undefined值的问题。[ISSUE 819](https://github.com/Tencent/wepy/issues/819)
+* `A` 添加了`wepy init`和`wepy list`功能，允许使用模板。[PR 833](https://github.com/Tencent/wepy/pull/833)
+
+`npm install wepy-cli@1.6.1-alpha7`
 
 
 ## 1.6.0 (2017-10-25) 

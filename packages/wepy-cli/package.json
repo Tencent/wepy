@@ -1,13 +1,12 @@
 {
   "name": "wepy-cli",
-  "version": "1.6.1-alpha4",
+  "version": "1.6.1-alpha7",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
     "wepy": "bin/wepy.js"
   },
   "scripts": {
-    "prepublish": "npm run build",
     "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run build -- --watch",
     "watch": "npm run watch-compile",
@@ -53,9 +52,11 @@
     "postcss-selector-parser": "^2.2.3",
     "read-metadata": "^1.0.0",
     "request": "^2.67.0",
+    "tildify": "^1.2.0",
     "time-ago": "^0.2.1",
     "tty-table": "^2.5.5",
     "update-notifier": "^1.0.2",
+    "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
     "xmldom": "^0.1.27"
   },
