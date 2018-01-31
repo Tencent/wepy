@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -26,7 +26,7 @@ export default {
     comCount: 0,
     getPrefix (prefix) {
         if (!this.comPrefix[prefix]) {
-            this.comPrefix[prefix] = util.camelize(prefix || '');;
+            this.comPrefix[prefix] = util.camelize(prefix || '');
         }
         return this.comPrefix[prefix];
     },
@@ -182,12 +182,12 @@ export default {
                 // get rid of the begining space
                 if (!str.length && exp[i] === ' ')
                     continue;
-     
+
                 // not started with '', like {abc: num < 1}
                 if (flag === 'start') {
                     flag = 'class';
                 }
-     
+
                 if (flag === 'class' || flag === 'expression') {
                     str += exp[i];
                 }
@@ -232,6 +232,32 @@ export default {
     },
 
     updateBind (node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
+        //include模板：include进来的模板实际为直接复制合并到当前文件，使用当前文件的作用域，这不同于具有独立作用域的WePY组件模板
+        //与小程序原生import模板。
+        //这与小程序原生include模板功能类似，但也有明显区别：
+        //    1）原生include只是“相当于”复制合并到当前文件，而这里的include是实际会复制合并到当前文件的，这使得使用wepy语法的模板能
+        //       被wepy编译；
+        //    2）同时这也使得复制合并过来的wepy模板能够参与当前文件作用域，这对于在wepy组件模板部分中include模板很有用。
+        //
+        // 语法：<include src="../relative/path/to/template.wpy" />
+        //
+        // 注意：
+        //    1）与小程序原生include的区别在于src中的文件后缀为.wpy，因此文件后缀名不能省略，否则在wepy编译时将不会被复制合并；
+        //    2）template.wpy模板文件顶层只能含有template标签，不能含有script标签和style标签，否则可能会引发不可知的异常；
+        //    3）template.wpy模板文件中不能再嵌套wepy组件，否则可能会引发不可知的异常。
+        [].slice.call(node.childNodes || []).forEach(function (child) {
+            if (child.tagName === 'include' && /\.wpy$/.test(child.getAttribute('src'))) {
+                let childSrcResolved = path.resolve(template.src, '..' + path.sep + child.getAttribute('src'));
+                if (childSrcResolved) {
+                    cache.setFileNotWritten(childSrcResolved);
+                    let content = util.attrReplace(util.readFile(childSrcResolved).replace(/^\s*<template[^>]*>|<\/template>\s*$/ig, ''));
+                    node.replaceChild(cWpy.createParser().parseFromString(content), child);
+                    //console.log('成功include模板：' + childSrcResolved)
+                } else {
+                    //console.log('include模板前src路径解析错误，src路径为：', child.getAttribute('src'));
+                }
+            }
+        });
 
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
@@ -359,7 +385,6 @@ export default {
     },
 
     compileXML (node, template, parentTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
-
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
         this.updateSlot(node, childNodes);
@@ -379,8 +404,6 @@ export default {
 
         let repeats = util.elemToArray(node.getElementsByTagName('repeat'));
 
-
-        
         let forDetail = {};
         template.props = {};
         repeats.forEach(repeat => {
@@ -388,7 +411,7 @@ export default {
             // <repeat for="xxx" index="idx" item="xxx" key="xxx"></repeat>
             //                    To
             // <block wx:for="xxx" wx:for-index="xxx" wx:for-item="xxx" wx:key="xxxx"></block>
-            repeat.tagName = 'block'; 
+            repeat.tagName = 'block';
             let val = repeat.getAttribute('for');
             if (val) {
                 repeat.setAttribute(tagprefix + ':for', val);
@@ -457,7 +480,6 @@ export default {
             });
         });
 
-
         let componentElements = util.elemToArray(node.getElementsByTagName('component'));
         let customElements = [];
         Object.keys(template.components).forEach((com) => {
@@ -491,7 +513,7 @@ export default {
             } else {
                 let comWpy = cWpy.resolveWpy(src);
                 let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
-                
+
                 node.replaceChild(newnode, com);
             }
         });
@@ -506,7 +528,6 @@ export default {
         let src = cache.getSrc();
         let dist = cache.getDist();
         let self = this;
-
 
         let compiler = loader.loadCompiler(lang);
 
@@ -550,6 +571,8 @@ export default {
                     util.output(p.action, p.file);
                 },
                 done (rst) {
+                    if (cache.getFileNotWritten(opath.dir + path.sep + opath.base) > -1) return;
+
                     util.output('写入', rst.file);
                     rst.code = self.replaceBooleanAttr(rst.code);
                     util.writeFile(target, rst.code);
@@ -558,7 +581,6 @@ export default {
         }).catch((e) => {
             console.log(e);
         });
-
         //util.log('WXML: ' + path.relative(process.cwd(), target), '写入');
         //util.writeFile(target, util.decode(node.toString()));
     }
