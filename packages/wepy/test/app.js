@@ -309,7 +309,7 @@ describe('app.js', () => {
             assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
             assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
         })
-        .abort(() => console.info('uploadFile abort custom'))
+        .abort()
         .then((res) => {
             assert.strictEqual(res.success, 'success', 'upload success');
         });
@@ -325,9 +325,83 @@ describe('app.js', () => {
             assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512');
             assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048');
         })
-        .abort(() => console.info('downloadFile abort custom'))
+        .abort()
         .then((res) => {
             assert.strictEqual(res.success, 'success', 'download success');
         });
     });
+
+    it('api uploadFile then first separate call progress', () => {
+
+        app.use('promisify')
+
+        const up = wepy.uploadFile({
+          url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+          filePath: 'tempFilePath',
+          name: 'file',
+        })
+
+        up.then((res) => {
+          assert.strictEqual(res.success, 'success', 'upload success')
+        })
+
+        up.progress(res => {
+          assert.strictEqual(res.progress, 50, 'progress should be 50')
+          assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512')
+          assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512')
+          assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048')
+        })
+
+        up.abort()
+    })
+
+    it('[async/await]api uploadFile then first separate call progress', async () => {
+
+        app.use('promisify')
+
+        const up = wepy.uploadFile({
+          url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+          filePath: 'tempFilePath',
+          name: 'file',
+        })
+
+        const resp = await up.catch(error => console.log('await error', error))
+        assert.strictEqual(resp.success, 'success', 'upload success')
+
+        up.progress(res => {
+          assert.strictEqual(res.progress, 50, 'progress should be 50')
+          assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512')
+          assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512')
+          assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048')
+        })
+
+        up.abort()
+    })
+
+    it('[throws error] api uploadFile then first chain call progress', () => {
+
+        app.use('promisify')
+
+        const up = () => {
+          wepy.uploadFile({
+            url: 'https://example.weixin.qq.com/upload', //仅为示例，非真实的接口地址
+            filePath: 'tempFilePath',
+            name: 'file',
+          })
+            .then((res) => {
+              assert.strictEqual(res.success, 'success', 'upload success')
+            })
+            .progress(res => {
+              assert.strictEqual(res.progress, 50, 'progress should be 50')
+              assert.strictEqual(res.totalBytesSent, 512, 'totalBytesSent should be 512')
+              assert.strictEqual(res.totalBytesExpectedToSend, 1024, 'totalBytesExpectedToSend should be 512')
+              assert.notStrictEqual(res.totalBytesExpectedToSend, 2048, 'totalBytesExpectedToSend not equal 2048')
+            })
+            .abort()
+            .catch(error => console.log(error))
+        }
+
+        assert.throws(up)
+
+    })
 });
