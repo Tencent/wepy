@@ -27,6 +27,8 @@
 
 `npm install wepy-cli@1.6.1-alpha7`
 
+* `A` 添加了对`capture`语法的支持。[PR 839](https://github.com/Tencent/wepy/pull/839)
+
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
