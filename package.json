@@ -6,14 +6,14 @@
   "scripts": {
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
-    "bootstrap": "sh ./scripts/clean.sh && sh ./scripts/bootstrap.sh && npm run build",
-    "bootstrap:prod": "sh ./scripts/clean.sh && sh ./scripts/bootstrap.sh --only=dev && npm run build && sh ./scripts/clean.sh --production && sh ./scripts/bootstrap.sh --production",
+    "bootstrap": "./scripts/clean.sh && ./scripts/bootstrap.sh && npm run build",
+    "bootstrap:prod": "./scripts/clean.sh && ./scripts/bootstrap.sh --only=dev && npm run build && ./scripts/clean.sh --production && ./scripts/bootstrap.sh --production",
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
-    "test": "sh ./scripts/test.sh",
-    "clean": "sh ./scripts/clean.sh",
-    "publish": "npm run clean && npm run build && npm run test && sh ./node_modules/.bin/lerna publish --only-explicit-updates"
+    "test": "./scripts/test.sh",
+    "clean": "./scripts/clean.sh",
+    "publish": "npm run clean && npm run build && npm run test && ./node_modules/.bin/lerna publish --only-explicit-updates"
   },
   "repository": {
     "type": "git",
