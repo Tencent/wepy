@@ -291,6 +291,13 @@
             "opensource": "",
             "company": "杭州道禅网络科技有限公司",
             "qrcode": "https://pic.shuangdj.com/sdj_mini.jpg"
+        }, {
+            "name": "MEOW养好一只猫",
+            "email": "meow@neobaran.com",
+            "link": "https://mymeow.cn",
+            "opensource": "",
+            "company": "Neobaran",
+            "qrcode": "https://img.mymeow.cn/web/miniappcode.png"
         }
     ]
 }
