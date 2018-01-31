@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 
 # test wepy new demo

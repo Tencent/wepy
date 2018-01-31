@@ -21,6 +21,7 @@ install:
 
 script:
     - "npm run test"
+    - "npm run bootstrap:prod"
     - "bash ./scripts/gen.sh"
     
 after_script: "npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
