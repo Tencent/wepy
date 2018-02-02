@@ -51,4 +51,9 @@ program
     .option('--cli', 'upgrade wepy-cli')
     .option('--wepy', 'upgrade wepy');
 
+program
+    .command('new')
+    .description('deprecated command, use "wepy init <template-name> <project-name>" instead')
+    .action(require('./wepy-new'));
+
 program.parse(process.argv);
