@@ -16,6 +16,7 @@ npm install wepy-cli -g
 
 ```bash
 wepy new myproject
+# 1.7.0之后的版本使用 wepy init standard myproject 初始化项目，使用 wepy list 查看项目模板
 ```
 
 **切换至项目目录**
