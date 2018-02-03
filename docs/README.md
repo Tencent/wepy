@@ -1042,7 +1042,7 @@ export default class TestMixin extends wepy.mixin {
         foo: 'foo defined by page',
         bar: 'bar defined by testMix'
     };
-    methods: {
+    methods = {
     tap () {
       console.log('mix tap');
     }
