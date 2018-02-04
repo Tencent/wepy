@@ -559,10 +559,13 @@ function walkNode (node, moduleId) {
     if (node.childNodes) {
         [].slice.call(node.childNodes || []).forEach((child) => {
             if (child.tagName) {
-                // 是标签 则增加class
-                const cls = child.getAttribute('class');
-                child.setAttribute('class', (cls + ' ' + moduleId).trim());
-                walkNode(child, moduleId);
+                if (child.hasAttribute('class') || child.hasAttribute('v-bind:class.once') || child.hasAttribute(':class')) {
+                    // 是标签 则增加class
+                    const cls = child.getAttribute('class');
+                    child.setAttribute('class', (cls + ' ' + moduleId).trim());
+                    walkNode(child, moduleId);
+
+                }
             }
         });
     }
