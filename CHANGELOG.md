@@ -35,6 +35,8 @@
 * `F` 修复了使用alias会导致修改子组件不触发父组件编译的BUG。[ISSUE 903](https://github.com/Tencent/wepy/issues/903)
 * `F` 修复了在子组件中使用wxs会导致子组件的class属性绑定到wxs节点的BUG。[ISSUE 907](https://github.com/Tencent/wepy/issues/907)
 
+`npm install wepy-cli@1.6.1-alpha9`
+
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
 * `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
