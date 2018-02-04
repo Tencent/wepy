@@ -371,12 +371,22 @@ export default {
         this.updateBind(node, template, parentTemplate, prefix, {}, propsMapping);
 
         if (node && node.documentElement) {
+            let topNode = node.documentElement;
+
+            while (topNode && (topNode.tagName === 'wxs' || !topNode.tagName))
+                topNode = topNode.nextSibling;
+
             Object.keys(comAppendAttribute).forEach((key) => {
                 if (key === 'class') {
-                    let classNames = node.documentElement.getAttribute('class').split(' ').concat(comAppendAttribute[key].split(' ')).join(' ');
-                    node.documentElement.setAttribute('class', classNames);
+                    let classNames = topNode.getAttribute('class');
+                    if (classNames) {
+                        classNames = classNames.split(' ').concat(comAppendAttribute[key].split(' ')).join(' ');
+                    } else {
+                        classNames = comAppendAttribute[key];
+                    }
+                    topNode.setAttribute('class', classNames);
                 } else {
-                    node.documentElement.setAttribute(key, comAppendAttribute[key]);
+                    topNode.setAttribute(key, comAppendAttribute[key]);
                 }
             });
         }
