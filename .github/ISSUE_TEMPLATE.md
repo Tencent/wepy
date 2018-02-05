@@ -37,6 +37,7 @@ DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISS
 ## Description
 
   [问题描述：站在其它人的角度尽可能清晰地、简洁地把问题描述清楚]
+  
   [Description of the issue]
 
 ## Environment
