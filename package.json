@@ -13,7 +13,7 @@
     "watch": "node ./node_modules/gulp/bin/gulp watch",
     "test": "./scripts/test.sh",
     "clean": "./scripts/clean.sh",
-    "publish": "npm run test && npm run bootstrap:prod && ./node_modules/.bin/lerna publish --only-explicit-updates"
+    "publish": "npm run test && ./node_modules/.bin/lerna publish"
   },
   "repository": {
     "type": "git",
