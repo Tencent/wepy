@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-autoprefixer",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "wepy autoprefixer plugin",
   "main": "lib/index.js",
   "keywords": [

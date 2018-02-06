@@ -1,6 +1,6 @@
 {
   "name": "wepy-plugin-replace",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "wepy replace plugin",
   "main": "lib/index.js",
   "scripts": {
@@ -10,6 +10,5 @@
     "replace"
   ],
   "author": "Gcaufy",
-  "license": "MIT",
-  "dependencies": {}
+  "license": "MIT"
 }
