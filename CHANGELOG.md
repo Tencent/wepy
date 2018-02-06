@@ -1,4 +1,4 @@
-## 1.6.1 (comming soon)
+## 1.7.0 (2018-02-06)
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
 * `F` 修复了源码目录里有空内容组件编译报错的问题。[ISSUE 538](https://github.com/wepyjs/wepy/issues/538)
@@ -10,13 +10,8 @@
 * `F` 修复了使用sass语法时，首行不能缩进的问题。[ISSUE 663](https://github.com/wepyjs/wepy/issues/663)
 * `F` 修复了引用多个组件实例造成的style重复引用的问题。[ISSUE 639](https://github.com/wepyjs/wepy/issues/639)
 * `A` 添加了$nextTick方法，用于作为setData的回调方法。[ISSUE 712](https://github.com/Tencent/wepy/issues/712)
-
-`npm install wepy-cli@1.6.1-alpha3`
 * `A` 加入了对小程序分包功能的支持。[ISSUE 707](https://github.com/Tencent/wepy/issues/707)
 * `A` 加入了对原生小程序wxs的支持。[ISSUE 713](https://github.com/Tencent/wepy/issues/713)
-
-`npm install wepy-cli@1.6.1-alpha4`
-
 * `F` 修复了template中只有注释会导致终止编译的BUG。[6bbb304](https://github.com/Tencent/wepy/commit/6bbb304e06c28cd9309b17f97c6f6426a075ea99)
 * `F` 修复了在onLaunch阶段获取不到`getApp()`的BUG。[ISSUE 753](https://github.com/Tencent/wepy/issues/753)
 * `F` 在apply进入死循环时，进行报错提示。[ISSUE 723](https://github.com/Tencent/wepy/issues/723)
@@ -25,17 +20,9 @@
 * `F` 处理小程序版本库`1.9.0`中不再允许设置undefined值的问题。[ISSUE 819](https://github.com/Tencent/wepy/issues/819)
 * `A` 添加了`wepy init`和`wepy list`功能，允许使用模板。[PR 833](https://github.com/Tencent/wepy/pull/833)
 * `D` 弃用了原来的`wepy new`命令。
-
-`npm install wepy-cli@1.6.1-alpha7`
-
 * `A` 添加了对`capture`语法的支持。[PR 839](https://github.com/Tencent/wepy/pull/839)
-
-`npm install wepy-cli@1.6.1-alpha8`
-
 * `F` 修复了使用alias会导致修改子组件不触发父组件编译的BUG。[ISSUE 903](https://github.com/Tencent/wepy/issues/903)
 * `F` 修复了在子组件中使用wxs会导致子组件的class属性绑定到wxs节点的BUG。[ISSUE 907](https://github.com/Tencent/wepy/issues/907)
-
-`npm install wepy-cli@1.6.1-alpha9`
 
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)

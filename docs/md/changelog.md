@@ -1,3 +1,29 @@
+## 1.7.0 (2018-02-06)
+* `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
+* `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
+* `F` 修复了源码目录里有空内容组件编译报错的问题。[ISSUE 538](https://github.com/wepyjs/wepy/issues/538)
+* `F` 修复了当模板格式错误时，编译报错的问题。
+* `F` 修复了引用带路径的NPM模块时，编译报错的问题。
+* `A` 配置文件中添加了`watchOption`参数。
+* `F` 修复了repeat中，使用静态props异常的问题。[PR 538](https://github.com/Tencent/wepy/pull/605)
+* `F` 修复了同页面跳转，可能会导致数据绑定失效的问题。[ISSUE 621](https://github.com/wepyjs/wepy/issues/621)
+* `F` 修复了使用sass语法时，首行不能缩进的问题。[ISSUE 663](https://github.com/wepyjs/wepy/issues/663)
+* `F` 修复了引用多个组件实例造成的style重复引用的问题。[ISSUE 639](https://github.com/wepyjs/wepy/issues/639)
+* `A` 添加了$nextTick方法，用于作为setData的回调方法。[ISSUE 712](https://github.com/Tencent/wepy/issues/712)
+* `A` 加入了对小程序分包功能的支持。[ISSUE 707](https://github.com/Tencent/wepy/issues/707)
+* `A` 加入了对原生小程序wxs的支持。[ISSUE 713](https://github.com/Tencent/wepy/issues/713)
+* `F` 修复了template中只有注释会导致终止编译的BUG。[6bbb304](https://github.com/Tencent/wepy/commit/6bbb304e06c28cd9309b17f97c6f6426a075ea99)
+* `F` 修复了在onLaunch阶段获取不到`getApp()`的BUG。[ISSUE 753](https://github.com/Tencent/wepy/issues/753)
+* `F` 在apply进入死循环时，进行报错提示。[ISSUE 723](https://github.com/Tencent/wepy/issues/723)
+* `F` 修复了在使用多级目录作为src目录时，watch会提示找不到文件的问题。[ISSUE 696](https://github.com/Tencent/wepy/issues/696)
+* `A` 添加了`onPageScroll`, `onTabItemTap`两个事件，并且可以在config中配置。[ISSUE 793](https://github.com/Tencent/wepy/issues/793)
+* `F` 处理小程序版本库`1.9.0`中不再允许设置undefined值的问题。[ISSUE 819](https://github.com/Tencent/wepy/issues/819)
+* `A` 添加了`wepy init`和`wepy list`功能，允许使用模板。[PR 833](https://github.com/Tencent/wepy/pull/833)
+* `D` 弃用了原来的`wepy new`命令。
+* `A` 添加了对`capture`语法的支持。[PR 839](https://github.com/Tencent/wepy/pull/839)
+* `F` 修复了使用alias会导致修改子组件不触发父组件编译的BUG。[ISSUE 903](https://github.com/Tencent/wepy/issues/903)
+* `F` 修复了在子组件中使用wxs会导致子组件的class属性绑定到wxs节点的BUG。[ISSUE 907](https://github.com/Tencent/wepy/issues/907)
+
 ## 1.6.0 (2017-10-25) 
 * `F` 修复了`@import scss`编译出错的问题。[ISSUE 303](https://github.com/wepyjs/wepy/issues/303)
 * `F` 修复了在repeat中使用静态传值不生效的问题。[ISSUE 204](https://github.com/wepyjs/wepy/issues/204)
@@ -17,7 +43,6 @@
 * `F` 修复了组件中引用相对路径在某些情况下不准确的问题。[ISSUE 345](https://github.com/wepyjs/wepy/pull/345)
 * `F` 修复了repeat使用驼峰命名组件出现问题的BUG。[ISSUE 397](https://github.com/wepyjs/wepy/pull/397)
 * `F` 修复绑定多个事件传参时，参数混乱的问题。[ISSUE 385](https://github.com/wepyjs/wepy/pull/385)
-
 
 ## 1.5.8 (2017-08-05)
 * `A` 添加了`appConfig`字段。[ISSUE 199](https://github.com/wepyjs/wepy/issues/199)
