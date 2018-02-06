@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-pug",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "description": "wepy compile pug",
   "main": "lib/index.js",
   "scripts": {

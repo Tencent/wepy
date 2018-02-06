@@ -1,6 +1,6 @@
 {
   "name": "wepy-eslint",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "wepy eslint",
   "main": "lib/index.js",
   "scripts": {
