@@ -298,6 +298,13 @@
             "opensource": "",
             "company": "Neobaran",
             "qrcode": "https://img.mymeow.cn/web/miniappcode.png"
+        }, {
+            "name": "应用全球排行榜",
+            "email": "neo@neobaran.com",
+            "link": "",
+            "opensource": "https://github.com/szpnygo/wepy_ios_top",
+            "company": "Neobaran",
+            "qrcode": "https://github.com/szpnygo/wepy_ios_top/raw/master/qr.jpg"
         }
     ]
 }
