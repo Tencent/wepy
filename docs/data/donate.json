@@ -3,6 +3,11 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E6%8D%90%E8%B5%A0-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "donates": [{
+        "date": "2018/02/08",
+        "name": "爱松土的鸭子",
+        "amount": "8.88",
+        "desc": "希望微薄的力量能够成为您们坚持的理由，支持开源"
+    },{
         "date": "2018/01/16",
         "name": "沈扬东",
         "amount": "6.66",
