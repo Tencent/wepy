@@ -136,6 +136,7 @@ GitHub掘金版、
 七弦琴小助手、
 七弦琴大数据、
 爽到家小程序、
+[应用全球排行](https://github.com/szpnygo/wepy_ios_top)[（开源）](https://github.com/szpnygo/wepy_ios_top)、
 ...
 
 ### 交流群
