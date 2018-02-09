@@ -1092,7 +1092,7 @@ this.$invoke('./../ComB/ComG', 'someMethod', 'someArgs');
 
 - `.default`: 绑定小程序冒泡型事件，如`bindtap`，`.default`后缀可省略不写；
 
-- `.stop`: 绑定小程序捕获型事，如`catchtap`；
+- `.stop`: 绑定小程序捕获型事件，如`catchtap`；
 
 - `.user`: 绑定用户自定义组件事件，通过`$emit`触发。**注意，如果用了自定义事件，则events中对应的监听函数不会再执行。**
 
