@@ -25,6 +25,12 @@ wepy new myproject
 cd myproject
 ```
 
+**安装依赖**
+
+```bash
+npm  install
+```
+
 **开启实时编译**
 
 ```bash
