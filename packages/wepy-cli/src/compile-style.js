@@ -119,7 +119,12 @@ export default {
                         } else {
                             let mainFile = null;
                             let sepIndex = lib.indexOf(path.sep);
-                            if (sepIndex > 0) {
+                            if (lib.indexOf('@') === 0) {
+                                let tempArr = lib.split('/');
+                                if (tempArr.length > 2) {
+                                    lib = tempArr[0] + path.sep + tempArr[1];
+                                }
+                            } else if (sepIndex > 0) {
                                 let tmp = lib;
                                 lib = tmp.substring(0, sepIndex);
                                 mainFile = tmp.substring(sepIndex + 1, tmp.length);
