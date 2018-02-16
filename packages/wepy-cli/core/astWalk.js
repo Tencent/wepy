@@ -1,6 +1,7 @@
 class AstWalker {
   constructor (ast) {
     this.ast = ast;
+    this.state = {};
   }
 
   run () {
@@ -729,12 +730,20 @@ class AstWalker {
     } else {
 
       const callee = this.evaluateExpression(expression.callee);
-      if(false && callee.isIdentifier()) {
-        result = this.applyPluginsBailResult1("call " + callee.identifier, expression);
+      if(callee.identifier) {
+        let fn = `call${callee.identifier}`;
+        if (this[fn]) {
+          result = this[fn](expression);
+        }
+        // result = this.applyPluginsBailResult1("call " + callee.identifier, expression);
         if(result === true)
           return;
         let identifier = callee.identifier.replace(/\.[^.]+$/, ".*");
         if(identifier !== callee.identifier) {
+          let fn = `call${identifier}`;
+          if (this[fn]) {
+            result = this[fn](expression);
+          }
           // result = this.applyPluginsBailResult1("call " + identifier, expression);
           if(result === true)
             return;
@@ -766,7 +775,11 @@ class AstWalker {
 
   walkIdentifier(expression) {
     if(this.scope.definitions.indexOf(expression.name) === -1) {
-      const result = undefined;
+      let fn = 'expression' + (this.scope.renames["$" + expression.name] || expression.name);
+      let result;
+      if (this[fn]) {
+        result = this[fn](expression);
+      }
       // const result = this.applyPluginsBailResult1("expression " + (this.scope.renames["$" + expression.name] || expression.name), expression);
       if(result === true)
         return;
@@ -835,7 +848,11 @@ class AstWalker {
 
   evaluateExpression(expression) {
     try {
-      const result = undefined;
+      let result;
+      let fn = `evaluate${expression.type}`;
+      if (this[fn]) {
+        result = this[fn](expression);
+      }
       // const result = this.applyPluginsBailResult1("evaluate " + expression.type, expression);
       if(result !== undefined)
         return result;
@@ -845,6 +862,13 @@ class AstWalker {
     }
     return expression.range;
     return new BasicEvaluatedExpression().setRange(expression.range);
+  }
+
+  getRenameIdentifier (expr) {
+    const result = this.evaluateExpression(expr);
+    if(!result) return;
+    if(result.identifier) return result.identifier;
+    return;
   }
 
   parseString(expression) {
@@ -1057,6 +1081,249 @@ class AstWalker {
       nameGeneral,
       free
     };
+  }
+
+  // Plugins
+  evaluateMemberExpression (expression) {
+    let exprName = this.getNameForExpression(expression);
+    if(exprName) {
+      if(exprName.free) {
+        let fn = `evaluateIdentifier${exprName.name}`;
+        let rst;
+        if (this[fn]) {
+          rst = this[fn](expression);
+        }
+        return rst ? rst : {
+          identifier: exprName.name,
+          range: expression.range
+        };
+        // const result = this.applyPluginsBailResult1("evaluate Identifier " + exprName.name, expression);
+        // if(result) return result;
+        // return new BasicEvaluatedExpression().setIdentifier(exprName.name).setRange(expression.range);
+      } else {
+        let fn = `evaluatedefinedIdentifier${exprName.name}`;
+        let rst;
+        if (this[fn]) {
+          rst = this[fn](expression);
+        }
+        return rst;
+        // return this.applyPluginsBailResult1("evaluate defined Identifier " + exprName.name, expression);
+      }
+    }
+  }
+
+  evaluateIdentifier (expr) {
+    const name = this.scope.renames["$" + expr.name] || expr.name;
+    if(this.scope.definitions.indexOf(expr.name) === -1) {
+      let fn = `evaluateIdentifier${name}`;
+      let rst;
+      if (this[fn]) {
+        rst = this[fn](expr);
+      }
+      return rst ? rst : {
+        identifier: name,
+        range: expr.range
+      };
+      // const result = this.applyPluginsBailResult1("evaluate Identifier " + exprName.name, expr);
+      // if(result) return result;
+      // return new BasicEvaluatedexpr().setIdentifier(exprName.name).setRange(expr.range);
+    } else {
+      let fn = `evaluatedefinedIdentifier${name}`;
+      let rst;
+      if (this[fn]) {
+        rst = this[fn](expr);
+      }
+      return rst;
+      // return this.applyPluginsBailResult1("evaluate defined Identifier " + exprName.name, expression);
+    }
+  }
+  /*
+  callrequire (expr) {
+    // support for browserify style require delegator: "require(o, !0)"
+    if(expr.arguments.length !== 2) return;
+    const second = this.evaluateExpression(expr.arguments[1]);
+    if(!second.isBoolean()) return;
+    if(second.asBool() !== true) return;
+    // const dep = new ConstDependency("require", expr.callee.range);
+    const demp = {
+      expression: 'require',
+      range: expr.callee.range
+    };
+    dep.loc = expr.loc;
+    if(this.state.current.dependencies.length > 1) {
+      const last = this.state.current.dependencies[this.state.current.dependencies.length - 1];
+      if(last.critical && last.request === "." && last.userRequest === "." && last.recursive)
+        this.state.current.dependencies.pop();
+    }
+    this.state.current.addDependency(dep);
+    return true;
+  }*/
+  callrequire (expr) {
+    debugger;
+    let param;
+    let dep;
+    let result;
+
+    const old = this.state.current;
+
+    if(expr.arguments.length >= 1) {
+      param = this.evaluateExpression(expr.arguments[0]);
+      dep = {
+        expr: expr,
+        outerRange: param.range,
+        arrayRange: (expr.arguments.length > 1) ? expr.arguments[1].range : null,
+        functionRange: (expr.arguments.length > 2) ? expr.arguments[2].range : null,
+        errorCallbackRange: this.state.module,
+        loc: expr.loc
+      };
+      /*
+      dep = new AMDRequireDependenciesBlock(
+        expr,
+        param.range,
+        (expr.arguments.length > 1) ? expr.arguments[1].range : null,
+        (expr.arguments.length > 2) ? expr.arguments[2].range : null,
+        this.state.module,
+        expr.loc
+      );*/
+      this.state.current = dep;
+    }
+
+    if(expr.arguments.length === 1) {
+      this.inScope([], () => {
+        let fn = `callrequireAmdArray`;
+        result = this[fn] ? this[fn](expr, param) : undefined;
+        // result = this.applyPluginsBailResult("call require:amd:array", expr, param);
+      });
+      this.state.current = old;
+      if(!result) return;
+      // this.state.current.addBlock(dep);
+      return true;
+    }
+
+    if(expr.arguments.length === 2 || expr.arguments.length === 3) {
+      try {
+        this.inScope([], () => {
+          let fn = `callrequireAmdArray`;
+          result = this[fn] ? this[fn](expr, param) : undefined;
+          // result = this.applyPluginsBailResult("call require:amd:array", expr, param);
+        });
+        if(!result) {
+          dep = new UnsupportedDependency("unsupported", expr.range);
+          old.addDependency(dep);
+          if(this.state.module)
+            this.state.module.errors.push(new UnsupportedFeatureWarning(this.state.module, "Cannot statically analyse 'require(..., ...)' in line " + expr.loc.start.line));
+          dep = null;
+          return true;
+        }
+        dep.functionBindThis = this.processFunctionArgument(parser, expr.arguments[1]);
+        if(expr.arguments.length === 3) {
+          dep.errorCallbackBindThis = this.processFunctionArgument(parser, expr.arguments[2]);
+        }
+      } finally {
+        this.state.current = old;
+        if(dep)
+          this.state.current.addBlock(dep);
+      }
+      return true;
+    }
+  }
+
+  callrequireAmdArray (expr, param) {
+    debugger;
+    // if(param.isArray()) {
+    if (param.items && param.items.forEach) {
+      param.items.forEach((param) => {
+        let result;
+        let fn = `callrequireAmdItem`;
+        if (this[fn]) {
+          result = this[fn](expr, param);
+        }
+        // const result = this.applyPluginsBailResult("call require:amd:item", expr, param);
+        if(result === undefined) {
+          let fn = `callrequireAmdContext`;
+          if (this[fn]) {
+            this[fn](expr, param);
+          }
+          // this.applyPluginsBailResult("call require:amd:context", expr, param);
+        }
+      });
+      return true;
+    // } else if(param.isConstArray()) {
+
+    } else if(param.array && param.array.length) {
+      const deps = [];
+      param.array.forEach((request) => {
+        let dep, localModule;
+        if(request === "require") {
+          dep = "__webpack_require__";
+        } else if(["exports", "module"].indexOf(request) >= 0) {
+          dep = request;
+        } else if(localModule = LocalModulesHelpers.getLocalModule(this.state, request)) { // eslint-disable-line no-cond-assign
+          dep = new LocalModuleDependency(localModule);
+          dep.loc = expr.loc;
+          this.state.current.addDependency(dep);
+        } else {
+          dep = new AMDRequireItemDependency(request);
+          dep.loc = expr.loc;
+          dep.optional = !!this.scope.inTry;
+          this.state.current.addDependency(dep);
+        }
+        deps.push(dep);
+      });
+      // const dep = new AMDRequireArrayDependency(deps, param.range);
+      const dep = {
+        depsArray: depsArray,
+        range: param.range
+      };
+      dep.loc = expr.loc;
+      dep.optional = !!this.scope.inTry;
+      // this.state.current.addDependency(dep);
+      return true;
+    }
+  }
+
+  callrequireAmdItem (expr, param) {
+    if(param.isConditional()) {
+      param.options.forEach((param) => {
+        let fn = 'callrequireAmdItem';
+        const result = this[fn] ? this[fn](expr, param) : undefined;
+        // const result = this.applyPluginsBailResult("call require:amd:item", expr, param);
+        if(result === undefined) {
+          let fn = 'callrequireAmdContext';
+          if (this[fn]) {
+            this[fn](expr, param);
+          }
+          this.applyPluginsBailResult("call require:amd:context", expr, param);
+        }
+      });
+      return true;
+    } else if(param.isString()) {
+      let dep, localModule;
+      if(param.string === "require") {
+        dep = new ConstDependency("__webpack_require__", param.string);
+      } else if(param.string === "module") {
+        dep = new ConstDependency(this.state.module.moduleArgument || "module", param.range);
+      } else if(param.string === "exports") {
+        dep = new ConstDependency(this.state.module.exportsArgument || "exports", param.range);
+      } else if(localModule = LocalModulesHelpers.getLocalModule(this.state, param.string)) { // eslint-disable-line no-cond-assign
+        dep = new LocalModuleDependency(localModule, param.range);
+      } else {
+        dep = new AMDRequireItemDependency(param.string, param.range);
+      }
+      dep.loc = expr.loc;
+      dep.optional = !!this.scope.inTry;
+      this.state.current.addDependency(dep);
+      return true;
+    }
+  }
+
+  callrequireAmdContext (expr, param) {
+    const dep = ContextDependencyHelpers.create(AMDRequireContextDependency, param.range, param, expr, options);
+    if(!dep) return;
+    dep.loc = expr.loc;
+    dep.optional = !!this.scope.inTry;
+    this.state.current.addDependency(dep);
+    return true;
   }
 }
 
