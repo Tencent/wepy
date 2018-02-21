@@ -1506,13 +1506,13 @@ var item = require('item.js')
 
 <!-- index.wpy -->
 <template>
-    <component id="item"></component>
+    <com></com>
 </template>
 <script>
     import wepy from 'wepy';
     import Item from '../components/item';
     export default class Index extends wepy.page {
-        components = { Item }
+        components = { com: Item }
     }
 </script>
 ```
