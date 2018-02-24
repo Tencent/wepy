@@ -25,7 +25,8 @@ module.exports = {
   },
   compilers: {
     less: {
-      compress: isProd
+      compress: isProd,
+      strictMath: true
     },
     // sass: {
     //   outputStyle: 'compressed'
