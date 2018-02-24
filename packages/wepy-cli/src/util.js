@@ -618,6 +618,39 @@ const utils = {
             ID_CACHE[filepath] = '_' + hash(filepath).slice(1, 8);
         }
         return ID_CACHE[filepath];
+    },
+    checkComment(code, offset) {
+        // check if it is a comment
+        let starFound = false;
+        while (offset >= 0) {
+            const char = code[offset];
+            switch (char) {
+                case '*':
+                    starFound = true;
+                    offset--;
+                    break;
+                case '\t':
+                case ' ':
+                    offset--;
+                    break;
+                case '\r':
+                case '\n':
+                    if (!starFound)
+                        offset = -1;
+                    else
+                        offset--;
+                    break;
+                case '/':
+                    if (code[offset - 1] === '/') {
+                        return true;
+                    } else if (starFound)
+                        return true;
+                default:
+                    starFound = false;
+                    offset--;
+            }
+        }
+        return false;
     }
 }
 export default utils
