@@ -641,10 +641,29 @@ const utils = {
                         offset--;
                     break;
                 case '/':
-                    if (code[offset - 1] === '/') {
-                        return true;
-                    } else if (starFound)
-                        return true;
+                    if ((code[offset - 1] === '/') || starFound) {
+                        // check if it's in a string
+                        const searchRegexp = /`|'|"|`/g;
+                        let single = false;
+                        let regexp = searchRegexp;
+                        let lastIndex = 0;
+                        while(true) {
+                            const res = regexp.exec(code);
+                            lastIndex = regexp.lastIndex;
+                            if (res && (lastIndex <= offset)) {
+                                single = !single;
+                                if (single) {
+                                    regexp = new RegExp(res, 'g');
+                                } else {
+                                    regexp = searchRegexp;
+                                }
+                                regexp.lastIndex = lastIndex;
+                            } else {
+                                break;
+                            }
+                        }
+                        return !single;
+                    }
                 default:
                     starFound = false;
                     offset--;

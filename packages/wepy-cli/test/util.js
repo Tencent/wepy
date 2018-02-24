@@ -62,6 +62,15 @@ describe('util.js', () => {
 
             assert.strictEqual(util.checkComment(code, code.length - 1), expect)
         });
+        it('comment in string', () => {
+
+            const codes = ['"// require("foo")"', '"/* require("foo") */"'];
+            const expect = false;
+
+            codes.forEach((code) => {
+                assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+            });
+        });
     });
 
 });
