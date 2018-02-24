@@ -6,7 +6,8 @@ module.exports = {
   cliLogs: !isProd,
   compilers: {
     less: {
-      'compress': isProd
+      'compress': isProd,
+      'strictMath': true
     },
     // sass: {
     //   outputStyle: 'compressed'
