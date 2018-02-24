@@ -29,7 +29,13 @@ export default {
         let wpyExt = params.wpyExt;
 
 
-        return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib, offset) => {
+
+            if (util.checkComment(code, offset - 1))
+                return match;
+
+            let errmsg;
+
             let npmInfo = opath.npm;
 
             if (lib === './_wepylogs.js') {
@@ -83,51 +89,57 @@ export default {
                 let mainFile = resolve.getMainFile(lib);
 
                 if (!mainFile) {
-                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
+                    source = path.join(opath.dir, lib);
+                    target = util.getDistPath(source);
+                    errmsg = '找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。';
+                } else {
+                    npmInfo = {
+                        lib: lib,
+                        dir: mainFile.dir,
+                        modulePath: mainFile.modulePath,
+                        file: mainFile.file,
+                        pkg: mainFile.pkg
+                    };
+    
+                    let resolvedFile;
+                    if (mainFile.pkg && mainFile.pkg._activeFields.length) {
+                        resolvedFile = resolve.resolveSelfFields(mainFile.dir, mainFile.pkg, mainFile.file);
+                    }
+                    resolvedFile = resolvedFile ? resolvedFile : mainFile.file;
+                    source = path.join(mainFile.dir, resolvedFile);
+                    target = path.join(npmPath, lib, resolvedFile);
+    
+                    lib += path.sep + resolvedFile;
+                    ext = '';
+                    needCopy = true;
                 }
-                npmInfo = {
-                    lib: lib,
-                    dir: mainFile.dir,
-                    modulePath: mainFile.modulePath,
-                    file: mainFile.file,
-                    pkg: mainFile.pkg
-                };
-
-                let resolvedFile;
-                if (mainFile.pkg && mainFile.pkg._activeFields.length) {
-                    resolvedFile = resolve.resolveSelfFields(mainFile.dir, mainFile.pkg, mainFile.file);
-                }
-                resolvedFile = resolvedFile ? resolvedFile : mainFile.file;
-                source = path.join(mainFile.dir, resolvedFile);
-                target = path.join(npmPath, lib, resolvedFile);
-
-                lib += path.sep + resolvedFile;
-                ext = '';
-                needCopy = true;
             } else { // require('babel-runtime/regenerator')
                 let requieInfo = lib.split('/');
                 let mainFile = resolve.getMainFile(requieInfo[0]);
 
                 if (!mainFile) {
-                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
-                }
-                npmInfo = {
-                    lib: requieInfo[0],
-                    dir: mainFile.dir,
-                    modulePath: mainFile.modulePath,
-                    file: mainFile.file,
-                    pkg: mainFile.pkg
-                };
-                requieInfo.shift();
-
-                source = path.join(mainFile.dir, requieInfo.join('/'));
-                target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
-                ext = '';
-                needCopy = true;
-
-                // It's a node_module component.
-                if (path.extname(mainFile.file) === '.wpy') {
-                    source += '.wpy';
+                    source = path.join(opath.dir, lib);
+                    target = util.getDistPath(source);
+                    errmsg = '找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。';
+                } else {
+                    npmInfo = {
+                        lib: requieInfo[0],
+                        dir: mainFile.dir,
+                        modulePath: mainFile.modulePath,
+                        file: mainFile.file,
+                        pkg: mainFile.pkg
+                    };
+                    requieInfo.shift();
+    
+                    source = path.join(mainFile.dir, requieInfo.join('/'));
+                    target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
+                    ext = '';
+                    needCopy = true;
+    
+                    // It's a node_module component.
+                    if (path.extname(mainFile.file) === '.wpy') {
+                        source += '.wpy';
+                    }
                 }
             }
 
@@ -142,7 +154,10 @@ export default {
             }else if (util.isFile(source)) {
                 ext = '';
             } else {
-                throw ('找不到文件: ' + source);
+                if (errmsg)
+                    throw errmsg;
+                else
+                    throw ('找不到文件: ' + source);
             }
             source += ext;
             target += ext;
