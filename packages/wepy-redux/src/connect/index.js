@@ -24,7 +24,7 @@ export default function connect (states, actions) {
             const store = getStore();
             let hasChanged = false;
             Object.keys(states).forEach((k) => {
-                const newV = states[k]();
+                const newV = states[k].call(this);
                 if (this[k] !== newV) {
                     // 不相等
                     this[k] = newV;
