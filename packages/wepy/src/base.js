@@ -199,7 +199,10 @@ export default {
                         mix[v] && mix[v].apply(page, args);
                     });
 
-                    page.$apply();
+                    if (v !== 'onPageScroll') {
+                        console.log('invoke apply')
+                        page.$apply();
+                    }
 
                     return rst;
                 };
@@ -208,6 +211,10 @@ export default {
 
         if (!page.onShareAppMessage) {
             delete config.onShareAppMessage;
+        }
+
+        if (!page.onPageScroll) {
+            delete config.onPageScroll
         }
 
         return $bindEvt(config, page, '');
