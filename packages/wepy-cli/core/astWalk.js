@@ -2,6 +2,7 @@ class AstWalker {
   constructor (ast) {
     this.ast = ast;
     this.state = {};
+    this.deps = [];
   }
 
   run () {
@@ -420,13 +421,21 @@ class AstWalker {
         case "VariableDeclarator":
           {
             this.enterPattern(declarator.id, (name, decl) => {
+              if (!this.applyMethods(`var${declarator.kind}${name}`, decl)) {
+                if (!this.applyMethods(`var${name}`, decl)) {
+                  this.scope.renames['$' + name] = undefined;
+                  if(this.scope.definitions.indexOf(name) < 0)
+                    this.scope.definitions.push(name);
+                }
+              }
+              /*
               if(true || !this.applyPluginsBailResult1("var-" + declarator.kind + " " + name, decl)) {
                 if(true || !this.applyPluginsBailResult1("var " + name, decl)) {
                   this.scope.renames["$" + name] = undefined;
                   if(this.scope.definitions.indexOf(name) < 0)
                     this.scope.definitions.push(name);
                 }
-              }
+              }*/
             });
             break;
           }
@@ -440,9 +449,11 @@ class AstWalker {
         case "VariableDeclarator":
           {
             const renameIdentifier = declarator.init && this.getRenameIdentifier(declarator.init);
-            if(renameIdentifier && declarator.id.type === "Identifier" && this.applyPluginsBailResult1("can-rename " + renameIdentifier, declarator.init)) {
+            if(renameIdentifier && declarator.id.type === "Identifier" && this.applyMethods("canrename" + renameIdentifier, declarator.init)) {
+            // if(renameIdentifier && declarator.id.type === "Identifier" && this.applyPluginsBailResult1("can-rename " + renameIdentifier, declarator.init)) {
               // renaming with "var a = b;"
-              if(!this.applyPluginsBailResult1("rename " + renameIdentifier, declarator.init)) {
+              if(!this.applyMethods("rename" + renameIdentifier, declarator.init)) {
+              // if(!this.applyPluginsBailResult1("rename " + renameIdentifier, declarator.init)) {
                 this.scope.renames["$" + declarator.id.name] = this.scope.renames["$" + renameIdentifier] || renameIdentifier;
                 const idx = this.scope.definitions.indexOf(declarator.id.name);
                 if(idx >= 0) this.scope.definitions.splice(idx, 1);
@@ -604,21 +615,27 @@ class AstWalker {
 
   walkAssignmentExpression(expression) {
     const renameIdentifier = this.getRenameIdentifier(expression.right);
-    if(expression.left.type === "Identifier" && renameIdentifier && this.applyPluginsBailResult1("can-rename " + renameIdentifier, expression.right)) {
+    if(expression.left.type === "Identifier" && renameIdentifier && this.applyMethods("canrename" + renameIdentifier, expression.right)) {
+    // if(expression.left.type === "Identifier" && renameIdentifier && this.applyPluginsBailResult1("can-rename " + renameIdentifier, expression.right)) {
       // renaming "a = b;"
-      if(!this.applyPluginsBailResult1("rename " + renameIdentifier, expression.right)) {
+      if(!this.applyMethods("rename" + renameIdentifier, expression.right)) {
+      // if(!this.applyPluginsBailResult1("rename " + renameIdentifier, expression.right)) {
         this.scope.renames["$" + expression.left.name] = renameIdentifier;
         const idx = this.scope.definitions.indexOf(expression.left.name);
         if(idx >= 0) this.scope.definitions.splice(idx, 1);
       }
     } else if(expression.left.type === "Identifier") {
-      if(!this.applyPluginsBailResult1("assigned " + expression.left.name, expression)) {
+      if(!this.applyMethods("assigned" + expression.left.name, expression)) {
+      // if(!this.applyPluginsBailResult1("assigned " + expression.left.name, expression)) {
         this.walkExpression(expression.right);
       }
       this.scope.renames["$" + expression.left.name] = undefined;
-      if(!this.applyPluginsBailResult1("assign " + expression.left.name, expression)) {
+      if(!this.applyMethods("assign" + expression.left.name, expression)) {
+      // if(!this.applyPluginsBailResult1("assign " + expression.left.name, expression)) {
         this.walkExpression(expression.left);
       }
+    } else if (expression.left.type === 'MemberExpression' && expression.left.object.name === '_this' && expression.left.property.name === 'config' && expression.right.type === 'ObjectExpression') { // _this.config = {}
+      this.config = expression.right;
     } else {
       this.walkExpression(expression.right);
       this.walkPattern(expression.left);
@@ -676,12 +693,13 @@ class AstWalker {
 
   walkCallExpression(expression) {
     let result;
-    debugger;
     function walkIIFE(functionExpression, options, currentThis) {
       function renameArgOrThis(argOrThis) {
         const renameIdentifier = this.getRenameIdentifier(argOrThis);
-        if(renameIdentifier && this.applyPluginsBailResult1("can-rename " + renameIdentifier, argOrThis)) {
-          if(!this.applyPluginsBailResult1("rename " + renameIdentifier, argOrThis))
+        if(renameIdentifier && this.applyMethods("canrename" + renameIdentifier, argOrThis)) {
+        // if(renameIdentifier && this.applyPluginsBailResult1("can-rename " + renameIdentifier, argOrThis)) {
+          if(!this.applyMethods("rename" + renameIdentifier, argOrThis))
+          // if(!this.applyPluginsBailResult1("rename " + renameIdentifier, argOrThis))
             return renameIdentifier;
         }
         this.walkExpression(argOrThis);
@@ -1137,6 +1155,13 @@ class AstWalker {
       // return this.applyPluginsBailResult1("evaluate defined Identifier " + exprName.name, expression);
     }
   }
+  applyMethods (method) {
+    let rst;
+    if (this[method]) {
+      rst = this[method](expr);
+    }
+    return rst;
+  }
   /*
   callrequire (expr) {
     // support for browserify style require delegator: "require(o, !0)"
@@ -1159,7 +1184,7 @@ class AstWalker {
     return true;
   }*/
   callrequire (expr) {
-    debugger;
+    
     let param;
     let dep;
     let result;
@@ -1174,6 +1199,7 @@ class AstWalker {
         arrayRange: (expr.arguments.length > 1) ? expr.arguments[1].range : null,
         functionRange: (expr.arguments.length > 2) ? expr.arguments[2].range : null,
         errorCallbackRange: this.state.module,
+        module: expr.arguments[0].type === 'Literal' ? expr.arguments[0].value : '',
         loc: expr.loc
       };
       /*
@@ -1185,6 +1211,7 @@ class AstWalker {
         this.state.module,
         expr.loc
       );*/
+      this.deps.push(dep);
       this.state.current = dep;
     }
 
@@ -1229,7 +1256,7 @@ class AstWalker {
   }
 
   callrequireAmdArray (expr, param) {
-    debugger;
+    
     // if(param.isArray()) {
     if (param.items && param.items.forEach) {
       param.items.forEach((param) => {

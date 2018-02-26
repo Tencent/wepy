@@ -13,22 +13,26 @@ const ResolverFactory = require('enhanced-resolve').ResolverFactory;
 const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
 const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
 const parseOptions = require('./parseOptions');
+const moduleSet = require('./moduleSet');
 const loader = require('./loader');
 
 const ENTRY_FILE = 'app.wpy';
 
 class Compile {
   constructor (opt) {
+    let self = this;
     this.options = opt;
     this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
     this.compiled = {};
-
+    this.npm = new moduleSet();
     this.resolvers = {};
 
     this.context = process.cwd();
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
+
+    this.options.resolve.extensions = ['.js', '.json', '.node', this.options.wpyExt];
 
     this.resolvers.normal = ResolverFactory.createResolver(Object.assign({
       fileSystem: this.inputFileSystem
@@ -38,6 +42,34 @@ class Compile {
       fileSystem: this.inputFileSystem,
       resolveToContext: true
     }, this.options.resolve));
+
+
+    let fnNormalBak = this.resolvers.normal.resolve;
+    this.resolvers.normal.resolve = function (...args) {
+      return new Promise((resolve, reject) => {
+        args.push(function (err, filepath, meta) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({path: filepath, meta: meta});
+          }
+        });
+        fnNormalBak.apply(self.resolvers.normal, args);
+      });
+    };
+    let fnContextBak = this.resolvers.context.resolve;
+    this.resolvers.context.resolve = function (...args) {
+      return new Promise((resolve, reject) => {
+        args.push(function (err, filepath, meta) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({path: filepath, meta: meta});
+          }
+        });
+        fnContextBak.apply(self.resolvers.context, args);
+      });
+    };
 
     this.parsers = {};
     ['wpy', 'script', 'style', 'template'].forEach(k => {
@@ -50,7 +82,31 @@ class Compile {
 
   start () {
 
-    this.parsers.wpy.parse(this.options.entry);
+    this.parsers.wpy.parse(this.options.entry).then(rst => {
+      let script = rst[0];
+      let styles = rst[1];
+
+      let appConfig = script.code.substring(script.parser.config.start, script.parser.config.end);
+      try {
+        appConfig = new Function('return ' + appConfig)();
+      } catch (e) {
+        throw 'error config';
+      }
+      debugger;
+      let pages = appConfig.pages.map(v => {
+        return path.resolve(path.join(this.options.src, v + this.options.wpyExt));
+      });
+
+      let tasks = pages.map(v => {
+        return this.parsers.wpy.parse(v);
+      });
+
+      return Promise.all(tasks);
+    }).then(res => {
+      debugger;
+    }).catch(e => {
+      console.error(e);
+    });
 
 
   }
@@ -58,21 +114,20 @@ class Compile {
   applyCompiler (sfcItem, ctx) {
     let compiler;
     if (sfcItem.lang) {
-
       let compilerOptions = this.options.compilers[sfcItem.lang] || [];
-
-      return new Promise((resolve, reject) => {
-        this.resolvers.context.resolve({}, this.context, 'wepy-compiler-' + sfcItem.lang, {}, (err, filepath) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          let compiler = require(filepath).default;
-          return compiler(sfcItem.content, compilerOptions, ctx.file).then(rst => {
-            let parser = this.parsers[sfcItem.type];
-            return parser.parse(rst, ctx);
-          });
+      if (['css', 'wxss', 'wxml', 'js'].indexOf(sfcItem.lang) > -1) {
+        let parser = this.parsers[sfcItem.type];
+        sfcItem.code = sfcItem.content;
+        return parser.parse(sfcItem, ctx);
+      }
+      return this.resolvers.context.resolve({}, this.context, 'wepy-compiler-' + sfcItem.lang, {}).then(rst => {
+        let compiler = require(rst.path).default;
+        return compiler(sfcItem.content, compilerOptions, ctx.file).then(rst => {
+          let parser = this.parsers[sfcItem.type];
+          return parser.parse(rst, ctx);
         });
+      }).catch(e => {
+        console.error(e);
       });
     }
   }

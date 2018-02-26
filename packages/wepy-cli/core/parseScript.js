@@ -36,11 +36,43 @@ const POSSIBLE_AST_OPTIONS = [{
 
 exports = module.exports =  {
 
-  parse (rst) {
-    debugger;
-    let ast = this.ast(rst.code);
-    return ;
-    let sfc;
+  parse (compiled, ctx) {
+    console.log(path.relative(this.compilation.context, ctx.file));
+    if (ctx.npm) {
+      let npmModules = this.compilation.npm;
+      if (npmModules.pending(ctx.file)) {
+        return Promise.resolve(npmModules.get(ctx.file));
+      }
+      npmModules.add(ctx.file);
+    }
+    let astData = this.ast(compiled.code);
+
+    let walker = new Walker(astData);
+    walker.run();
+
+    if (walker.deps.length) {
+      debugger;
+    }
+
+    let depTasks = [];
+
+    walker.deps.forEach(dep => {
+      depTasks.push(this.parseDep(ctx.file, dep));
+    });
+
+
+    return Promise.all(depTasks).then(rst => {
+      let obj = {
+        file: ctx.file,
+        parser: walker,
+        code: compiled.code,
+        deps: rst
+      };
+      if (ctx.npm) {
+        this.compilation.npm.update(ctx.file, obj);
+      }
+      return obj;
+    });
   },
 
   ast (source) {
@@ -74,10 +106,41 @@ exports = module.exports =  {
     if (!ast || typeof ast !== 'object') {
       throw new Error(`Source could\'t be parsed`);
     }
-    let walker = new Walker(ast);
-    walker.run();
-
     return ast;
+  },
+
+  parseDep (issuer, dep) {
+    return this.compilation.resolvers.normal.resolve({issuer: issuer}, path.dirname(issuer), dep.module, {}).then(rst => {
+      let npm = rst.meta.descriptionFileRoot !== this.compilation.context;
+      let npmModules = this.compilation.npm;
+
+      if (!rst.path) {
+        return rst.path;
+      }
+      let id = npmModules.get(rst.path);
+      if (id !== undefined) {
+        return id;
+      }
+
+
+      let ext = path.extname(rst.path);
+
+      if (ext === '.js') {
+        if (npm) {
+          return this.parse({
+            code: fs.readFileSync(rst.path, 'utf-8')
+          }, {
+            file: rst.path,
+            npm: npm
+          });
+        }
+      } else if (ext === this.compilation.options.wpyExt) {
+        return this.compilation.parsers.wpy.parse(rst.path);
+      }
+    }).catch(e => {
+      console.error(e);
+    });
   }
+
 
 }

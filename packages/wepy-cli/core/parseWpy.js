@@ -31,17 +31,26 @@ exports = module.exports =  {
         sfc: sfc
       };
       if (sfc.script) {
+        if (!sfc.script.lang) {
+          sfc.script.lang = 'babel';
+        }
         wpyTask.push(this.compilation.applyCompiler(this.checkSrc(sfc.script), context));
       }
       if (sfc.styles) {
         let styleTask = [];
         sfc.styles.forEach(v => {
+          if (!v.lang) {
+            v.lang = 'css';
+          }
           styleTask.push(this.compilation.applyCompiler(this.checkSrc(v), context));
         });
         wpyTask.push(Promise.all(styleTask));
       }
       if (sfc.template) {
-        wpyTask.push(his.compilation.applyCompiler(this.checkSrc(sfc.template), context));
+        if (!sfc.template.lang) {
+          sfc.template.lang = 'wxml';
+        }
+        wpyTask.push(this.compilation.applyCompiler(this.checkSrc(sfc.template), context));
       }
     }
     return wpyTask.length ? Promise.all(wpyTask) : Promise.resolve(null);

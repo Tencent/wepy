@@ -6,15 +6,44 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const sfcCompiler = require('vue-template-compiler');
-const fs = require('fs');
-const path = require('path');
 
+class ModuleSet {
 
-exports = module.exports =  {
-
-  parse (rst) {
-    return Promise.resolve(rst);
+  constructor () {
+    this._index = -1;
+    this._map = {};
+    this._set = {};
   }
 
+  add (file) {
+    let id = this.get(file);
+
+    if (id === undefined) {
+      this._index++;
+      this.length = this._index + 1;
+      id = this._index;
+      this._map[file] = id;
+    }
+
+    return id;
+  }
+
+  get (file) {
+    return this._map[file];
+  }
+
+  pending (file) {
+    return this.get(file) !== undefined && this._set[file] === undefined;
+  }
+
+  update (file, data) {
+    this._set[file] = data;
+  }
+
+  data (file) {
+    return this._set[file];
+  }
 }
+
+
+exports = module.exports = ModuleSet;
