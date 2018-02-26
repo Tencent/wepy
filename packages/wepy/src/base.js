@@ -199,7 +199,11 @@ export default {
                         mix[v] && mix[v].apply(page, args);
                     });
 
-                    page.$apply();
+                    // DO NOT auto call $apply() for onPageScroll, otherwise
+                    // UI update will be blocked
+                    if (v !== 'onPageScroll') {
+                        page.$apply();
+                    }
 
                     return rst;
                 };
@@ -208,6 +212,12 @@ export default {
 
         if (!page.onShareAppMessage) {
             delete config.onShareAppMessage;
+        }
+
+        // if OnPageScroll not defined in page or its mixins, remove it so that
+        // useless OnPageScroll logs won't flush console
+        if ([].concat(page.$mixins, page).findIndex(mix => mix['onPageScroll']) === -1) {
+            delete config.onPageScroll;
         }
 
         return $bindEvt(config, page, '');
