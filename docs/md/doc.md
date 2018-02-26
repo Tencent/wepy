@@ -136,8 +136,8 @@ customFileTypes:
    框架在ES6(ECMAScript 6)下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
    
 4. 使用Promise。
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
-   
+   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。（启用Promise方法见下方）
+   
 5. 事件绑定语法使用优化语法代替。
    * 原 `bindtap="click"` 替换为 `@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。
    * 原 `capture-bind:tap="click"` 替换为 `@tap.capture="click"`，原`capture-catch:tap="click"`替换为`@tap.capture.stop="click"`。
@@ -334,6 +334,18 @@ export default class Index extends wepy.page {
         let data = await this.getData();
         console.log(data.data);
     };
+}
+```
+#### 开启 Promise 方法
+
+在 `app.wpy` 中修改 `constructor` 代码：
+
+```javascript
+constructor () {
+    super()
+    // 开启promise
+    this.use('promisify')
+    this.use('requestfix')
 }
 ```
 
