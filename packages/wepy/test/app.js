@@ -202,6 +202,45 @@ describe('app.js', () => {
         });
     });
 
+    it('api intercept call doIntercept function', () => {
+
+        app.$addons.promisify = undefined;
+        app.$addons.requestfix = undefined;
+
+        app.intercept('request', {
+            success: function (resp, doiIntercept) {
+                switch (resp.statusCode) {
+                    case 200:
+                        console.log('200cede,normal');
+                        break
+                    case 401:
+                    case 403:
+                        console.log('401 or 403 code,exception, call doiIntercept function');
+                        doiIntercept();
+                        break
+                }
+                return resp;
+            }
+        });
+        wepy.request({
+            data: {number: 1},
+            success: function (res) {
+                assert.strictEqual(res.statusCode, 200, 'wepy.request intercept test success');
+                assert.strictEqual(res.statusCode, 401, 'should not call success callback');
+                assert.strictEqual(res.statusCode, 403, 'should not call success callback');
+            }
+        });
+
+        app.use('promisify');
+        app.use('requestfix');
+
+        wepy.request({data: {number: 1}}).then(function (res) {
+            assert.strictEqual(res.statusCode, 200, 'wepy.request intercept test success');
+            assert.strictEqual(res.statusCode, 401, 'should not call success callback');
+            assert.strictEqual(res.statusCode, 403, 'should not call success callback');
+        });
+    });
+
 
     it('api intercept', () => {
 
