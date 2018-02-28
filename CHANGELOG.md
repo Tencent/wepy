@@ -1,3 +1,8 @@
+## 1.7.1 (2018-02-28)
+* `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
+* `F` 修复了私有npm组件引入报错的bug。[PR 947](https://github.com/Tencent/wepy/pull/947)
+* `F` 修复了onPageScroll会导致页面卡死的bug。[PR 985](https://github.com/Tencent/wepy/pull/985)
+
 ## 1.7.0 (2018-02-06)
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)
