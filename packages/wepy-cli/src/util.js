@@ -139,12 +139,7 @@ const utils = {
             }
         }
         let lib = com, main = null;
-        if (com.indexOf('@') === 0) { // for scoped npm deps
-            let tempArr = com.split('/');
-            if (tempArr.length > 2) {
-                lib = tempArr[0] + path.sep + tempArr[1];
-            }
-        } else if (com.indexOf(path.sep) > 0) {
+        if (com[0] !== '@' && com.indexOf(path.sep) > 0) {
             let sepIndex = com.indexOf(path.sep);
             lib = com.substring(0, sepIndex);
             main = com.substring(sepIndex + 1, com.length);
