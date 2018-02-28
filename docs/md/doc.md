@@ -1293,7 +1293,7 @@ project
 
 // mywxs.wxs
 
-modules.exports = {
+module.exports = {
   text: 'This is from wxs',
   filter: function (num) {
     return num.toFixed(2);
