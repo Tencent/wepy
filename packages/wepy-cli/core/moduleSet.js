@@ -13,6 +13,7 @@ class ModuleSet {
     this._index = -1;
     this._map = {};
     this._set = {};
+    this._array = {};
   }
 
   add (file) {
@@ -23,6 +24,7 @@ class ModuleSet {
       this.length = this._index + 1;
       id = this._index;
       this._map[file] = id;
+      this._array[id] = file;
     }
 
     return id;
@@ -42,6 +44,11 @@ class ModuleSet {
 
   data (file) {
     return this._set[file];
+  }
+
+  array () {
+    this._array.length = this.length;
+    return Array.prototype.slice.apply(this._array);
   }
 }
 

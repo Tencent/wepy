@@ -53,7 +53,13 @@ exports = module.exports =  {
         wpyTask.push(this.compilation.applyCompiler(this.checkSrc(sfc.template), context));
       }
     }
-    return wpyTask.length ? Promise.all(wpyTask) : Promise.resolve(null);
+    return wpyTask.length ? Promise.all(wpyTask).then(res => {
+      return {
+        sfc: true,
+        file: file,
+        data: res
+      };
+    }) : Promise.resolve(null);
   },
 
   checkSrc (sfcItem) {

@@ -16,35 +16,7 @@ const ENTRY_FILE = 'app.wpy';
 exports = module.exports =  {
 
   parse (file) {
-    let sfc;
-    if (!this.compilation.compiled[file]) {
-      this.compilation.compiled[file] = {};
-    }
-    if (!sfc) {
-      let entryContent = fs.readFileSync(file, 'utf-8');
-      sfc = sfcCompiler.parseComponent(entryContent, { pad: 'line' });
-      this.compilation.compiled[file].sfc = sfc;
-      let context = {
-        file: file,
-        sfc: sfc
-      };
-
-      if (sfc.script) {
-        this.compilation.applyCompiler(sfc.script, context);
-      }
-      if (sfc.styles) {
-        sfc.styles.forEach(v => {
-          this.compilation.applyCompiler(v, context);
-        })
-      }
-      if (sfc.template) {
-        this.compilation.applyCompiler(sfc.template, context);
-      }
-    }
-
-    return new Promise((resolve, reject) => {
-    });
-
+    return Promise.resolve(file);
   }
 
 }

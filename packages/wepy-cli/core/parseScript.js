@@ -38,8 +38,8 @@ exports = module.exports =  {
 
   parse (compiled, ctx) {
     console.log(path.relative(this.compilation.context, ctx.file));
+    let npmModules = this.compilation.npm;
     if (ctx.npm) {
-      let npmModules = this.compilation.npm;
       if (npmModules.pending(ctx.file)) {
         return Promise.resolve(npmModules.get(ctx.file));
       }
@@ -48,11 +48,8 @@ exports = module.exports =  {
     let astData = this.ast(compiled.code);
 
     let walker = new Walker(astData);
+    debugger;
     walker.run();
-
-    if (walker.deps.length) {
-      debugger;
-    }
 
     let depTasks = [];
 
@@ -66,10 +63,11 @@ exports = module.exports =  {
         file: ctx.file,
         parser: walker,
         code: compiled.code,
-        deps: rst
+        depModules: rst
       };
       if (ctx.npm) {
         this.compilation.npm.update(ctx.file, obj);
+        obj.id = npmModules.get(ctx.file);
       }
       return obj;
     });
