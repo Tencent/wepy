@@ -29,6 +29,8 @@
     "babel-preset-stage-1": "^6.16.0"
   },
   "dependencies": {
+    "acorn": "^5.4.1",
+    "acorn-dynamic-import": "^3.0.0",
     "async": "^2.6.0",
     "chalk": "^2.3.0",
     "chokidar": "^1.6.1",
@@ -38,6 +40,7 @@
     "consolidate": "^0.15.0",
     "download": "^6.2.5",
     "download-git-repo": "^1.0.2",
+    "enhanced-resolve": "^4.0.0-beta.4",
     "handlebars": "^4.0.11",
     "hash-sum": "^1.0.2",
     "ignore": "^3.2.0",
@@ -58,6 +61,7 @@
     "update-notifier": "^1.0.2",
     "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
+    "vue-template-compiler": "^2.5.13",
     "xmldom": "^0.1.27"
   },
   "engines": {
