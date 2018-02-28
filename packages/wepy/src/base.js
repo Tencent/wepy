@@ -111,9 +111,9 @@ export default {
         PAGE_EVENT = PAGE_EVENT.concat(appConfig.pageEvents || []);
 
         APP_EVENT.forEach((v) => {
-            config[v] = (...args) => {
+            config[v] = function (...args) {
                 let rst;
-                !app.$wxapp && (app.$wxapp = getApp());
+                !app.$wxapp && (app.$wxapp = this);
                 app[v] && (rst = app[v].apply(app, args));
                 return rst;
             };
