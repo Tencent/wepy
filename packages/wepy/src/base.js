@@ -158,6 +158,17 @@ export default {
             page.$apply();
         };
 
+        config.onUnload = function (...args) {
+            page.$uninit();
+
+            [].concat(page.$mixins, page).forEach((mix) => {
+                mix['onUnload'] && mix['onUnload'].apply(page, args);
+            });
+
+            // skip update ui while page onloading
+            // page.$apply();
+        };
+
         config.onShow = function (...args) {
 
             self.$instance.__prevPage__ = page;
@@ -186,7 +197,7 @@ export default {
         };
 
         PAGE_EVENT.forEach((v) => {
-            if (v !== 'onLoad' && v !== 'onShow') {
+            if (v !== 'onLoad' && v !== 'onUnload' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
 
