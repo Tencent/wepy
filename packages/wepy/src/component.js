@@ -210,29 +210,6 @@ export default class {
             coms.forEach((name) => {
                 const com = this.$com[name];
                 com.$init(this.getWxPage(), $root, this);
-
-                [].concat(com.$mixins, com).forEach((mix) => {
-                    mix['onLoad'] && mix['onLoad'].call(com);
-                });
-                com.$apply();
-            });
-        }
-    }
-
-    $uninit () {
-        let coms = Object.getOwnPropertyNames(this.$com);
-        if (coms.length) {
-            coms.forEach((name) => {
-                const com = this.$com[name];
-                com.$uninit();
-
-                [].concat(com.$mixins, com).forEach((mix) => {
-                    mix['onUnload'] && mix['onUnload'].call(com);
-                });
-
-                // ui update is uneccessary during page unloading, so disable this time
-                // consuming method
-                // com.$apply();
             });
         }
     }
@@ -252,7 +229,35 @@ export default class {
         });
     }
 
-    onLoad () {
+    $onLoad (...args) {
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onLoad'] && mix['onLoad'].apply(this, args);
+        });
+
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onLoad.call(com);
+            });
+        }
+    }
+
+    $onUnload (...args) {
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onUnload.call(com);
+            });
+        }
+
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onUnload'] && mix['onUnload'].apply(this, args);
+        });
+    }
+
+    onLoad() {
     }
 
     onUnload() {
