@@ -219,6 +219,24 @@ export default class {
         }
     }
 
+    $uninit () {
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$uninit();
+
+                [].concat(com.$mixins, com).forEach((mix) => {
+                    mix['onUnload'] && mix['onUnload'].call(com);
+                });
+
+                // ui update is uneccessary during page unloading, so disable this time
+                // consuming method
+                // com.$apply();
+            });
+        }
+    }
+
     $initMixins () {
         if (this.mixins) {
             if (typeof(this.mixins) === 'function') {
@@ -235,6 +253,9 @@ export default class {
     }
 
     onLoad () {
+    }
+
+    onUnload() {
     }
 
     setData (k, v) {
