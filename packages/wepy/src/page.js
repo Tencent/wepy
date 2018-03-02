@@ -31,8 +31,16 @@ export default class extends component {
         super.$init(wxpage, this);
     }
 
+    $uninit () {
+        super.$uninit();
+    }
+
     onLoad () {
         super.onLoad();
+    }
+
+    onUnload() {
+        super.onUnload();
     }
 
     $preload(key, data) {
