@@ -80,7 +80,7 @@ npm install wepy-cli -g
 #### 生成开发示例
 
 ```console
-wepy new myproject
+wepy init standard myproject
 ```
 
 #### 开发实时编译
