@@ -283,7 +283,7 @@ export default {
                 }
                 // bindtap="abc" => bindtap="prefix_abc"
                 if (
-                    (config.output !== 'ant' && (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0)) ||
+                    (config.output !== 'ant' && (attr.name.indexOf('bind') === 0 || attr.name.indexOf('catch') === 0 || attr.name.indexOf('capture') === 0)) ||
                     (config.output === 'ant' && (attr.name.indexOf('on') === 0 || attr.name.indexOf('catch') === 0))
                     ) {
                     // added index for all events;
