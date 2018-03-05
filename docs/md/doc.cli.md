@@ -42,7 +42,7 @@ Usage: init <template-name> [project-name]
    # create a new project straight from a github template
   $ wepy init username/repo my-project
 ```
-![image](../img/cli/wepy-init.jpg)
+![image](https://user-images.githubusercontent.com/16918885/36104960-64ac836e-104e-11e8-84de-c52f0a961464.png)
 
 ## 查找官方/第三方模板资源
 
@@ -58,7 +58,7 @@ Usage: list [options]
     -h, --help    output usage information
 ```
 
-![image](../img/cli/wepy-list.jpg)
+![image](https://user-images.githubusercontent.com/16918885/36105399-6efda388-104f-11e8-86a0-c659c9f1e595.png)
 
 ## 编译
 
