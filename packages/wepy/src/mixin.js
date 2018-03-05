@@ -11,6 +11,8 @@ export default class {
 
     data = {};
 
+    computed = {};
+
     components = {};
 
     methods = {};
@@ -31,8 +33,8 @@ export default class {
         });
 
 
-        // 数据，事件，组件覆盖
-        ['data', 'events', 'components'].forEach((item) => {
+        // 数据，计算属性，事件，组件覆盖
+        ['data', 'computed', 'events', 'components'].forEach((item) => {
             Object.getOwnPropertyNames(this[item]).forEach((k) => {
                 if (k !== 'init' && !parent[item][k])
                     parent[item][k] = this[item][k];
