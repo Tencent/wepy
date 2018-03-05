@@ -10,6 +10,5 @@ Bug fixes and new features should include tests and possibly benchmarks.
 
 - [ ] `npm run test` passes
 - [ ] tests and/or benchmarks are included
-- [ ] documentation is changed or added
 - [ ] cases or donate is changed or added
 - [ ] documentation is changed or added
