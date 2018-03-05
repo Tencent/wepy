@@ -12,7 +12,7 @@ WePY的安装或更新都通过`npm`进行。
 npm install wepy-cli -g
 ```
 
-**在开发目录中生成Demo开发项目**
+**在开发目录中生成Demo开发项目, 1.7.0之后版本请移步[wepy-cli文档](./doc.cli.md)**
 
 ```bash
 wepy new myproject
