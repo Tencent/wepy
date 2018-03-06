@@ -1010,7 +1010,7 @@ props = {
 onLoad () {
     console.log(this.title); // p-title
     console.log(this.syncTitle); // p-title
-    console.log(this.twoWayTitle); // p-title
+    console.log(this.twoWayTitle); // nothing
 
     this.title = 'c-title';
     console.log(this.$parent.parentTitle); // p-title.
