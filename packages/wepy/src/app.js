@@ -178,13 +178,20 @@ export default class {
                                     ['fail', 'success', 'complete'].forEach((k) => {
                                         bak[k] = obj[k];
                                         obj[k] = (res) => {
+                                            let isIntercept = false;
                                             if (self.$interceptors[key] && self.$interceptors[key][k]) {
-                                                res = self.$interceptors[key][k].call(self, res);
+                                                const doIntercept = function () {
+                                                    isIntercept = true;
+                                                }
+                                                res = self.$interceptors[key][k].call(self, res, doIntercept);
                                             }
-                                            if (k === 'success')
-                                                resolve(res);
-                                            else if (k === 'fail')
-                                                reject(res);
+                                            // 如果用户在自定义请求拦截器的success函数里面调用了doIntercept函数，则不执行后续代码了
+                                            if(!isIntercept){
+                                                if (k === 'success')
+                                                    resolve(res);
+                                                else if (k === 'fail')
+                                                    reject(res);
+                                            }
                                         };
                                     });
                                     if (self.$addons.requestfix && key === 'request') {
@@ -210,10 +217,14 @@ export default class {
                                 ['fail', 'success', 'complete'].forEach((k) => {
                                     bak[k] = obj[k];
                                     obj[k] = (res) => {
+                                        let isIntercept = false;
                                         if (self.$interceptors[key] && self.$interceptors[key][k]) {
-                                            res = self.$interceptors[key][k].call(self, res);
+                                            const doIntercept = function () {
+                                                isIntercept = true;
+                                            }
+                                            res = self.$interceptors[key][k].call(self, res, doIntercept);
                                         }
-                                        bak[k] && bak[k].call(self, res);
+                                        !isIntercept && bak[k] && bak[k].call(self, res);
                                     };
                                 });
                                 if (self.$addons.requestfix && key === 'request') {
