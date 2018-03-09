@@ -35,6 +35,10 @@ export default class extends component {
         super.onLoad();
     }
 
+    onUnload() {
+        super.onUnload();
+    }
+
     $preload(key, data) {
         if (typeof(key) === 'object') {
             let k;

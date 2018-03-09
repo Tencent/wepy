@@ -120,34 +120,34 @@ customFileTypes:
 
 &emsp;&emsp;2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
- ```vim
+```vim
  au BufRead,BufNewFile *.wpy setlocal filetype=vue.html.javascript.css
- ```
+```
 
 ### 代码规范
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
-   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
-   
+      以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
-   具体请参考[wpy文件说明](#wpy文件说明)。
-   
+      具体请参考[wpy文件说明](#wpy文件说明)。
+
 3. 使用ES6语法开发。
    框架在ES6(ECMAScript 6)下开发，因此也需要使用ES6开发小程序，ES6中有大量的语法糖可以让我们的代码更加简洁高效。
-   
+
 4. 使用Promise。
-   框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
-   
+      框架默认对小程序提供的API全都进行了 Promise 处理，甚至可以直接使用`async/await`等新特性进行开发。
+
 5. 事件绑定语法使用优化语法代替。
    * 原 `bindtap="click"` 替换为 `@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。
    * 原 `capture-bind:tap="click"` 替换为 `@tap.capture="click"`，原`capture-catch:tap="click"`替换为`@tap.capture.stop="click"`。
    * 更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
-   
+
 6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
-   
+
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
-   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+      不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
 
 
 ## 主要功能特性
@@ -506,9 +506,9 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`、`less`、`scss`、`stylus` |
-| template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
-| script   | `babel` | `babel`、`TypeScript`         |
+| style    | `css`   | `css`、`less`、`scss`、`stylus` |
+| template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
+| script   | `babel` | `babel`、`TypeScript`         |
 
 ### 脚本部分介绍
 
@@ -555,9 +555,13 @@ export default class Page extends wepy.page {
 
     data = {};
     methods = {};
+  
+    provide = {};
+    inject = {};
 
     events = {};
     onLoad() {};
+ 
     // Other properties
 }
 </script>
@@ -577,12 +581,14 @@ export default class Page extends wepy.page {
 
 | 属性         | 说明                                       |
 | ---------- | ---------------------------------------- |
-| config     | 页面配置对象，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
-| components | 页面组件列表对象，声明页面所引入的组件列表                               |
-| data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                                |
-| methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange`        |
-| events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
-| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
+| config     | 页面配置对象，对应于原生的`page.json`文件，类似于`app.wpy`中的config |
+| components | 页面组件列表对象，声明页面所引入的组件列表                    |
+| data       | 页面渲染数据对象，存放可用于页面模板绑定的渲染数据                |
+| provide    | 提供给子孙用于注入的数据或方法                          |
+| inject     | 可用于自动将App.wpy中provide的数据或方法注入到页面中        |
+| methods    | wxml事件处理函数对象，存放响应wxml中所捕获到的事件的函数，如`bindtap`、`bindchange` |
+| events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数 |
+| 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性 |
 
 #### 组件com.wpy
 
@@ -597,6 +603,10 @@ export default class Com extends wepy.component {
     components = {};
 
     data = {};
+  
+    provide = {};
+    inject = {};
+  
     methods = {};
 
     events = {};
@@ -610,6 +620,13 @@ export default class Com extends wepy.component {
 ```
 
 组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，除了不需要`config`配置以及页面特有的一些生命周期函数之外，其属性与页面属性大致相同。
+
+组件中的provide/inject用法和page相同
+
+| 属性      | 说明                                       |
+| ------- | ---------------------------------------- |
+| provide | 提供给子孙用于注入的数据或方法                          |
+| inject  | 可用于自动将祖先provide的数据和方法注入到自身中，祖先可以是组件，页面，App.wpy |
 
 ### 实例
 
@@ -677,6 +694,10 @@ export default class MyComponent extends wepy.component {
     config = {};  // 只在Page实例中存在的配置数据，对应于原生的page.json文件
     
     data = {};  // 页面所需数据均需在这里声明，可用于模板数据绑定
+  
+    provide = {}; // 定义可向子孙中注入的数据
+  
+    inject = {}; // 定义可从祖先中获取的注入数据
 
     components = {};  // 声明页面中所引用的组件，或声明组件中所引用的子组件
 
@@ -895,7 +916,7 @@ project
 
 * **示例**：
 
-    ```javascript
+  ```javascript
     data = {
         a: 1
     }
@@ -906,7 +927,7 @@ project
             return this.a + 1
         }
     }
-    ```
+  ```
 
 #### watcher 监听器
 
@@ -920,7 +941,7 @@ project
 
 * **示例**：
 
-    ```javascript
+  ```javascript
     data = {
         num: 1
     }
@@ -940,7 +961,7 @@ project
             this.$apply();
         }, 1000)
     }
-    ```
+  ```
 
 
 #### props 传值
@@ -1023,6 +1044,48 @@ onLoad () {
     console.log(this.syncTitle); // 'p-title-changed' --- 有.sync修饰符的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
 }
 ```
+
+#### provide/inject 数据和方法的自动注入
+
+和vue中的provide/inject机制相同（更多例子和解释可参考vue的文档）
+
+provide可用于向子孙中提供数据或方法，inject可用于从祖先中自动获取数据或方法并注入到自身属性中
+
+provide可定义在`wepy.app`、`wepy.page`、`wepy.component`中
+
+inject可定义在`wepy.page`、`wepy.component`中
+
+```javascript
+export default class Com extends wepy.component {
+
+	hello() {
+      	return 'hello'
+	}
+  
+    // provide定义自身提供给子孙的数据或方法
+    // 结构是一个map的形式，key代表提供的数据或方法名称
+    provide = {
+        foo: 'bar', // 子孙直接将静态数据注入到自身属性中
+        hello: () => { // 子孙也可以将方法注入到自身属性中
+          return this.hello() // 此处可以访问data, props等
+        }
+    }
+    
+    // inject定义需要从祖先中获取哪些数据和方法以及注入到自身的方式
+    // 结构也是一个map的形式，key代表数据或方法注入到自身哪个属性中，value也是map的形式，
+    // value的key定义数据源，value的value定义获取方式
+    inject = {
+      	dest: {
+          from: 'src', // 将祖先provide中定义的src注入为自身的this.dest
+          default: 'himan' // 如果祖先没有provide这个数据或方法，则将default值注入为this.dest
+      	}
+    }
+}
+```
+
+页面或者组件中定义了inject时，会先从父亲开始向上逐级查找有没有provide inject中声明获取的数据，直到App.wpy如果还找不到就将default中定义的数据注入（如果default是方法则将方法返回值作为数据注入），如果default不存在，则不会注入
+
+向上逐级查找的过程中，如果在某一级找到了匹配则立即返回
 
 #### 组件通信与交互
 

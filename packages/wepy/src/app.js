@@ -68,7 +68,16 @@ export default class {
 
     $init (wepy, config = {}) {
         this.$initAPI(wepy, config.noPromiseAPI);
+        this.$initProvide();
         this.$wxapp = getApp();
+    }
+
+    $initProvide() {
+        if (this.provide) {
+            this.$provide = (typeof this.provide === 'function')
+                ? this.provide.call(this)
+                : this.provide;
+        }
     }
 
 

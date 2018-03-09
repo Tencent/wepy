@@ -104,6 +104,9 @@ export default class {
             this.$wxapp = this.$root.$parent.$wxapp;
         }
 
+        // resolve injections before data/props
+        this.$initInjections();
+
         if (this.props) {
             this.props = Props.build(this.props);
         }
@@ -205,17 +208,49 @@ export default class {
         }
         this.setData(defaultData);
 
+        // resolve provide after data/props
+        this.$initProvide();
+
         let coms = Object.getOwnPropertyNames(this.$com);
         if (coms.length) {
             coms.forEach((name) => {
                 const com = this.$com[name];
                 com.$init(this.getWxPage(), $root, this);
-
-                [].concat(com.$mixins, com).forEach((mix) => {
-                    mix['onLoad'] && mix['onLoad'].call(com);
-                });
-                com.$apply();
             });
+        }
+    }
+
+    $initProvide() {
+        if (this.provide) {
+            this.$provide = (typeof this.provide === 'function')
+                ? this.provide.call(this)
+                : this.provide;
+        }
+    }
+
+    $initInjections() {
+        if (this.inject) {
+            const keys = Object.keys(this.inject);
+
+            for (let key of keys) {
+                const provideKey = this.inject[key].from;
+                let source = this;
+                while (source) {
+                    if (source.$provide && provideKey in source.$provide) {
+                        this[key] = source.$provide[provideKey];
+                        break;
+                    }
+                    source = source.$parent;
+                }
+                if (!source) {
+                    if ('default' in this.inject[key]) {
+                        const provideDefault = this.inject[key].default;
+                        this[key] = (typeof provideDefault === 'function')
+                            ? provideDefault.call(this)
+                            : provideDefault;
+                    }
+                }
+            }
         }
     }
 
@@ -234,7 +269,38 @@ export default class {
         });
     }
 
-    onLoad () {
+    $onLoad (...args) {
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onLoad'] && mix['onLoad'].apply(this, args);
+        });
+
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onLoad.call(com);
+            });
+        }
+    }
+
+    $onUnload (...args) {
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onUnload.call(com);
+            });
+        }
+
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onUnload'] && mix['onUnload'].apply(this, args);
+        });
+    }
+
+    onLoad() {
+    }
+
+    onUnload() {
     }
 
     setData (k, v) {

@@ -151,11 +151,13 @@ export default {
             }
             args.push(secParams);
 
-            [].concat(page.$mixins, page).forEach((mix) => {
-                mix['onLoad'] && mix['onLoad'].apply(page, args);
-            });
+            page.$onLoad.apply(page, args);
 
             page.$apply();
+        };
+
+        config.onUnload = function (...args) {
+            page.$onUnload.apply(page, args);
         };
 
         config.onShow = function (...args) {
@@ -186,7 +188,7 @@ export default {
         };
 
         PAGE_EVENT.forEach((v) => {
-            if (v !== 'onLoad' && v !== 'onShow') {
+            if (v !== 'onLoad' && v !== 'onUnload' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
 
