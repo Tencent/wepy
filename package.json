@@ -4,6 +4,7 @@
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
+    "dev:wepy2": "rollup -w -c scripts/config.js --environment TARGET:wepy2",
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
     "bootstrap": "./scripts/clean.sh && ./scripts/bootstrap.sh && npm run build",
@@ -35,6 +36,7 @@
     "chalk": "^1.1.3",
     "eslint": "^3.11.1",
     "event-stream": "^3.3.4",
+    "fs-extra": "^5.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-clean": "^0.3.2",
@@ -50,6 +52,9 @@
     "less": "^2.7.3",
     "mkpath": "^1.0.0",
     "mocha": "^3.2.0",
+    "rollup": "^0.56.5",
+    "rollup-plugin-buble": "^0.19.2",
+    "rollup-plugin-replace": "^2.0.0",
     "serve-static": "^1.11.1",
     "through2": "^2.0.3"
   },
