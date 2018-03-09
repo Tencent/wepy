@@ -40,7 +40,7 @@ wepy build --watch
 ### WePY项目的目录结构
 
 ```
-├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
+├── dist                   小程序运行代码目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
 ├── node_modules           
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
@@ -59,17 +59,38 @@ wepy build --watch
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
-### 重要提醒
+### 添加项目
 
-1. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
+`1.7.0` 之后的版本`init`新生成的代码包会在根目录包含`project.config.json`文件，之前生成的代码包可能不存在`project.config.json`文件。
+检查根目录是否存在该文件。
 
-2. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。 <font style="color:red">重要：漏掉此项会运行报错。</font>
+如果存在，使用`微信开发者工具`-->`添加项目`，`项目目录`请选择项目根目录即可根据配置完成项目信息自动配置。
 
-3. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全`。 <font style="color:red">重要：某些情况下漏掉此项也会运行报错。</font>
+如果不存在，建议手动创建该文件后再添加项目。`project.config.json`文件内容如下：
 
-4. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
+```
+{
+  "description": "project description",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "Project name",
+  "miniprogramRoot": "./dist"
+}
+```
 
-5. 本地项目根目录运行`wepy build --watch`，开启实时编译。（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实时预览，非常方便。）
+`es6`: 对应`关闭ES6转ES5`选项，关闭。 <font style="color:red">重要：未关闭会运行报错。</font>
+
+`postcss`: 对应`关闭上传代码时样式自动补全`选项，关闭。 <font style="color:red">重要：某些情况下漏掉此项也会运行报错。</font>
+
+`minified`: 对应`关闭代码压缩上传`选项，关闭。<font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
+
+`urlCheck`: 对应`不检查安全域名`选项，开启。 如果已配置好安全域名则建议关闭。
 
 ### 代码高亮
 
