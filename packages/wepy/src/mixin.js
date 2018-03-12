@@ -22,14 +22,21 @@ export default class {
     $init (parent) {
         let k;
 
+        let props = [];
+        let obj = this;
+
+        // Recursively get own and prototype properties
+        // support mixin extends another mixin
+        do {
+            props.push(...Object.getOwnPropertyNames(obj));
+        } while (obj = Object.getPrototypeOf(obj));
+
         // 自定义属性覆盖
-        Object.getOwnPropertyNames(this)
-            .concat(Object.getOwnPropertyNames(Object.getPrototypeOf(this)))
-            .forEach((k) => {
-                if (k[0] + k[1] !== 'on' && k !== 'constructor') {
-                    if (!parent[k])
-                        parent[k] = this[k];
-                }
+        props.forEach((k) => {
+            if (k[0] + k[1] !== 'on' && k !== 'constructor') {
+                if (!parent[k])
+                    parent[k] = this[k];
+            }
         });
 
 
