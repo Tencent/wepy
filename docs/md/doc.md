@@ -414,7 +414,7 @@ async onLoad() {
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    'output': 'dist',
+    'target': 'dist',
     'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
