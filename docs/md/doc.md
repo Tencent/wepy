@@ -549,7 +549,7 @@ export default class extends wepy.app {
 import wepy from 'wepy';
 import Counter from '../components/counter';
    
-export default class Page extends wepy.page {
+export default class Index extends wepy.page {
     config = {};
     components = {counter1: Counter};
 
