@@ -29,7 +29,8 @@ export default class {
         // support mixin extends another mixin
         do {
             props.push(...Object.getOwnPropertyNames(obj));
-        } while (obj = Object.getPrototypeOf(obj));
+            obj = Object.getPrototypeOf(obj);
+        } while (Object.getPrototypeOf(obj));
 
         // 自定义属性覆盖
         props.forEach((k) => {
