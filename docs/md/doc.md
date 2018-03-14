@@ -386,15 +386,15 @@ async onLoad() {
 
 ### wepy.config.js配置文件说明
 
-执行`wepy new demo`后，会生成类似下面这样的配置文件。
+执行`wepy new demo`（1.7.0版本后是`wepy init standard myproject`）后，会生成类似下面这样的配置文件。
 
 ```javascript
 
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    'output': 'dist',
-    'source': 'src',
+    'target': 'dist', // 输出文件位置，默认为dist
+    'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
         less: {
