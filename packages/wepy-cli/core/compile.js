@@ -73,7 +73,7 @@ class Compile {
     };
 
     this.parsers = {};
-    ['wpy', 'script', 'style', 'template'].forEach(k => {
+    ['wpy', 'script', 'style', 'template', 'config'].forEach(k => {
       let parser = k[0].toUpperCase() + k.slice(1);
       this.parsers[k] = require('./parse' + parser);
       this.parsers[k].compilation = this;
@@ -83,20 +83,23 @@ class Compile {
 
   start () {
 
-    this.parsers.wpy.parse(this.options.entry).then(app => {
-      let script = app.data[0];
-      let styles = app.data[1];
+    this.parsers.wpy.parse(this.options.entry, 'app').then(app => {
 
-      let appConfig = script.code.substring(script.parser.config.start, script.parser.config.end);
-      try {
-        appConfig = new Function('return ' + appConfig)();
-      } catch (e) {
-        throw 'error config';
-      }
-      debugger;
+      let script = app.script;
+      let styles = app.styles;
+      let config = app.config;
+
+      let appConfig = config.parsed;
+
       let pages = appConfig.pages.map(v => {
         return path.resolve(path.join(this.options.src, v + this.options.wpyExt));
       });
+
+      if (appConfig.subPackages) {
+        appConfig.subPackages.forEach(sub => {
+          pages.push(path.join(this.options.src, sub + this.options.wpyExt));
+        });
+      }
 
       let tasks = pages.map(v => {
         return this.parsers.wpy.parse(v);
@@ -105,6 +108,7 @@ class Compile {
       return Promise.all(tasks);
     }).then(pages => {
       this.buildPage(pages);
+
       this.buildNPM();
     }).catch(e => {
       console.error(e);
@@ -117,7 +121,7 @@ class Compile {
     let compiler;
     if (sfcItem.lang) {
       let compilerOptions = this.options.compilers[sfcItem.lang] || [];
-      if (['css', 'wxss', 'wxml', 'js'].indexOf(sfcItem.lang) > -1) {
+      if (['css', 'wxss', 'wxml', 'js', 'json'].indexOf(sfcItem.lang) > -1) {
         let parser = this.parsers[sfcItem.type];
         sfcItem.code = sfcItem.content;
         return parser.parse(sfcItem, ctx);
@@ -143,38 +147,42 @@ class Compile {
   buildApp (app) {
     logger.info('app', 'building App');
 
-    let script = app.data[0];
-    let style = app.data[1];
+    let script = app.script;
+    let style = app.styles;
+    let config = app.config;
 
     let targetFile = path.join(this.context, this.options.target, 'app');
 
-    let scriptCode = this.fixDep(script);
+    let configCode = JSON.stringify(config.parsed, null, 4);
+    let scriptCode = this.fixDep(script.parsed);
     let styleCode = '';
 
     style.forEach(v => {
-      styleCode += v.code + '\n';
+      styleCode += v.content + '\n';
     });
 
     fs.writeFile(targetFile + '.js', scriptCode, function () {});
     fs.writeFile(targetFile + '.wxss', styleCode, function () {});
+    fs.writeFile(targetFile + '.json', configCode, function () {});
   }
 
   buildPage (pages) {
     logger.info('page', 'building pages');
 
     pages.forEach(page => {
-      let script = page.data[0];
-      let style = page.data[1];
-      let template = page.data[2];
+      let script = page.script;
+      let style = page.styles;
+      let config = page.config;
+      let template = page.template;
 
-      let targetFile = this.getTarget(script.file);
-      debugger;
-      let scriptCode = this.fixDep(script);
-      let templateCode = template.code;
+
+      let targetFile = this.getTarget(script.parsed.file);
+      let scriptCode = this.fixDep(script.parsed);
+      let templateCode = template.parsed.code;
       let styleCode = '';
 
       style.forEach(v => {
-        styleCode += v.code + '\n';
+        styleCode += v.content + '\n';
       });
 
       let target = path.parse(targetFile);
@@ -182,6 +190,7 @@ class Compile {
       fs.writeFile(path.join(target.dir, target.name + '.js'), scriptCode, function () {});
       fs.writeFile(path.join(target.dir, target.name + '.wxml'), templateCode, function () {});
       fs.writeFile(path.join(target.dir, target.name + '.wxss'), styleCode, function () {});
+      fs.writeFile(path.join(target.dir, target.name + '.json'), config.code, function () {});
     });
   }
 
@@ -206,7 +215,7 @@ class Compile {
     });
 
     npmCode = `
-(function(modules) { 
+(function(modules) {
    // The module cache
    var installedModules = {};
    // The require function
@@ -244,11 +253,11 @@ ${npmCode}
   }
 
 
-  fixDep (data, inNPM) {
-    let code = data.code;
+  fixDep (parsed, inNPM) {
+    let code = parsed.code;
     let fixPos = 0;
-    data.parser.deps.forEach((dep, i) => {
-      let depMod = data.depModules[i];
+    parsed.parser.deps.forEach((dep, i) => {
+      let depMod = parsed.depModules[i];
       let moduleId = (typeof depMod === 'object') ? depMod.id : depMod;
       let repleaceMent = '';
       if (inNPM) {
@@ -256,10 +265,10 @@ ${npmCode}
       } else {
         if (typeof moduleId === 'number') {
           let npmfile = path.join(this.context, this.options.src, 'npm.js');
-          let relativePath = path.relative(path.dirname(data.file), npmfile);
+          let relativePath = path.relative(path.dirname(parsed.file), npmfile);
           repleaceMent = `require('${relativePath}')(${moduleId})`;
         } else if (depMod && depMod.sfc) {
-          let relativePath = path.relative(path.dirname(data.file), depMod.file);
+          let relativePath = path.relative(path.dirname(parsed.file), depMod.file);
           let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
           relativePath = relativePath.replace(reg, '.js');
           repleaceMent = `require('${relativePath}')`;

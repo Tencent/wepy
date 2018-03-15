@@ -614,7 +614,6 @@ class AstWalker {
   }
 
   walkAssignmentExpression(expression) {
-    debugger;
     const renameIdentifier = this.getRenameIdentifier(expression.right);
     if(expression.left.type === "Identifier" && renameIdentifier && this.applyMethods("canrename" + renameIdentifier, expression.right)) {
     // if(expression.left.type === "Identifier" && renameIdentifier && this.applyPluginsBailResult1("can-rename " + renameIdentifier, expression.right)) {
@@ -1189,7 +1188,7 @@ class AstWalker {
     return true;
   }*/
   callrequire (expr) {
-    
+
     let param;
     let dep;
     let result;
@@ -1261,7 +1260,7 @@ class AstWalker {
   }
 
   callrequireAmdArray (expr, param) {
-    
+
     // if(param.isArray()) {
     if (param.items && param.items.forEach) {
       param.items.forEach((param) => {

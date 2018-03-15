@@ -62,7 +62,7 @@
     "update-notifier": "^1.0.2",
     "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
-    "vue-template-compiler": "^2.5.13",
+    "vue-template-compiler": "^2.5.15",
     "xmldom": "^0.1.27"
   },
   "engines": {

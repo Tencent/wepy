@@ -1022,10 +1022,25 @@ function createComputedGetter (key) {
   }
 }
 
+var $global = {};
+
+function initAppLifecycle (vm, appConfig) {
+  appConfig.onLaunch = function (options) {
+    var result;
+    vm.$wxapp = this;
+    (typeof vm.$option.onLaunch === 'function') && (result = vm.$option.onLaunch.call(vm, options));
+    return result;
+  };
+}
+
 function initLifecycle (vm, pageConfig) {
   pageConfig.onLoad = function () {
     var wxpage = this;
     vm.$wxpage = wxpage;
+
+    if (!vm.$app) {
+      vm.$app = $global.$app;
+    }
 
     var init = false;
 
@@ -1152,8 +1167,40 @@ function page (option) {
   return Page(pageConfig);
 }
 
+var WepyApp = (function (Base$$1) {
+  function WepyApp () {
+
+  }
+
+  if ( Base$$1 ) WepyApp.__proto__ = Base$$1;
+  WepyApp.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyApp.prototype.constructor = WepyApp;
+
+  WepyApp.prototype.$init = function $init (option) {
+    var appConfig = {};
+
+    this.$option = option;
+
+    initAppLifecycle(this, appConfig);
+
+    return appConfig;
+  };
+
+  return WepyApp;
+}(Base));
+
+function app (options) {
+  var app = new WepyApp();
+  $global.$app = app;
+
+  var appConfig = app.$init(options);
+  return App(appConfig);
+}
+
 var wepy = {
-  page: page
+  page: page,
+  app: app,
+  global: $global
 }
 
 module.exports = wepy;

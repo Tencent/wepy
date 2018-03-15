@@ -15,12 +15,11 @@ const ENTRY_FILE = 'app.wpy';
 
 exports = module.exports =  {
 
-  parse (file) {
+  parse (file, type) {
     let sfc;
     if (!this.compilation.compiled[file]) {
       this.compilation.compiled[file] = {};
     }
-    this.file = file;
     let wpyTask = [];
     if (!sfc) {
       let entryContent = fs.readFileSync(file, 'utf-8');
@@ -30,46 +29,55 @@ exports = module.exports =  {
         file: file,
         sfc: sfc
       };
-      if (sfc.script) {
-        if (!sfc.script.lang) {
-          sfc.script.lang = 'babel';
+      let sfcConfig = sfc.customBlocks.filter(item => item.type === 'config');
+      sfcConfig = sfcConfig.length ? sfcConfig[0] : { type: 'config', content: '' };
+      sfcConfig.lang = sfcConfig.lang || 'json';
+      sfc.config = sfcConfig;
+
+      return this.compilation.applyCompiler(this.checkSrc(sfcConfig, file), context).then(parsed => {
+        sfc.config && (sfc.config.parsed = parsed);
+
+        if (sfc.template && type !== 'app') {
+          sfc.template.lang = sfc.template.lang = 'wxml';
+          return this.compilation.applyCompiler(this.checkSrc(sfc.template, file), context);
         }
-        wpyTask.push(this.compilation.applyCompiler(this.checkSrc(sfc.script), context));
-      }
-      if (sfc.styles) {
+        return null;
+      }).then(parsed => {
+        sfc.template && (sfc.template.parsed = parsed);
+        if (sfc.script) {
+          sfc.script.lang = sfc.script.lang || 'babel';
+          return this.compilation.applyCompiler(this.checkSrc(sfc.script, file), context);
+        }
+        return null;
+      }).then(parsed => {
+        sfc.script && (sfc.script.parsed = parsed);
         let styleTask = [];
-        sfc.styles.forEach(v => {
-          if (!v.lang) {
-            v.lang = 'css';
-          }
-          styleTask.push(this.compilation.applyCompiler(this.checkSrc(v), context));
-        });
-        wpyTask.push(Promise.all(styleTask));
-      }
-      if (sfc.template) {
-        if (!sfc.template.lang) {
-          sfc.template.lang = 'wxml';
+        if (sfc.styles) {
+          sfc.styles.forEach(v => {
+            v.lang = v.lang || 'css';
+            styleTask.push(this.compilation.applyCompiler(this.checkSrc(v, file), context));
+          })
         }
-        wpyTask.push(this.compilation.applyCompiler(this.checkSrc(sfc.template), context));
-      }
+        return Promise.all(styleTask);
+      }).then(parsed => {
+        sfc.style && (sfc.style.parsed = parsed);
+        return sfc;
+      }).catch(e => {
+        debugger;
+      });
+    } else {
+      return Promise.reject('error component');
     }
-    return wpyTask.length ? Promise.all(wpyTask).then(res => {
-      return {
-        sfc: true,
-        file: file,
-        data: res
-      };
-    }) : Promise.resolve(null);
   },
 
-  checkSrc (sfcItem) {
+  checkSrc (sfcItem, context) {
     if (sfcItem && sfcItem.src) {
-      let srcPath = path.resolve(path.dirname(this.file), sfcItem.src);
+      let srcPath = path.resolve(path.dirname(context), sfcItem.src);
       try {
         sfcItem.content = fs.readFileSync(srcPath, 'utf-8');
         sfcItem.dirty = true;
       } catch (e) {
-        throw `Unable to open file "${sfcItem.src} in ${this.file}"`
+        throw `Unable to open file "${sfcItem.src} in ${context}"`
       }
     }
    return sfcItem;

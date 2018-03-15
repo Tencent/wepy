@@ -48,7 +48,6 @@ exports = module.exports =  {
     let astData = this.ast(compiled.code);
 
     let walker = new Walker(astData);
-    debugger;
     walker.run();
 
     let depTasks = [];
