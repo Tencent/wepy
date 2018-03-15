@@ -61,7 +61,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
             console.log('Hello World');
         }
         sleep(time) {
-            return new Promise((resolve, reject) => setTimeout(() => resolve, time * 1000));
+            return new Promise((resolve, reject) => setTimeout(resolve, time * 1000));
         }
     }
 </script>
