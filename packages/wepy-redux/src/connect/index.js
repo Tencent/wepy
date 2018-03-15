@@ -36,11 +36,7 @@ export default function connect (states, actions) {
         return class extends Component {
             constructor () {
                 super();
-                this.computed = Object.assign(this.computed || {}, states, mapState({
-                    $state(state) {
-                        return state;
-                    }
-                }));
+                this.computed = Object.assign(this.computed || {}, states);
                 this.methods = Object.assign(this.methods || {}, actions);
             }
             onLoad() {
