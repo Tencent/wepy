@@ -1,3 +1,19 @@
+## 1.7.2 (comming)
+* `A` 添加了对小程序原生组件的支持。
+
+```
+npm i wepy-cli@1.7.2-alpha1 -g
+npm i wepy@1.7.2-alpha1 --save
+```
+
+* `F` 修复了使用less/sass去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
+```
+npm i wepy-cli@1.7.2-alpha2 -g
+npm i wepy-compiler-less@1.3.12 --save-dev
+npm i wepy-compiler-sass@1.3.12 --save-dev
+```
+
+
 ## 1.7.1 (2018-02-28)
 * `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
 * `F` 修复了私有npm组件引入报错的bug。[PR 947](https://github.com/Tencent/wepy/pull/947)
