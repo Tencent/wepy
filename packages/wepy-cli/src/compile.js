@@ -302,6 +302,13 @@ export default {
                 } else {
                     files = refs;
                 }
+                // imported in less / sass.
+                let fullpath = path.join(current, src, file);
+                let cssDeps = cache.getCssDep(fullpath);
+                if (cssDeps.length) {
+                  let cssDepfiles = cssDeps.map(v =>  path.relative(path.join(current, src), v));
+                  files = refs.length === 0 ? cssDepfiles : files.concat(cssDepfiles);
+                }
             } else if (file.indexOf('components') !== -1) { // 是wpy 文件，而且是组件
                 let parents = this.findParents(file);
                 files = parents.concat([file]);
