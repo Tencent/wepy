@@ -80,7 +80,19 @@ export default {
                 throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`
             }
 
-            const p = compiler(content, options || {}, filepath).then((css) => {
+            options.supportObject = true;
+            const p = compiler(content, options || {}, filepath).then((compiled) => {
+                let css;
+                if (typeof compiled === 'object') {
+                    css = compiled.css;
+                    if (compiled.imports && compiled.imports.length) {
+                        compiled.imports.forEach(v => {
+                            cache.addCssDep(v, path.join(opath.dir, opath.base));
+                        });
+                    }
+                } else {
+                    css = compiled;
+                }
                 // 处理 scoped
                 if (scoped) {
                     // 存在有 scoped 的 style
