@@ -286,6 +286,13 @@ export default class {
         for (t in k) {
             let noPrefix = t.replace(reg, '');
             this.$data[noPrefix] = util.$copy(k[t], true);
+
+            // `Immutable` data maybe affect performance
+            // see: https://github.com/Tencent/wepy/issues/1090#issuecomment-373893316
+            if (util.isImmutable(k[t])) {
+				k[t] = k[t].toJS()
+			}
+
             // 1.9.2 do not allow to set a undefined value
             if (k[t] === undefined) {
                 delete k[t];
