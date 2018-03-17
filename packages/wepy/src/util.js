@@ -28,7 +28,7 @@ export default {
     },
 
     $isDeepEqual (a, b, aStack, bStack) {
-		if (this.isImmutable(a) || this.isImmutable(b)) return a === b
+        if (this.isImmutable(a) || this.isImmutable(b)) return a === b
 
         let self = this;
         // Compare `[[Class]]` names.
@@ -208,7 +208,7 @@ export default {
         } else if ('' + obj === 'null') {
             return obj;
         } else if (typeof (obj) === 'object') {
-			if (this.isImmutable(obj)) return obj
+            if (this.isImmutable(obj)) return obj
             return this.$extend(deep, {}, obj);
         } else
             return obj;
@@ -292,22 +292,22 @@ export default {
        return rst;
     },
 
-	isImmutable (maybeImmutable) {
-		// https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
-		if (!maybeImmutable || typeof maybeImmutable !== 'object') {
-		    return false;
-		}
+    isImmutable (maybeImmutable) {
+        // https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
+        if (!maybeImmutable || typeof maybeImmutable !== 'object') {
+            return false;
+        }
 
-		const IMMUTABLE_KEYS = [
-			'@@__IMMUTABLE_ITERABLE__@@',
-			'@@__IMMUTABLE_KEYED__@@',
-			'@@__IMMUTABLE_INDEXED__@@',
-			'@@__IMMUTABLE_ORDERED__@@',
-			'@@__IMMUTABLE_RECORD__@@'
-		]
+        const IMMUTABLE_KEYS = [
+            '@@__IMMUTABLE_ITERABLE__@@',
+            '@@__IMMUTABLE_KEYED__@@',
+            '@@__IMMUTABLE_INDEXED__@@',
+            '@@__IMMUTABLE_ORDERED__@@',
+            '@@__IMMUTABLE_RECORD__@@'
+        ]
 
-		return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
-	},
+        return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
+    },
 
     /**
     * Hyphenate a camelCase string.
