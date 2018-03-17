@@ -290,8 +290,8 @@ export default class {
             // `Immutable` data maybe affect performance
             // see: https://github.com/Tencent/wepy/issues/1090#issuecomment-373893316
             if (util.isImmutable(k[t])) {
-				k[t] = k[t].toJS()
-			}
+                k[t] = k[t].toJS()
+            }
 
             // 1.9.2 do not allow to set a undefined value
             if (k[t] === undefined) {
