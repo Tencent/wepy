@@ -7,13 +7,30 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+function isImmutable (maybeImmutable) {
+	// https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
+	if (!maybeImmutable || typeof maybeImmutable !== 'object') {
+		return false;
+	}
+
+	const IMMUTABLE_KEYS = [
+		'@@__IMMUTABLE_ITERABLE__@@',
+		'@@__IMMUTABLE_KEYED__@@',
+		'@@__IMMUTABLE_INDEXED__@@',
+		'@@__IMMUTABLE_ORDERED__@@',
+		'@@__IMMUTABLE_RECORD__@@'
+	]
+
+	return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
+}
+
 export default {
     $isEmpty (obj) {
         return Object.keys(obj).length === 0;
     },
 
     $isEqual (a, b, aStack, bStack) {
-        if (this.isImmutable(a) || this.isImmutable(b)) return a === b
+        if (isImmutable(a) || isImmutable(b)) return a === b
         // Identical objects are equal. `0 === -0`, but they aren't identical.
         // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
         if (a === b) return a !== 0 || 1 / a === 1 / b;
@@ -28,7 +45,7 @@ export default {
     },
 
     $isDeepEqual (a, b, aStack, bStack) {
-        if (this.isImmutable(a) || this.isImmutable(b)) return a === b
+        if (isImmutable(a) || isImmutable(b)) return a === b
 
         let self = this;
         // Compare `[[Class]]` names.
@@ -208,7 +225,7 @@ export default {
         } else if ('' + obj === 'null') {
             return obj;
         } else if (typeof (obj) === 'object') {
-            if (this.isImmutable(obj)) return obj
+            if (isImmutable(obj)) return obj
             return this.$extend(deep, {}, obj);
         } else
             return obj;
@@ -290,23 +307,6 @@ export default {
             });
        }
        return rst;
-    },
-
-    isImmutable (maybeImmutable) {
-        // https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
-        if (!maybeImmutable || typeof maybeImmutable !== 'object') {
-            return false;
-        }
-
-        const IMMUTABLE_KEYS = [
-            '@@__IMMUTABLE_ITERABLE__@@',
-            '@@__IMMUTABLE_KEYED__@@',
-            '@@__IMMUTABLE_INDEXED__@@',
-            '@@__IMMUTABLE_ORDERED__@@',
-            '@@__IMMUTABLE_RECORD__@@'
-        ]
-
-        return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
     },
 
     /**
