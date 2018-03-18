@@ -309,6 +309,8 @@ export default {
        return rst;
     },
 
+	isImmutable,
+
     /**
     * Hyphenate a camelCase string.
     */
