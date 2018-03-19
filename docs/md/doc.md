@@ -1522,3 +1522,25 @@ var item = require('item.js')
     }
 </script>
 ```
+#### 5. wx.connectSocket 接收参数修改
+点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-socket.html#wxconnectsocketobject" target="_blank">官方文档</a>
+
+```javascript
+// 原生代码:
+
+wx.connectSocket({
+  url: 'xxxx',
+  data:{
+    x: '',
+    y: ''
+  },
+  header:{ 
+    'content-type': 'application/json'
+  },
+  protocols: ['protocol1'],
+  method:"GET"
+})
+
+// WePY 使用方式
+wepy.connectSocket('xxxx').then((d) => console.log(d),(d) => console.log('rejected')).catch(error => console.log(error));
+```
