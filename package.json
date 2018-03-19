@@ -43,6 +43,7 @@
     "gulp-plumber": "^1.1.0",
     "gulp-util": "^3.0.7",
     "gulp-watch": "^4.3.11",
+    "immutable": "^4.0.0-rc.9",
     "istanbul": "^0.4.5",
     "jsonlint": "^1.6.2",
     "lerna": "^2.8.0",
