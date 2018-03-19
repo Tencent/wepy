@@ -1,13 +1,13 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
- 
+var Immutable = require('immutable')
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
 
@@ -22,8 +22,19 @@ describe('index.js', () => {
     it('wepy.$isDeepEqual', () => {
         let a = {a:{b:{c:{d:1}}}};
         let b = {a:{b:{c:{d:2}}}};
+        let a$ = Immutable.fromJS(a);
+        let a1$ = Immutable.fromJS(a);
+        let a2$ = a$.setIn(['a', 'b', 'c', 'd'], 2222)
+
         assert.strictEqual(wepy.$isDeepEqual(a, b), false);
 
+        assert.equal(wepy.$isDeepEqual(a, a$), true, 'compare with a immutable variable that has same values');
+
+        assert.equal(wepy.$isDeepEqual(b, a$), false, 'compare with a immutable variable that has different values');
+
+        assert.equal(wepy.$isDeepEqual(a$, a1$), true, 'compare two immutable variable that has same values');
+
+        assert.equal(wepy.$isDeepEqual(a1$, a2$), false, 'compare two immutable variable that has different values');
 
         let c = {a:{b:[1,2,3,{e:[12,3,{a:'1'}]}]}};
         let d = {a:{b:[1,2,3,{e:[12,3,{a:'1'}]}]}};
@@ -60,11 +71,14 @@ describe('index.js', () => {
         assert.strictEqual(wepy.$isDeepEqual(function () {return this}, function () {return this}), false, 'compare function');
 
         assert.strictEqual(wepy.$isDeepEqual(new function () {return this}, new function () {return this}), false, 'compare new instance');
-
     });
     it('wepy.$isEqual', () => {
         let a = {a:{b:[1,2,3,{e:[12,3,{a:'1'}]}]}};
         let b = {a:{b:[1,2,3,{e:[12,3,{a:'1'}]}]}};
+        let a$ = Immutable.fromJS(a);
+        let a1$ = Immutable.fromJS(a);
+        let a2$ = a$.setIn(['a', 'b', 0], 2);
+
         assert.equal(wepy.$isEqual(a, b), true, 'wepy.$isEqual({a:{b:[1,2,3,{e:[12,3,{a:\'1\'}]}]}}, {a:{b:[1,2,3,{e:[12,3,{a:\'1\'}]}]}})');
 
 
@@ -82,6 +96,12 @@ describe('index.js', () => {
         assert.equal(wepy.$isEqual([1], 1), false, 'wepy.$isEqual([1], 1)');
 
         assert.equal(wepy.$isEqual('a', 'a'), true, 'wepy.$isEqual(\'a\', \'a\')');
+
+        assert.equal(wepy.$isEqual(a, a$), false, 'compare with a immutable variable that has same values');
+
+        assert.equal(wepy.$isEqual(a$, a1$), true, 'compare two immutable variable that has same values');
+
+        assert.equal(wepy.$isEqual(a$, a2$), false, 'compare two immutable variable that has different values');
 
     });
     it('wepy.$has', () => {

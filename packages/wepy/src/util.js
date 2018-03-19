@@ -1,27 +1,27 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
 function isImmutable (maybeImmutable) {
-	// https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
-	if (!maybeImmutable || typeof maybeImmutable !== 'object') {
-		return false;
-	}
+    // https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
+    if (!maybeImmutable || typeof maybeImmutable !== 'object') {
+        return false;
+    }
 
 	const IMMUTABLE_KEYS = [
-		'@@__IMMUTABLE_ITERABLE__@@',
-		'@@__IMMUTABLE_KEYED__@@',
-		'@@__IMMUTABLE_INDEXED__@@',
-		'@@__IMMUTABLE_ORDERED__@@',
-		'@@__IMMUTABLE_RECORD__@@'
-	]
+	    '@@__IMMUTABLE_ITERABLE__@@',
+        '@@__IMMUTABLE_KEYED__@@',
+        '@@__IMMUTABLE_INDEXED__@@',
+        '@@__IMMUTABLE_ORDERED__@@',
+        '@@__IMMUTABLE_RECORD__@@'
+    ]
 
-	return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
+    return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
 }
 
 export default {
@@ -30,7 +30,9 @@ export default {
     },
 
     $isEqual (a, b, aStack, bStack) {
-        if (isImmutable(a) || isImmutable(b)) return a === b
+        if (isImmutable(a)) return a.equals(b)
+        if (isImmutable(b)) return b.equals(a)
+
         // Identical objects are equal. `0 === -0`, but they aren't identical.
         // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
         if (a === b) return a !== 0 || 1 / a === 1 / b;
@@ -45,7 +47,9 @@ export default {
     },
 
     $isDeepEqual (a, b, aStack, bStack) {
-        if (isImmutable(a) || isImmutable(b)) return a === b
+        if (isImmutable(a)) a = a.toJS()
+
+        if (isImmutable(b)) b = b.toJS()
 
         let self = this;
         // Compare `[[Class]]` names.
@@ -309,7 +313,7 @@ export default {
        return rst;
     },
 
-	isImmutable,
+    isImmutable,
 
     /**
     * Hyphenate a camelCase string.
