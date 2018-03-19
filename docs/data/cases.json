@@ -250,13 +250,6 @@
             "qrcode": "https://raw.githubusercontent.com/davylaker/wepy-wechat-demo/697292c4767dd08e5f50ada95e295d2c37ac05c2/quntuodan.jpg",
             "company": ""
         }, {
-            "name": "给你的 iPhone X 换个发型",
-            "email": "",
-            "link": "https://bangs.baran.wang/",
-            "opensource": "",
-            "qrcode": "https://img.bangs.baran.wang/img/qrcode_wechat_app.jpg",
-            "company": ""
-        }, {
             "name": "素洁商城",
             "email": "490844594@qq.com",
             "opensource": "https://github.com/dyq086/wxYuHanStore",
