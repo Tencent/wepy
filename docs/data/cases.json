@@ -319,6 +319,13 @@
             "opensource": "",
             "qrcode": "http://app.duowan.com/s/gh_94d63b43f057_344.jpg",
             "company": "广州玩盒科技有限公司"
+        },{
+            "name": "HiPlusBest",
+            "email": "belinchung@gmail.com",
+            "link": "https://plus.hiliaox.com",
+            "opensource": "https://github.com/BelinChung/weapp-hiapp",
+            "qrcode": "https://plus.hiliaox.com/static/image/weapp_qrcode.jpg",
+            "company": "肇庆市逆风电子商务有限公司"
         }
     ]
 }
