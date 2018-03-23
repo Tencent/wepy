@@ -618,6 +618,58 @@ const utils = {
             ID_CACHE[filepath] = '_' + hash(filepath).slice(1, 8);
         }
         return ID_CACHE[filepath];
+    },
+    checkComment(code, offset) {
+        // check if it is a comment
+        let starFound = false;
+        while (offset >= 0) {
+            const char = code[offset];
+            switch (char) {
+                case '*':
+                    starFound = true;
+                    offset--;
+                    break;
+                case '\t':
+                case ' ':
+                    offset--;
+                    break;
+                case '\r':
+                case '\n':
+                    if (!starFound)
+                        offset = -1;
+                    else
+                        offset--;
+                    break;
+                case '/':
+                    if ((code[offset - 1] === '/') || starFound) {
+                        // check if it's in a string
+                        const searchRegexp = /`|'|"|`/g;
+                        let single = false;
+                        let regexp = searchRegexp;
+                        let lastIndex = 0;
+                        while(true) {
+                            const res = regexp.exec(code);
+                            lastIndex = regexp.lastIndex;
+                            if (res && (lastIndex <= offset)) {
+                                single = !single;
+                                if (single) {
+                                    regexp = new RegExp(res, 'g');
+                                } else {
+                                    regexp = searchRegexp;
+                                }
+                                regexp.lastIndex = lastIndex;
+                            } else {
+                                break;
+                            }
+                        }
+                        return !single;
+                    }
+                default:
+                    starFound = false;
+                    offset--;
+            }
+        }
+        return false;
     }
 }
 export default utils

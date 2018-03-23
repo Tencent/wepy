@@ -30,4 +30,47 @@ describe('util.js', () => {
             assert.strictEqual(util.attrReplace(capture), expect)
         });
     })
+
+    describe('checkComment', () => {
+        it('/* comment', () => {
+
+            const code = '/** require("foo") */';
+            const expect = true;
+
+            assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+        });
+
+        it('/* comment with enter', () => {
+
+            const code = '/** foo\n * require("bar")\n */';
+            const expect = true;
+
+            assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+        });
+
+        it('// comment', () => {
+
+            const code = '// require("foo")';
+            const expect = true;
+
+            assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+        });
+        it('no comment', () => {
+
+            const code = 'require("foo")';
+            const expect = false;
+
+            assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+        });
+        it('comment in string', () => {
+
+            const codes = ['"// require("foo")"', '"/* require("foo") */"'];
+            const expect = false;
+
+            codes.forEach((code) => {
+                assert.strictEqual(util.checkComment(code, code.length - 1), expect)
+            });
+        });
+    });
+
 });
