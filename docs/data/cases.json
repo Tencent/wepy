@@ -319,6 +319,13 @@
             "opensource": "",
             "qrcode": "",
             "company": "中国平安财产保险股份有限公司"
+        },{
+            "name": "HiPlusBest",
+            "email": "belinchung@gmail.com",
+            "link": "https://plus.hiliaox.com",
+            "opensource": "https://github.com/BelinChung/weapp-hiapp",
+            "qrcode": "https://plus.hiliaox.com/static/image/weapp_qrcode.jpg",
+            "company": "肇庆市逆风电子商务有限公司"
         }
     ]
 }
