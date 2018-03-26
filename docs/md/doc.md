@@ -613,7 +613,7 @@ export default class Com extends wepy.component {
 
 ### 实例
 
-通过前文的介绍可知，在 WePY 中，小程序被分为三个实例：小程序实例`App`、页面实例`Page`、组件实例`Component`。其中`Page`实例继承自`Component`。各自的声明方式如下：
+通过前文的介绍可知，在 WePY 中，小程序被分为三个实例：小程序实例`App`、页面实例`Page`、组件实例`Component`。其中`Page`实例继承自`page`。各自的声明方式如下：
 
 ```javascript
 import wepy from 'wepy';
