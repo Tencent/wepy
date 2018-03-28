@@ -36,4 +36,5 @@ module.exports = {
 问题相关：[Github](https://github.com/webpack-contrib/css-loader/pull/472)
 
 ## Contributor
+
 [shoyuf](mailto:shoyuf@shoyuf.top)
