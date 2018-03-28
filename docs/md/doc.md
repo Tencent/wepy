@@ -423,6 +423,13 @@ module.exports = {
         },
         /*sass: {
             'outputStyle': 'compressed'
+        },
+        postcss: {
+            plugins: [
+                cssnext({
+                    browsers:['iOS 9', 'Android 4.4']
+                })
+            ]
         },*/
         babel: {
             'presets': [
@@ -471,13 +478,15 @@ if (prod) {
 
 **wpyExt：** 缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
-**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`、`wepy-compiler-babel`、`wepy-compiler-pug`，其他compiler持续开发中......
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`， `wepy-compiler-postcss`，`wepy-compiler-sass`、`wepy-compiler-babel`、`wepy-compiler-pug`，其他compiler持续开发中......
 
 对应各compiler请参考各自文档：
 
 > **sass：** sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 
 > **less：** less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+
+> **postcss：** postcss编译配置，参见<a href="http://www.css88.com/archives/7317" target="_blank">这里</a>。
 
 > **stylus：** stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 
@@ -527,7 +536,7 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`、`less`、`scss`、`stylus` |
+| style    | `css`   | `css`、`less`、`scss`、`stylus`、`postcss` |
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
 | script   | `babel` | `babel`、`TypeScript`         |
 
