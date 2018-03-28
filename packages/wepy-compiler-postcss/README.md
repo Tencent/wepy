@@ -32,7 +32,8 @@ module.exports = {
 
 ## 已知Bug
 
-使用`cssnano`插件压缩css时，由于其依赖`macaddress`存在全局变量泄露问题，将导致无法完成编译过程。
+使用`cssnano`插件压缩css时，由于其依赖`macaddress`存在全局变量泄露问题，将导致无法完成编译过程。
 问题相关：[Github](https://github.com/webpack-contrib/css-loader/pull/472)
 
-如果你有相关解决办法请联系我 shoyuf@shoyuf.top
+## Contributor
+[shoyuf](mailto:shoyuf@shoyuf.top)
