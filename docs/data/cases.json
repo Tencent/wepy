@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "表情演员",
+            "email": "medivhzhan@gmail.com",
+            "link": "",
+            "opensource": "https://github.com/medivhzhan/emotion-weapp",
+            "qrcode": "https://raw.githubusercontent.com/medivhzhan/emotion-weapp/master/code.jpg",
+            "company": ""
+        },
+        {
             "name": "时光倒数日",
             "email": "days_matter@126.com",
             "link": "",
