@@ -21,7 +21,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 * 支持引入NPM包
 * 支持[Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
 * 支持ES2015+特性，如[Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-* 支持多种编译器，Less/Sass/Stylus、Babel/Typescript、Pug
+* 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
 * 支持多种插件处理，文件压缩，图片压缩，内容替换等
 * 支持 Sourcemap，ESLint等
 * 小程序细节优化，如请求列队，事件优化等
