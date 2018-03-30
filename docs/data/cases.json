@@ -334,6 +334,13 @@
             "opensource": "https://github.com/BelinChung/weapp-hiapp",
             "qrcode": "https://plus.hiliaox.com/static/image/weapp_qrcode.jpg",
             "company": "肇庆市逆风电子商务有限公司"
-        }
+        },{
+            "name": "糖果街",
+            "email": "hi@togojoy.com",
+            "link": "https://www.togojoy.com/",
+            "opensource": "",
+            "qrcode": "https://www.togojoy.com/upload/minicode.jpg",
+            "company": "广州心花路放互联网科技有限公司"
+         }
     ]
 }
