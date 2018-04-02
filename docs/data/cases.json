@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "表情演员",
+            "email": "medivhzhan@gmail.com",
+            "link": "",
+            "opensource": "https://github.com/medivhzhan/emotion-weapp",
+            "qrcode": "https://raw.githubusercontent.com/medivhzhan/emotion-weapp/master/code.jpg",
+            "company": ""
+        },
+        {
             "name": "时光倒数日",
             "email": "days_matter@126.com",
             "link": "",
@@ -319,6 +327,27 @@
             "opensource": "",
             "qrcode": "http://app.duowan.com/s/gh_94d63b43f057_344.jpg",
             "company": "广州玩盒科技有限公司"
-        }
+        },{
+            "name": "爽快赔",
+            "email": "PA13837216640@163.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "",
+            "company": "中国平安财产保险股份有限公司"
+        },{
+            "name": "HiPlusBest",
+            "email": "belinchung@gmail.com",
+            "link": "https://plus.hiliaox.com",
+            "opensource": "https://github.com/BelinChung/weapp-hiapp",
+            "qrcode": "https://plus.hiliaox.com/static/image/weapp_qrcode.jpg",
+            "company": "肇庆市逆风电子商务有限公司"
+        },{
+            "name": "糖果街",
+            "email": "hi@togojoy.com",
+            "link": "https://www.togojoy.com/",
+            "opensource": "",
+            "qrcode": "https://www.togojoy.com/upload/minicode.jpg",
+            "company": "广州心花路放互联网科技有限公司"
+         }
     ]
 }

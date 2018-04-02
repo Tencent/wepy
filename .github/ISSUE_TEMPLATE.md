@@ -71,5 +71,5 @@ DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISS
 ## Relevant Code / Logs
 
   ```
-  // TODO(you): code or logs ohere to reproduce the problem
+  // TODO(you): code or logs here to reproduce the problem
   ```

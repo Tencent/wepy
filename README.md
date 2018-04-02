@@ -21,7 +21,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
 * 支持引入NPM包
 * 支持[Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
 * 支持ES2015+特性，如[Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-* 支持多种编译器，Less/Sass/Styus、Babel/Typescript、Pug
+* 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
 * 支持多种插件处理，文件压缩，图片压缩，内容替换等
 * 支持 Sourcemap，ESLint等
 * 小程序细节优化，如请求列队，事件优化等
@@ -61,7 +61,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
             console.log('Hello World');
         }
         sleep(time) {
-            return new Promise((resolve, reject) => setTimeout(() => resolve, time * 1000));
+            return new Promise((resolve, reject) => setTimeout(resolve, time * 1000));
         }
     }
 </script>
@@ -80,7 +80,7 @@ npm install wepy-cli -g
 #### 生成开发示例
 
 ```console
-wepy new myproject
+wepy init standard myproject
 ```
 
 #### 开发实时编译
@@ -89,13 +89,9 @@ wepy new myproject
 wepy build --watch
 ```
 
-#### 开发者工具使用
+#### 开发者工具导入项目
 
-1. 使用`微信开发者工具`新建项目，本地开发选择`dist`目录。
-2. `微信开发者工具`-->项目-->关闭ES6转ES5。<font style="color:red">重要：漏掉此项会运行报错。</font>
-3. `微信开发者工具`-->项目-->关闭上传代码时样式自动补全 <font style="color:red">重要：某些情况下漏掉此项会也会运行报错。</font>
-4. `微信开发者工具`-->项目-->关闭代码压缩上传 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。[#270](https://github.com/wepyjs/wepy/issues/270)</font>
-5. 项目根目录运行`wepy build --watch`，开启实时编译。
+使用`微信开发者工具`新建项目，本地开发选择项目根目录，会自动导入项目配置。
 
 ### 哪些小程序是用 WePY 开发的
 
@@ -136,6 +132,8 @@ GitHub掘金版、
 七弦琴小助手、
 七弦琴大数据、
 爽到家小程序、
+[应用全球排行](https://github.com/szpnygo/wepy_ios_top)[（开源）](https://github.com/szpnygo/wepy_ios_top)、
+[we川大](https://github.com/mohuishou/scuplus-wechat)[（开源）](https://github.com/mohuishou/scuplus-wechat)、
 ...
 
 ### 交流群

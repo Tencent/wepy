@@ -1,3 +1,25 @@
+## 1.7.2 (comming)
+* `A` 添加了对小程序原生组件的支持。
+
+```
+npm i wepy-cli@1.7.2-alpha1 -g
+npm i wepy@1.7.2-alpha1 --save
+```
+
+* `F` 修复了使用`less/sass/stylus`去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
+```
+npm i wepy-cli@1.7.2-alpha2 -g
+npm i wepy-compiler-less@1.3.12 --save-dev
+npm i wepy-compiler-sass@1.3.12 --save-dev
+npm i wepy-compiler-stylus@1.3.12 --save-dev
+```
+
+
+## 1.7.1 (2018-02-28)
+* `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
+* `F` 修复了私有npm组件引入报错的bug。[PR 947](https://github.com/Tencent/wepy/pull/947)
+* `F` 修复了onPageScroll会导致页面卡死的bug。[PR 985](https://github.com/Tencent/wepy/pull/985)
+
 ## 1.7.0 (2018-02-06)
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)

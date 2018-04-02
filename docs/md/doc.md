@@ -12,7 +12,7 @@ WePY的安装或更新都通过`npm`进行。
 npm install wepy-cli -g
 ```
 
-**在开发目录中生成Demo开发项目**
+**在开发目录中生成Demo开发项目, 1.7.0之后版本请移步[wepy-cli文档](./doc.cli.md)**
 
 ```bash
 wepy new myproject
@@ -40,7 +40,7 @@ wepy build --watch
 ### WePY项目的目录结构
 
 ```
-├── dist                   微信开发者工具指定的目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
+├── dist                   小程序运行代码目录（该目录由WePY的build指令自动编译生成，请不要直接修改该目录下的文件）
 ├── node_modules           
 ├── src                    代码编写的目录（该目录为使用WePY后的开发目录）
 |   ├── components         WePY组件目录（组件不属于完整页面，仅供完整页面或其他组件引用）
@@ -59,17 +59,38 @@ wepy build --watch
 
 2. 开发建议使用第三方成熟IDE或编辑器(具体请参看后文的`代码高亮`部分)，`微信开发者工具`仅用于实时预览和调试。
 
-### 重要提醒
+### 添加项目
 
-1. 使用`微信开发者工具`-->`添加项目`，`项目目录`请选择`dist`目录。
+`1.7.0` 之后的版本`init`新生成的代码包会在根目录包含`project.config.json`文件，之前生成的代码包可能不存在`project.config.json`文件。
+检查根目录是否存在该文件。
 
-2. `微信开发者工具`-->`项目`-->`关闭ES6转ES5`。 <font style="color:red">重要：漏掉此项会运行报错。</font>
+如果存在，使用`微信开发者工具`-->`添加项目`，`项目目录`请选择项目根目录即可根据配置完成项目信息自动配置。
 
-3. `微信开发者工具`-->`项目`-->`关闭上传代码时样式自动补全`。 <font style="color:red">重要：某些情况下漏掉此项也会运行报错。</font>
+如果不存在，建议手动创建该文件后再添加项目。`project.config.json`文件内容如下：
 
-4. `微信开发者工具`-->`项目`-->`关闭代码压缩上传`。 <font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
+```
+{
+  "description": "project description",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram",
+  "appid": "touristappid",
+  "projectname": "Project name",
+  "miniprogramRoot": "./dist"
+}
+```
 
-5. 本地项目根目录运行`wepy build --watch`，开启实时编译。（注：如果同时在`微信开发者工具`-->`设置`-->`编辑器`中勾选了`文件保存时自动编译小程序`，将可以实时预览，非常方便。）
+`es6`: 对应`关闭ES6转ES5`选项，关闭。 <font style="color:red">重要：未关闭会运行报错。</font>
+
+`postcss`: 对应`关闭上传代码时样式自动补全`选项，关闭。 <font style="color:red">重要：某些情况下漏掉此项也会运行报错。</font>
+
+`minified`: 对应`关闭代码压缩上传`选项，关闭。<font style="color:red">重要：开启后，会导致真机computed, props.sync 等等属性失效。</font>（注：压缩功能可使用WePY提供的build指令代替，详见后文相关介绍以及Demo项目根目录中的`wepy.config.js`和`package.json`文件。）
+
+`urlCheck`: 对应`不检查安全域名`选项，开启。 如果已配置好安全域名则建议关闭。
 
 ### 代码高亮
 
@@ -393,7 +414,7 @@ async onLoad() {
 let prod = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    'output': 'dist',
+    'target': 'dist',
     'source': 'src',
     'wpyExt': '.wpy',
     'compilers': {
@@ -402,6 +423,13 @@ module.exports = {
         },
         /*sass: {
             'outputStyle': 'compressed'
+        },
+        postcss: {
+            plugins: [
+                cssnext({
+                    browsers:['iOS 9', 'Android 4.4']
+                })
+            ]
         },*/
         babel: {
             'presets': [
@@ -450,13 +478,15 @@ if (prod) {
 
 **wpyExt：** 缺省值为'.wpy'，IDE默认情况下不会对此文件类型进行高亮处理，这种情况下，除了按照前文`代码高亮`部分的介绍进行设置之外，还可以直接将相关文件的后缀名由`.wpy`修改为`.vue`(因为与Vue的高亮规则一样)，然后将此选项修改为`.vue`，也能解决部分IDE中代码高亮的问题。
 
-**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`，`wepy-compiler-sass`、`wepy-compiler-babel`、`wepy-compiler-pug`，其他compiler持续开发中......
+**compilers：** compilers为`1.3.1`版本之后的功能，如果需要使用其它语法，请先配置`compilers`，然后再安装相应的compilers。目前支持`wepy-compiler-less`， `wepy-compiler-postcss`，`wepy-compiler-sass`、`wepy-compiler-babel`、`wepy-compiler-pug`，其他compiler持续开发中......
 
 对应各compiler请参考各自文档：
 
 > **sass：** sass编译配置，参见<a href="https://github.com/sass/node-sass" target="_blank">这里</a>。
 
 > **less：** less编译配置，参见<a href="http://lesscss.org/#using-less-usage-in-code" target="_blank">这里</a>。
+
+> **postcss：** postcss编译配置，参见<a href="http://www.css88.com/archives/7317" target="_blank">这里</a>。
 
 > **stylus：** stylus编译配置，参见<a href="http://www.zhangxinxu.com/jq/stylus/js.php" target="_blank">这里</a>。
 
@@ -506,7 +536,7 @@ if (prod) {
 
 | 标签       | lang默认值 | lang支持值                      |
 | -------- | ------- | ---------------------------- |
-| style    | `css`   | `css`、`less`、`scss`、`stylus` |
+| style    | `css`   | `css`、`less`、`scss`、`stylus`、`postcss` |
 | template | `wxml`  | `wxml`、`xml`、`pug(原jade)`    |
 | script   | `babel` | `babel`、`TypeScript`         |
 
@@ -1190,7 +1220,7 @@ WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范
 
 ### Mixin 混合
 
-混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分分为两种：
+混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分为两种：
 
 * 默认式混合
 * 兼容式混合
@@ -1512,13 +1542,13 @@ var item = require('item.js')
 
 <!-- index.wpy -->
 <template>
-    <component id="item"></component>
+    <com></com>
 </template>
 <script>
     import wepy from 'wepy';
     import Item from '../components/item';
     export default class Index extends wepy.page {
-        components = { Item }
+        components = { com: Item }
     }
 </script>
 ```

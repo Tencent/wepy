@@ -1,7 +1,20 @@
 # Contributing
 
-
 欢迎任意形式的贡献。
+
+## Acknowledgements
+
+非常感谢以下几位贡献者对于 WePY 的做出的贡献：
+
+* dlhandsome <awsomeduan@gmail.com>
+* dolymood <dolymood@gmail.com>
+* baisheng <baisheng@gmail.com>
+
+其中特别致谢 dlhandsome 提交的38个 commits, 对 WePY 做出了1,350增加和362处删减(截止02/28/18日)。
+
+WePy 持续招募贡献者，即使是在 Issues 中回答问题，或者做一些简单的 bugfix ，也会给 WePY 带来很大的帮助。
+
+Wepy已开发近一年，在此感谢所有开发者对于 WePY 的喜欢和支持，希望你能够成为 WePY 的核心贡献者，加入 WePY ，共同打造一个更棒的小程序开发框架！🍾🎉
 
 ## Issues
 

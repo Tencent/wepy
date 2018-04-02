@@ -3,6 +3,36 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E6%8D%90%E8%B5%A0-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "donates": [{
+        "date": "2018/03/19",
+        "name": "幕僚",
+        "amount": "6.66",
+        "desc": "正在使用该框架，感觉比原生的小程序好用,有问题会及时反馈"
+    },{
+        "date": "2018/03/15",
+        "name": "热情用户",
+        "amount": "6.66",
+        "desc": "期待2.0"
+    },{
+        "date": "2018/03/12",
+        "name": "热情用户",
+        "amount": "6.66",
+        "desc": ""
+    },{
+        "date": "2018/03/12",
+        "name": "热情用户",
+        "amount": "8.88",
+        "desc": ""
+    },{
+        "date": "2018/03/09",
+        "name": "热情用户",
+        "amount": "8.88",
+        "desc": ""
+    },{
+        "date": "2018/03/01",
+        "name": "热情用户",
+        "amount": "6.66",
+        "desc": "希望2.0尽快出来"
+    },{
         "date": "2018/02/12",
         "name": "JerryQu",
         "amount": "88.88",
