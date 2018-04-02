@@ -14,6 +14,7 @@ const path = require('path');
 exports = module.exports =  {
 
   parse (rst) {
+    debugger;
     return Promise.resolve(rst);
   }
 

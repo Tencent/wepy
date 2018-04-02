@@ -35,6 +35,22 @@ function isNative (Ctor) {
 }
 
 /**
+ * String type check
+ */
+var isStr = function (v) { return typeof v === 'string'; };
+/**
+ * Array type check
+ */
+var isArr = Array.isArray;
+/**
+ * undefined type check
+ */
+var isUndef = function (v) { return v === undefined; };
+/**
+ * Function type check
+ */
+var isFunc = function (v) { return typeof v === 'function'; };
+/**
  * Quick object check - this is primarily used to tell
  * Objects from primitive values when we know the value
  * is a JSON-compliant type.
@@ -42,6 +58,8 @@ function isNative (Ctor) {
 function isObject (obj) {
   return obj !== null && typeof obj === 'object'
 }
+
+var isObj = isObject;
 /**
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
@@ -1197,7 +1215,91 @@ function app (options) {
   return App(appConfig);
 }
 
+var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
+
+function initProps (vm, compConfig, props) {
+  var newProps = {};
+  if (isStr(props)) {
+    newProps = [props];
+  }
+  if (isArr(props)) {
+    props.forEach(function (prop) {
+      newProps[prop] = {
+        type: null
+      };
+    });
+  } else if (isObj(props)) {
+    for (var k in props) {
+      var prop = props[k];
+      var newProp = {};
+
+      // props.type
+      if (isUndef(prop.type)){
+        newProp.type = null;
+      } else if (isArr(prop.type)) {
+        newProp.type = null;
+        console.warn(("Type property of props \"" + k + "\" is invalid. Array is not allowed, please specify the type."));
+      } else if (AllowedTypes.indexOf(prop.type) === -1) {
+        newProp.type = null;
+        console.warn(("Type property of props \"" + k + "\" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component"));
+      } else {
+        newProp.type = prop.type;
+      }
+
+      // props.default
+      if (prop.default) {
+        if (isFunc(prop.default)) {
+          newProp.value = prop.default.call(vm);
+        } else {
+          newProp.value = prop.default;
+        }
+      }
+      // TODO
+      // props.validator
+      // props.required
+
+      newProps[k] = newProp;
+    }
+  }
+
+  compConfig.properties = newProps;
+}
+
+var WepyComponent = (function (Base$$1) {
+  function WepyComponent () {
+    Base$$1.apply(this, arguments);
+  }
+
+  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
+  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyComponent.prototype.constructor = WepyComponent;
+
+  WepyComponent.prototype.$init = function $init (option) {
+    var compConfig = {};
+
+    if (option.properties) {
+      compConfig.properties = option.properties;
+      if (option.props) {
+        console.warn("props will be ignore, if properties is set");
+      }
+    } else if (option.props) {
+      initProps(this, compConfig, option.props);
+    }
+    return option;
+  };
+
+  return WepyComponent;
+}(Base));
+
+function component (option) {
+  var vm = new WepyComponent();
+
+  var compConfig = vm.$init(option);
+  return Component(compConfig);
+}
+
 var wepy = {
+  component: component,
   page: page,
   app: app,
   global: $global

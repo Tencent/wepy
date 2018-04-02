@@ -60,9 +60,12 @@ exports = module.exports =  {
         }
         return Promise.all(styleTask);
       }).then(parsed => {
-        sfc.style && (sfc.style.parsed = parsed);
-        return sfc;
+        parsed.forEach((parsed, i) => {
+          sfc.styles[i].parsed = parsed;
+        });
+        return context;
       }).catch(e => {
+        console.error(e);
         debugger;
       });
     } else {

@@ -1,4 +1,20 @@
 /**
+ * String type check
+ */
+export const isStr = (v) => typeof v === 'string';
+/**
+ * Array type check
+ */
+export const isArr = Array.isArray;
+/**
+ * undefined type check
+ */
+export const isUndef = (v) => v === undefined;
+/**
+ * Function type check
+ */
+export const isFunc = (v) => typeof v === 'function';
+/**
  * Quick object check - this is primarily used to tell
  * Objects from primitive values when we know the value
  * is a JSON-compliant type.
@@ -6,6 +22,8 @@
 export function isObject (obj) {
   return obj !== null && typeof obj === 'object'
 }
+
+export const isObj = isObject;
 /**
  * Strict object type check. Only returns true
  * for plain JavaScript objects.

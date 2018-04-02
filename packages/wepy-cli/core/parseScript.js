@@ -37,7 +37,6 @@ const POSSIBLE_AST_OPTIONS = [{
 exports = module.exports =  {
 
   parse (compiled, ctx) {
-    console.log(path.relative(this.compilation.context, ctx.file));
     let npmModules = this.compilation.npm;
     if (ctx.npm) {
       if (npmModules.pending(ctx.file)) {
