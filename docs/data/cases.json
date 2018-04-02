@@ -321,6 +321,13 @@
             "qrcode": "https://img1.dxycdn.com/2018/0227/019/3263532083175598806-2.jpg",
             "company": "观澜网络（杭州）有限公司（丁香园）"
         },{
+            "name": "微剧电影",
+            "email": "junqiang@ouj.com",
+            "link": "http://app.duowan.com/wjy/",
+            "opensource": "",
+            "qrcode": "http://app.duowan.com/s/gh_94d63b43f057_344.jpg",
+            "company": "广州玩盒科技有限公司"
+        },{
             "name": "爽快赔",
             "email": "PA13837216640@163.com",
             "link": "",
@@ -341,6 +348,13 @@
             "opensource": "",
             "qrcode": "https://www.togojoy.com/upload/minicode.jpg",
             "company": "广州心花路放互联网科技有限公司"
+         },{
+            "name": "附近生鲜水果",
+            "email": "",
+            "link": "",
+            "opensource": "",
+            "qrcode": "",
+            "company": ""
          }
     ]
 }
