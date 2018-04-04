@@ -341,6 +341,13 @@
             "opensource": "",
             "qrcode": "https://www.togojoy.com/upload/minicode.jpg",
             "company": "广州心花路放互联网科技有限公司"
-         }
+         }, {
+            "name": "附近生鲜水果",
+            "email": "",
+            "link": "",
+            "opensource": "",
+            "qrcode": "",
+            "company": ""
+       }
     ]
 }
