@@ -68,7 +68,7 @@ const Props = {
         }
         return valid;
     },
-    getValue (props, key, value) {
+    getValue (props, key, value, com) {
         var rst;
         if (value !== undefined && this.valid(props, key, value)) {
             rst = value;
@@ -76,7 +76,7 @@ const Props = {
             rst = props[key].default();
         } else
             rst = props[key].default;
-        return props[key].coerce ? props[key].coerce(rst) : rst;
+        return props[key].coerce ? props[key].coerce.call(com, rst) : rst;
     }
 };
 
@@ -176,7 +176,7 @@ export default class {
                     }
                 }
                 if (!this.data[key] && !props[key].repeat) {
-                    val = Props.getValue(props, key, val);
+                    val = Props.getValue(props, key, val, this);
                     this.data[key] = val;
                 }
             }
