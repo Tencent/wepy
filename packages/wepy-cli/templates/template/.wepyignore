@@ -1,4 +1,4 @@
 node_modules
 dist
-.DB_store
+.DS_Store
 *.wpy___jb_tmp___
