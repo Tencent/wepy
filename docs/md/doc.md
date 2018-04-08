@@ -1372,7 +1372,9 @@ import wepy from 'wepy';
 
 export default class extends wepy.app {
     constructor () {
-        //拦截request请求
+        // this is not allowed before super()
+        super();
+        // 拦截request请求
         this.intercept('request', {
             // 发出请求时的回调函数
             config (p) {
