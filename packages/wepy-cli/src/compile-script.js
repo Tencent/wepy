@@ -142,7 +142,7 @@ export default {
             }else if (util.isFile(source)) {
                 ext = '';
             } else {
-                throw ('找不到文件: ' + source);
+                throw `Missing files: ${resolved} in ${path.join(opath.dir, opath.base)}`;
             }
             source += ext;
             target += ext;
