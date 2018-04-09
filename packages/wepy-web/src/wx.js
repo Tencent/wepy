@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -11,7 +11,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import {resolveQuery} from './helper/query';
-import {browser, system} from './helper/device';
+import {system} from './helper/device';
 
 const callback = (type, o, name, data) => {
     if (typeof o[type] === 'function') {
@@ -37,14 +37,18 @@ wx.login = wx.login || function login (o) {
 /*** Storage ***/
 wx.getStorageSync = wx.getStorageSync || function getStorageSync (v) {
     let rst = window.localStorage.getItem(v);
+    if (rst === null)
+      return '';
     try {
-            rst = JSON.parse(rst);
+        rst = JSON.parse(rst);
     } catch (e) {
     }
     return rst;
 };
 wx.getStorage = wx.getStorage || function getStorage (o) {
     let rst = wx.getStorageSync(o.key);
+    if (rst === null)
+      rst = '';
     callback('success', o, 'getStorage', rst);
     callback('complete', o, 'getStorage', rst);
 };
@@ -126,7 +130,7 @@ wx.getSystemInfoSync = wx.getSystemInfoSync || function getSystemInfoSync () {
     return {
         SDKVersion: '0.0.0',
         language: '-',
-        model: browser(),
+        model: system().replace('mobile_', '').replace('pad_', ''),
         pixelRatio: 0,
         platform: system(),
         screenHeight: window.screen.height,
@@ -279,7 +283,7 @@ if (typeof window !== 'undefined') {
     window.getCurrentPages = () => {
         if (wx._currentPage)
             return [wx._currentPage];
-        else 
+        else
             return [wx._currentPages[0]];
     };
 }

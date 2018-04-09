@@ -70,7 +70,3 @@ export function mobile () {
     let ua = window.navigator.userAgent.toLowerCase();
     return MOBILE_DEVICE.some(v => ua.indexOf(v) !== -1);
 };
-
-export function browser () {
-
-};
