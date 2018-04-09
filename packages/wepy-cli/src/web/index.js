@@ -231,7 +231,7 @@ export default {
 
                 code += '/***** module ' + i + ' start *****/\n';
                 code += '/***** ' + p + ' *****/\n';
-                code += 'function(module, exports, __wepy_require) {'
+                code += 'function(module, exports, __wepy_require, process, global) {'
                 if (v.type === 'script') {
                     code += v.source.script.code + '\n';
                     if (v.source.template && v.source.template.id !== undefined) {
@@ -256,6 +256,11 @@ export default {
 
 code = `
 (function(modules) { 
+   var process = {};
+   var global = window;
+   process.env = {
+    NODE_ENV: '${process.env.NODE_ENV}'
+   };
    // The module cache
    var installedModules = {};
    // The require function
@@ -270,7 +275,7 @@ code = `
            loaded: false
        };
        // Execute the module function
-       modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+       modules[moduleId].call(module.exports, module, module.exports, __webpack_require__, process, global);
        // Flag the module as loaded
        module.loaded = true;
        // Return the exports of the module

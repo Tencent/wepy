@@ -107,8 +107,10 @@ export default {
                 let p = tmp.replace(/^\s*/ig, '').replace(/\s*$/ig, '');
                 if (p && (p[0] === '"' || p[0] === '\'') && p[0] === p[p.length - 1]) {
                     p = p.substring(1, p.length - 1);
+                    rst.params.push({exp: p, type: 'string'});
+                } else {
+                    rst.params.push({exp: p, type: 'param'});
                 }
-                rst.params.push(p);
                 tmp = '';
                 continue;
             }
@@ -226,8 +228,8 @@ export default {
                             attr.value = func.name + '(';
 
                             func.params = func.params.map(p => {
-                                let exp = this.changeExp(p);
-                                return exp.indexOf('(') !== -1 ? exp : p;
+                                let exp = this.changeExp(p.exp);
+                                return exp.indexOf('(') !== -1 ? exp : (p.type === 'string' ? `'${p.exp}'` : p.exp);
                             }).concat('$event');
 
                             attr.value = `${func.name}(${func.params.join(',')})`;
