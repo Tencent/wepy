@@ -62,7 +62,8 @@ export default class {
             hideKeyboard: true,
             stopPullDownRefresh: true
         };
-        Object.keys(wx).forEach((key) => {
+        // Object.keys can not enumerate defined property
+        Object.getOwnPropertyNames(wx).forEach((key) => {
             if (!noPromiseMethods[key] && key.substr(0, 2) !== 'on' && !(/\w+Sync$/.test(key))) {
                 Object.defineProperty(native, key, {
                     get () {

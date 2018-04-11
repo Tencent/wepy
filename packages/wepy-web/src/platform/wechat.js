@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -19,7 +19,7 @@ let k;
 let callList = [];
 
 for (k in wx) {
-    if (k !== 'config' && k !== 'ready') {
+    if (typeof wx[k] === 'function' && k !== 'config' && k !== 'ready' && k.substr(-4) !== 'Sync') {
         wx[k] = function () {
             if (wx.__ready) {
                 wxbak[k].apply(wx, arguments);
@@ -46,7 +46,7 @@ wx.ready(function () {
  * fail    Function    否   接口调用失败的回调函数
  * complete    Function    否   接口调用结束的回调函数（调用成功、失败都会执行）
  * success返回参数说明：
- * 
+ *
  * 参数名 类型  说明
  * errMsg  String  调用结果
  * code    String  用户允许登录后，回调内容会带上 code（有效期五分钟），开发者需要将 code 发送到开发者服务器后台，使用code 换取 session_key api，将 code 换成 openid 和 session_key
@@ -69,7 +69,7 @@ wx.login = (options) => {
             state = options.state || 'qqchongzhi',
             type = type || 'snsapi_base';
 
-        window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + options.appId + 
+        window.location = location.protocol + '//open.weixin.qq.com/connect/oauth2/authorize?appid=' + options.appId +
             '&redirect_uri=' + encodeURIComponent(url) + '&response_type=code&scope=' + type + '&state=' + state + '#wechat_redirect';
     } else {
         wxFail('login', options, '');
@@ -79,7 +79,7 @@ wx.login = (options) => {
 /**
  * wx.requestPayment(OBJECT)
  * Object参数说明：
- * 
+ *
  * 参数  类型  必填  说明
  * timeStamp   String  是   时间戳从1970年1月1日00:00:00至今的秒数,即当前的时间
  * nonceStr    String  是   随机字符串，长度为32个字符以下。
@@ -120,7 +120,7 @@ wx.scanCode = (params) => {
 /**
  * onShareAppMessage
  * 在 Page 中定义 onShareAppMessage 函数，设置该页面的转发信息。
- * 
+ *
  * 只有定义了此事件处理函数，右上角菜单才会显示 “转发” 按钮
  * 用户点击转发按钮的时候会调用
  * 此事件需要 return 一个 Object，用于自定义转发内容
