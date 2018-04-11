@@ -202,8 +202,10 @@ export default {
                     main.addPage(wpy.path, wpy);
                 } else if (wpy.type === 'app') {
                     if (matchs) {
+                        let appConfig = JSON.stringify(config.appConfig || {});
+
                         wpy.script.code = wpy.script.code.replace(/exports\.default\s*=\s*(\w+);/i, '');
-                        wpy.script.code += `\nrequire('wepy').default.$createApp(${defaultExport}, $$WEPY_APP_PARAMS_PLACEHOLDER$$);\n`;
+                        wpy.script.code += `\nrequire('wepy').default.$createApp(${defaultExport}, $$WEPY_APP_PARAMS_PLACEHOLDER$$, ${appConfig});\n`;
                     }
                 }
             }

@@ -340,6 +340,11 @@ ${code}
 
         let singleFile = false;
 
+
+        // It's may be vue api component
+        if (typeof wpys === 'string') {
+            wpys = { path: wpys };
+        } 
         if (wpys.path) {
             if (mmap.getPending(wpys.path))
                 return Promise.resolve(0);
@@ -350,7 +355,6 @@ ${code}
             }
 
             let opath = path.parse(wpys.path);
-
 
             if (opath.ext === wpyExt || opath.ext === '.vue') {
                 let wpy = compileWpy.resolveWpy(wpys.path);
