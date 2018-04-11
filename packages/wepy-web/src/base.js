@@ -59,11 +59,17 @@ const $createComponent = (com, template) => {
     let k, vueObject = {};
 
     vueObject.template = template;
+    vueObject.computed = {};
 
     let comData = Object.assign({}, com.data);
 
     Object.getOwnPropertyNames(com.computed || {}).forEach(key => {
-        comData[key] = com.computed[key].call(com);
+      // mappedState is an redux data.
+      if (com.computed[key].name === 'mappedState') {
+          comData[key] = com.computed[key].call(com);
+      } else {
+          vueObject.computed[key] = com.computed[key];
+      }
     });
     vueObject.data = function () {
         return comData;
@@ -144,7 +150,26 @@ const $createComponent = (com, template) => {
         }
 
         if (typeof com.onLoad === 'function') {
-            com.onLoad.call(com, com.$vm.$route.query, {});
+            let preload;
+            let prefetch;
+            if (wx._previousPage) {
+                if (Object.getOwnPropertyNames(wx._previousPage.$preloadData).length) {
+                    preload = wx._previousPage.$preloadData;
+                    wx._previousPage.$preloadData = {};
+                }
+                if (Object.getOwnPropertyNames(wx._previousPage.$prefetchData).length) {
+                    prefetch = wx._previousPage.$prefetchData;
+                    wx._previousPage.$prefetchData = {};
+                }
+            }
+            let args = {};
+            if (preload) {
+                args.preload = preload;
+            }
+            if (prefetch) {
+                args.prefetch = prefetch;
+            }
+            com.onLoad.call(com, com.$vm.$route.query, args);
         }
     };
 
@@ -231,7 +256,7 @@ export default {
                 });
             }
         }
-        
+
         if (!this.$instance) {
             app.$init(this);
             this.$instance = app;
