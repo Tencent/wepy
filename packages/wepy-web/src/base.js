@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -25,7 +25,7 @@ const addStyle = (stylelist) => {
     stylelist.forEach(id => {
         css += __wepy_require(id) + '\r\n';
     });
-    
+
     let cssNode = document.createTextNode(css);
     styleElement.appendChild(cssNode);
     head.appendChild(styleElement);
@@ -59,8 +59,14 @@ const $createComponent = (com, template) => {
     let k, vueObject = {};
 
     vueObject.template = template;
+
+    let comData = Object.assign({}, com.data);
+
+    Object.getOwnPropertyNames(com.computed || {}).forEach(key => {
+        comData[key] = com.computed[key].call(com);
+    });
     vueObject.data = function () {
-        return com.data;
+        return comData;
     };
 
     vueObject.components = {};
@@ -115,7 +121,7 @@ const $createComponent = (com, template) => {
     }
 
     vueObject.props = com.props;
-    vueObject.computed = com.computed;
+    //vueObject.computed = com.computed;
     vueObject.watch = com.watch;
     vueObject.events = com.events;
 
@@ -151,13 +157,16 @@ const $createComponent = (com, template) => {
             com.onShow.call(com);
         }
     };
-
+    let definedProperties = {};
     [].concat(Object.getOwnPropertyNames(com.props || {})).
         concat(Object.getOwnPropertyNames(com.computed || {})).
         concat(Object.getOwnPropertyNames(com.data || {})).
         forEach(v => {
             v = camelize(v);
-            Object.defineProperty(com, v, { 
+            if (definedProperties[v]) {
+                throw `Cannot redefine property "${v}" in component ${com.$name}`;
+            }
+            Object.defineProperty(com, v, {
                 get: function () {
                     return com.$vm[v];
                 },
@@ -170,19 +179,16 @@ const $createComponent = (com, template) => {
 }
 
 export default {
-    $createApp (appClass, config) {
+    $createApp (appClass, config, appConfig) {
         let k, routes = [];
 
         let app = new appClass;
 
+        app.$appConfig = appConfig;
+
         this.platform = wx.__platform;
         app.$components = [];
         app.$apis = [];
-
-        if (!this.$instance) {
-            app.$init(this);
-            this.$instance = app;
-        }
 
         // Vue2
         /*for (k in config.routes) {
@@ -199,17 +205,6 @@ export default {
 
         addStyle(config.style);
 
-        
-        if (typeof app.onLaunch === 'function') {
-            app.onLaunch();
-        }
-        if (typeof app.onShow === 'function') {
-            console.warn('onShow is not implemented in web');
-        }
-        if (typeof app.onHide === 'function') {
-            console.warn('onHide is not implemented in web');
-        }
-
         // 注入组件
         for (k in config.components) {
             app.$components.push(k);
@@ -217,7 +212,7 @@ export default {
             com.name = 'wepy-' + com.name;
             Vue.component('wepy-' + k, com);
         }
-        
+
         // 注入API
         for (k in config.apis) {
             app.$apis.push(k);
@@ -237,6 +232,11 @@ export default {
             }
         }
         
+        if (!this.$instance) {
+            app.$init(this);
+            this.$instance = app;
+        }
+
         Vue.use(VueRouter);
 
         let router = new VueRouter();
@@ -262,6 +262,18 @@ export default {
         });
 
         window.$router = router;
+
+
+        // Move lifescyle event to the end
+        if (typeof app.onLaunch === 'function') {
+            app.onLaunch();
+        }
+        if (typeof app.onShow === 'function') {
+            console.warn('onShow is not implemented in web');
+        }
+        if (typeof app.onHide === 'function') {
+            console.warn('onHide is not implemented in web');
+        }
     },
     $createPage (pageClass, pagePath) {
 
@@ -281,7 +293,7 @@ export default {
         wx._currentPages.push(page);
         page.__route__ = pagePath;
         page.__wxWebviewId__ = 0;
-        
+
         return vueObject;
     },
 }
