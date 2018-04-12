@@ -174,7 +174,6 @@ const $createComponent = (com, template) => {
     };
 
     vueObject.ready = function () {
-        console.log(`${com.$name} is ready`);
         com.$wxpage = this;
         com.$vm = this;
 
