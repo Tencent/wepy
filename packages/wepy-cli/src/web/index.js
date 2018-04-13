@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -61,11 +61,11 @@ export default {
         scripts.forEach(v => {
             let script = doc.createElement('script');
             if (v.src) {
-                script.setAttribute('src', v.src);    
+                script.setAttribute('src', v.src);
             } else if (v.js) {
                 script.appendChild(doc.createTextNode(v.js));
             }
-            
+
             if (v.pos === 'body') {
                 body.appendChild(script);
             } else {
@@ -105,28 +105,43 @@ export default {
 
             let scripts = [];
 
-            if (platform === 'qq') {
-                scripts.push({
+            const DEFAULT_INJECT = {
+                qq: [{
                     pos: 'head',
                     src: '//i.gtimg.cn/channel/lib/components/adapt/adapt-3.0.js?_bid=2106&max_age=86400000'
-                });
-                scripts.push({
+                }, {
                     pos: 'head',
                     src: '//open.mobile.qq.com/sdk/qqapi.js?_bid=152'
-                });
-            } else if (platform === 'wechat') {
-                scripts.push({
+                }],
+                wechat: [{
                     pos: 'head',
                     src: '//res.wx.qq.com/open/js/jweixin-1.2.0.js'
-                });
+                }],
+                main: {
+                    pos: 'head',
+                    src: this.replaceParams(path.relative(path.parse(target).dir, webConfig.jsOutput), {platform: platform})
+                }
+            };
+            if (webConfig.injectScripts === undefined) {
+                webConfig.injectScripts = DEFAULT_INJECT;
             }
+            if (webConfig.injectScripts !== false) {
+                let pscript = webConfig.injectScripts[platform] || [];
+                if (!Array.isArray(pscript)) {
+                    pscript = [pscript];
+                }
+                scripts = scripts.concat(pscript);
 
-            scripts.push({
-                pos: 'body',
-                src: this.replaceParams(path.relative(path.parse(target).dir, webConfig.jsOutput), {platform: platform})
-            });
-            this.injectScript(node, scripts);
+                let mscript = webConfig.injectScripts.main || [];
+                if (!Array.isArray(mscript)) {
+                    mscript = [mscript];
+                }
+                scripts = scripts.concat(mscript);
 
+                if (scripts.length) {
+                    this.injectScript(node, scripts);
+                }
+            }
 
             util.output('写入', target);
             util.writeFile(target, node.toString(true));
@@ -255,7 +270,7 @@ export default {
             });
 
 code = `
-(function(modules) { 
+(function(modules) {
    var process = {};
    var global = window;
    process.env = {
@@ -308,12 +323,13 @@ ${code}
             if (platformId !== undefined) {
                 code = code.replace('$$WEPY_APP_PLATFORM_PLACEHOLDER$$', `__webpack_require__(${platformId})`);
             } else {
-                code = code.replace('$$WEPY_APP_PLATFORM_PLACEHOLDER$$', '');    
+                code = code.replace('$$WEPY_APP_PLATFORM_PLACEHOLDER$$', '');
             }
             code = code.replace('$$WEPY_APP_PARAMS_PLACEHOLDER$$', JSON.stringify(config));
 
             webConfig.jsOutput = webConfig.jsOutput || path.join(dist, 'dist.js');
             let target = this.replaceParams(path.join(util.currentDir, webConfig.jsOutput), {platform: platform});
+
             let plg = new loader.PluginHelper(config.plugins, {
                 type: 'dist',
                 code: code,
@@ -344,7 +360,7 @@ ${code}
         // It's may be vue api component
         if (typeof wpys === 'string') {
             wpys = { path: wpys };
-        } 
+        }
         if (wpys.path) {
             if (mmap.getPending(wpys.path))
                 return Promise.resolve(0);
