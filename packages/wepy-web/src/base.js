@@ -51,6 +51,12 @@ const $createMixin = (com, mixinClass) => {
             obj[k] = mixin[k];
         }
     }
+    let proto = Object.getPrototypeOf(mixin);
+    Object.getOwnPropertyNames(proto).forEach(k => {
+        if (k !== 'constructor') {
+            com[k] = proto[k];
+        }
+    });
     return obj;
 };
 
