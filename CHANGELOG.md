@@ -14,6 +14,13 @@ npm i wepy-compiler-sass@1.3.12 --save-dev
 npm i wepy-compiler-stylus@1.3.12 --save-dev
 ```
 
+* `F` 修复了`--output web`报错的一些问题
+* `A` 添加了`--output web`时对`wepy-redux`的支持
+```
+npm i wepy-cli@1.7.2-alpha3 -g
+```
+
+
 
 ## 1.7.1 (2018-02-28)
 * `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
