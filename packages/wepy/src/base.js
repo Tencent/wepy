@@ -133,6 +133,8 @@ export default {
             config.$page = page;
 
         config.onLoad = function (...args) {
+            // 修复小程序1.1.1版本this中不包含options
+            !('options' in this) && (this.options = args.length ? args[0] : {});
 
             page.$name = pageClass.name || 'unnamed';
             page.$init(this, self.$instance, self.$instance);
