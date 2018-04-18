@@ -407,7 +407,7 @@ async onLoad() {
 
 ### wepy.config.js配置文件说明
 
-执行`wepy new demo`后，会生成类似下面这样的配置文件。
+执行`wepy init standard demo`后，会生成类似下面这样的配置文件。
 
 ```javascript
 
