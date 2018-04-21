@@ -233,7 +233,7 @@ export default {
             return;
         }
         
-        const compileConfig = config.compiler[lang] || {};
+        const compileConfig = Object.assign({}, config.compiler[lang] || {});
         
         // typescript compiler need the filename to generate right sourcemap
         // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#transpiling-a-single-file
