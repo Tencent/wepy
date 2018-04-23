@@ -31,7 +31,7 @@ function resetSchedulerState () {
 /**
  * Flush both queues and run the watchers.
  */
-function flushSchedulerQueue () {
+function flushSchedulerQueue (times = 0) {
   flushing = true
   let watcher, id
 
@@ -47,24 +47,18 @@ function flushSchedulerQueue () {
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
-  let renderWatcher;
-  for (index = 0; index < queue.length + 1; index++) {
+  // there would be mutilple renderWatcher in the queue.
+  let renderWatcher = [];
+  for (index = 0; index < queue.length; index++) {
     // if it's renderWatcher, run it in the end
     watcher = queue[index];
     if (watcher && watcher.isRenderWatcher) {
-      renderWatcher = watcher;
+      renderWatcher.push(watcher);
       continue;
     }
-    // end of the queue, run renderWatcher
-    if (index === queue.length) {
-      watcher = renderWatcher;
-      if (!watcher) {
-        break;
-      }
-    }
-    id = watcher.id
-    has[id] = null
-    watcher.run()
+    id = watcher.id;
+    has[id] = null;
+    watcher.run();
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1
@@ -77,27 +71,42 @@ function flushSchedulerQueue () {
           ),
           watcher.vm
         )
-        break
+        resetSchedulerState();
+        return;
       }
     }
   }
+  // Run renderWatcher in the end.
+  if (renderWatcher.length) {
+    renderWatcher.forEach(watcher => {
+      has[watcher.id] = null;
+      watcher.run();
+    });
+  }
 
-  // keep copies of post queues before resetting state
-  const activatedQueue = activatedChildren.slice()
-  const updatedQueue = queue.slice()
+  // It may added new watcher to the queue in render watcher
+  let pendingQueue = queue.slice(index);
 
-  resetSchedulerState()
+  if (pendingQueue.length) {
+    flushSchedulerQueue(times + 1);
+  } else {
+    // keep copies of post queues before resetting state
+    // const activatedQueue = activatedChildren.slice()
+    // const updatedQueue = queue.slice()
 
-  // call component updated and activated hooks
-  callActivatedHooks(activatedQueue)
-  callUpdatedHooks(updatedQueue)
+    resetSchedulerState();
 
-  // devtool hook
-  /* istanbul ignore if */
-  /*
-  if (devtools && config.devtools) {
-    devtools.emit('flush')
-  }*/
+    // call component updated and activated hooks
+    // callActivatedHooks(activatedQueue)
+    // callUpdatedHooks(updatedQueue)
+
+    // devtool hook
+    /* istanbul ignore if */
+    /*
+    if (devtools && config.devtools) {
+      devtools.emit('flush')
+    }*/
+  }
 }
 
 function callUpdatedHooks (queue) {

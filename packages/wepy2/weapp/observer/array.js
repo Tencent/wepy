@@ -27,6 +27,13 @@ methodsToPatch.forEach(function (method) {
   def(arrayMethods, method, function mutator (...args) {
     const result = original.apply(this, args);
     const ob = this.__ob__;
+    const vm = ob.vm;
+
+    // push parent key to dirty, wait to setData
+    if (vm.$dirty.indexOf(ob.key) === -1) {
+      vm.$dirty.push(ob.key);
+    }
+
     let inserted;
     switch (method) {
       case 'push':

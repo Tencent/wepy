@@ -84,11 +84,113 @@ function hasOwn (obj, key) {
  */
 function noop (a, b, c) {}
 
+/*
+ * extend objects
+ * e.g.
+ * extend({}, {a: 1}) : extend {a: 1} to {}
+ * extend(true, [], [1,2,3]) : deep extend [1,2,3] to an empty array
+ * extend(true, {}, {a: 1}, {b: 2}) : deep extend two objects to {}
+ */
+function extend () {
+  var arguments$1 = arguments;
+
+  var options, name, src, copy, copyIsArray, clone,
+  target = arguments[ 0 ] || {},
+  i = 1,
+  length = arguments.length,
+  deep = false;
+
+  // Handle a deep copy situation
+  if ( typeof target === 'boolean' ) {
+    deep = target;
+
+    // Skip the boolean and the target
+    target = arguments[ i ] || {};
+    i++;
+  }
+
+  // Handle case when target is a string or something (possible in deep copy)
+  if ( typeof target !== 'object' && !(typeof(target) === 'function') ) {
+    target = {};
+}
+
+  // Extend jQuery itself if only one argument is passed
+  if ( i === length ) {
+    target = this;
+    i--;
+  }
+
+  for ( ; i < length; i++ ) {
+
+    // Only deal with non-null/undefined values
+    if ( ( options = arguments$1[ i ] ) ) {
+
+      // Extend the base object
+      for ( name in options ) {
+        src = target[ name ];
+        copy = options[ name ];
+
+        // Prevent never-ending loop
+        if ( target === copy ) {
+          continue;
+        }
+
+        // Recurse if we're merging plain objects or arrays
+        if ( deep && copy && ( isPlainObject( copy ) ||
+          ( copyIsArray = Array.isArray( copy ) ) ) ) {
+
+          if ( copyIsArray ) {
+            copyIsArray = false;
+            clone = src && Array.isArray( src ) ? src : [];
+
+          } else {
+            clone = src && isPlainObject( src ) ? src : {};
+          }
+
+          // Never move original objects, clone them
+          target[ name ] = extend( deep, clone, copy );
+
+        // Don't bring in undefined values => bring undefined values
+        } else {
+          target[ name ] = copy;
+        }
+      }
+    }
+  }
+
+  // Return the modified object
+  return target;
+}
+
+/*
+ * clone objects, return a cloned object default to use deep clone
+ * e.g.
+ * clone({a: 1})
+ * clone({a: b: {c : 1}}, false);
+ */
+function clone (sth, deep) {
+  if ( deep === void 0 ) deep = true;
+
+  if (isArr(sth)) {
+    return extend(deep, [], sth);
+  } else if ('' + sth === 'null') {
+    return sth;
+  } else if (isPlainObject(sth)) {
+    return extend(deep, {}, sth);
+  } else {
+    throw ("Do not support to clone a \"" + (typeof sth) + "\" data");
+  }
+}
+
 var config = {
 
 }
 
 var warn = noop;
+
+var generateComponentTrace = function (vm) {
+  return ("Found in component: \"" + (vm.$is) + "\"");
+};
 
 {
   var hasConsole = typeof console !== 'undefined';
@@ -285,6 +387,348 @@ function parsePath (path) {
   }
 }
 
+// import type Watcher from './watcher'
+
+var uid = 0;
+
+/**
+ * A dep is an observable that can have multiple
+ * directives subscribing to it.
+ */
+var Dep = function Dep () {
+  this.id = uid++;
+  this.subs = [];
+};
+
+Dep.prototype.addSub = function addSub (sub) {
+  this.subs.push(sub);
+};
+
+Dep.prototype.removeSub = function removeSub (sub) {
+  remove(this.subs, sub);
+};
+
+Dep.prototype.depend = function depend () {
+  if (Dep.target) {
+    Dep.target.addDep(this);
+  }
+};
+
+Dep.prototype.notify = function notify () {
+  // stabilize the subscriber list first
+  var subs = this.subs.slice();
+  for (var i = 0, l = subs.length; i < l; i++) {
+    subs[i].update();
+  }
+};
+
+// the current target watcher being evaluated.
+// this is globally unique because there could be only one
+// watcher being evaluated at any time.
+Dep.target = null;
+var targetStack = [];
+
+function pushTarget (_target) {
+  if (Dep.target) { targetStack.push(Dep.target); }
+  Dep.target = _target;
+}
+
+function popTarget () {
+  Dep.target = targetStack.pop();
+}
+
+/*
+ * not type checking this file because flow doesn't play well with
+ * dynamically accessing methods on Array prototype
+ */
+
+var arrayProto = Array.prototype;
+var arrayMethods = Object.create(arrayProto);
+
+var methodsToPatch = [
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse'
+];
+
+/**
+ * Intercept mutating methods and emit events
+ */
+methodsToPatch.forEach(function (method) {
+  // cache original method
+  var original = arrayProto[method];
+  def(arrayMethods, method, function mutator () {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var result = original.apply(this, args);
+    var ob = this.__ob__;
+    var vm = ob.vm;
+
+    // push parent key to dirty, wait to setData
+    if (vm.$dirty.indexOf(ob.key) === -1) {
+      vm.$dirty.push(ob.key);
+    }
+
+    var inserted;
+    switch (method) {
+      case 'push':
+      case 'unshift':
+        inserted = args;
+        break;
+      case 'splice':
+        inserted = args.slice(2);
+        break;
+    }
+    if (inserted) { ob.observeArray(inserted); }
+    // notify change
+    ob.dep.notify();
+    return result;
+  });
+});
+
+var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
+
+/**
+ * By default, when a reactive property is set, the new value is
+ * also converted to become reactive. However when passing down props,
+ * we don't want to force conversion because the value may be a nested value
+ * under a frozen data structure. Converting it would defeat the optimization.
+ */
+var observerState = {
+  shouldConvert: true
+};
+
+/**
+ * Observer class that are attached to each observed
+ * object. Once attached, the observer converts target
+ * object's property keys into getter/setters that
+ * collect dependencies and dispatches updates.
+ */
+var Observer = function Observer (vm, value, parentKey) {
+  this.value = value;
+  this.dep = new Dep();
+  this.vmCount = 0;
+  this.vm = vm;
+  this.key = parentKey;
+  def(value, '__ob__', this);
+  if (Array.isArray(value)) {
+    var augment = hasProto
+      ? protoAugment
+      : copyAugment;
+    augment(value, arrayMethods, arrayKeys);
+    this.observeArray(value, parentKey);
+  } else {
+    this.walk(value, parentKey);
+  }
+};
+
+/**
+ * Walk through each property and convert them into
+ * getter/setters. This method should only be called when
+ * value type is Object.
+ */
+Observer.prototype.walk = function walk (obj, parentKey) {
+    var this$1 = this;
+
+  var keys = Object.keys(obj);
+  for (var i = 0; i < keys.length; i++) {
+    defineReactive(this$1.vm, obj, keys[i], obj[keys[i]], parentKey || keys[i]);
+  }
+};
+
+/**
+ * Observe a list of Array items.
+ */
+Observer.prototype.observeArray = function observeArray (items, parentKey) {
+    var this$1 = this;
+
+  for (var i = 0, l = items.length; i < l; i++) {
+    observe(this$1.vm, items[i]);
+  }
+};
+
+// helpers
+
+/**
+ * Augment an target Object or Array by intercepting
+ * the prototype chain using __proto__
+ */
+function protoAugment (target, src, keys) {
+  /* eslint-disable no-proto */
+  target.__proto__ = src;
+  /* eslint-enable no-proto */
+}
+
+/**
+ * Augment an target Object or Array by defining
+ * hidden properties.
+ */
+/* istanbul ignore next */
+function copyAugment (target, src, keys) {
+  for (var i = 0, l = keys.length; i < l; i++) {
+    var key = keys[i];
+    def(target, key, src[key]);
+  }
+}
+
+/**
+ * Attempt to create an observer instance for a value,
+ * returns the new observer if successfully observed,
+ * or the existing observer if the value already has one.
+ */
+function observe (vm, value, parentKey, asRootData) {
+  if (!isObject(value)) {
+    return
+  }
+  var ob;
+  if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
+    ob = value.__ob__;
+  } else if (
+    observerState.shouldConvert &&
+    (Array.isArray(value) || isPlainObject(value)) &&
+    Object.isExtensible(value) &&
+    !value._isVue
+  ) {
+    ob = new Observer(vm, value, parentKey);
+  }
+  if (asRootData && ob) {
+    ob.vmCount++;
+  }
+  return ob
+}
+
+/**
+ * Define a reactive property on an Object.
+ */
+function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
+  var dep = new Dep();
+
+  var property = Object.getOwnPropertyDescriptor(obj, key);
+  if (property && property.configurable === false) {
+    return
+  }
+
+  // cater for pre-defined getter/setters
+  var getter = property && property.get;
+  if (!getter && arguments.length === 2) {
+    val = obj[key];
+  }
+  var setter = property && property.set;
+
+  var childOb = !shallow && observe(vm, val, parentKey);
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get: function reactiveGetter () {
+      var value = getter ? getter.call(obj) : val;
+      if (Dep.target) {
+        dep.depend();
+        if (childOb) {
+          childOb.dep.depend();
+          if (Array.isArray(value)) {
+            dependArray(value);
+          }
+        }
+      }
+      return value
+    },
+    set: function reactiveSetter (newVal) {
+      var value = getter ? getter.call(obj) : val;
+      /* eslint-disable no-self-compare */
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return
+      }
+
+      parentKey = parentKey || key;
+
+      // push parent key to dirty, wait to setData
+      if (vm.$dirty.indexOf(parentKey) === -1) {
+        vm.$dirty.push(parentKey);
+      }
+
+      /* eslint-enable no-self-compare */
+      if ("development" !== 'production' && customSetter) {
+        customSetter();
+      }
+      if (setter) {
+        setter.call(obj, newVal);
+      } else {
+        val = newVal;
+      }
+      childOb = !shallow && observe(newVal);
+      dep.notify();
+    }
+  });
+}
+
+/**
+ * Collect dependencies on array elements when the array is touched, since
+ * we cannot intercept array element access like property getters.
+ */
+function dependArray (value) {
+  for (var e = (void 0), i = 0, l = value.length; i < l; i++) {
+    e = value[i];
+    e && e.__ob__ && e.__ob__.dep.depend();
+    if (Array.isArray(e)) {
+      dependArray(e);
+    }
+  }
+}
+
+var sharedPropertyDefinition = {
+  enumerable: true,
+  configurable: true,
+  get: noop,
+  set: noop
+};
+
+
+function proxy (target, sourceKey, key) {
+  sharedPropertyDefinition.get = function proxyGetter () {
+    return this[sourceKey][key]
+  };
+  sharedPropertyDefinition.set = function proxySetter (val) {
+    this[sourceKey][key] = val;
+  };
+  Object.defineProperty(target, key, sharedPropertyDefinition);
+}
+/*
+ * patch data option
+ */
+function patchData (output, data) {
+  if (!data) {
+    data = {};
+  }
+  output.data = data;
+}
+
+/*
+ * init data
+ */
+function initData (vm, data) {
+  if (!data) {
+    data = {};
+  }
+  var _data;
+  if (typeof data === 'function') {
+    _data = data.call(vm);
+  } else {
+    _data = clone(data);
+  }
+  vm._data = _data;
+  vm.$dirty = [];
+  Object.keys(_data).forEach(function (key) {
+    proxy(vm, '_data', key);
+  });
+
+  observe(vm, _data, null, true);
+}
+
 var seenObjects = new _Set();
 
 /**
@@ -345,7 +789,9 @@ function resetSchedulerState () {
 /**
  * Flush both queues and run the watchers.
  */
-function flushSchedulerQueue () {
+function flushSchedulerQueue (times) {
+  if ( times === void 0 ) times = 0;
+
   flushing = true;
   var watcher, id;
 
@@ -361,20 +807,14 @@ function flushSchedulerQueue () {
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
-  var renderWatcher;
-  for (index = 0; index < queue.length + 1; index++) {
+  // there would be mutilple renderWatcher in the queue.
+  var renderWatcher = [];
+  for (index = 0; index < queue.length; index++) {
     // if it's renderWatcher, run it in the end
     watcher = queue[index];
     if (watcher && watcher.isRenderWatcher) {
-      renderWatcher = watcher;
+      renderWatcher.push(watcher);
       continue;
-    }
-    // end of the queue, run renderWatcher
-    if (index === queue.length) {
-      watcher = renderWatcher;
-      if (!watcher) {
-        break;
-      }
     }
     id = watcher.id;
     has[id] = null;
@@ -391,44 +831,41 @@ function flushSchedulerQueue () {
           ),
           watcher.vm
         );
-        break
+        resetSchedulerState();
+        return;
       }
     }
   }
-
-  // keep copies of post queues before resetting state
-  var activatedQueue = activatedChildren.slice();
-  var updatedQueue = queue.slice();
-
-  resetSchedulerState();
-
-  // call component updated and activated hooks
-  callActivatedHooks(activatedQueue);
-  callUpdatedHooks(updatedQueue);
-
-  // devtool hook
-  /* istanbul ignore if */
-  /*
-  if (devtools && config.devtools) {
-    devtools.emit('flush')
-  }*/
-}
-
-function callUpdatedHooks (queue) {
-  var i = queue.length;
-  while (i--) {
-    var watcher = queue[i];
-    var vm = watcher.vm;
-    if (vm._watcher === watcher && vm._isMounted) {
-      callHook(vm, 'updated');
-    }
+  // Run renderWatcher in the end.
+  if (renderWatcher.length) {
+    renderWatcher.forEach(function (watcher) {
+      has[watcher.id] = null;
+      watcher.run();
+    });
   }
-}
 
-function callActivatedHooks (queue) {
-  for (var i = 0; i < queue.length; i++) {
-    queue[i]._inactive = true;
-    activateChildComponent(queue[i], true /* true */);
+  // It may added new watcher to the queue in render watcher
+  var pendingQueue = queue.slice(index);
+
+  if (pendingQueue.length) {
+    flushSchedulerQueue(times + 1);
+  } else {
+    // keep copies of post queues before resetting state
+    // const activatedQueue = activatedChildren.slice()
+    // const updatedQueue = queue.slice()
+
+    resetSchedulerState();
+
+    // call component updated and activated hooks
+    // callActivatedHooks(activatedQueue)
+    // callUpdatedHooks(updatedQueue)
+
+    // devtool hook
+    /* istanbul ignore if */
+    /*
+    if (devtools && config.devtools) {
+      devtools.emit('flush')
+    }*/
   }
 }
 
@@ -458,56 +895,6 @@ function queueWatcher (watcher) {
       nextTick(flushSchedulerQueue);
     }
   }
-}
-
-// import type Watcher from './watcher'
-
-var uid = 0;
-
-/**
- * A dep is an observable that can have multiple
- * directives subscribing to it.
- */
-var Dep = function Dep () {
-  this.id = uid++;
-  this.subs = [];
-};
-
-Dep.prototype.addSub = function addSub (sub) {
-  this.subs.push(sub);
-};
-
-Dep.prototype.removeSub = function removeSub (sub) {
-  remove(this.subs, sub);
-};
-
-Dep.prototype.depend = function depend () {
-  if (Dep.target) {
-    Dep.target.addDep(this);
-  }
-};
-
-Dep.prototype.notify = function notify () {
-  // stabilize the subscriber list first
-  var subs = this.subs.slice();
-  for (var i = 0, l = subs.length; i < l; i++) {
-    subs[i].update();
-  }
-};
-
-// the current target watcher being evaluated.
-// this is globally unique because there could be only one
-// watcher being evaluated at any time.
-Dep.target = null;
-var targetStack = [];
-
-function pushTarget (_target) {
-  if (Dep.target) { targetStack.push(Dep.target); }
-  Dep.target = _target;
-}
-
-function popTarget () {
-  Dep.target = targetStack.pop();
 }
 
 //import { SimpleSet } from '../util/index';
@@ -717,288 +1104,28 @@ Watcher.prototype.teardown = function teardown () {
   }
 };
 
-var Base = function Base () {
-
-};
-
-Base.prototype.$on = function $on () {
-
-};
-
-Base.prototype.$once = function $once () {};
-
-Base.prototype.$off = function $off () {};
-
-Base.prototype.$emit = function $emit () {};
+function createComputedGetter (key) {
+  return function computedGetter () {
+    var watcher = this._computedWatchers && this._computedWatchers[key];
+    if (watcher) {
+      if (watcher.dirty) {
+        watcher.evaluate();
+      }
+      if (Dep.target) {
+        watcher.depend();
+      }
+      return watcher.value;
+    }
+  }
+}
 
 /*
- * not type checking this file because flow doesn't play well with
- * dynamically accessing methods on Array prototype
+ * init computed
  */
-
-var arrayProto = Array.prototype;
-var arrayMethods = Object.create(arrayProto);
-
-var methodsToPatch = [
-  'push',
-  'pop',
-  'shift',
-  'unshift',
-  'splice',
-  'sort',
-  'reverse'
-];
-
-/**
- * Intercept mutating methods and emit events
- */
-methodsToPatch.forEach(function (method) {
-  // cache original method
-  var original = arrayProto[method];
-  def(arrayMethods, method, function mutator () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    var result = original.apply(this, args);
-    var ob = this.__ob__;
-    var inserted;
-    switch (method) {
-      case 'push':
-      case 'unshift':
-        inserted = args;
-        break;
-      case 'splice':
-        inserted = args.slice(2);
-        break;
-    }
-    if (inserted) { ob.observeArray(inserted); }
-    // notify change
-    ob.dep.notify();
-    return result;
-  });
-});
-
-var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
-
-/**
- * By default, when a reactive property is set, the new value is
- * also converted to become reactive. However when passing down props,
- * we don't want to force conversion because the value may be a nested value
- * under a frozen data structure. Converting it would defeat the optimization.
- */
-var observerState = {
-  shouldConvert: true
-};
-
-/**
- * Observer class that are attached to each observed
- * object. Once attached, the observer converts target
- * object's property keys into getter/setters that
- * collect dependencies and dispatches updates.
- */
-var Observer = function Observer (vm, value, parentKey) {
-  this.value = value;
-  this.dep = new Dep();
-  this.vmCount = 0;
-  this.vm = vm;
-  def(value, '__ob__', this);
-  if (Array.isArray(value)) {
-    var augment = hasProto
-      ? protoAugment
-      : copyAugment;
-    augment(value, arrayMethods, arrayKeys);
-    this.observeArray(value, parentKey);
-  } else {
-    this.walk(value, parentKey);
+function initComputed (vm, computed) {
+  if (!computed) {
+    return;
   }
-};
-
-/**
- * Walk through each property and convert them into
- * getter/setters. This method should only be called when
- * value type is Object.
- */
-Observer.prototype.walk = function walk (obj, parentKey) {
-    var this$1 = this;
-
-  var keys = Object.keys(obj);
-  for (var i = 0; i < keys.length; i++) {
-    defineReactive(this$1.vm, obj, keys[i], obj[keys[i]], parentKey || keys[i]);
-  }
-};
-
-/**
- * Observe a list of Array items.
- */
-Observer.prototype.observeArray = function observeArray (items, parentKey) {
-    var this$1 = this;
-
-  for (var i = 0, l = items.length; i < l; i++) {
-    observe(this$1.vm, items[i]);
-  }
-};
-
-// helpers
-
-/**
- * Augment an target Object or Array by intercepting
- * the prototype chain using __proto__
- */
-function protoAugment (target, src, keys) {
-  /* eslint-disable no-proto */
-  target.__proto__ = src;
-  /* eslint-enable no-proto */
-}
-
-/**
- * Augment an target Object or Array by defining
- * hidden properties.
- */
-/* istanbul ignore next */
-function copyAugment (target, src, keys) {
-  for (var i = 0, l = keys.length; i < l; i++) {
-    var key = keys[i];
-    def(target, key, src[key]);
-  }
-}
-
-/**
- * Attempt to create an observer instance for a value,
- * returns the new observer if successfully observed,
- * or the existing observer if the value already has one.
- */
-function observe (vm, value, parentKey, asRootData) {
-  if (!isObject(value)) {
-    return
-  }
-  var ob;
-  if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
-    ob = value.__ob__;
-  } else if (
-    observerState.shouldConvert &&
-    (Array.isArray(value) || isPlainObject(value)) &&
-    Object.isExtensible(value) &&
-    !value._isVue
-  ) {
-    ob = new Observer(vm, value, parentKey);
-  }
-  if (asRootData && ob) {
-    ob.vmCount++;
-  }
-  return ob
-}
-
-/**
- * Define a reactive property on an Object.
- */
-function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
-  var dep = new Dep();
-
-  var property = Object.getOwnPropertyDescriptor(obj, key);
-  if (property && property.configurable === false) {
-    return
-  }
-
-  // cater for pre-defined getter/setters
-  var getter = property && property.get;
-  if (!getter && arguments.length === 2) {
-    val = obj[key];
-  }
-  var setter = property && property.set;
-
-  var childOb = !shallow && observe(vm, val, parentKey);
-  Object.defineProperty(obj, key, {
-    enumerable: true,
-    configurable: true,
-    get: function reactiveGetter () {
-      var value = getter ? getter.call(obj) : val;
-      if (Dep.target) {
-        dep.depend();
-        if (childOb) {
-          childOb.dep.depend();
-          if (Array.isArray(value)) {
-            dependArray(value);
-          }
-        }
-      }
-      return value
-    },
-    set: function reactiveSetter (newVal) {
-      var value = getter ? getter.call(obj) : val;
-      /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
-        return
-      }
-
-      parentKey = parentKey || key;
-
-      // push parent key to dirty, wait to setData
-      if (vm.$dirty.indexOf(parentKey) === -1) {
-        vm.$dirty.push(parentKey);
-      }
-
-      /* eslint-enable no-self-compare */
-      if ("development" !== 'production' && customSetter) {
-        customSetter();
-      }
-      if (setter) {
-        setter.call(obj, newVal);
-      } else {
-        val = newVal;
-      }
-      childOb = !shallow && observe(newVal);
-      dep.notify();
-    }
-  });
-}
-
-/**
- * Collect dependencies on array elements when the array is touched, since
- * we cannot intercept array element access like property getters.
- */
-function dependArray (value) {
-  for (var e = (void 0), i = 0, l = value.length; i < l; i++) {
-    e = value[i];
-    e && e.__ob__ && e.__ob__.dep.depend();
-    if (Array.isArray(e)) {
-      dependArray(e);
-    }
-  }
-}
-
-var sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
-  get: noop,
-  set: noop
-};
-
-
-function proxy (target, sourceKey, key) {
-  sharedPropertyDefinition.get = function proxyGetter () {
-    return this[sourceKey][key]
-  };
-  sharedPropertyDefinition.set = function proxySetter (val) {
-    this[sourceKey][key] = val;
-  };
-  Object.defineProperty(target, key, sharedPropertyDefinition);
-}
-function initData (vm, pageConfig, data) {
-  var instanceData = typeof data === 'function' ? data.call(vm) : data;
-  vm._data = instanceData;
-
-  vm.$dirty = [];
-  Object.keys(instanceData).forEach(function (key) {
-    proxy(vm, '_data', key);
-  });
-
-  observe(vm, instanceData, null, true);
-
-  pageConfig.data = instanceData;
-
-}
-
-function initComputed (vm, pageConfig, computed) {
   var watchers = vm._computedWatchers = Object.create(null);
   var computedWatcherOptions = { lazy: true };
 
@@ -1021,136 +1148,61 @@ function initComputed (vm, pageConfig, computed) {
     }
 
     Object.defineProperty(vm, key, sharedPropertyDefinition);
-    pageConfig.data[key] = vm[key];
   });
 }
 
-function createComputedGetter (key) {
-  return function computedGetter () {
-    var watcher = this._computedWatchers && this._computedWatchers[key];
-    if (watcher) {
-      if (watcher.dirty) {
-        watcher.evaluate();
-      }
-      if (Dep.target) {
-        watcher.depend();
-      }
-      return watcher.value;
-    }
+var Base = function Base () {
+
+};
+
+Base.prototype.$on = function $on () {
+
+};
+
+Base.prototype.$once = function $once () {};
+
+Base.prototype.$off = function $off () {};
+
+Base.prototype.$emit = function $emit () {};
+
+var WepyApp = (function (Base$$1) {
+  function WepyApp () {
+
   }
-}
 
-var $global = {};
+  if ( Base$$1 ) WepyApp.__proto__ = Base$$1;
+  WepyApp.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyApp.prototype.constructor = WepyApp;
 
-function initAppLifecycle (vm, appConfig) {
-  appConfig.onLaunch = function (options) {
-    var result;
-    vm.$wxapp = this;
-    (typeof vm.$option.onLaunch === 'function') && (result = vm.$option.onLaunch.call(vm, options));
-    return result;
-  };
-}
-
-function initLifecycle (vm, pageConfig) {
-  pageConfig.onLoad = function () {
-    var wxpage = this;
-    vm.$wxpage = wxpage;
-
-    if (!vm.$app) {
-      vm.$app = $global.$app;
-    }
-
-    var init = false;
-
-    var renderWatcher = new Watcher(vm, function () {
-      if (!init) {
-        for (var k in vm._data) {
-          // initialize getter dep
-          vm._data[k];
-        }
-        init = true;
-      }
-
-      if (vm.$dirty.length) {
-        var dirtyData = {};
-        vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
-          dirtyData[k] = vm[k];
-        });
-        vm.$dirty = [];
-        wxpage.setData(dirtyData);
-      }
-    }, function () {
-
-    }, null, true);
-
-    var result;
-    (typeof vm.$option.onLoad === 'function') && (result = vm.$option.onLoad.call(vm));
-    return result;
-  };
-}
-
-function initMethods (vm, pageConfig, methods) {
-  Object.keys(methods).forEach(function (method) {
-    pageConfig[method] = function () {
-      var fn = methods[method];
-      var result;
-
-      (typeof fn === 'function') && (result = fn.call(vm));
-
-      return result;
-    };
-  });
-}
-
-function initWatch (vm, watch) {
-  Object.keys(watch).forEach(function (key) {
-    vm.$watch(key, watch[key]);
-  });
-}
+  return WepyApp;
+}(Base));
 
 var WepyPage = (function (Base$$1) {
-  function WepyPage () {
+	function WepyPage () {
+		Base$$1.apply(this, arguments);
+	}if ( Base$$1 ) WepyPage.__proto__ = Base$$1;
+	WepyPage.prototype = Object.create( Base$$1 && Base$$1.prototype );
+	WepyPage.prototype.constructor = WepyPage;
+
+	
+
+	return WepyPage;
+}(Base));
+
+var WepyComponent = (function (Base$$1) {
+  function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
 
-  if ( Base$$1 ) WepyPage.__proto__ = Base$$1;
-  WepyPage.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyPage.prototype.constructor = WepyPage;
+  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
+  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyComponent.prototype.constructor = WepyComponent;
 
-  WepyPage.prototype.$init = function $init (option) {
-    var pageConfig = {};
-    this.$option  = option;
-    if (!option.data) {
-      option.data = {};
-    }
-
-    initData(this, pageConfig, option.data);
-
-    if (option.methods) {
-      initMethods(this, pageConfig, option.methods);
-    }
-
-    this._watchers = [];
-
-    initLifecycle(this, pageConfig);
-
-    // Some platform has a native watch property
-    if (option.watch && option.watch !== ({}).watch) {
-      initWatch(this, option.watch);
-    }
-
-    if (option.computed) {
-      initComputed(this, pageConfig, option.computed);
-    }
-
-    return pageConfig;
-  };
-
-  WepyPage.prototype.$watch = function $watch (expOrFn, cb, options) {
+  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
     var this$1 = this;
 
     var vm = this;
-    if (Array.isArray(cb)) {
+    if (isArr(cb)) {
       cb.forEach(function (handler) {
         this$1.$watch(expOrFn, handler, options);
       });
@@ -1175,49 +1227,25 @@ var WepyPage = (function (Base$$1) {
     }
   };
 
-  return WepyPage;
+  return WepyComponent;
 }(Base));
 
-function page (option) {
-  var vm = new WepyPage();
-
-  var pageConfig = vm.$init(option);
-  return Page(pageConfig);
-}
-
-var WepyApp = (function (Base$$1) {
-  function WepyApp () {
-
-  }
-
-  if ( Base$$1 ) WepyApp.__proto__ = Base$$1;
-  WepyApp.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyApp.prototype.constructor = WepyApp;
-
-  WepyApp.prototype.$init = function $init (option) {
-    var appConfig = {};
-
-    this.$option = option;
-
-    initAppLifecycle(this, appConfig);
-
-    return appConfig;
-  };
-
-  return WepyApp;
-}(Base));
-
-function app (options) {
-  var app = new WepyApp();
-  $global.$app = app;
-
-  var appConfig = app.$init(options);
-  return App(appConfig);
-}
+var $global = {};
 
 var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 
-function initProps (vm, compConfig, props) {
+var observerFn = function (output, props, prop) {
+  return function (newVal, oldVal, changedPaths) {
+    var vm = this.$wepy;
+    vm[prop] = newVal;
+  };
+};
+/*
+ * patch props option
+ */
+function patchProps (output, props) {
+  var this$1 = this;
+
   var newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -1225,7 +1253,8 @@ function initProps (vm, compConfig, props) {
   if (isArr(props)) {
     props.forEach(function (prop) {
       newProps[prop] = {
-        type: null
+        type: null,
+        observer: observerFn(output, props, prop)
       };
     });
   } else if (isObj(props)) {
@@ -1249,7 +1278,7 @@ function initProps (vm, compConfig, props) {
       // props.default
       if (prop.default) {
         if (isFunc(prop.default)) {
-          newProp.value = prop.default.call(vm);
+          newProp.value = prop.default.call(output);
         } else {
           newProp.value = prop.default;
         }
@@ -1258,43 +1287,220 @@ function initProps (vm, compConfig, props) {
       // props.validator
       // props.required
 
+      newProp.observer = observerFn(this$1.$wepy, output, props, prop);
+
       newProps[k] = newProp;
     }
   }
 
-  compConfig.properties = newProps;
-}
+  Object.keys(newProps).forEach(function (prop) {
 
-var WepyComponent = (function (Base$$1) {
-  function WepyComponent () {
-    Base$$1.apply(this, arguments);
+  });
+
+  output.properties = newProps;
+}
+/*
+ * init props
+ */
+function initProps (vm, properties) {
+  vm._props = {};
+  vm.$dirty = vm.$dirty || [];
+
+  if (!properties) {
+    return;
   }
 
-  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
-  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyComponent.prototype.constructor = WepyComponent;
+  Object.keys(properties).forEach(function (key) {
+    vm._props[key] = properties[key].value;
+    proxy(vm, '_props', key);
+  });
 
-  WepyComponent.prototype.$init = function $init (option) {
-    var compConfig = {};
+  observe(vm, vm._props, null, true);
+}
 
-    if (option.properties) {
-      compConfig.properties = option.properties;
-      if (option.props) {
-        console.warn("props will be ignore, if properties is set");
+var comid = 0;
+
+var callUserMethod = function (vm, userOpt, method, args) {
+  var result;
+  if (isStr(method) && isFunc(userOpt[method])) {
+    result = userOpt[method].apply(vm, args);
+  } else if (isArr(method)) {
+    for (var i = method, l = method.length; i < l; i++) {
+      if (isFunc(userOpt[method[i]])) {
+        result = userOpt[method[i]].apply(vm, args);
+        break;
       }
-    } else if (option.props) {
-      initProps(this, compConfig, option.props);
     }
-    return option;
+  }
+  return result;
+};
+
+/*
+ * patch app lifecyle
+ */
+function patchAppLifecycle (appConfig, option) {
+  appConfig.onLaunch = function (params) {
+    var vm = new WepyApp();
+    vm.$option = option;
+
+    var result;
+    vm.$wx = this;
+    this.$wepy = vm;
+    (typeof option.onLaunch === 'function') && (result = option.onLaunch.call(vm, params));
+    return result;
+  };
+}
+function patchLifecycle (output, option, isComponent) {
+
+  var initClass = isComponent ? WepyComponent : WepyPage;
+  var initLifecycle = function () {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var vm = new initClass();
+
+    this.$wepy = vm;
+    vm.$wx = this;
+    vm.$is = this.is;
+    vm.$option = option;
+
+    vm.$id = ++comid + (isComponent ? '.1' : '.0');
+    if (!vm.$app) {
+      vm.$app = $global.$app;
+    }
+
+    initProps(vm, output.properties);
+
+    initData(vm, output.data, isComponent);
+
+    vm._watchers = [];
+    var renderWatcher = new Watcher(vm, function () {
+      if (!vm._init) {
+        for (var k in vm._props) {
+          // initialize getter dep
+          vm._props[k];
+        }
+        for (var k$1 in vm._data) {
+          vm._data[k$1];
+        }
+        vm._init = true;
+      }
+
+      if (vm.$dirty.length) {
+        var dirtyData = {};
+        vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
+          dirtyData[k] = vm[k];
+        });
+        vm.$dirty = [];
+        console.log('setdata: ' + JSON.stringify(dirtyData));
+        vm.$wx.setData(dirtyData);
+      }
+    }, function () {
+
+    }, null, true);
+
+    // not need to patch computed to ouput
+    initComputed(vm, option.computed, true);
+
+    return callUserMethod(vm, vm.$option, isComponent ? 'created' : ['onLoad', 'created'], args);
   };
 
-  return WepyComponent;
-}(Base));
+  if (isComponent) {
+    output.created = initLifecycle;
+    output.attached = function () {
+      console.log('attached');
+      console.log(this);
+      var outProps = output.properties;
+      // this.propperties are includes datas
+      var acceptProps = this.properties;
+      var vm = this.$wepy;
+      Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
+    };
+  } else {
+    output.onLoad = initLifecycle;
+  }
+
+  output.ready = function () {
+    console.log('ready');
+    console.log(this);
+  };
+
+  output.moved = function () {
+    console.log('moved');
+    console.log(this);
+  };
+}
+
+/*
+ * initialize page methods
+ */
+
+/*
+ * patch method option
+ */
+function patchMethods (output, methods, isComponent) {
+  if (!methods) {
+    return;
+  }
+
+  var target = output;
+  if (isComponent) {
+    output.methods = {};
+    target = output.methods;
+  }
+
+  Object.keys(methods).forEach(function (method) {
+    target[method] = function () {
+      var fn = methods[method];
+      var result;
+
+      (typeof fn === 'function') && (result = fn.call(this.$wepy));
+
+      return result;
+    };
+  });
+}
+
+function page (option) {
+
+  var pageConfig = {};
+
+  patchMethods(pageConfig, option.methods);
+
+  patchData(pageConfig, option.data);
+
+  patchLifecycle(pageConfig, option);
+
+  return Page(pageConfig);
+}
+
+function app (option) {
+  var appConfig = {};
+
+  patchAppLifecycle(appConfig, option);
+
+  return App(appConfig);
+}
 
 function component (option) {
-  var vm = new WepyComponent();
 
-  var compConfig = vm.$init(option);
+  var compConfig = {};
+
+  if (option.properties) {
+    compConfig.properties = option.properties;
+    if (option.props) {
+      console.warn("props will be ignore, if properties is set");
+    }
+  } else if (option.props) {
+    patchProps(compConfig, option.props);
+  }
+
+  patchMethods(compConfig, option.methods, true);
+
+  patchData(compConfig, option.data, true);
+
+  patchLifecycle(compConfig, option, true);
+
   return Component(compConfig);
 }
 
