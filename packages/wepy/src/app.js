@@ -14,7 +14,7 @@ let RequestMQ = {
     map: {},
     mq: [],
     running: [],
-    MAX_REQUEST: 5,
+    MAX_REQUEST: 10,
     push (param) {
         param.t = +new Date();
         while ((this.mq.indexOf(param.t) > -1 || this.running.indexOf(param.t) > -1)) {
