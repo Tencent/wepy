@@ -3,7 +3,29 @@ import Dep from './../observer/dep';
 import { noop } from './../util/index';
 import { sharedPropertyDefinition } from './data';
 
-export function initComputed (vm, pageConfig, computed) {
+
+function createComputedGetter (key) {
+  return function computedGetter () {
+    let watcher = this._computedWatchers && this._computedWatchers[key];
+    if (watcher) {
+      if (watcher.dirty) {
+        watcher.evaluate();
+      }
+      if (Dep.target) {
+        watcher.depend();
+      }
+      return watcher.value;
+    }
+  }
+}
+
+/*
+ * init computed
+ */
+export function initComputed (vm, computed) {
+  if (!computed) {
+    return;
+  }
   let watchers = vm._computedWatchers = Object.create(null);
   let computedWatcherOptions = { lazy: true };
 
@@ -26,24 +48,5 @@ export function initComputed (vm, pageConfig, computed) {
     }
 
     Object.defineProperty(vm, key, sharedPropertyDefinition);
-    pageConfig.data[key] = vm[key];
   })
-}
-
-function createComputedGetter (key) {
-  return function computedGetter () {
-    let watcher = this._computedWatchers && this._computedWatchers[key];
-    if (watcher) {
-      if (watcher.dirty) {
-        watcher.evaluate();
-      }
-      if (Dep.target) {
-        watcher.depend();
-      }
-      return watcher.value;
-    }
-  }
-}
-
-
-
+};

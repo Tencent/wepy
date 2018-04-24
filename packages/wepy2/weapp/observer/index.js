@@ -35,6 +35,7 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
+    this.key = parentKey;
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
       const augment = hasProto
