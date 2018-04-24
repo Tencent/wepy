@@ -152,8 +152,6 @@ export default {
             args.push(secParams);
 
             page.$onLoad.apply(page, args);
-
-            page.$apply();
         };
 
         config.onUnload = function (...args) {
