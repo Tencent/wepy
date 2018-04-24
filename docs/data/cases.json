@@ -355,6 +355,13 @@
             "opensource": "",
             "qrcode": "",
             "company": ""
-       }
+        }, {
+            "name": "羽球自由对阵赛",
+            "email": "1648511816@qq.com",
+            "link": "",
+            "opensource": "https://github.com/jasscia/newBadminton",
+            "qrcode": "https://raw.githubusercontent.com/jasscia/newBadminton/master/src/image/scancode.jpg",
+            "company": ""
+        }
     ]
 }
