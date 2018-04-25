@@ -124,15 +124,10 @@ export default {
                 target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
                 ext = '';
                 needCopy = true;
-
-                // It's a node_module component.
-                if (path.extname(mainFile.file) === '.wpy') {
-                    source += '.wpy';
-                }
             }
 
             if (util.isFile(source + wpyExt)) {
-                ext = '.js';
+                ext = wpyExt;
             } else if (util.isFile(source + '.js')) {
                 ext = '.js';
             } else if (util.isFile(source + '.ts')) {
