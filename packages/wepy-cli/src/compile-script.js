@@ -228,9 +228,7 @@ export default {
                 throw '打开文件失败: ' + filepath);
             }
         }
-        
-        
-        
+
         if (config.lintjs) {
             eslint(filepath);
         }
