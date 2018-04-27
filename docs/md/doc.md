@@ -148,7 +148,7 @@ customFileTypes:
 ### 代码规范
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
-   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](https://tencent.github.io/wepy/document.html#/api?id=api)。
    
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
    具体请参考[wpy文件说明](#wpy文件说明)。
