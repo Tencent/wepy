@@ -86,7 +86,8 @@ wepy init standard myproject
 #### 安装依赖
 
 ```console
-yarn
+cd myproject
+npm install
 ```
 
 #### 开发实时编译
