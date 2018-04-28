@@ -1,5 +1,5 @@
 import { observe } from './../observer/index';
-import { noop } from './../util/index';
+import { noop, clone } from './../../shared/index';
 
 export const sharedPropertyDefinition = {
   enumerable: true,
@@ -19,17 +19,35 @@ export function proxy (target, sourceKey, key) {
   Object.defineProperty(target, key, sharedPropertyDefinition)
 };
 
-export function initData (vm, pageConfig, data) {
-  let instanceData = typeof data === 'function' ? data.call(vm) : data;
-  vm._data = instanceData;
+/*
+ * patch data option
+ */
+export function patchData (output, data) {
+  if (!data) {
+    data = {};
+  }
+  output.data = data;
+};
 
+
+/*
+ * init data
+ */
+export function initData (vm, data) {
+  if (!data) {
+    data = {};
+  }
+  let _data;
+  if (typeof data === 'function') {
+    _data = data.call(vm);
+  } else {
+    _data = clone(data);
+  }
+  vm._data = _data;
   vm.$dirty = [];
-  Object.keys(instanceData).forEach(key => {
+  Object.keys(_data).forEach(key => {
     proxy(vm, '_data', key);
   });
 
-  observe(vm, instanceData, null, true);
-
-  pageConfig.data = instanceData;
-
-};
+  observe(vm, _data, null, true);
+}
