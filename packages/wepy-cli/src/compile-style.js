@@ -16,6 +16,7 @@ import cache from './cache';
 import loader from './loader';
 import resolve from './resolve';
 import scopedHandler from './style-compiler/scoped';
+import postcssHandler from './style-compiler/postcss';
 
 const LANG_MAP = {
     'less': '.less',
@@ -85,10 +86,14 @@ export default {
                 if (scoped) {
                     // 存在有 scoped 的 style
                     return scopedHandler(moduleId, css).then((cssContent) => {
-                        return cssContent;
+                        postcssHandler(cssContent).then(css => {
+                            return css;
+                        });
                     });
                 } else {
-                    return css;
+                    postcssHandler(css).then(css => {
+                        return css;
+                    });
                 }
             });
 
