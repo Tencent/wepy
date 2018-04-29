@@ -132,7 +132,7 @@ export default {
             }
 
             if (util.isFile(source + wpyExt)) {
-                ext = '.js';
+                ext = '.wpy';
             } else if (util.isFile(source + '.js')) {
                 ext = '.js';
             } else if (util.isFile(source + '.ts')) {
@@ -265,7 +265,8 @@ export default {
 
             code = this.resolveDeps(code, type, opath);
 
-            if (type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
+            if (!opath.compiled && type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
+                opath.compiled = true
                 cWpy.compile(opath);
                 return;
             }
@@ -275,7 +276,8 @@ export default {
                 target = util.getDistPath(opath, 'js');
             } else {
                 code = this.npmHack(opath, code);
-                target = path.join(npmPath, path.relative(opath.npm.modulePath, path.join(opath.dir, opath.base)));
+                const base = opath.ext === '.wpy' ? opath.base.replace(opath.ext, '.js') : opath.base;
+                target = path.join(npmPath, path.relative(opath.npm.modulePath, path.join(opath.dir, base)));
             }
 
             if (sourceMap) {
@@ -284,7 +286,7 @@ export default {
                 var Base64 = require('js-base64').Base64;
                 code += `\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Base64.encode(JSON.stringify(sourceMap))}`;
             }
-
+            
             let plg = new loader.PluginHelper(config.plugins, {
                 type: type,
                 code: code,
