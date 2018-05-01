@@ -29,7 +29,7 @@ export default {
         let wpyExt = params.wpyExt;
 
 
-        return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        return code.replace(/([^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
             let npmInfo = opath.npm;
 
             if (lib === './_wepylogs.js') {
@@ -44,7 +44,7 @@ export default {
             }
             lib = resolve.resolveAlias(lib, opath);
             if (lib === 'false') {
-                return `{}`
+                return `${char}{}`;
             } else if (path.isAbsolute(lib)) {
                 source = lib;
                 target = util.getDistPath(source);
@@ -183,7 +183,7 @@ export default {
                 resolved = path.relative(util.getDistPath(opath, opath.ext, src, dist), target);
             }
             resolved = resolved.replace(/\\/g, '/').replace(/^\.\.\//, './');
-            return `require('${resolved}')`;
+            return `${char}require('${resolved}')`;
         });
     },
 
