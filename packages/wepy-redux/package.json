@@ -1,6 +1,6 @@
 {
   "name": "wepy-redux",
-  "version": "1.5.6",
+  "version": "1.5.7",
   "description": "WePY bindings for Redux",
   "main": "lib/index.js",
   "scripts": {
@@ -14,7 +14,8 @@
   ],
   "author": "dolymood",
   "license": "MIT",
-  "peerDependencies": {
+  "dependencies": {
+    "lodash": "^4.17.5",
     "redux": "^2.0.0 || ^3.0.0"
   }
 }
