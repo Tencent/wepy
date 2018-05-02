@@ -244,6 +244,13 @@
             "qrcode": "https://library.ufutx.com/imgs/mp_library.jpg",
             "company": "深圳市友福同享信息科技有限公司"
         }, {
+            "name": "友福聚会",
+            "email": "glore@ufutx.com",
+            "link": "https://party.ufutx.com",
+            "opensource": "https://github.com/glore/party",
+            "qrcode": "https://party.ufutx.com/imgs/mp_party.jpg",
+            "company": "深圳市友福同享信息科技有限公司"
+        }, {
             "name": "米淘联盟",
             "link": "",
             "email": "hello_undefined@icloud.com",
