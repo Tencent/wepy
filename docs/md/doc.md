@@ -36,6 +36,11 @@ npm  install
 ```bash
 wepy build --watch
 ```
+编译后，在微信开发工具报错，报错内容：
+thirdScriptError 
+ sdk uncaught third Error 
+ module "npm/lodash/_nodeUtil.js" is not defined 
+ Error: module "npm/lodash/_nodeUtil.js" is not defined
 
 ### WePY项目的目录结构
 
