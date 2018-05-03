@@ -369,6 +369,13 @@
             "opensource": "https://github.com/jasscia/newBadminton",
             "qrcode": "https://raw.githubusercontent.com/jasscia/newBadminton/master/src/image/scancode.jpg",
             "company": ""
+        }, {
+            "name": "世界杯GO",
+            "email": "world.cup.calendar@wecode.tech",
+            "link": "https://wecode.tech/",
+            "opensource": "",
+            "qrcode": "https://cdn.wecode.net.cn/gh_e1456f383a2d_258.jpg",
+            "company": "深圳微小程序科技有限公司"
         }
     ]
 }
