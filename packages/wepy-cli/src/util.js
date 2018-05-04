@@ -455,7 +455,7 @@ const utils = {
         ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
         if (opath.npm) {
-            relative = path.relative(opath.npm.modulePath, opath.npm.dir);
+            relative = path.relative(opath.npm.modulePath, opath.dir);
             relative = path.join('npm', relative);
         } else {
             relative = path.relative(path.join(this.currentDir, src), opath.dir);
@@ -621,6 +621,3 @@ const utils = {
     }
 }
 export default utils
-
-
-

@@ -125,11 +125,6 @@ export default {
                 requieInfo.shift();
 
                 source = path.join(mainFile.dir, requieInfo.join('/'));
-
-                // It's a node_module component.
-                if (path.extname(mainFile.file) === '.wpy') {
-                    source += '.wpy';
-                }
             }
 
             if (path.extname(source)) {
