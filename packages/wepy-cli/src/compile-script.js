@@ -216,12 +216,12 @@ export default {
     },
 
     compile (lang, code, type, opath) {
+        const filepath = path.join(opath.dir, opath.base);
         let config = util.getConfig();
         src = cache.getSrc();
         dist = cache.getDist();
         npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
-        const filepath = path.join(opath.dir, opath.base);
         if (!code) {
             code = util.readFile(filepath);
             if (code === null) {
