@@ -225,7 +225,7 @@ export default {
         if (!code) {
             code = util.readFile(filepath);
             if (code === null) {
-                throw '打开文件失败: ' + filepath);
+                throw '打开文件失败: ' + filepath;
             }
         }
 
