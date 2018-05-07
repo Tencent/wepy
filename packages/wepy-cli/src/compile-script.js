@@ -238,7 +238,7 @@ export default {
         if (!compiler) {
             return;
         }
-        
+
         const compileConfig = Object.assign({}, config.compiler[lang] || {});
         
         // typescript compiler need the filename to generate right sourcemap
