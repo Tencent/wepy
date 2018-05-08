@@ -137,47 +137,49 @@ export default class {
 
         if (props) {
             for (key in props) {
-                val = undefined;
-                if ($parent && $parent.$props && $parent.$props[this.$name]) {
-                    val = $parent.$props[this.$name][key];
-                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
-                    if (binded) {
-                        if (typeof(binded) === 'object') {
-                            props[key].repeat = binded.for;
-                            props[key].item = binded.item;
-                            props[key].index = binded.index;
-                            props[key].key = binded.key;
-                            props[key].value = binded.value;
+                if (keyCheck(this, key)) {
+                    val = undefined;
+                    if ($parent && $parent.$props && $parent.$props[this.$name]) {
+                        val = $parent.$props[this.$name][key];
+                        binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
+                        if (binded) {
+                            if (typeof(binded) === 'object') {
+                                props[key].repeat = binded.for;
+                                props[key].item = binded.item;
+                                props[key].index = binded.index;
+                                props[key].key = binded.key;
+                                props[key].value = binded.value;
 
-                            inRepeat = true;
+                                inRepeat = true;
 
-                            let bindfor = binded.for, binddata = $parent;
-                            bindfor.split('.').forEach(t => {
-                                binddata = binddata ? binddata[t] : {};
-                            });
-                            if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
-                                repeatKey = Object.keys(binddata)[0];
-                            }
+                                let bindfor = binded.for, binddata = $parent;
+                                bindfor.split('.').forEach(t => {
+                                    binddata = binddata ? binddata[t] : {};
+                                });
+                                if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
+                                    repeatKey = Object.keys(binddata)[0];
+                                }
 
-                            if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                            this.$mappingProps[key]['parent'] = {
-                                mapping: binded.for,
-                                from: key
-                            };
-                        } else {
-                            val = $parent[binded];
-                            if (props[key].twoWay) {
                                 if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                                this.$mappingProps[key]['parent'] = binded;
+                                this.$mappingProps[key]['parent'] = {
+                                    mapping: binded.for,
+                                    from: key
+                                };
+                            } else {
+                                val = $parent[binded];
+                                if (props[key].twoWay) {
+                                    if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
+                                    this.$mappingProps[key]['parent'] = binded;
+                                }
                             }
+                        } else if (typeof val === 'object' && val.value !== undefined) { // 静态传值
+                            this.data[key] = val.value;
                         }
-                    } else if (typeof val === 'object' && val.value !== undefined) { // 静态传值
-                        this.data[key] = val.value;
                     }
-                }
-                if (!this.data[key] && !props[key].repeat) {
-                    val = Props.getValue(props, key, val, this);
-                    this.data[key] = val;
+                    if (!this.data[key] && !props[key].repeat) {
+                        val = Props.getValue(props, key, val, this);
+                        this.data[key] = val;
+                    }
                 }
             }
         }
@@ -187,9 +189,10 @@ export default class {
         }
 
         for (k in this.data) {
-            defaultData[`${this.$prefix}${k}`] = this.data[k];
-            this[k] = this.data[k];
-            //this[k] = util.$copy(this.data[k], true);
+            if (keyCheck(this, k)) {
+                defaultData[`${this.$prefix}${k}`] = this.data[k];
+                this[k] = this.data[k];
+            }
         }
 
         this.$data = util.$copy(this.data, true);
@@ -198,9 +201,11 @@ export default class {
 
         if (this.computed) {
             for (k in this.computed) {
-                let fn = this.computed[k];
-                defaultData[`${this.$prefix}${k}`] = fn.call(this);
-                this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
+                if (keyCheck(this, k)) {
+                    let fn = this.computed[k];
+                    defaultData[`${this.$prefix}${k}`] = fn.call(this);
+                    this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
+                }
             }
         }
         this.setData(defaultData);
@@ -653,6 +658,24 @@ export default class {
         this.$$nextTick = fn;
     }
 
+}
+
+/**
+ * check if a key is allowed
+ * @param  {String} k user defined key
+ * @return {Number}   1: allowed, 0: warn, -1: error
+ */
+function keyCheck (vm, k) {
+    if (typeof vm[k] === 'function') {
+        console.warn('You are not allowed to define a function "' + k + '" in data.');
+        return 0;
+    } else if (['data', 'props', 'methods', 'events', 'mixins'].indexOf(k) !== -1) {
+        console.warn(`"${k}" is reserved word, please fix it.`);
+        return 0;
+    } else if (k[0] === '$') {
+        console.warn(`"${k}: You can not define a property started with "$"`);
+        return 0;
+    }
 }
 
 function getEventsFn (comContext, evtName) {
