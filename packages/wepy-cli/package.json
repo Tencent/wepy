@@ -43,6 +43,7 @@
     "enhanced-resolve": "^4.0.0-beta.4",
     "handlebars": "^4.0.11",
     "hash-sum": "^1.0.2",
+    "htmlparser2": "^3.9.2",
     "ignore": "^3.2.0",
     "inquirer": "^5.0.1",
     "js-base64": "^2.1.9",
