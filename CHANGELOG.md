@@ -1,19 +1,11 @@
-## 1.7.2 (comming)
+## 1.7.2 (2018-05-08)
 * `A` 添加了对小程序原生组件的支持。
-
-```
-npm i wepy-cli@1.7.2-alpha1 -g
-npm i wepy@1.7.2-alpha1 --save
-```
-
 * `F` 修复了使用`less/sass/stylus`去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
-```
-npm i wepy-cli@1.7.2-alpha2 -g
-npm i wepy-compiler-less@1.3.12 --save-dev
-npm i wepy-compiler-sass@1.3.12 --save-dev
-npm i wepy-compiler-stylus@1.3.12 --save-dev
-```
-
+* `F` 修复了`--output web`报错的一些问题
+* `A` 添加了`--output web`时对`wepy-redux`的支持
+* `F` 修复了 mixin 中用户自定义事件不生效的问题
+* `F` 添加了属性名检测，对于保留字段给开发者提示warning，防止开发者使用了一些保留字段导致了意想不到的结果。[ISSUE 1327](https://github.com/Tencent/wepy/issues/1327)
+* `F` 修复了使用新版本lodash编译不通过的问题。[ISSUE 1276](https://github.com/Tencent/wepy/issues/1276)
 
 ## 1.7.1 (2018-02-28)
 * `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
