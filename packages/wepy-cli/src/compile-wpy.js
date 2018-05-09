@@ -26,29 +26,34 @@ import toWeb from './web/index';
 import loader from './loader';
 import resolve from './resolve';
 
+let globalLocator = {};
+
 export default {
     _cacheWpys: {},
     createParser (opath) {
-        return new DOMParser({errorHandler: {
-            warning (x) {
-                if (x.indexOf('missed value!!') > -1) {
-                    // ignore warnings
-                } else {
-                    if (!opath) {
-                        util.warning(x);
+        return new DOMParser({
+            locator: globalLocator,
+            errorHandler: {
+                warning (x) {
+                    if (x.indexOf('missed value!!') > -1) {
+                        // ignore warnings
                     } else {
-                        util.warning('WARNING IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
+                        if (!opath) {
+                            util.warning(x);
+                        } else {
+                            util.warning('WARNING IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
+                        }
+                    }
+                },
+                error (x) {
+                    if (!opath) {
+                        util.error(x);
+                    } else {
+                        util.error('ERROR IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
                     }
                 }
-            },
-            error (x) {
-                if (!opath) {
-                    util.error(x);
-                } else {
-                    util.error('ERROR IN : ' + path.relative(util.currentDir, path.join(opath.dir, opath.base)) + '\n' + x);
-                }
             }
-        }});
+        });
     },
 
     grabConfigFromScript(str, n) {
