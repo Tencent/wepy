@@ -1460,8 +1460,14 @@ wx.request({
     }
 });
 
-// WePY 使用方式
+// WePY 使用方式, 需要开启 Promise 支持，参考开发规范章节
 wepy.request('xxxx').then((d) => console.log(d));
+
+// async/await 的使用方式, 需要开启 Promise 和 async/await 支持，参考 WIKI
+async function request () {
+   let d = await wepy.request('xxxxx');
+   console.log(d);
+}
 ```
 
 #### 2. 优化事件参数传递
