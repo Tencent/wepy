@@ -37,7 +37,7 @@ export default class {
 
             let prefixer = postcss([ autoprefixer(this.setting.config) ]);
 
-            prefixer.process(op.code, { from: undefined }).then((result) => {
+            prefixer.process(op.code, { from: op.file }).then((result) => {
                 op.code = result.css;
                 op.next();
             }).catch(e => {
