@@ -106,6 +106,12 @@ export default {
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
                 let requieInfo = lib.split('/');
+                //当引用私有库带@时，一般私有库目录都是‘@types/node/package.json,@types/react/package.json’这里直接处理，好像报错,看合并记录，在处理.wpy文件的时候，@已经处理，但是在js,ts中，引用未处理
+                //这里这样处理不知道，不过可以解决问题
+                if(requieInfo[0].startsWith("@")){
+                    var tema = requieInfo.splice(1,1)
+                    requieInfo[0] = requieInfo[0] + '/' + tema[0]
+                }
                 let mainFile = resolve.getMainFile(requieInfo[0]);
 
                 if (!mainFile) {
@@ -139,6 +145,8 @@ export default {
                 ext = '.ts';
             } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
                 ext = path.sep + 'index.js';
+            }else if (util.isDir(source) && util.isFile(source + path.sep + 'index.ts')) {//ts文件时，无法使用缺省默认值
+                ext = path.sep + 'index.ts';
             }else if (util.isFile(source)) {
                 ext = '';
             } else {
