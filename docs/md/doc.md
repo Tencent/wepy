@@ -1560,3 +1560,29 @@ var item = require('item.js')
     }
 </script>
 ```
+
+### 存在的问题
+
+WePY 1.x 版本中，组件使用的是静态编译组件，即组件是在编译阶段编译进页面的，每个组件都是唯一的一个实例，目前只提供简单的 `repeat` 支持。不支持在 `repeat` 的组件中去使用 `props`, `computed`, `watch` 等等特性。
+
+```
+<!-- 错误使用 --->
+// list.wpy
+<view>{{test.name}}</view>
+
+// index.wpy
+<repeat for="{{mylist}}">
+   <List :test.sync="item"></List>
+</repeat>
+
+<!-- 推荐用法 --->
+// list.wpy
+<repeat for="{{mylist}}">
+    <view>{{item.name}}</view>
+</repeat>
+
+// index.wpy
+<List :mylist.sync="mylist"></List>
+```
+
+* 另外，在 1.7.2-alpha4 的实验版本中提供了对原生组件的支持。*
