@@ -1431,9 +1431,28 @@ function patchLifecycle (output, option, isComponent) {
   };
 }
 
-/*
- * initialize page methods
- */
+var eventHandler = function (method, fn) {
+  var methodKey = method.toLowerCase();
+  return function (e) {
+    var args = [], len = arguments.length - 1;
+    while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+    if (!isFunc(fn)) {
+      throw 'undefined method: ' + method;
+    }
+    var wepyParams = [];
+    var paramsLength = 0;
+    var p;
+    if (e.currentTarget && e.currentTarget.dataset) {
+      var tmp = e.currentTarget.dataset;
+      while(!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
+        wepyParams.push(tmp['wpy' + methodKey + p]);
+      }
+    }
+    args = args.concat(wepyParams);
+    return fn.apply(this.$wepy, args);
+  };
+};
 
 /*
  * patch method option
@@ -1450,14 +1469,7 @@ function patchMethods (output, methods, isComponent) {
   }
 
   Object.keys(methods).forEach(function (method) {
-    target[method] = function () {
-      var fn = methods[method];
-      var result;
-
-      (typeof fn === 'function') && (result = fn.call(this.$wepy));
-
-      return result;
-    };
+    target[method] = eventHandler(method, methods[method]);
   });
 }
 
