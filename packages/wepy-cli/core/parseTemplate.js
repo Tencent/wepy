@@ -187,7 +187,7 @@ exports = module.exports =  {
       char = exp[i];
       if (!rst.name) {
         if (char === '(') {
-          rst.name = tmp;
+          rst.name = tmp.trim();
           tmp = '';
           continue;
         }
