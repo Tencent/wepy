@@ -18,4 +18,28 @@ describe('parseTemplate', function() {
     expect(pt.parseHandler('tap', 'do(a,b,c)', { capture: true, stop: true })).to.deep.equal({ type: 'capture-catch:tap', handler: 'do', params: ['a', 'b', 'c']});
   });
 
+  it('parseModifiers', function() {
+    expect(pt.parseModifiers('')).to.deep.equal({})
+    expect(pt.parseModifiers(undefined)).to.deep.equal({})
+    expect(pt.parseModifiers('tap')).to.deep.equal({})
+    expect(pt.parseModifiers('tap.a')).to.deep.equal({ a: true })
+    expect(pt.parseModifiers('tap.a.b')).to.deep.equal({ a: true, b: true })
+  })
+
+  it('parseFor', function () {
+    expect(pt.parseFor('')).to.deep.equal({})
+    expect(pt.parseFor(undefined)).to.deep.equal({})
+    // variableMatch
+    expect(pt.parseFor('items')).to.deep.equal({ alias: 'item', for: 'items' })
+    expect(pt.parseFor(' items ')).to.deep.equal({ alias: 'item', for: 'items' })
+    // aliasMatch
+    expect(pt.parseFor('i in items')).to.deep.equal({ alias: 'i', for: 'items' })
+    expect(pt.parseFor(' i in items ')).to.deep.equal({ alias: 'i', for: 'items' })
+    expect(pt.parseFor('(i) in items ')).to.deep.equal({ alias: 'i', for: 'items' })
+    // iteratorMatch
+    expect(pt.parseFor('(a, b) in items ')).to.deep.equal({ alias: 'a', for: 'items', iterator1: 'b' })
+    expect(pt.parseFor('(a, b, c) in items ')).to.deep.equal({ alias: 'a', for: 'items', iterator1: 'b', iterator2: 'c' })
+    expect(pt.parseFor(' ( a, b,c) in items ')).to.deep.equal({ alias: 'a', for: 'items', iterator1: 'b', iterator2: 'c' })    
+    expect(pt.parseFor(' ( a, b,c  ) in items ')).to.deep.equal({ alias: 'a', for: 'items', iterator1: 'b', iterator2: 'c' })    
+  })
 });
