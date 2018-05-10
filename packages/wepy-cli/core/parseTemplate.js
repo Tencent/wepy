@@ -18,6 +18,7 @@ const errorHandler = require('./util/error');
 const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
 const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
 const stripParensRE = /^\(|\)$/g;
+const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
 const onRE = /^@|^v-on:/;
 const modifierRE = /\.[^.]+/g;
 
@@ -71,7 +72,7 @@ exports = module.exports =  {
     return ast;
   },
 
-  transforTag (item) {
+  transforTag (item = {}) {
 
     let htmlTags = this.compilation.tags.htmlTags;
     let wxmlTags = this.compilation.tags.wxmlTags;
@@ -92,7 +93,7 @@ exports = module.exports =  {
     }
   },
 
-  transforAttr (item, attrs) {
+  transforAttr (item = {}, attrs = {}) {
     let rst = {};
     if (attrs['class']) {
       rst.class = attrs['class'];
@@ -152,7 +153,7 @@ exports = module.exports =  {
    * @param  {String} value event value, e.g. doSomething(item)
    * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
    */
-  parseHandler (key, value, modifiers = {}) {
+  parseHandler (key = '', value = '', modifiers = {}) {
     let handler = '';
     let type = '';
     let info;
@@ -176,7 +177,7 @@ exports = module.exports =  {
    * @param  {String} exp function expression, e.g. soSomething('a', 0, a, $event);
    * @return {Object}     {name: 'doSomething', params: ["'a'", 0, a, $event]}
    */
-  parseFunction (exp) {
+  parseFunction (exp = '') {
     let rst = {name: '', params: []}, char = '', tmp = '', stack = [];
     if (exp.indexOf('(') === -1) {
       rst.name = exp.replace(/^\s*/ig, '').replace(/\s*$/ig, '');
@@ -217,13 +218,13 @@ exports = module.exports =  {
    * @param  {String} name e.g. tap.stop.other
    * @return {Object}      e.g. {stop: true, other: true}
    */
-  parseModifiers (name) {
+  parseModifiers (name = '') {
+    let ret = {};
     let match = name.match(modifierRE);
     if (match) {
-      let ret = {};
       match.forEach(function (m) { ret[m.slice(1)] = true; });
-      return ret;
     }
+    return ret;
   },
 
 
@@ -232,15 +233,25 @@ exports = module.exports =  {
    * @param  {String} exp expresion
    * @return {Object}     parse result
    */
-  parseFor (exp) {
-    let inMatch = exp.match(forAliasRE);
-    if (!inMatch) { return }
+  parseFor (exp = '') {
     let res = {};
+    let inMatch = exp.match(forAliasRE);
+    let variableMatch = exp.match(variableRE);
+    if (variableMatch) {
+      // e.g: v-for="items"
+      res.alias = 'item';
+      res.for = variableMatch[0].trim();
+      return res;
+    }
+    
+    if (!inMatch) {
+      return res;
+    }
     res.for = inMatch[2].trim();
     let alias = inMatch[1].trim().replace(stripParensRE, '');
     let iteratorMatch = alias.match(forIteratorRE);
     if (iteratorMatch) {
-      res.alias = alias.replace(forIteratorRE, '');
+      res.alias = alias.replace(forIteratorRE, '').trim();
       res.iterator1 = iteratorMatch[1].trim();
       if (iteratorMatch[2]) {
         res.iterator2 = iteratorMatch[2].trim();
