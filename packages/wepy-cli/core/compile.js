@@ -15,8 +15,9 @@ const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSyste
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const loader = require('./loader');
-const logger = require('./logger');
+const logger = require('./util/logger');
 const Hook = require('./hook');
+const tag = require('./tag');
 
 const ENTRY_FILE = 'app.wpy';
 
@@ -32,6 +33,17 @@ class Compile extends Hook {
     this.resolvers = {};
 
     this.context = process.cwd();
+
+    let appConfig = opt.appConfig || {};
+    let userDefinedTags = appConfig.tags || {};
+
+    this.tags = {
+      htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
+      wxmlTags: tag.combineTag(tag.WXML_TAGS, userDefinedTags.wxmlTags),
+      html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
+    };
+
+    this.logger = logger;
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
@@ -94,14 +106,13 @@ class Compile extends Hook {
   start () {
 
     this.parsers.wpy.parse(this.options.entry, 'app').then(app => {
-debugger;
+
       let sfc = app.sfc;
       let script = sfc.script;
       let styles = sfc.styles;
       let config = sfc.config;
 
       let appConfig = config.parsed;
-      debugger;
       let pages = appConfig.pages.map(v => {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
       });
