@@ -12,6 +12,7 @@ import path from 'path';
 import imagemin from 'imagemin';
 import imageminMozjpeg from 'imagemin-mozjpeg';
 import imageminPngquant from 'imagemin-pngquant';
+import imageminSvgo from 'imagemin-svgo';
 import fs from 'fs';
 
 
@@ -19,10 +20,11 @@ export default class {
 
     constructor(c = {}) {
         const def = {
-            filter: new RegExp('\.(jpg|png|jpeg)$'),
+            filter: new RegExp('\.(jpg|png|jpeg|svg)$'),
             config: {
                 jpg: {},
-                png: {quality: '65-80'}
+                png: {quality: '65-80'},
+                svg: {}
             }
         };
 
@@ -42,7 +44,8 @@ export default class {
             imagemin([op.file], '', {
                 plugins: [
                     imageminMozjpeg(this.setting.config.jpg),
-                    imageminPngquant(this.setting.config.png)
+                    imageminPngquant(this.setting.config.png),
+                    imageminSvgo(this.setting.config.svg)
                 ]
             }).then((files) => {
                 op.code = files[0].data;
