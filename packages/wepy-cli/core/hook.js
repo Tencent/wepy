@@ -20,7 +20,8 @@ class Hook {
 
   hookSequence (key, p) {
     let rst = p;
-    (this._hooks[key] || []).forEatch(fn => {
+    let fns = this._hooks[key] || [];
+    fns.forEach(fn => {
       (typeof fn === 'function') && (rst = fn.apply(this, rst));
     });
     return rst;
