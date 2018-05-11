@@ -227,6 +227,7 @@ class Compile extends Hook {
 
     config.outputCode = JSON.stringify(config.parsed, null, 4);
     script.outputCode = this.fixDep(script.parsed);
+    script.outputCode = this.injectParams(script.parsed, '{a:1}');
 
     let styleCode = '';
 
@@ -255,6 +256,7 @@ class Compile extends Hook {
 
       config.outputCode = JSON.stringify(config.parsed, null, 4);
       script.outputCode = this.fixDep(script.parsed);
+      script.outputCode = this.injectParams(script.parsed, '{a:1}');
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 
@@ -281,6 +283,7 @@ class Compile extends Hook {
       config.parsed.component = true;
       config.outputCode = JSON.stringify(config.parsed, null, 4);
       script.outputCode = this.fixDep(script.parsed);
+      script.outputCode = this.injectParams(script.parsed, '{a:1}');
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 
@@ -381,6 +384,21 @@ ${npmCode}
       code = code.substring(0, dep.expr.start + fixPos) + repleaceMent + code.substr(dep.expr.end + fixPos);
       fixPos += repleaceMent.length - dep.expr.end + dep.expr.start;
     });
+    return code;
+  }
+
+  injectParams (parsed, params) {
+    let code = parsed.code;
+    let entry = parsed.parser.entry;
+    let args = entry.arguments;
+    let pos = 0;
+    if (args === 0) {
+      pos = entry.callee.end + 1;
+    } else {
+      pos = args[args.length -1].end;
+      params = ', ' + params;
+    }
+    code = code.substring(0, pos) + params + code.substring(pos, code.length);
     return code;
   }
 

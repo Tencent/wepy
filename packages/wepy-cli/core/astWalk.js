@@ -11,10 +11,11 @@ class AstWalker {
     const oldComments = this.comments;
 
     this.scope = {
-			inTry: false,
-			definitions: [],
-			renames: {}
-		};
+      inTry: false,
+      definitions: [],
+      instances: [],
+      renames: {}
+    };
     const state = {};
     this.prewalkStatements(this.ast.body);
     this.walkStatements(this.ast.body);
@@ -247,6 +248,7 @@ class AstWalker {
 
   // Declarations
   prewalkFunctionDeclaration(statement) {
+    
     if(statement.id) {
       this.scope.renames["$" + statement.id.name] = undefined;
       this.scope.definitions.push(statement.id.name);
@@ -268,6 +270,7 @@ class AstWalker {
   }
 
   prewalkImportDeclaration(statement) {
+    
     const source = statement.source.value;
     // this.applyPluginsBailResult("import", statement, source);
     statement.specifiers.forEach(function(specifier) {
@@ -416,11 +419,21 @@ class AstWalker {
   }
 
   prewalkVariableDeclarators(declarators) {
+    
     declarators.forEach(declarator => {
       switch(declarator.type) {
         case "VariableDeclarator":
           {
             this.enterPattern(declarator.id, (name, decl) => {
+              if (declarator.init && declarator.init.type === 'CallExpression') {
+                if (declarator.init.callee.name === 'require') {
+                  if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === 'wepy') {
+                    this.scope.instances.push(name);
+                  }
+                } else if (declarator.init.callee.name === '_interopRequireDefault') {
+                  this.scope.instances.push(name + '.default');
+                }
+              }
               if (!this.applyMethods(`var${declarator.kind}${name}`, decl)) {
                 if (!this.applyMethods(`var${name}`, decl)) {
                   this.scope.renames['$' + name] = undefined;
@@ -750,6 +763,16 @@ class AstWalker {
       if(expression.arguments)
         this.walkExpressions(expression.arguments);
     } else {
+
+      if (expression.callee.type === 'MemberExpression') {
+        let exprName = this.getNameForExpression(expression.callee);
+        
+        if (this.scope.instances && this.scope.instances.indexOf(exprName.instance) !== -1) {  // calling wepy instance
+          if (['app', 'page', 'component'].indexOf(exprName.callee) !== -1) {  
+            this.entry = expression;
+          }
+        }
+      }
 
       const callee = this.evaluateExpression(expression.callee);
       if(callee.identifier) {
@@ -1101,6 +1124,8 @@ class AstWalker {
     return {
       name,
       nameGeneral,
+      instance: prefix.substring(0, prefix.length - 1),
+      callee: exprName[0],
       free
     };
   }
