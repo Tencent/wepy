@@ -1,16 +1,32 @@
+import { isFunc, isUndef  } from './../util/index';
+
+const eventHandler = function (method, fn) {
+  let methodKey = method.toLowerCase();
+  return function (e, ...args) {
+    if (!isFunc(fn)) {
+      throw 'undefined method: ' + method;
+    }
+    let result;
+    let wepyParams = [];
+    let paramsLength = 0;
+    let p;
+    if (e.currentTarget && e.currentTarget.dataset) {
+      let tmp = e.currentTarget.dataset;
+      while(!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
+        wepyParams.push(tmp['wpy' + methodKey + p]);
+      }
+    }
+    args = args.concat(wepyParams);
+    return fn.apply(this.$wepy, args);
+  };
+};
+
 /*
  * initialize page methods
  */
 export function initMethods (vm, pageConfig, methods) {
   Object.keys(methods).forEach(method => {
-    pageConfig[method] = function () {
-      let fn = methods[method];
-      let result;
-
-      (typeof fn === 'function') && (result = fn.call(vm));
-
-      return result;
-    };
+    pageConfig[method] = eventHandler(method, methods[method]);
   });
 };
 
@@ -21,16 +37,7 @@ export function initComponentMethods (comConfig, methods) {
 
   comConfig.methods = {};
   Object.keys(methods).forEach(method => {
-
-    comConfig.methods[method] = function () {
-      let fn = methods[method];
-      let result;
-
-      (typeof fn === 'function') && (result === fn.call(this.$wepy));
-
-      return result;
-    };
-
+    comConfig[method] = eventHandler(method, methods[method]);
   });
 };
 
@@ -49,13 +56,6 @@ export function patchMethods (output, methods, isComponent) {
   }
 
   Object.keys(methods).forEach(method => {
-    target[method] = function () {
-      let fn = methods[method];
-      let result;
-
-      (typeof fn === 'function') && (result = fn.call(this.$wepy));
-
-      return result;
-    }
+    target[method] = eventHandler(method, methods[method]);
   });
 };

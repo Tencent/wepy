@@ -83,6 +83,13 @@ npm install wepy-cli -g
 wepy init standard myproject
 ```
 
+#### 安装依赖
+
+```console
+cd myproject
+npm install
+```
+
 #### 开发实时编译
 
 ```console

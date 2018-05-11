@@ -241,7 +241,14 @@
             "email": "glore@ufutx.com",
             "link": "https://library.ufutx.com",
             "opensource": "https://github.com/glore/library",
-            "qrcode": "https://library.ufutx.com/imgs/mp_library.jpg",
+            "qrcode": "https://raw.githubusercontent.com/glore/library/master/src/images/logo2.jpg",
+            "company": "深圳市友福同享信息科技有限公司"
+        }, {
+            "name": "友福聚会",
+            "email": "glore@ufutx.com",
+            "link": "https://party.ufutx.com",
+            "opensource": "https://github.com/glore/party",
+            "qrcode": "https://raw.githubusercontent.com/glore/party/master/src/images/logo.jpg",
             "company": "深圳市友福同享信息科技有限公司"
         }, {
             "name": "米淘联盟",

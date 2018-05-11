@@ -2,9 +2,12 @@
 
 const chalk = require('chalk');
 const program = require('commander');
+const logger = require('../core/util/logger');
+
 
 program
   .version(require('../package.json').version, '-v, --version')
+  .option('-l, --log <level>', 'change the log level')
   .usage('<command> [options]');
 
 program
@@ -59,3 +62,7 @@ program
   .action(require('./wepy-new'));
 
 program.parse(process.argv);
+
+if (program.log) {
+  logger.level(program.log);
+}

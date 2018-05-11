@@ -10,7 +10,7 @@
     "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
     "watch-compile": "npm run build -- --watch",
     "watch": "npm run watch-compile",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,11 @@
     "babel": "^6.23.0",
     "babel-cli": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-1": "^6.16.0"
+    "babel-preset-stage-1": "^6.16.0",
+    "chai": "^4.1.2"
   },
   "dependencies": {
+    "@babel/code-frame": "^7.0.0-beta.46",
     "acorn": "^5.4.1",
     "acorn-dynamic-import": "^3.0.0",
     "async": "^2.6.0",
@@ -43,6 +45,8 @@
     "enhanced-resolve": "^4.0.0-beta.4",
     "handlebars": "^4.0.11",
     "hash-sum": "^1.0.2",
+    "htmlhint": "^0.9.13",
+    "htmlparser2": "^3.9.2",
     "ignore": "^3.2.0",
     "inquirer": "^5.0.1",
     "js-base64": "^2.1.9",
@@ -63,7 +67,7 @@
     "update-notifier": "^1.0.2",
     "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
-    "vue-template-compiler": "^2.5.15",
+    "vue-template-compiler": "^2.5.16",
     "xmldom": "^0.1.27"
   },
   "engines": {
