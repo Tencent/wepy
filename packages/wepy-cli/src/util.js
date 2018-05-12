@@ -594,6 +594,7 @@ const utils = {
             msg = msg.replace(/\\/g, '\\\\');
             msg = msg.replace(/\u001b/g, '');
             msg = msg.replace(/\[\d+m/g, '');
+            msg = msg.replace(/`/g, '\\`');
         }
         try {
             fs.appendFileSync(file, `console.${type}(\`CLI报错：${msg}\`);\r\n`);
