@@ -67,6 +67,7 @@
     "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
     "vue-template-compiler": "^2.5.16",
+    "vue-template-es2015-compiler": "^1.6.0",
     "xmldom": "^0.1.27"
   },
   "engines": {

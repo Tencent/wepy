@@ -214,6 +214,27 @@ class Compile extends Hook {
     }
   }
 
+  genHandlers (handlers) {
+    let params = '{ handlers: [';
+    handlers.forEach((handler, i) => {
+      params += '{';
+      let events = Object.keys(handler);
+      events.forEach((e, p) => {
+        params += `${e}: ${handler[e]}`;
+        if (p !== events.length - 1) {
+          params += ',';
+        }
+      });
+      params += '}'
+      if (i !== handlers.length - 1) {
+        params += ',';
+      }
+    });
+    params += '] }';
+    return params;
+  }
+
+
   buildApp (app) {
     logger.info('app', 'building App');
 
@@ -256,7 +277,10 @@ class Compile extends Hook {
 
       config.outputCode = JSON.stringify(config.parsed, null, 4);
       script.outputCode = this.fixDep(script.parsed);
-      script.outputCode = this.injectParams(script.parsed, '{a:1}');
+
+      let eventHandlers = template.eventHandlers;
+      let injectParams = this.genHandlers(eventHandlers);
+      script.outputCode = this.injectParams(script.parsed, injectParams);
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 

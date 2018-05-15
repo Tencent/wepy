@@ -13,6 +13,9 @@ const parseOptions = require('./parseOptions');
 const tag = require('./tag');
 const xmllint = require('./util/xmllint');
 const errorHandler = require('./util/error');
+const astParser = require('./ast/toAST');
+const paramsDetect = require('./ast/paramsDetect');
+const vueWithTransform = require('vue-template-es2015-compiler');
 
 
 const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
@@ -33,9 +36,14 @@ exports = module.exports =  {
       errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
     return this.getAST(compiled.content).then(ast => {
+      this.eventHandlers = [];
+      this.parseInfo = {
+        handlers: []
+      };
       ast = this.transforAST(ast);
       debugger;
       compiled.code = this.astToString(ast);
+      compiled.eventHandlers = this.eventHandlers;
       return compiled;
     }).catch(e => {
       throw e;
@@ -127,26 +135,72 @@ exports = module.exports =  {
       if (modifiers) {
         k = k.replace(modifierRE, '');
       }
+      let handlers = {};
+      let isHandler = false;
       if (onRE.test(k)) {  // @ or v-on:
         k = k.replace(onRE, '');
         let info = this.parseHandler(k, val, modifiers);
 
         info.params.forEach((p, i) => {
-          let paramAttr = 'data-wpy' + info.handler.toLowerCase() + '-' + String.fromCharCode(97 + i);
+          let paramAttr = 'data-wpy' + info.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
           if (paramAttr.length > 31) {
             this.compilation.logger.warn(`Function name is too long, it may cause an Error. "${info.handler}"`);
           }
           rst[paramAttr] = `{{ ${p} }}`;
         });
         rst[info.type] = info.handler;
-        break;
-      }
-      rst[k] = attrs[k];
-    }
 
+        handlers[info.event] = info.proxy;
+        isHandler = true;
+      }
+      if (isHandler) {
+        rst['data-wpy-evt'] = this.eventHandlers.length;
+        this.eventHandlers.push(handlers);
+      } else {
+        rst[k] = attrs[k];
+      }
+    }
     return rst;
   },
 
+  /**
+   * parsse handler AST
+   * @param {String} expr   function expression, e.g. doSomething(a,b,c); item++;
+   * @return {Object}       AST result
+   */
+  parseHandlerProxy (expr) {
+
+    let injectParams = [];
+    let handlerExpr = expr;
+
+    if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
+      handlerExpr += '()';
+    }
+
+    let detected = paramsDetect(handlerExpr);
+
+    Object.keys(detected).forEach(d => {
+      if (!detected[d].callable) {
+        injectParams.push(d);
+      }
+    });
+
+    let proxy = `function proxyHandler (${injectParams.join(', ')}) {
+      with (this) {
+        return (function () {
+          ${handlerExpr}
+        })();
+      }
+    }`;
+
+    proxy = vueWithTransform(proxy);  // transform this
+    proxy = proxy.replace('var _h=_vm.$createElement;var _c=_vm._self._c||_h;', ''); // removed unused vue code;
+    return {
+      handler: 'handlerProxy',
+      proxy: proxy,
+      params: injectParams
+    };
+  },
   /**
    * parse event handler
    * @param  {String} key   event key, e.g. tap
@@ -157,7 +211,7 @@ exports = module.exports =  {
     let handler = '';
     let type = '';
     let info;
-    info = this.parseFunction(value);
+    info = this.parseHandlerProxy(value.trim());
 
     if (key === 'click')
       key = 'tap';
@@ -165,10 +219,12 @@ exports = module.exports =  {
       type = 'capture-';
     }
     type = type + (modifiers.stop ? 'catch' : 'bind') + ':' + key;
-    return { 
+    return {
+      event: key,
       type: type,
-      handler: info.name,
-      params: info.params
+      handler: info.handler,
+      params: info.params,
+      proxy: info.proxy
     };
   },
 
@@ -243,7 +299,7 @@ exports = module.exports =  {
       res.for = variableMatch[0].trim();
       return res;
     }
-    
+
     if (!inMatch) {
       return res;
     }
