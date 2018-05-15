@@ -1380,7 +1380,7 @@ export default class extends wepy.app {
             // 发出请求时的回调函数
             config (p) {
                 // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
-                p.timestamp = +new Date();
+                p.timestamp = new Date().getTime();
                 console.log('config request: ', p);
                 // 必须返回OBJECT参数对象，否则无法发送请求到服务端
                 return p;
