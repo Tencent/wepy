@@ -54,7 +54,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
             myprop: {}
         };
         computed = {
-            now () { return +new Date(); }
+            now () { return new Date().getTime(); }
         };
         async onLoad() {
             await sleep(3);

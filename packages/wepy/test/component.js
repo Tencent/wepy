@@ -111,7 +111,7 @@ describe('component.js', () => {
 
     it('$nextTick', function (done) {
         //this.timeout(1500);
-        com.a = +new Date();
+        com.a = new Date().getTime();
         com.$nextTick(function () {
             assert.strictEqual(this, com, 'setData callback use this');
             setTimeout(function () {
@@ -124,7 +124,7 @@ describe('component.js', () => {
 
     it('$nextTick using promise', function (done) {
         //this.timeout(1500);
-        com.a = +new Date();
+        com.a = new Date().getTime();
         com.$nextTick().then(function () {
             setTimeout(function () {
                 assert.strictEqual(com.$$nextTick, null, '$$nextTick should be cleared');
@@ -136,7 +136,7 @@ describe('component.js', () => {
 
     it('$nextTick callback for clear data', function (done) {
         //this.timeout(1500);
-        com.a = +new Date();
+        com.a = new Date().getTime();
         com.$apply();
         com.$nextTick(function () {
             assert.strictEqual(this, com, 'setData callback use this');
@@ -150,7 +150,7 @@ describe('component.js', () => {
 
     it('$nextTick using promise for clear data', function (done) {
         //this.timeout(1500);
-        com.a = +new Date();
+        com.a = new Date().getTime();
         com.$apply();
         com.$nextTick().then(function () {
             setTimeout(function () {
@@ -164,14 +164,14 @@ describe('component.js', () => {
 
     it('$nextTick do apply', function (done) {
         //this.timeout(1500);
-        com.a = +new Date();
+        com.a = new Date().getTime();
         com.$nextTick(function () {
             assert.strictEqual(this, com, 'setData callback use this');
-            com.a = +new Date();
+            com.a = new Date().getTime();
             com.$apply();
             com.$nextTick(function () {
                 assert.strictEqual(this, com, 'setData callback use this');
-                com.a = +new Date();
+                com.a = new Date().getTime();
                 com.$apply();
                 done();
             });

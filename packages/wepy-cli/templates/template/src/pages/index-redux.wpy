@@ -177,7 +177,7 @@
 
     computed = {
       now () {
-        return +new Date()
+        return new Date().getTime()
       }
     }
 
