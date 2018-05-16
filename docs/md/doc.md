@@ -694,8 +694,8 @@ export default class MyAPP extends wepy.app {
 ```javascript
 import wepy from 'wepy';
 
-// export default class MyPage extends wepy.page {
-export default class MyComponent extends wepy.component {
+export default class MyPage extends wepy.page {
+// export default class MyComponent extends wepy.component {
     customData = {}  // 自定义数据
 
     customFunction ()　{}  //自定义方法
