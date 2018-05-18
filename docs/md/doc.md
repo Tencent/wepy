@@ -881,7 +881,7 @@ project
 
 <template>
     <!-- 注意，使用for属性，而不是使用wx:for属性 -->
-    <repeat for="{{list}}" key="index" index="index" item="item">
+    <repeat for="{{list}}" key="id" index="index" item="item">
         <!-- 插入<script>脚本部分所声明的child组件，同时传入item -->
         <child :item="item"></child>
     </repeat>
