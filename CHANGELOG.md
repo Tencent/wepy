@@ -1,3 +1,16 @@
+## 1.7.3 (waiting)
+1. `F` 修复组件内@<event>.capture="handler"无法使用组件内部method的bug。[PR 1023](https://github.com/Tencent/wepy/pull/1023)
+2. `F` 修复了xml报错行号定位的问题。
+3. `A` 添加对immutable数据类型的检查优化。[PR 1094](https://github.com/Tencent/wepy/pull/1094)
+4. `F` 忽略大于500kb的文件的编译。
+5. `A` 添加了onPageNotFound事件的支持。[ISSUE 1391](https://github.com/Tencent/wepy/issues/1391)
+6. `F` 修复了部分依赖 core-js 的包编译不能过的问题。[ISSUE 1381](https://github.com/Tencent/wepy/issues/1381)
+7. `F` 修复了复杂的引用关系导致图片路径不正常的问题。
+
+```
+npm install wepy-cli@1.7.3-alpha1 -g
+```
+
 ## 1.7.2 (2018-05-08)
 * `A` 添加了对小程序原生组件的支持。
 * `F` 修复了使用`less/sass/stylus`去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
