@@ -218,12 +218,12 @@ export default {
     /**
      * 组件图片引用会被直接编译进页面，因此需要对组件中的相对路径进行路径修正
      */
-    fixRelativePath (node, template, parentTemplate) {
-        if ((node.nodeName === 'wxs' || node.nodeName === 'image') && parentTemplate) {
+    fixRelativePath (node, template, rootTemplate) {
+        if ((node.nodeName === 'wxs' || node.nodeName === 'image') && rootTemplate) {
             let src = node.getAttribute('src')
             if (src[0] === '.') {
                 let realpath = path.join(path.parse(template.src).dir, node.getAttribute('src'));
-                let fixedpath = path.relative(path.parse(parentTemplate.src).dir, realpath);
+                let fixedpath = path.relative(path.parse(rootTemplate.src).dir, realpath);
                 fixedpath = fixedpath.replace(/\\/g, '/');
                 node.setAttribute('src', fixedpath);
             }
@@ -231,12 +231,12 @@ export default {
         return node;
     },
 
-    updateBind (node, template, parentTemplate, prefix, ignores = {}, mapping = {}) {
+    updateBind (node, template, rootTemplate, prefix, ignores = {}, mapping = {}) {
 
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
 
-        node = this.fixRelativePath(node, template, parentTemplate);
+        node = this.fixRelativePath(node, template, rootTemplate);
 
         // If it's a wxs module, then do not parse it
         if (template.wxs) {
@@ -316,7 +316,7 @@ export default {
                 }
             });
             [].slice.call(node.childNodes || []).forEach((child) => {
-                this.updateBind(child, template, parentTemplate, prefix, ignores, mapping);
+                this.updateBind(child, template, rootTemplate, prefix, ignores, mapping);
             });
         }
         return node;
@@ -362,13 +362,13 @@ export default {
         return node;
     },
 
-    compileXML (node, template, parentTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
+    compileXML (node, template, rootTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
 
         let config = cache.getConfig();
         let tagprefix = config.output === 'ant' ? 'a' : 'wx';
         this.updateSlot(node, childNodes);
 
-        this.updateBind(node, template, parentTemplate, prefix, {}, propsMapping);
+        this.updateBind(node, template, rootTemplate, prefix, {}, propsMapping);
 
         if (node && node.documentElement) {
             let topNode = node.documentElement;
@@ -465,7 +465,7 @@ export default {
                     util.error('找不到组件：' + com.tagName, '\n请尝试使用 npm install ' + com.tagName + ' 安装', '错误');
                 } else {
                     let comWpy = cWpy.resolveWpy(src);
-                    let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes, template.props[comid]);
+                    let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, rootTemplate || template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes, template.props[comid]);
                     node.replaceChild(newnode, com);
                 }
             });
@@ -504,7 +504,7 @@ export default {
                 util.error('找不到组件：' + definePath, '\n请尝试使用 npm install ' + definePath + ' 安装', '错误');
             } else {
                 let comWpy = cWpy.resolveWpy(src);
-                let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
+                let newnode = this.compileXML(this.getTemplate(comWpy.template.code), comWpy.template, rootTemplate || template, this.getPrefix(prefix ? `${prefix}$${comid}` : `${comid}`), com.childNodes, comAttributes);
 
                 node.replaceChild(newnode, com);
             }
