@@ -29,7 +29,7 @@ export default {
         let wpyExt = params.wpyExt;
 
 
-        return code.replace(/([^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
+        return code.replace(/(^|[^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
             let npmInfo = opath.npm;
 
             if (lib === './_wepylogs.js') {
