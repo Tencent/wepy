@@ -105,9 +105,9 @@ const devtoolsTest = (bin, program) => {
 exports = module.exports = (program) => {
   const config = util.getConfig() || {};
 
-  if (config.devtool && config.devtool.rootPath) {
-    const rootPath = config.devtool.rootPath;
-    const bin = getDevtoolsCliPath(rootPath);
+  if (config.devtools && config.devtools.rootDir) {
+    const rootDir = config.devtools.rootDir;
+    const bin = getDevtoolsCliPath(rootDir);
 
     program.open && devtoolsOpen(bin, program);
     program.login && devtoolsLogin(bin, program);
