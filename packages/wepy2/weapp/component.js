@@ -1,6 +1,6 @@
 import { patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
 
-function component (option) {
+function component (option, rel) {
 
   let compConfig = {};
 
@@ -17,7 +17,7 @@ function component (option) {
 
   patchData(compConfig, option.data, true);
 
-  patchLifecycle(compConfig, option, true);
+  patchLifecycle(compConfig, option, rel, true);
 
   return Component(compConfig);
 }

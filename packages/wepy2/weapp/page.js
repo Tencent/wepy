@@ -1,6 +1,6 @@
 import { patchData, patchMethods, patchLifecycle, initWatch, initComputed } from './init/index';
 
-function page (option) {
+function page (option, rel) {
 
   let pageConfig = {};
 
@@ -8,7 +8,7 @@ function page (option) {
 
   patchData(pageConfig, option.data);
 
-  patchLifecycle(pageConfig, option);
+  patchLifecycle(pageConfig, option, rel);
 
   return Page(pageConfig);
 }

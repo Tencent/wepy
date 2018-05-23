@@ -1318,6 +1318,58 @@ function initProps (vm, properties) {
   observe(vm, vm._props, null, true);
 }
 
+var proxyHandler = function (e) {
+  var vm = this.$wepy;
+  var type = e.type;
+  var dataset = e.currentTarget.dataset;
+  var evtid = dataset.wpyEvt;
+  var rel = vm.$rel || {};
+  var handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
+  var fn = handlers[type];
+
+  var i = 0;
+  var params = [];
+  while (i++ < 26) {
+    var alpha = String.fromCharCode(64 + i);
+    var key = 'wpy' + type + alpha;
+    if (!dataset[key]) {
+      break;
+    }
+    params.push(dataset[key]);
+  }
+
+  if (isFunc(fn)) {
+    return fn.apply(vm, params);
+  } else {
+    throw 'Unrecognized event';
+  }
+};
+
+/*
+ * initialize page methods
+ */
+function initMethods (vm, methods) {
+  Object.keys(methods).forEach(function (method) {
+    vm[method] = methods[method];
+  });
+}
+/*
+ * patch method option
+ */
+function patchMethods (output, methods, isComponent) {
+  if (!methods) {
+    return;
+  }
+
+  var target = output;
+  if (isComponent) {
+    output.methods = {};
+    target = output.methods;
+  }
+
+  target._proxy = proxyHandler;
+}
+
 var comid = 0;
 
 var callUserMethod = function (vm, userOpt, method, args) {
@@ -1350,7 +1402,7 @@ function patchAppLifecycle (appConfig, option) {
     return result;
   };
 }
-function patchLifecycle (output, option, isComponent) {
+function patchLifecycle (output, option, rel, isComponent) {
 
   var initClass = isComponent ? WepyComponent : WepyPage;
   var initLifecycle = function () {
@@ -1363,6 +1415,7 @@ function patchLifecycle (output, option, isComponent) {
     vm.$wx = this;
     vm.$is = this.is;
     vm.$option = option;
+    vm.$rel = rel;
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
     if (!vm.$app) {
@@ -1372,6 +1425,8 @@ function patchLifecycle (output, option, isComponent) {
     initProps(vm, output.properties);
 
     initData(vm, output.data, isComponent);
+
+    initMethods(vm, option.methods);
 
     vm._watchers = [];
     var renderWatcher = new Watcher(vm, function () {
@@ -1431,49 +1486,7 @@ function patchLifecycle (output, option, isComponent) {
   };
 }
 
-var eventHandler = function (method, fn) {
-  var methodKey = method.toLowerCase();
-  return function (e) {
-    var args = [], len = arguments.length - 1;
-    while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
-
-    if (!isFunc(fn)) {
-      throw 'undefined method: ' + method;
-    }
-    var wepyParams = [];
-    var paramsLength = 0;
-    var p;
-    if (e.currentTarget && e.currentTarget.dataset) {
-      var tmp = e.currentTarget.dataset;
-      while(!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
-        wepyParams.push(tmp['wpy' + methodKey + p]);
-      }
-    }
-    args = args.concat(wepyParams);
-    return fn.apply(this.$wepy, args);
-  };
-};
-
-/*
- * patch method option
- */
-function patchMethods (output, methods, isComponent) {
-  if (!methods) {
-    return;
-  }
-
-  var target = output;
-  if (isComponent) {
-    output.methods = {};
-    target = output.methods;
-  }
-
-  Object.keys(methods).forEach(function (method) {
-    target[method] = eventHandler(method, methods[method]);
-  });
-}
-
-function page (option) {
+function page (option, rel) {
 
   var pageConfig = {};
 
@@ -1481,20 +1494,20 @@ function page (option) {
 
   patchData(pageConfig, option.data);
 
-  patchLifecycle(pageConfig, option);
+  patchLifecycle(pageConfig, option, rel);
 
   return Page(pageConfig);
 }
 
-function app (option) {
+function app (option, rel) {
   var appConfig = {};
 
-  patchAppLifecycle(appConfig, option);
+  patchAppLifecycle(appConfig, rel, option);
 
   return App(appConfig);
 }
 
-function component (option) {
+function component (option, rel) {
 
   var compConfig = {};
 
@@ -1511,7 +1524,7 @@ function component (option) {
 
   patchData(compConfig, option.data, true);
 
-  patchLifecycle(compConfig, option, true);
+  patchLifecycle(compConfig, option, rel, true);
 
   return Component(compConfig);
 }

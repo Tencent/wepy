@@ -8,6 +8,7 @@ import $global from './../global';
 import { initProps } from './props';
 import { initData } from './data';
 import { initComputed } from './computed';
+import { initMethods } from './methods';
 import { isStr, isArr, isFunc } from '../../shared/index';
 
 
@@ -99,7 +100,7 @@ export function patchComponentLifecycle (compConfig, option) {
   }
 };
 
-export function patchLifecycle (output, option, isComponent) {
+export function patchLifecycle (output, option, rel, isComponent) {
 
   const initClass = isComponent ? WepyComponent : WepyPage;
   const initLifecycle = function (...args) {
@@ -109,6 +110,7 @@ export function patchLifecycle (output, option, isComponent) {
     vm.$wx = this;
     vm.$is = this.is;
     vm.$option = option;
+    vm.$rel = rel;
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
     if (!vm.$app) {
@@ -118,6 +120,8 @@ export function patchLifecycle (output, option, isComponent) {
     initProps(vm, output.properties);
 
     initData(vm, output.data, isComponent);
+
+    initMethods(vm, option.methods);
 
     vm._watchers = [];
     let renderWatcher = new Watcher(vm, function () {

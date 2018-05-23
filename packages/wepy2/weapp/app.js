@@ -1,9 +1,9 @@
 import { patchAppLifecycle } from './init/index';
 
-export default function app (option) {
+export default function app (option, rel) {
   let appConfig = {};
 
-  patchAppLifecycle(appConfig, option);
+  patchAppLifecycle(appConfig, rel, option);
 
   return App(appConfig);
 }

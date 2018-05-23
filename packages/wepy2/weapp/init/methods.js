@@ -21,12 +21,39 @@ const eventHandler = function (method, fn) {
   };
 };
 
+const proxyHandler = function (e) {
+  let vm = this.$wepy;
+  let type = e.type;
+  let dataset = e.currentTarget.dataset;
+  let evtid = dataset.wpyEvt;
+  let rel = vm.$rel || {};
+  let handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
+  let fn = handlers[type];
+
+  let i = 0;
+  let params = [];
+  while (i++ < 26) {
+    let alpha = String.fromCharCode(64 + i);
+    let key = 'wpy' + type + alpha;
+    if (!dataset[key]) {
+      break;
+    }
+    params.push(dataset[key]);
+  }
+
+  if (isFunc(fn)) {
+    return fn.apply(vm, params);
+  } else {
+    throw 'Unrecognized event';
+  }
+}
+
 /*
  * initialize page methods
  */
-export function initMethods (vm, pageConfig, methods) {
+export function initMethods (vm, methods) {
   Object.keys(methods).forEach(method => {
-    pageConfig[method] = eventHandler(method, methods[method]);
+    vm[method] = methods[method];
   });
 };
 
@@ -55,7 +82,5 @@ export function patchMethods (output, methods, isComponent) {
     target = output.methods;
   }
 
-  Object.keys(methods).forEach(method => {
-    target[method] = eventHandler(method, methods[method]);
-  });
+  target._proxy = proxyHandler;
 };
