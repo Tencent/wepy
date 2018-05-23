@@ -12,7 +12,7 @@ exports = module.exports = function () {
         replaceMent = `__wepy_require(${moduleId})`;
       } else {
         if (typeof moduleId === 'number') {
-          let npmfile = path.join(this.context, this.options.src, 'npm.js');
+          let npmfile = path.join(this.context, this.options.src, 'vendor.js');
           let relativePath = path.relative(path.dirname(parsed.file), npmfile);
           replaceMent = `require('${relativePath}')(${moduleId})`;
         } else if (depMod && depMod.sfc) {

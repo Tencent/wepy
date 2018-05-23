@@ -115,7 +115,10 @@ class Compile extends Hook {
       './plugins/build/app',
       './plugins/build/pages',
       './plugins/build/components',
-      './plugins/build/vendor'
+      './plugins/build/vendor',
+
+      './plugins/template/parse',
+      './plugins/template/parseBindClass',
     ].map(v => require(v));
 
     initHooks(this, plugins);

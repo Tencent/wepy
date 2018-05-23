@@ -1,32 +1,36 @@
-function genHandlers (handlers) {
+const genRel = (rel) => {
 
-  if (typeof handlers === 'string')
-    return handlers;
+  if (typeof rel === 'string')
+    return rel;
 
-  let params = '{ handlers: [';
-  handlers.forEach((handler, i) => {
-    params += '{';
+  let handlerStr = '['
+  rel.handlers.forEach((handler, i) => {
+    handlerStr += '{';
     let events = Object.keys(handler);
     events.forEach((e, p) => {
-      params += `${e}: ${handler[e]}`;
+      handlerStr += `${e}: ${handler[e]}`;
       if (p !== events.length - 1) {
-        params += ',';
+        handlerStr += ',';
       }
     });
-    params += '}'
-    if (i !== handlers.length - 1) {
-      params += ',';
+    handlerStr += '}'
+    if (i !== rel.handlers.length - 1) {
+      handlerStr += ',';
     }
   });
-  params += '] }';
-  return params;
-}
+  handlerStr += ']';
+
+  let copy = Object.assign({}, rel);
+  delete copy.handlers;
+
+  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr} }`; 
+};
 
 
 exports = module.exports = function () {
-  this.register('script-injection', function scriptInjection (parsed, data) {
+  this.register('script-injection', function scriptInjection (parsed, ref) {
 
-    let params = genHandlers(data);
+    let relstr = genRel(ref);
     let code = parsed.code;
     let entry = parsed.parser.entry;
     let args = entry.arguments;
@@ -35,8 +39,8 @@ exports = module.exports = function () {
       pos = entry.callee.end + 1;
     } else {
       pos = args[args.length -1].end;
-      params = ', ' + params;
+      relstr = ', ' + relstr;
     }
-    parsed.source.insert(pos, params);
+    parsed.source.insert(pos, relstr);
   });
 }

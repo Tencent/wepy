@@ -37,7 +37,7 @@ exports = module.exports = class Hook {
   }
 
   hookUnique (key, ...args) {
-    let rst = [];
+    let rst;
     let hooks = this._hooks[key] || [];
 
     let lastHook = hooks[hooks.length - 1];
@@ -45,7 +45,20 @@ exports = module.exports = class Hook {
     if (typeof lastHook === 'function') {
       return lastHook.apply(this, args);
     } else {
-      return Promise.resolve(args);
+      return rst;
+    }
+  }
+
+  hookUniqueReturnArg (key, ...args) {
+    let rst = args;
+    let hooks = this._hooks[key] || [];
+
+    let lastHook = hooks[hooks.length - 1];
+
+    if (typeof lastHook === 'function') {
+      return lastHook.apply(this, args);
+    } else {
+      return (rst.length <= 1 ? rst[0] : rst);
     }
   }
 

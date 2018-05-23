@@ -35,6 +35,13 @@ exports = module.exports =  {
       let type = item.type === 'warning' ? 'warn' : 'error';
       errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
+
+    return this.compilation.hookUnique('template-parse', compiled.content).then(rst => {
+      compiled.code = rst.code;
+      compiled.rel = rst.rel;
+      return compiled;
+    });
+     
     return this.getAST(compiled.content).then(ast => {
       this.eventHandlers = [];
       this.parseInfo = {
@@ -181,7 +188,7 @@ exports = module.exports =  {
 
     Object.keys(detected).forEach(d => {
       if (!detected[d].callable) {
-        injectParams.push(d);
+        //injectParams.push(d);
       }
     });
 
