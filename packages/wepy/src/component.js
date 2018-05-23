@@ -683,6 +683,7 @@ function keyCheck (vm, k) {
         console.warn(`"${k}: You can not define a property started with "$"`);
         return 0;
     }
+    return 1;
 }
 
 function getEventsFn (comContext, evtName) {
