@@ -9,6 +9,9 @@ spawn wepy init empty $dist
 expect "Project name"
 send "empty-project\n"
 
+expect "AppId"
+send "\n"
+
 expect "Project description"
 send "\n"
 
@@ -16,7 +19,7 @@ expect "Author"
 send "\n"
 
 expect "Use ESLint to lint your code"
-send "\n"
+send "n\n"
 
 send_user  "\nEmpty template generated\n"
 
