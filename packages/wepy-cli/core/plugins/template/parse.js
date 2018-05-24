@@ -217,7 +217,7 @@ exports = module.exports = function () {
       logger.silly('html2wxml', `Change "${item.name}" to "${html2wxmlMap[item.name]}"`);
       item.name = html2wxmlMap[item.name];
     } else if (wxmlTags.indexOf(item.name) > -1) { // Tag is a wxml tag
-      
+
     } else if (htmlTags.indexOf(item.name) > -1) { // Tag is a html tag
       logger.silly('html2wxml', `Change "${item.name}" is a html tag, changed to "view"`);
       item.name = 'view';
@@ -252,9 +252,14 @@ exports = module.exports = function () {
         str += '<' + item.name;
         if (item.parsedAttr) {
           Object.keys(item.parsedAttr).forEach(attr => {
-            if (attr !== 'class')
+            if (attr !== 'class' && attr !== 'style')
               str += ` ${attr}="${item.parsedAttr[attr]}"`;
           });
+        }
+        if (item.parsedAttr.style || (item.bindStyle && item.bindStyle.length)) {
+          let staticStyle = item.parsedAttr.style || '';
+          let bindStyle = (item.bindStyle && item.bindStyle.length) ? ` {{ ${item.bindStyle.join(' + ')} }}` : '';
+          str += ` style="${staticStyle + bindStyle}"`;
         }
         if (item.parsedAttr.class || (item.bindClass && item.bindClass.length)) {
           let staticClass = item.parsedAttr.class || '';
