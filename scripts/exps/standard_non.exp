@@ -9,6 +9,9 @@ spawn wepy init standard $dist
 expect "Project name"
 send "standard-project\n"
 
+expect "AppId"
+send "\n"
+
 expect "Project description"
 send "\n"
 
@@ -24,6 +27,6 @@ send "n\n"
 expect "Use web transform feature in your project"
 send "n\n"
 
-send_user  "\nStandard template generatedg\n"
+send_user  "\nStandard template generated\n"
 
 interact

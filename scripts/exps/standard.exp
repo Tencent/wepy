@@ -9,6 +9,9 @@ spawn wepy init standard $dist
 expect "Project name"
 send "standard-project\n"
 
+expect "AppId"
+send "\n"
+
 expect "Project description"
 send "\n"
 
@@ -16,14 +19,13 @@ expect "Author"
 send "\n"
 
 expect "Use ESLint to lint your code"
-send "\n"
-
+send "y\n"
 
 expect "Use Redux in your project"
-send "\n"
+send "y\n"
 
 expect "Use web transform feature in your project"
-send "\n"
+send "y\n"
 
 send_user  "\nStandard template generatedg\n"
 
