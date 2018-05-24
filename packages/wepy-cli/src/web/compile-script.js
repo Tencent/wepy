@@ -42,7 +42,8 @@ export default {
         let depences = [];
 
         // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
-        wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        wpy.script.code = wpy.script.code.replace(/(^|[^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
             if (lib === 'wepy')
                 lib = 'wepy-web';
 
@@ -55,7 +56,7 @@ export default {
             lib = resolve.resolveAlias(lib, opath);
 
             if (lib === 'false') {
-                return '{}';
+                return `${char}{}`;
             } else if (path.isAbsolute(lib)) {
                 source = lib;
             } else if (lib[0] === '.') { // require('./something'');
@@ -167,7 +168,7 @@ export default {
             }
             dep.id = wepyRequireId;
             depences.push(dep);
-            return `__wepy_require(${wepyRequireId})`;
+            return `${char}__wepy_require(${wepyRequireId})`;
         });
         return depences;
     },
