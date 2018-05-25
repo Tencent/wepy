@@ -44,10 +44,17 @@ export function initData (vm, data) {
     _data = clone(data);
   }
   vm._data = _data;
-  vm.$dirty = [];
+  vm.$dirty = {};
   Object.keys(_data).forEach(key => {
     proxy(vm, '_data', key);
   });
 
-  observe(vm, _data, null, true);
+  observe({
+    vm: vm,
+    key: '',
+    value: _data,
+    parent: '',
+    root: true
+  });
+  //observe(vm, _data, null, true);
 }

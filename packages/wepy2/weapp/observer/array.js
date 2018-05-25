@@ -30,21 +30,19 @@ methodsToPatch.forEach(function (method) {
     const vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty.indexOf(ob.key) === -1) {
-      vm.$dirty.push(ob.key);
-    }
+    vm.$dirty[ob.path] = ob.value;
 
     let inserted;
     switch (method) {
       case 'push':
       case 'unshift':
-        inserted = args;
+        inserted = ob.value;
         break;
       case 'splice':
         inserted = args.slice(2);
         break;
     }
-    if (inserted) ob.observeArray(inserted, ob.key);
+    if (inserted) ob.observeArray(ob.key, inserted);
     // notify change
     ob.dep.notify();
     return result;

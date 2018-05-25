@@ -476,21 +476,19 @@ methodsToPatch.forEach(function (method) {
     var vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty.indexOf(ob.key) === -1) {
-      vm.$dirty.push(ob.key);
-    }
+    vm.$dirty[ob.path] = ob.value;
 
     var inserted;
     switch (method) {
       case 'push':
       case 'unshift':
-        inserted = args;
+        inserted = ob.value;
         break;
       case 'splice':
         inserted = args.slice(2);
         break;
     }
-    if (inserted) { ob.observeArray(inserted, ob.key); }
+    if (inserted) { ob.observeArray(ob.key, inserted); }
     // notify change
     ob.dep.notify();
     return result;
@@ -498,6 +496,23 @@ methodsToPatch.forEach(function (method) {
 });
 
 var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
+
+var getRootAndPath = function (key, parent) {
+  var path = '';
+  if (parent) {
+    path = parent.__ob__.path;
+    if (path) {
+      path = isNum(key) ? (path + "[" + key + "]") : (path + "." + key);
+      var root = '';
+      var i = 0;
+      while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
+        root += path[i++];
+      }
+      return { path: path, root: root }
+    }
+  }
+  return { root: key, path: key };
+};
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -515,21 +530,30 @@ var observerState = {
  * object's property keys into getter/setters that
  * collect dependencies and dispatches updates.
  */
-var Observer = function Observer (vm, value, parentKey) {
+var Observer = function Observer (ref) {
+  var vm = ref.vm;
+  var key = ref.key;
+  var value = ref.value;
+  var parent = ref.parent;
+
   this.value = value;
   this.dep = new Dep();
   this.vmCount = 0;
   this.vm = vm;
-  this.key = parentKey;
+  this.key = key;
+  var rootAndPath = getRootAndPath(key, parent);
+  this.root = rootAndPath.root;
+  this.path = rootAndPath.path;
+
   def(value, '__ob__', this);
   if (Array.isArray(value)) {
     var augment = hasProto
       ? protoAugment
       : copyAugment;
     augment(value, arrayMethods, arrayKeys);
-    this.observeArray(value, parentKey);
+    this.observeArray(key, value);
   } else {
-    this.walk(value, parentKey);
+    this.walk(key, value);
   }
 };
 
@@ -538,23 +562,24 @@ var Observer = function Observer (vm, value, parentKey) {
  * getter/setters. This method should only be called when
  * value type is Object.
  */
-Observer.prototype.walk = function walk (obj, parentKey) {
+Observer.prototype.walk = function walk (key, obj) {
     var this$1 = this;
 
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
-    defineReactive(this$1.vm, obj, keys[i], obj[keys[i]], parentKey || keys[i]);
+    defineReactive({ vm: this$1.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+    //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
   }
 };
 
 /**
  * Observe a list of Array items.
  */
-Observer.prototype.observeArray = function observeArray (items, parentKey) {
+Observer.prototype.observeArray = function observeArray (key, items) {
     var this$1 = this;
 
   for (var i = 0, l = items.length; i < l; i++) {
-    observe(this$1.vm, items[i], parentKey);
+    observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
   }
 };
 
@@ -587,7 +612,13 @@ function copyAugment (target, src, keys) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
-function observe (vm, value, parentKey, asRootData) {
+function observe (ref) {
+  var vm = ref.vm;
+  var key = ref.key;
+  var value = ref.value;
+  var parent = ref.parent;
+  var root = ref.root;
+
   if (!isObject(value)) {
     return
   }
@@ -600,9 +631,9 @@ function observe (vm, value, parentKey, asRootData) {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
-    ob = new Observer(vm, value, parentKey);
+    ob = new Observer({vm: vm, key: key, value: value, parent: parent});
   }
-  if (asRootData && ob) {
+  if (root && ob) {
     ob.vmCount++;
   }
   return ob
@@ -611,7 +642,15 @@ function observe (vm, value, parentKey, asRootData) {
 /**
  * Define a reactive property on an Object.
  */
-function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
+function defineReactive (ref) {
+  var vm = ref.vm;
+  var obj = ref.obj;
+  var key = ref.key;
+  var value = ref.value;
+  var parent = ref.parent;
+  var customSetter = ref.customSetter;
+  var shallow = ref.shallow;
+
   var dep = new Dep();
 
   var property = Object.getOwnPropertyDescriptor(obj, key);
@@ -622,40 +661,41 @@ function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
   // cater for pre-defined getter/setters
   var getter = property && property.get;
   if (!getter && arguments.length === 2) {
-    val = obj[key];
+    value = obj[key];
   }
   var setter = property && property.set;
 
-  var childOb = !shallow && observe(vm, val, parentKey);
+  var childOb = !shallow && observe({vm: vm, key: key, value: value, parent: obj});
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
-      var value = getter ? getter.call(obj) : val;
+      var val = getter ? getter.call(obj) : value;
       if (Dep.target) {
         dep.depend();
         if (childOb) {
           childOb.dep.depend();
-          if (Array.isArray(value)) {
-            dependArray(value);
+          if (Array.isArray(val)) {
+            dependArray(val);
           }
         }
       }
-      return value
+      return val
     },
     set: function reactiveSetter (newVal) {
-      var value = getter ? getter.call(obj) : val;
+      var val = getter ? getter.call(obj) : value;
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === val || (newVal !== newVal && val !== value)) {
         return
       }
 
-      parentKey = parentKey || key;
+      parent = parent || key;
+
+      var ref = getRootAndPath(key, obj);
+      var path = ref.path;
 
       // push parent key to dirty, wait to setData
-      if (vm.$dirty.indexOf(parentKey) === -1) {
-        vm.$dirty.push(parentKey);
-      }
+      vm.$dirty[path] = newVal;
 
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
@@ -664,9 +704,9 @@ function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
       if (setter) {
         setter.call(obj, newVal);
       } else {
-        val = newVal;
+        value = newVal;
       }
-      childOb = !shallow && observe(vm, newVal, parentKey);
+      childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
       dep.notify();
     }
   });
@@ -727,12 +767,19 @@ function initData (vm, data) {
     _data = clone(data);
   }
   vm._data = _data;
-  vm.$dirty = [];
+  vm.$dirty = {};
   Object.keys(_data).forEach(function (key) {
     proxy(vm, '_data', key);
   });
 
-  observe(vm, _data, null, true);
+  observe({
+    vm: vm,
+    key: '',
+    value: _data,
+    parent: '',
+    root: true
+  });
+  //observe(vm, _data, null, true);
 }
 
 var seenObjects = new _Set();
@@ -1245,6 +1292,13 @@ function initRender (vm, keys) {
       keys.forEach(function (key) { return clone(vm[key]); });
       vm._init = true;
     }
+    var dirtyKeys = Object.keys(vm.$dirty);
+    if (dirtyKeys.length) {
+      console.log('setdata: ' + JSON.stringify(vm.$dirty));
+      vm.$wx.setData(vm.$dirty);
+      vm.$dirty = {};
+    }
+    return;
     if (vm.$dirty.length) {
       var dirtyData = {};
       vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
@@ -1278,7 +1332,12 @@ var observerFn = function (output, props, prop) {
       proxy(vm, '_props', key);
     });
 
-    observe(vm, _props, null, true);
+    observe({
+      vm: vm,
+      key: '',
+      value: _props,
+      root: true
+    });
 
     initRender(vm, Object.keys(_props));
   };
@@ -1347,7 +1406,7 @@ function patchProps (output, props) {
  */
 function initProps (vm, properties) {
   vm._props = {};
-  vm.$dirty = vm.$dirty || [];
+  vm.$dirty = vm.$dirty || {};
 
   if (!properties) {
     return;
@@ -1358,7 +1417,12 @@ function initProps (vm, properties) {
     proxy(vm, '_props', key);
   });
 
-  observe(vm, vm._props, null, true);
+  observe({
+    vm: vm,
+    key: '',
+    value: vm._props,
+    root: true
+  });
 }
 
 var proxyHandler = function (e) {

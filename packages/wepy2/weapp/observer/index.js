@@ -6,11 +6,29 @@ import {
   hasOwn,
   hasProto,
   isObject,
+  isNum,
   isPlainObject,
   isValidArrayIndex
 } from '../util/index'
 
-const arrayKeys = Object.getOwnPropertyNames(arrayMethods)
+const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
+
+const getRootAndPath = (key, parent) => {
+  let path = '';
+  if (parent) {
+    path = parent.__ob__.path;
+    if (path) {
+      path = isNum(key) ? `${path}[${key}]` : `${path}.${key}`;
+      let root = '';
+      let i = 0;
+      while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
+        root += path[i++];
+      }
+      return { path: path, root: root }
+    }
+  }
+  return { root: key, path: key };
+}
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -30,21 +48,25 @@ export const observerState = {
  */
 export class Observer {
 
-  constructor (vm, value, parentKey) {
+  constructor ({vm, key, value, parent}) {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
-    this.key = parentKey;
+    this.key = key;
+    let rootAndPath = getRootAndPath(key, parent);
+    this.root = rootAndPath.root;
+    this.path = rootAndPath.path;
+
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
       const augment = hasProto
         ? protoAugment
         : copyAugment
       augment(value, arrayMethods, arrayKeys)
-      this.observeArray(value, parentKey);
+      this.observeArray(key, value);
     } else {
-      this.walk(value, parentKey);
+      this.walk(key, value);
     }
   }
 
@@ -53,19 +75,20 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
-  walk (obj, parentKey) {
+  walk (key, obj) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
-      defineReactive(this.vm, obj, keys[i], obj[keys[i]], parentKey || keys[i]);
+      defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+      //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
     }
   }
 
   /**
    * Observe a list of Array items.
    */
-  observeArray (items, parentKey) {
+  observeArray (key, items) {
     for (let i = 0, l = items.length; i < l; i++) {
-      observe(this.vm, items[i], parentKey);
+      observe({ vm: this.vm, key: i, value: items[i], parent: items });
     }
   }
 }
@@ -99,7 +122,7 @@ function copyAugment (target, src, keys) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
-export function observe (vm, value, parentKey, asRootData) {
+export function observe ({vm, key, value, parent, root}) {
   if (!isObject(value)) {
     return
   }
@@ -112,9 +135,9 @@ export function observe (vm, value, parentKey, asRootData) {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
-    ob = new Observer(vm, value, parentKey);
+    ob = new Observer({vm: vm, key: key, value: value, parent: parent});
   }
-  if (asRootData && ob) {
+  if (root && ob) {
     ob.vmCount++
   }
   return ob
@@ -123,7 +146,7 @@ export function observe (vm, value, parentKey, asRootData) {
 /**
  * Define a reactive property on an Object.
  */
-export function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
+export function defineReactive ({vm, obj, key, value, parent, customSetter, shallow}) {
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -134,40 +157,40 @@ export function defineReactive (vm, obj, key, val, parentKey, customSetter, shal
   // cater for pre-defined getter/setters
   const getter = property && property.get
   if (!getter && arguments.length === 2) {
-    val = obj[key]
+    value = obj[key]
   }
   const setter = property && property.set
 
-  let childOb = !shallow && observe(vm, val, parentKey)
+  let childOb = !shallow && observe({vm: vm, key: key, value: value, parent: obj});
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
-      const value = getter ? getter.call(obj) : val
+      const val = getter ? getter.call(obj) : value
       if (Dep.target) {
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
-          if (Array.isArray(value)) {
-            dependArray(value)
+          if (Array.isArray(val)) {
+            dependArray(val)
           }
         }
       }
-      return value
+      return val
     },
     set: function reactiveSetter (newVal) {
-      const value = getter ? getter.call(obj) : val
+      const val = getter ? getter.call(obj) : value
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === val || (newVal !== newVal && val !== value)) {
         return
       }
 
-      parentKey = parentKey || key;
+      parent = parent || key;
+
+      let {root, path} = getRootAndPath(key, obj);
 
       // push parent key to dirty, wait to setData
-      if (vm.$dirty.indexOf(parentKey) === -1) {
-        vm.$dirty.push(parentKey);
-      }
+      vm.$dirty[path] = newVal;
 
       /* eslint-enable no-self-compare */
       if (process.env.NODE_ENV !== 'production' && customSetter) {
@@ -176,10 +199,10 @@ export function defineReactive (vm, obj, key, val, parentKey, customSetter, shal
       if (setter) {
         setter.call(obj, newVal)
       } else {
-        val = newVal
+        value = newVal
       }
-      childOb = !shallow && observe(vm, newVal, parentKey);
-      dep.notify()
+      childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
+      dep.notify();
     }
   })
 }
@@ -211,7 +234,7 @@ export function set (vm, target, key, val) {
     target[key] = val
     return val
   }
-  defineReactive(vm, ob.value, key, val)
+  defineReactive({ vm: vm,  obj: ob.value, key: key, value: val });
   ob.dep.notify()
   return val
 }

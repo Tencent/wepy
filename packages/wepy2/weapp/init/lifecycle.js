@@ -57,7 +57,7 @@ export function initLifecycle_bak (vm, pageConfig) {
 
     let init = false;
 
-    vm.$dirty = [];
+    vm.$dirty = {};
     let renderWatcher = new Watcher(vm, function () {
       if (!init) {
         for (let k in vm._data) {
@@ -72,7 +72,7 @@ export function initLifecycle_bak (vm, pageConfig) {
         vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(k => {
           dirtyData[k] = vm[k];
         });
-        vm.$dirty = [];
+        vm.$dirty = {};
         wxpage.setData(dirtyData);
       }
     }, function () {

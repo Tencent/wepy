@@ -27,7 +27,12 @@ const observerFn = function (output, props, prop) {
       proxy(vm, '_props', key);
     });
 
-    observe(vm, _props, null, true);
+    observe({
+      vm: vm,
+      key: '',
+      value: _props,
+      root: true
+    });
 
     initRender(vm, Object.keys(_props));
   };
@@ -95,7 +100,7 @@ export function patchProps (output, props) {
  */
 export function initProps (vm, properties) {
   vm._props = {};
-  vm.$dirty = vm.$dirty || [];
+  vm.$dirty = vm.$dirty || {};
 
   if (!properties) {
     return;
@@ -106,5 +111,10 @@ export function initProps (vm, properties) {
     proxy(vm, '_props', key);
   });
 
-  observe(vm, vm._props, null, true);
+  observe({
+    vm: vm,
+    key: '',
+    value: vm._props,
+    root: true
+  });
 };
