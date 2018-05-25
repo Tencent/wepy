@@ -39,6 +39,10 @@ function isNative (Ctor) {
  */
 var isStr = function (v) { return typeof v === 'string'; };
 /**
+ * Number type check
+ */
+var isNum = function (v) { return typeof v === 'number'; };
+/**
  * Array type check
  */
 var isArr = Array.isArray;
@@ -177,8 +181,10 @@ function clone (sth, deep) {
     return sth;
   } else if (isPlainObject(sth)) {
     return extend(deep, {}, sth);
+  } else if (isNum(sth) || isStr(sth)) {
+    return sth;
   } else {
-    throw ("Do not support to clone a \"" + (typeof sth) + "\" data");
+    throw new Error(("Do not support to clone a \"" + (typeof sth) + "\" data"));
   }
 }
 
@@ -484,7 +490,7 @@ methodsToPatch.forEach(function (method) {
         inserted = args.slice(2);
         break;
     }
-    if (inserted) { ob.observeArray(inserted); }
+    if (inserted) { ob.observeArray(inserted, ob.key); }
     // notify change
     ob.dep.notify();
     return result;
@@ -548,7 +554,7 @@ Observer.prototype.observeArray = function observeArray (items, parentKey) {
     var this$1 = this;
 
   for (var i = 0, l = items.length; i < l; i++) {
-    observe(this$1.vm, items[i]);
+    observe(this$1.vm, items[i], parentKey);
   }
 };
 
@@ -660,7 +666,7 @@ function defineReactive (vm, obj, key, val, parentKey, customSetter, shallow) {
       } else {
         val = newVal;
       }
-      childOb = !shallow && observe(newVal);
+      childOb = !shallow && observe(vm, newVal, parentKey);
       dep.notify();
     }
   });
@@ -1232,12 +1238,49 @@ var WepyComponent = (function (Base$$1) {
 
 var $global = {};
 
+function initRender (vm, keys) {
+  vm._init = false;
+  return new Watcher(vm, function () {
+    if (!vm._init) {
+      keys.forEach(function (key) { return clone(vm[key]); });
+      vm._init = true;
+    }
+    if (vm.$dirty.length) {
+      var dirtyData = {};
+      vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
+        dirtyData[k] = vm[k];
+      });
+      vm.$dirty = [];
+      console.log('setdata: ' + JSON.stringify(dirtyData));
+      vm.$wx.setData(dirtyData);
+    }
+  }, function () {
+
+  }, null, true);
+}
+
 var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 
 var observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     var vm = this.$wepy;
-    vm[prop] = newVal;
+    var _props;
+    var _data = newVal;
+    var key = changedPaths[0];
+    if (typeof _data === 'function') {
+      _data = _data.call(vm);
+    }
+
+    _props = vm._props || {};
+    _props[key] = _data;
+    vm._props = _props;
+    Object.keys(_props).forEach(function (key) {
+      proxy(vm, '_props', key);
+    });
+
+    observe(vm, _props, null, true);
+
+    initRender(vm, Object.keys(_props));
   };
 };
 /*
@@ -1429,30 +1472,9 @@ function patchLifecycle (output, option, rel, isComponent) {
     initMethods(vm, option.methods);
 
     vm._watchers = [];
-    var renderWatcher = new Watcher(vm, function () {
-      if (!vm._init) {
-        for (var k in vm._props) {
-          // initialize getter dep
-          vm._props[k];
-        }
-        for (var k$1 in vm._data) {
-          vm._data[k$1];
-        }
-        vm._init = true;
-      }
 
-      if (vm.$dirty.length) {
-        var dirtyData = {};
-        vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
-          dirtyData[k] = vm[k];
-        });
-        vm.$dirty = [];
-        console.log('setdata: ' + JSON.stringify(dirtyData));
-        vm.$wx.setData(dirtyData);
-      }
-    }, function () {
-
-    }, null, true);
+    // create render watcher
+    initRender(vm, Object.keys(vm._data));
 
     // not need to patch computed to ouput
     initComputed(vm, option.computed, true);

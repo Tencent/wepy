@@ -44,7 +44,7 @@ methodsToPatch.forEach(function (method) {
         inserted = args.slice(2);
         break;
     }
-    if (inserted) ob.observeArray(inserted);
+    if (inserted) ob.observeArray(inserted, ob.key);
     // notify change
     ob.dep.notify();
     return result;

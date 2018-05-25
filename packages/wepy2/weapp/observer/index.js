@@ -65,7 +65,7 @@ export class Observer {
    */
   observeArray (items, parentKey) {
     for (let i = 0, l = items.length; i < l; i++) {
-      observe(this.vm, items[i])
+      observe(this.vm, items[i], parentKey);
     }
   }
 }
@@ -178,7 +178,7 @@ export function defineReactive (vm, obj, key, val, parentKey, customSetter, shal
       } else {
         val = newVal
       }
-      childOb = !shallow && observe(newVal)
+      childOb = !shallow && observe(vm, newVal, parentKey);
       dep.notify()
     }
   })

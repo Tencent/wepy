@@ -6,6 +6,7 @@ import { proxy } from './data';
 import Watcher from './../observer/watcher';
 import $global from './../global';
 import { initProps } from './props';
+import { initRender } from './render';
 import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
@@ -124,30 +125,9 @@ export function patchLifecycle (output, option, rel, isComponent) {
     initMethods(vm, option.methods);
 
     vm._watchers = [];
-    let renderWatcher = new Watcher(vm, function () {
-      if (!vm._init) {
-        for (let k in vm._props) {
-          // initialize getter dep
-          vm._props[k];
-        }
-        for (let k in vm._data) {
-          vm._data[k];
-        }
-        vm._init = true;
-      }
 
-      if (vm.$dirty.length) {
-        let dirtyData = {};
-        vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(k => {
-          dirtyData[k] = vm[k];
-        });
-        vm.$dirty = [];
-        console.log('setdata: ' + JSON.stringify(dirtyData));
-        vm.$wx.setData(dirtyData);
-      }
-    }, function () {
-
-    }, null, true);
+    // create render watcher
+    initRender(vm, Object.keys(vm._data));
 
     // not need to patch computed to ouput
     initComputed(vm, option.computed, true);

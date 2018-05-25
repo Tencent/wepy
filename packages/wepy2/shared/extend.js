@@ -1,4 +1,4 @@
-import { isPlainObject, isArr } from './util';
+import { isPlainObject, isArr, isStr, isNum } from './util';
 
 /*
  * extend objects
@@ -89,7 +89,9 @@ export function clone (sth, deep = true) {
     return sth;
   } else if (isPlainObject(sth)) {
     return extend(deep, {}, sth);
+  } else if (isNum(sth) || isStr(sth)) {
+    return sth;
   } else {
-    throw `Do not support to clone a "${typeof sth}" data`;
+    throw new Error(`Do not support to clone a "${typeof sth}" data`);
   }
 }

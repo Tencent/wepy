@@ -1,9 +1,9 @@
 import { observe } from './../observer/index';
 import { proxy } from './data';
-import { isFunc, isArr, isStr, isObj, isUndef  } from './../util/index';
+import { initRender } from './render';
+import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
+
 const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
-
-
 
 const propOberverHandler = function (prop, newVal, oldVal, changedPaths) {
   console.log(prop);
@@ -13,7 +13,23 @@ const propOberverHandler = function (prop, newVal, oldVal, changedPaths) {
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
-    vm[prop] = newVal;
+    let _props;
+    let _data = newVal;
+    let key = changedPaths[0];
+    if (typeof _data === 'function') {
+      _data = _data.call(vm);
+    }
+
+    _props = vm._props || {};
+    _props[key] = _data;
+    vm._props = _props;
+    Object.keys(_props).forEach(key => {
+      proxy(vm, '_props', key);
+    });
+
+    observe(vm, _props, null, true);
+
+    initRender(vm, Object.keys(_props));
   };
 };
 /*
