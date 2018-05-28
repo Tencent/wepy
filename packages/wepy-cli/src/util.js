@@ -188,6 +188,18 @@ const utils = {
     isArray (obj) {
         return Array.isArray(obj);
     },
+    isTrue (v) {
+        return v === true;
+    },
+    isFalse (v) {
+        return v === false;
+    },
+    isUndef (v) {
+        return v === undefined || v === null;
+    },
+    isDef (v) {
+        return v !== undefined && v !== null;
+    },
     isFile (p) {
         p = (typeof(p) === 'object') ? path.join(p.dir, p.base) : p;
         if (!fs.existsSync(p)) {
@@ -518,7 +530,12 @@ const utils = {
     },
     getVersion () {
         let filepath = path.resolve(__dirname, '../package.json');
-        let version = JSON.parse(this.readFile(filepath)).version;
+        let version = (JSON.parse(this.readFile(filepath)) || {}).version;
+        return version;
+    },
+    getProjectVersion () {
+        let filepath = path.resolve(this.currentDir, '../package.json');
+        let version = (JSON.parse(this.readFile(filepath)) || {}).version;
         return version;
     },
     datetime (date = new Date(), format = 'HH:mm:ss') {
