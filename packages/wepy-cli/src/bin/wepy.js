@@ -57,16 +57,11 @@ program
     .action(require('./wepy-new'));
 
 program
-  .command('devtools')
-  .description('commander for login, preview, upload and other operations.')
-  .action(require('./wepy-devtools'))
-  .option('-o, --open [projectpath]', '打开工具，如果不带 projectpath，只是打开工具。如果带 project path，则打开路径中的项目，每次执行都会自动编译刷新，并且自动打开模拟器和调试器.')
-  .option('-l, --login', '启动登录逻辑.')
-  .option('--login-qr-output [format[@path]]', '指定二维码输出形式.')
-  .option('-p, --preview <project_root>', '预览代码，project_root 指定项目根路径.')
-  .option('--preview-qr-output [format[@path]]', '指定二维码输出形式，语义同登录用的选项 --login-qr-output.')
-  .option('-u, --upload <version@project_root>', '上传代码，version 指定版本号，project_root 指定项目根路径.')
-  .option('--upload-desc <desc>', '上传代码时的备注.')
-  .option('-t, --test <project_root>', '提交自动化测试，project_root 指定项目根路径.');
+    .command('devtool <action-name> [action-value]')
+    .description('commander for login, preview, upload and other operations.')
+    .action(require('./wepy-devtool'))
+    .option('--login-qr-output [format[@path]]', '指定二维码输出形式.')
+    .option('--preview-qr-output [format[@path]]', '指定二维码输出形式，语义同登录用的选项 --login-qr-output.')
+    .option('--upload-desc <desc>', '上传代码时的备注.');
 
 program.parse(process.argv);
