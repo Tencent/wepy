@@ -13,6 +13,10 @@ const propOberverHandler = function (prop, newVal, oldVal, changedPaths) {
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
+    if (vm._fromSelf) {
+      vm._fromSelf = false;
+      return;
+    }
     let _props;
     let _data = newVal;
     let key = changedPaths[0];
@@ -100,7 +104,6 @@ export function patchProps (output, props) {
  */
 export function initProps (vm, properties) {
   vm._props = {};
-  vm.$dirty = vm.$dirty || {};
 
   if (!properties) {
     return;

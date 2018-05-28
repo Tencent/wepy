@@ -44,7 +44,6 @@ export function initData (vm, data) {
     _data = clone(data);
   }
   vm._data = _data;
-  vm.$dirty = {};
   Object.keys(_data).forEach(key => {
     proxy(vm, '_data', key);
   });

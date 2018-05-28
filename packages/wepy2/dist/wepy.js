@@ -476,7 +476,7 @@ methodsToPatch.forEach(function (method) {
     var vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    vm.$dirty[ob.path] = ob.value;
+    vm.$dirty.push(ob.key, ob.path, ob.value);
 
     var inserted;
     switch (method) {
@@ -692,10 +692,11 @@ function defineReactive (ref) {
       parent = parent || key;
 
       var ref = getRootAndPath(key, obj);
+      var root = ref.root;
       var path = ref.path;
 
       // push parent key to dirty, wait to setData
-      vm.$dirty[path] = newVal;
+      vm.$dirty.push(root, path, newVal);
 
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
@@ -767,7 +768,6 @@ function initData (vm, data) {
     _data = clone(data);
   }
   vm._data = _data;
-  vm.$dirty = {};
   Object.keys(_data).forEach(function (key) {
     proxy(vm, '_data', key);
   });
@@ -1292,21 +1292,16 @@ function initRender (vm, keys) {
       keys.forEach(function (key) { return clone(vm[key]); });
       vm._init = true;
     }
-    var dirtyKeys = Object.keys(vm.$dirty);
-    if (dirtyKeys.length) {
-      console.log('setdata: ' + JSON.stringify(vm.$dirty));
-      vm.$wx.setData(vm.$dirty);
-      vm.$dirty = {};
-    }
-    return;
-    if (vm.$dirty.length) {
-      var dirtyData = {};
-      vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(function (k) {
-        dirtyData[k] = vm[k];
+
+    if (vm.$dirty.length()) {
+      var dirty = vm.$dirty.pop();
+      // TODO: optimize
+      Object.keys(vm._computedWatchers || []).forEach(function (k) {
+        dirty[k] = vm[k];
       });
-      vm.$dirty = [];
-      console.log('setdata: ' + JSON.stringify(dirtyData));
-      vm.$wx.setData(dirtyData);
+      console.log("setData[" + (vm.$dirty.type) + "]: " + JSON.stringify(dirty));
+      vm._fromSelf = true;
+      vm.$wx.setData(dirty);
     }
   }, function () {
 
@@ -1318,6 +1313,10 @@ var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 var observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     var vm = this.$wepy;
+    if (vm._fromSelf) {
+      vm._fromSelf = false;
+      return;
+    }
     var _props;
     var _data = newVal;
     var key = changedPaths[0];
@@ -1406,7 +1405,6 @@ function patchProps (output, props) {
  */
 function initProps (vm, properties) {
   vm._props = {};
-  vm.$dirty = vm.$dirty || {};
 
   if (!properties) {
     return;
@@ -1477,6 +1475,41 @@ function patchMethods (output, methods, isComponent) {
   target._proxy = proxyHandler;
 }
 
+var Dirty = function Dirty (type) {
+  this.reset();
+
+  // path||key
+  this.type = type || 'path';
+};
+
+Dirty.prototype.push = function push (key, path, value) {
+  this._keys[key] = value;
+  this._path[path] = value;
+  this._length++;
+};
+
+Dirty.prototype.pop = function pop () {
+  var data = Object.create(null);
+  if (this.type === 'path') {
+    data = this._path;
+  } else if (this.type === 'key') {
+    data = this._keys;
+  }
+  this.reset();
+  return data;
+};
+
+Dirty.prototype.reset = function reset () {
+  this._keys = {};
+  this._path = {};
+  this._length = 0;
+  return this;
+};
+
+Dirty.prototype.length = function length () {
+  return this._length;
+};
+
 var comid = 0;
 
 var callUserMethod = function (vm, userOpt, method, args) {
@@ -1517,6 +1550,8 @@ function patchLifecycle (output, option, rel, isComponent) {
     while ( len-- ) args[ len ] = arguments[ len ];
 
     var vm = new initClass();
+
+    vm.$dirty = new Dirty('path');
 
     this.$wepy = vm;
     vm.$wx = this;

@@ -11,6 +11,7 @@ import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
 import { isStr, isArr, isFunc } from '../../shared/index';
+import Dirty from '../class/Dirty';
 
 
 let comid = 0;
@@ -106,6 +107,8 @@ export function patchLifecycle (output, option, rel, isComponent) {
   const initClass = isComponent ? WepyComponent : WepyPage;
   const initLifecycle = function (...args) {
     let vm = new initClass();
+
+    vm.$dirty = new Dirty('path');
 
     this.$wepy = vm;
     vm.$wx = this;

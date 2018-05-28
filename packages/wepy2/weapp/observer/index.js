@@ -190,7 +190,7 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       let {root, path} = getRootAndPath(key, obj);
 
       // push parent key to dirty, wait to setData
-      vm.$dirty[path] = newVal;
+      vm.$dirty.push(root, path, newVal);
 
       /* eslint-enable no-self-compare */
       if (process.env.NODE_ENV !== 'production' && customSetter) {
