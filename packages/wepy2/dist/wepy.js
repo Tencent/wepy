@@ -1423,6 +1423,21 @@ function initProps (vm, properties) {
   });
 }
 
+var Event = function Event (e) {
+  var detail = e.detail;
+  var target = e.target;
+  var currentTarget = e.currentTarget;
+  this.$wx = e;
+  this.type = e.type;
+  this.timeStamp = e.timeStamp;
+  this.x = detail.x;
+  this.y = detail.y;
+
+  this.target = target;
+  this.currentTarget = currentTarget;
+  this.touches = e.touches;
+};
+
 var proxyHandler = function (e) {
   var vm = this.$wepy;
   var type = e.type;
@@ -1443,8 +1458,11 @@ var proxyHandler = function (e) {
     params.push(dataset[key]);
   }
 
+
+  var $event = new Event(e);
+
   if (isFunc(fn)) {
-    return fn.apply(vm, params);
+    return fn.apply(vm, [$event].concat(params));
   } else {
     throw 'Unrecognized event';
   }

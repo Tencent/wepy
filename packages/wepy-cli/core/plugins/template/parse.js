@@ -51,16 +51,23 @@ const parseHandlerProxy = (expr) => {
   let handlerExpr = expr;
 
   if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
-    handlerExpr += '()';
+    injectParams.push('$event');
+    handlerExpr += '($event)';
+  } else {
+    let detected = paramsDetect(handlerExpr);
+
+    if (detected.$event) {
+      injectParams.push('$event');
+    }
+
+    Object.keys(detected).forEach(d => {
+      if (!detected[d].callable) {
+        //injectParams.push(d);
+      }
+    });
   }
 
-  let detected = paramsDetect(handlerExpr);
 
-  Object.keys(detected).forEach(d => {
-    if (!detected[d].callable) {
-      //injectParams.push(d);
-    }
-  });
 
   let proxy = `function proxyHandler (${injectParams.join(', ')}) {
     with (this) {

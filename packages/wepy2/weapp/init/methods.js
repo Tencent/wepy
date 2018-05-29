@@ -1,3 +1,4 @@
+import Event from '../class/Event';
 import { isFunc, isUndef  } from './../util/index';
 
 const eventHandler = function (method, fn) {
@@ -17,7 +18,8 @@ const eventHandler = function (method, fn) {
       }
     }
     args = args.concat(wepyParams);
-    return fn.apply(this.$wepy, args);
+    $event = new Event(e);
+    return fn.apply(this.$wepy, [$event].concat(args));
   };
 };
 
@@ -41,8 +43,11 @@ const proxyHandler = function (e) {
     params.push(dataset[key]);
   }
 
+
+  let $event = new Event(e);
+
   if (isFunc(fn)) {
-    return fn.apply(vm, params);
+    return fn.apply(vm, [$event].concat(params));
   } else {
     throw 'Unrecognized event';
   }
