@@ -529,13 +529,33 @@ const utils = {
         return rst;
     },
     getVersion () {
+        let version;
         let filepath = path.resolve(__dirname, '../package.json');
-        let version = (JSON.parse(this.readFile(filepath)) || {}).version;
+        try {
+            version = JSON.parse(this.readFile(filepath)).version;
+        } catch (e) {
+            version = '';
+        }
         return version;
     },
+    getProjectPath () {
+        let projecPath;
+        let filepath = path.resolve(this.currentDir, 'project.config.json');
+        try {
+            projecPath = JSON.parse(this.readFile(filepath)).miniprogramRoot;
+        } catch (e) {
+            projecPath = '';
+        }
+        return projecPath; 
+    },
     getProjectVersion () {
-        let filepath = path.resolve(this.currentDir, '../package.json');
-        let version = (JSON.parse(this.readFile(filepath)) || {}).version;
+        let version;
+        let filepath = path.resolve(this.currentDir, 'package.json');
+        try {
+            version = JSON.parse(this.readFile(filepath)).version;
+        } catch (e) {
+            version = '';
+        }
         return version;
     },
     datetime (date = new Date(), format = 'HH:mm:ss') {
