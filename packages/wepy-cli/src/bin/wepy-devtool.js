@@ -1,7 +1,9 @@
 import path from 'path';
 import util from '../util';
 import localPath from '../cli/local-path';
+import ask from '../cli/ask';
 import * as logger from '../cli/logger';
+import * as prompt from '../cli/devtool-prompt';
 
 const DEVTOOLS_DEFAULT_ROOTDIR = {
     // macOS
@@ -17,6 +19,14 @@ const DEVTOOLS_RELATIVEPATH_MAP = {
     'win32': '/cli.bat'
 };
 
+const ACTION_METHOD_MAP = {
+    'open': devtoolOpen,
+    'login': devtoolLogin,
+    'preview': devtoolPreview,
+    'upload': devtoolUpload,
+    'test': devtoolTest
+}
+
 const getDevtoolCliPath = (rootPath) => {
     const platform = process.platform;
     const relativePath = DEVTOOLS_RELATIVEPATH_MAP[platform];
@@ -27,22 +37,21 @@ const getDevtoolCliPath = (rootPath) => {
     } else {
         devtoolsCliPath = path.join(rootPath, relativePath);
         if (platform === 'win32') {
-            devtoolsCliPath = `"${devtoolsCliPath}"`;
+            devtoolsCliPath = `'${devtoolsCliPath}'`;
         }
     }
     return devtoolsCliPath;
 };
 
 // open devtool operate
-const devtoolOpen = (bin, program) => {
-    const projectPath = program.open;
-    const isLocalPath = localPath.isLocalPath(projectPath);
+function devtoolOpen (bin, options) {
+    const path = options.path;
 
     try {
-        if (util.isTrue(projectPath)) {
+        if (path === '') {
             util.exec(`${bin} -o`);  
-        } else if (isLocalPath) {
-            util.exec(`${bin} -o ${projectPath}`)
+        } else if (localPath.isLocalPath(path)) {
+            util.exec(`${bin} -o ${path}`)
         } else {
             logger.fatal('打开项目失败：项目路径必须是本地路径');
         }
@@ -52,31 +61,36 @@ const devtoolOpen = (bin, program) => {
 };
 
 // login devtool operate
-const devtoolLogin = (bin, program) => {
-    const login = program.login;
-    const loginQrOutput = program.loginQrOutput;
+function devtoolLogin (bin, options) {
+    const format = options.format;
+    const target = options.target;
+    const loginQrOutput = target
+        ? format + '@' + target
+        : format;
     
     try {
-        if (login) {
-            loginQrOutput
-                ? util.exec(`${bin} -l --login-qr-output ${loginQrOutput}`)
-                : util.exec(`${bin} -l`)
-        }
+        util.exec(`${bin} -l --login-qr-output ${loginQrOutput}`)
     } catch (e) {
         logger.fatal('登录失败：' + e.message);
     }
 };
 
 // preview devtool project
-const devtoolPreview = (bin, program) => {
-    const projectRoot = program.preview || process.cwd();
-    const previewQrOutput = program.previewQrOutput;
+function devtoolPreview (bin, options) {
+    const format = options.format;
+    const path = options.path;
+    const target = options.target;
+    const previewQrOutput = target
+        ? format + '@' + target
+        : format;
 
     try {
-        if (localPath.isLocalPath(projectRoot)) {
+        if (localPath.isLocalPath(path)) {
             previewQrOutput
-                ? util.exec(`${bin} -p ${projectRoot} --preview-qr-output ${previewQrOutput}`)
-                : util.exec(`${bin} -p ${projectRoot}`)
+                ? util.exec(`${bin} -p ${path} --preview-qr-output ${previewQrOutput}`)
+                : util.exec(`${bin} -p ${path}`)
+        } else {
+            logger.fatal('预览项目失败：项目路径必须是本地路径');
         }
     } catch (e) {
         logger.fatal('预览项目失败：' + e.message);
@@ -84,13 +98,19 @@ const devtoolPreview = (bin, program) => {
 }
 
 // upload devtool project
-const devtoolUpload = (bin, program) => {
-    const upload = program.upload || `${util.getProjectVersion()}@${process.cwd()}}`;
-    const uploadDes = program.uploadDes || 'release';
+function devtoolUpload (bin, options) {
+    const version = options.version;
+    const path = options.path;
+    const desc = options.desc;
+    const upload = path
+        ? version + '@' + path
+        : version;
 
     try {
-        if (upload) {
-            util.exec(`${bin} -u ${upload} --upload-desc ${uploadDes}`)
+        if (localPath.isLocalPath(path)) {
+            util.exec(`${bin} -u ${upload} --upload-desc ${desc}`)
+        } else {
+            logger.fatal('预览项目失败：项目路径必须是本地路径');
         }
     } catch (e) {
         logger.fatal('预览项目失败：' + e.message);
@@ -98,12 +118,12 @@ const devtoolUpload = (bin, program) => {
 }
 
 // test devtool project
-const devtoolTest = (bin, program) => {
-    const testPath = program.test || process.cwd();
+function devtoolTest (bin, options) {
+    const path = options.path;
 
     try {
-        if (localPath.isLocalPath(testPath)) {
-            util.exec(`${bin} -t ${testPath}`);
+        if (localPath.isLocalPath(path)) {
+            util.exec(`${bin} -t ${path}`);
         } else {
             logger.fatal('提交测试失败：项目路径必须是本地路径');
         }
@@ -112,18 +132,21 @@ const devtoolTest = (bin, program) => {
     }
 }
 
-exports = module.exports = (action, value, program) => {
+exports = module.exports = (program) => {
     const config = util.getConfig() || {};
     const rootDir =  (config.devtool && config.devtool.rootDir) || DEVTOOLS_DEFAULT_ROOTDIR[process.platform];
     const bin = getDevtoolCliPath(rootDir);  
 
-    program = Object.assign({}, program, {
-        [action]: value || true
-    });
-
-    program.open && devtoolOpen(bin, program);
-    program.login && devtoolLogin(bin, program);
-    program.preview && devtoolPreview(bin, program);
-    program.upload && devtoolUpload(bin, program);
-    program.test && devtoolTest(bin, program);
+    Object.keys(ACTION_METHOD_MAP)
+        .every(action => {
+            if (action === program) {
+                const options = {}
+                ask(prompt[action], options, () => {
+                    ACTION_METHOD_MAP[action](bin, options)
+                })
+                return false
+            } else {
+                return true
+            }
+        })
 }

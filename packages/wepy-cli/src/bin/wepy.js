@@ -57,7 +57,7 @@ program
     .action(require('./wepy-new'));
 
 program
-    .command('devtool <action-name> [action-value]')
+    .command('devtool <action-name>')
     .description('commander for login, preview, upload and other operations.')
     .action(require('./wepy-devtool'))
     .option('--login-qr-output [format[@path]]', '指定二维码输出形式.')
