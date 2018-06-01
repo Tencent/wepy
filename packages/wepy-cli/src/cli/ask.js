@@ -33,7 +33,6 @@ export default function ask (prompts, data, done) {
 
 function prompt (data, key, prompt, done) {
   // skip prompts whose when condition is not met
-  debugger
     if (prompt.when && !evaluate(prompt.when, data)) {
         return done();
     }
