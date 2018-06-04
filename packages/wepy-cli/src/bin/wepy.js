@@ -56,4 +56,12 @@ program
     .description('deprecated command, use "wepy init <template-name> <project-name>" instead')
     .action(require('./wepy-new'));
 
+program
+    .command('devtool <action-name>')
+    .description('commander for login, preview, upload and other operations.')
+    .action(require('./wepy-devtool'))
+    .option('--login-qr-output [format[@path]]', '指定二维码输出形式.')
+    .option('--preview-qr-output [format[@path]]', '指定二维码输出形式，语义同登录用的选项 --login-qr-output.')
+    .option('--upload-desc <desc>', '上传代码时的备注.');
+
 program.parse(process.argv);
