@@ -1,8 +1,9 @@
-/*
- * promisify a function
- * @params: [Function] fn
- * @params: [Object] caller
- * @params: [String] type  function callback style, [weapp-style|weapp-fix|error-first]
+/**
+ * Promisify a callback function
+ * @param  {Function} fn     callback function
+ * @param  {Object}   caller caller
+ * @param  {String}   type   weapp-style|error-first, default to weapp-style
+ * @return {Function}        promisified function
  */
 const promisify = function (fn, caller, type = 'weapp-style') {
   return function (...args) {

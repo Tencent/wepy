@@ -100,7 +100,7 @@ describe('wepy-use-promisify', function() {
 
   it('install appends array list', function (done) {
     let wepy = {};
-    debugger;
+
     usePromisify.install(wepy, {someNewAPI: false, getStorage: true});
 
     wepy.wx.someNewAPI({num: 1}).then(res => {
@@ -193,7 +193,6 @@ describe('wepy-use-promisify', function() {
     let wepy = {};
     usePromisify.install(wepy);
 
-    debugger;
     let promisifyFn = wepy.promisify(isGreaterThan10);
 
     promisifyFn({num: 11}).then(res => {
