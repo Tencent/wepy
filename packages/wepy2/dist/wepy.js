@@ -1668,11 +1668,31 @@ function component (option, rel) {
   return Component(compConfig);
 }
 
+function use (plugin) {
+  var args = [], len = arguments.length - 1;
+  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+  if (plugin.installed) {
+    return this;
+  }
+
+  var install = plugin.install || plugin;
+
+  if (isFunc(install)) {
+    install.apply(plugin, args);
+  }
+
+  plugin.installed = 1;
+}
+
 var wepy = {
   component: component,
   page: page,
   app: app,
-  global: $global
+  global: $global,
+
+  // global apis
+  use: use
 }
 
 module.exports = wepy;
