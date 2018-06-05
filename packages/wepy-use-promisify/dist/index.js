@@ -1,10 +1,11 @@
 'use strict';
 
-/*
- * promisify a function
- * @params: [Function] fn
- * @params: [Object] caller
- * @params: [String] type  function callback style, [weapp-style|weapp-fix|error-first]
+/**
+ * Promisify a callback function
+ * @param  {Function} fn     callback function
+ * @param  {Object}   caller caller
+ * @param  {String}   type   weapp-style|error-first, default to weapp-style
+ * @return {Function}        promisified function
  */
 var promisify = function (fn, caller, type) {
   if ( type === void 0 ) type = 'weapp-style';
@@ -85,7 +86,7 @@ var noPromiseMethods = [
   'base64ToArrayBuffer'
 ];
 
-var allowOneArg = {
+var simplifyArgs = {
   // network
   'request': 'url',
   'downloadFile': 'url',
@@ -189,9 +190,9 @@ var index = {
           var fixArgs = args[0];
           var failFn = args.pop();
           var successFn = args.pop();
-          if (allowOneArg[key] && typeof fixArgs !== 'object') {
+          if (simplifyArgs[key] && typeof fixArgs !== 'object') {
             fixArgs = {};
-            var ps = allowOneArg[key];
+            var ps = simplifyArgs[key];
             if (args.length) {
               ps.split(',').forEach(function (p, i) {
                 if (args[i]) {
