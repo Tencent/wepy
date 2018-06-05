@@ -90,4 +90,4 @@ wepy.wx.request(myurl);
 wepy.wx.openLocation(0, 0);
 ```
 
-Here we can see all the (Simplify List]() 
+Here we can see all the [Simplify List](https://github.com/Tencent/wepy/blob/2.0.x/packages/wepy-use-promisify/index.js#L86-L152) 

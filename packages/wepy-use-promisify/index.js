@@ -83,7 +83,7 @@ const noPromiseMethods = [
   'base64ToArrayBuffer'
 ];
 
-const allowOneArg = {
+const simplifyArgs = {
   // network
   'request': 'url',
   'downloadFile': 'url',
@@ -184,9 +184,9 @@ export default {
           let fixArgs = args[0];
           let failFn = args.pop();
           let successFn = args.pop();
-          if (allowOneArg[key] && typeof fixArgs !== 'object') {
+          if (simplifyArgs[key] && typeof fixArgs !== 'object') {
             fixArgs = {};
-            let ps = allowOneArg[key];
+            let ps = simplifyArgs[key];
             if (args.length) {
               ps.split(',').forEach((p, i) => {
                 if (args[i]) {
