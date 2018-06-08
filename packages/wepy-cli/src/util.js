@@ -538,16 +538,6 @@ const utils = {
         }
         return version;
     },
-    getProjectPath () {
-        let projecPath;
-        let filepath = path.resolve(this.currentDir, 'project.config.json');
-        try {
-            projecPath = JSON.parse(this.readFile(filepath)).miniprogramRoot;
-        } catch (e) {
-            projecPath = '';
-        }
-        return projecPath; 
-    },
     getProjectVersion () {
         let version;
         let filepath = path.resolve(this.currentDir, 'package.json');
