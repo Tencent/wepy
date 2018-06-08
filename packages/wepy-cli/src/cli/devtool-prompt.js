@@ -79,20 +79,20 @@ export const upload = {
     version: {
         type: 'string',
         required: false,
-        message: 'Upload version',
+        message: 'Upload Version',
         default: util.getProjectVersion() || '1.0.0'
     },
     path: {
         type: 'string',
         required: true,
-        message: 'Project path',
-        default: util.getProjectPath()
+        message: 'Project Path',
+        default: util.currentDir
     },
     desc: {
         type: 'string',
         required: false,
-        message: 'upload descript',
-        default: 'initial release'
+        message: 'Upload Description ',
+        default: 'release'
     }
 }
 
@@ -100,7 +100,7 @@ export const test = {
     path: {
         type: 'string',
         required: true,
-        message: 'Project path',
-        default: util.getProjectPath()
+        message: 'Project Path',
+        default: util.currentDir
     }
 }

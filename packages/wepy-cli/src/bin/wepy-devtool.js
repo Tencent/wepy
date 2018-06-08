@@ -19,13 +19,53 @@ const DEVTOOLS_RELATIVEPATH_MAP = {
     'win32': '/cli.bat'
 };
 
-const ACTION_METHOD_MAP = {
-    'open': devtoolOpen,
-    'login': devtoolLogin,
-    'preview': devtoolPreview,
-    'upload': devtoolUpload,
-    'test': devtoolTest
-}
+const ACTION_LIST = {
+    open: {
+        ask: false,
+        default: {
+            path: util.currentDir
+        },
+        handler: devtoolOpen,
+        prompt: prompt.open,
+        args: ['path']
+    },
+    login: {
+        ask: false,
+        handler: devtoolLogin,
+        prompt: prompt.login,
+        args: ['loginQrOutput']
+    },
+    preview: {
+        ask: false,
+        default: {
+            format: 'terminal',
+            path: util.currentDir,
+            target: ''
+        },
+        handler: devtoolPreview,
+        prompt: prompt.preview,
+        args: ['path', 'previewQrOutput']
+    },
+    test: {
+        ask: false,
+        default: {
+            path: util.currentDir
+        },
+        handler: devtoolTest,
+        prompt: prompt.test,
+        args: ['path']
+    },
+    upload: {
+        ask: true,
+        default: {
+            path: util.currentDir
+        },
+        handler: devtoolUpload,
+        prompt: prompt.upload,
+        args: ['path', 'uploadDesc']
+    }
+};
+
 
 const getDevtoolCliPath = (rootPath) => {
     const platform = process.platform;
@@ -44,14 +84,17 @@ const getDevtoolCliPath = (rootPath) => {
 };
 
 // open devtool operate
-function devtoolOpen (bin, options) {
-    const path = options.path;
+function devtoolOpen (bin, options, userArgs) {
+    const path = userArgs.path || options.path;
 
+    let cmd = '';
     try {
         if (path === '') {
-            util.exec(`${bin} -o`);  
+            cmd = `${bin} -o`;
+            logAndExec(cmd);
         } else if (localPath.isLocalPath(path)) {
-            util.exec(`${bin} -o ${path}`)
+            cmd = `${bin} -o ${path}`;
+            logAndExec(cmd);
         } else {
             logger.fatal('打开项目失败：项目路径必须是本地路径');
         }
@@ -61,34 +104,34 @@ function devtoolOpen (bin, options) {
 };
 
 // login devtool operate
-function devtoolLogin (bin, options) {
+function devtoolLogin (bin, options, userArgs) {
     const format = options.format;
     const target = options.target;
-    const loginQrOutput = target
+    const loginQrOutput = userArgs.loginQrOutput ? userArgs.loginQrOutput : (target
         ? format + '@' + target
-        : format;
-    
+        : format);
     try {
-        util.exec(`${bin} -l --login-qr-output ${loginQrOutput}`)
+        let cmd = loginQrOutput ? `${bin} -l --login-qr-output ${loginQrOutput}` : `${bin} -l`;
+        logAndExec(cmd);
     } catch (e) {
         logger.fatal('登录失败：' + e.message);
     }
 };
 
 // preview devtool project
-function devtoolPreview (bin, options) {
+function devtoolPreview (bin, options, userArgs) {
     const format = options.format;
-    const path = options.path;
+    const path = userArgs.path || options.path;
     const target = options.target;
-    const previewQrOutput = target
+    const previewQrOutput = userArgs.previewQrOutput ? userArgs.previewQrOutput : (target
         ? format + '@' + target
-        : format;
+        : format);
 
     try {
         if (localPath.isLocalPath(path)) {
             previewQrOutput
-                ? util.exec(`${bin} -p ${path} --preview-qr-output ${previewQrOutput}`)
-                : util.exec(`${bin} -p ${path}`)
+                ? logAndExec(`${bin} -p ${path} --preview-qr-output ${previewQrOutput}`)
+                : logAndExec(`${bin} -p ${path}`)
         } else {
             logger.fatal('预览项目失败：项目路径必须是本地路径');
         }
@@ -98,17 +141,17 @@ function devtoolPreview (bin, options) {
 }
 
 // upload devtool project
-function devtoolUpload (bin, options) {
+function devtoolUpload (bin, options, userArgs) {
     const version = options.version;
     const path = options.path;
-    const desc = options.desc;
-    const upload = path
+    const desc = userArgs.uploadDesc || options.desc;
+    const upload = userArgs.path ? userArgs.path : (path
         ? version + '@' + path
-        : version;
+        : version);
 
     try {
         if (localPath.isLocalPath(path)) {
-            util.exec(`${bin} -u ${upload} --upload-desc ${desc}`)
+            logAndExec(`${bin} -u ${upload} --upload-desc '${desc}'`)
         } else {
             logger.fatal('预览项目失败：项目路径必须是本地路径');
         }
@@ -118,12 +161,12 @@ function devtoolUpload (bin, options) {
 }
 
 // test devtool project
-function devtoolTest (bin, options) {
-    const path = options.path;
+function devtoolTest (bin, options, userArgs) {
+    const path = userArgs.path || options.path;
 
     try {
         if (localPath.isLocalPath(path)) {
-            util.exec(`${bin} -t ${path}`);
+            logAndExec(`${bin} -t ${path}`);
         } else {
             logger.fatal('提交测试失败：项目路径必须是本地路径');
         }
@@ -132,21 +175,32 @@ function devtoolTest (bin, options) {
     }
 }
 
-exports = module.exports = (program) => {
+function logAndExec(cmd) {
+    console.log('Execute: ' + cmd);
+    util.exec(cmd);
+}
+
+exports = module.exports = (program, path, cmd) => {
     const config = util.getConfig() || {};
     const rootDir =  (config.devtool && config.devtool.rootDir) || DEVTOOLS_DEFAULT_ROOTDIR[process.platform];
-    const bin = getDevtoolCliPath(rootDir);  
+    const bin = getDevtoolCliPath(rootDir);
 
-    Object.keys(ACTION_METHOD_MAP)
-        .every(action => {
-            if (action === program) {
-                const options = {}
-                ask(prompt[action], options, () => {
-                    ACTION_METHOD_MAP[action](bin, options)
-                })
-                return false
-            } else {
-                return true
-            }
-        })
+    let action = ACTION_LIST[program];
+
+    if (action) {
+        let options = Object.assign({}, action.default || {});
+        let userArgs = {};
+        let p;
+        action.args.forEach(k => (p = k === 'path' ? path : cmd[k]) ? (userArgs[k] = p) : undefined);
+
+        if (action.ask && Object.keys(userArgs).length === 0) {
+            ask(action.prompt, options, () => {
+                action.handler(bin, options, userArgs);
+            });
+        } else {
+            action.handler(bin, options, userArgs);
+        }
+    } else {
+        debugger;
+    }
 }
