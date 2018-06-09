@@ -474,6 +474,9 @@ export default {
         } else if (relative.indexOf(path.sep + 'components' + path.sep) > -1){
             type = 'component';
             util.log('组件: ' + relative, '编译');
+        } else if (opath.npm) {
+            type = 'npm'
+            util.log('第三方组件: ' + relative, '编译');
         } else {
             util.log('Other: ' + relative, '编译');
         }
