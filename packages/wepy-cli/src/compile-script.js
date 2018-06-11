@@ -105,23 +105,31 @@ export default {
                 ext = '';
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
-                let requieInfo = lib.split('/');
-                let mainFile = resolve.getMainFile(requieInfo[0]);
+                let requireInfo = lib.split('/');
+                let mainFile = resolve.getMainFile(requireInfo[0]);
 
                 if (!mainFile) {
                     throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
                 }
                 npmInfo = {
-                    lib: requieInfo[0],
+                    lib: requireInfo[0],
                     dir: mainFile.dir,
                     modulePath: mainFile.modulePath,
                     file: mainFile.file,
                     pkg: mainFile.pkg
                 };
-                requieInfo.shift();
+                requireInfo.shift();
 
-                source = path.join(mainFile.dir, requieInfo.join('/'));
-                target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
+                let resolvedFile = requireInfo.join('/');
+                if (mainFile.pkg && mainFile.pkg._activeFields.length) {
+                    resolvedFile = resolve.resolveSelfFields(mainFile.dir, mainFile.pkg, resolvedFile) || resolvedFile;
+                    if (path.extname(resolvedFile) === '.wpy') {
+                        resolvedFile = resolvedFile.substr(0, resolvedFile.length - 4);
+                    }
+                }
+
+                source = path.join(mainFile.dir, resolvedFile);
+                target = path.join(npmPath, npmInfo.lib, resolvedFile);
                 ext = '';
                 needCopy = true;
 
@@ -286,7 +294,7 @@ export default {
                 var Base64 = require('js-base64').Base64;
                 code += `\r\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,${Base64.encode(JSON.stringify(sourceMap))}`;
             }
-            
+
             let plg = new loader.PluginHelper(config.plugins, {
                 type: type,
                 code: code,

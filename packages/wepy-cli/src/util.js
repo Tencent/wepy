@@ -147,6 +147,9 @@ const utils = {
         let o = resolve.getMainFile(lib);
         if (o) {
             if (main) {
+                if (o.pkg && o.pkg._activeFields.length) {
+                    main = resolve.resolveSelfFields(o.dir, o.pkg, main) || main;
+                }
                 src = path.join(o.dir, main);
             } else {
                 src = path.join(o.dir, o.file);
@@ -467,7 +470,8 @@ const utils = {
         ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
         if (opath.npm) {
-            relative = path.relative(opath.npm.modulePath, opath.npm.dir);
+            // maybe it's node_modules/moduleA/xxx/yyy/zzz/index.js
+            relative = path.relative(opath.npm.modulePath, opath.dir);
             relative = path.join('npm', relative);
         } else {
             relative = path.relative(path.join(this.currentDir, src), opath.dir);
