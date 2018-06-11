@@ -138,6 +138,9 @@ export default {
                             }
                             let o = resolve.getMainFile(lib);
                             if (mainFile) {
+                                if (o.pkg && o.pkg._activeFields.length) {
+                                    mainFile = resolve.resolveSelfFields(o.dir, o.pkg, mainFile) || mainFile;
+                                }
                                 comsrc = path.join(o.dir, mainFile);
                             } else {
                                 comsrc = path.join(o.dir, o.file);
