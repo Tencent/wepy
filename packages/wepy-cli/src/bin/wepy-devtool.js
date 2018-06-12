@@ -201,6 +201,6 @@ exports = module.exports = (program, path, cmd) => {
             action.handler(bin, options, userArgs);
         }
     } else {
-        debugger;
+        logger.fatal('不支持的命令：wepy devtool' + program + '。运行命令： wepy devtool --help 查看具体用法');
     }
 }
