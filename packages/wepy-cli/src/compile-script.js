@@ -17,6 +17,7 @@ import loader from './loader';
 
 import resolve from './resolve';
 
+import eslint from './eslint';
 
 const currentPath = util.currentDir;
 
@@ -215,16 +216,21 @@ export default {
     },
 
     compile (lang, code, type, opath) {
+        const filepath = path.join(opath.dir, opath.base);
         let config = util.getConfig();
         src = cache.getSrc();
         dist = cache.getDist();
         npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
         if (!code) {
-            code = util.readFile(path.join(opath.dir, opath.base));
+            code = util.readFile(filepath);
             if (code === null) {
-                throw '打开文件失败: ' + path.join(opath.dir, opath.base);
+                throw '打开文件失败: ' + filepath;
             }
+        }
+
+        if (config.lintjs) {
+            eslint(filepath);
         }
 
         let compiler = loader.loadCompiler(lang);
@@ -232,7 +238,7 @@ export default {
         if (!compiler) {
             return;
         }
-        
+
         const compileConfig = Object.assign({}, config.compiler[lang] || {});
         
         // typescript compiler need the filename to generate right sourcemap
