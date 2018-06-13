@@ -628,7 +628,8 @@ const utils = {
             msg = msg.replace(/`/g, '\\`');
         }
         try {
-            fs.appendFileSync(file, `console.${type}(\`CLI报错：${msg}\`);\r\n`);
+            msg = msg.replace(/\n/g, '\\n').replace(/\"/g, '\\"');
+            fs.appendFileSync(file, `console.${type}("CLI报错：${msg}");\r\n`);
         } catch (e) {
             console.log(e);
         }
