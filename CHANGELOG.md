@@ -17,6 +17,7 @@ npm install wepy-cli@1.7.3-alpha1 -g
 ```
 npm install wepy-cli@1.7.3-alpha2 -g
 ```
+* `F` 修复了开启cliLogs时，在部分低版本机型上会报错的问题。[ISSUE 1460](https://github.com/Tencent/wepy/issues/1460)
 
 ## 1.7.2 (2018-05-08)
 * `A` 添加了对小程序原生组件的支持。
