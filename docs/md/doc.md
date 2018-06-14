@@ -572,7 +572,7 @@ export default class extends wepy.app {
 
 入口文件`app.wpy`中所声明的小程序实例继承自`wepy.app`类，包含一个`config`属性和其它全局属性、方法、事件。其中`config`属性对应原生的`app.json`文件，build编译时会根据`config`属性自动生成`app.json`文件，如果需要修改`config`中的内容，请使用微信提供的相关API。
 
-#### 页面page.wpy
+#### 页面 page/*.wpy
 
 ```html
 <script>
@@ -603,7 +603,7 @@ export default class Page extends wepy.page {
 </style>
 ```
 
-页面文件`page.wpy`中所声明的页面实例继承自`wepy.page`类，该类的主要属性介绍如下：
+页面文件 `page/*.wpy` 中所声明的页面实例继承自 `wepy.page` 类，该类的主要属性介绍如下：
 
 | 属性         | 说明                                       |
 | ---------- | ---------------------------------------- |
@@ -614,7 +614,7 @@ export default class Page extends wepy.page {
 | events     | WePY组件事件处理函数对象，存放响应组件之间通过`$broadcast`、`$emit`、`$invoke`所传递的事件的函数            |
 | 其它         | 小程序页面生命周期函数，如`onLoad`、`onReady`等，以及其它自定义的方法与属性    |
 
-#### 组件com.wpy
+#### 组件 components/*.wpy
 
 ```html
 <template lang="wxml">
@@ -639,7 +639,7 @@ export default class Com extends wepy.component {
 </style>
 ```
 
-组件文件`com.wpy`中所声明的组件实例继承自`wepy.component`类，除了不需要`config`配置以及页面特有的一些生命周期函数之外，其属性与页面属性大致相同。
+组件文件 `components/*.wpy` 中所声明的组件实例继承自 `wepy.component` 类，除了不需要`config`配置以及页面特有的一些生命周期函数之外，其属性与页面属性大致相同。
 
 ### 实例
 
