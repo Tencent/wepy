@@ -151,7 +151,7 @@ customFileTypes:
 ### 代码规范
 
 1. 变量与方法尽量使用驼峰式命名，并且注意避免使用`$`开头。
-   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](#api)。
+   以`$`开头的标识符为WePY框架的内建属性和方法，可在JavaScript脚本中以`this.`的方式直接使用，具体请[参考API文档](https://tencent.github.io/wepy/document.html#/api?id=api)。
    
 2. 小程序入口、页面、组件文件名的后缀为`.wpy`；外链的文件可以是其它后缀。
    具体请参考[wpy文件说明](#wpy文件说明)。
@@ -165,13 +165,13 @@ customFileTypes:
 5. 事件绑定语法使用优化语法代替。
    * 原 `bindtap="click"` 替换为 `@tap="click"`，原`catchtap="click"`替换为`@tap.stop="click"`。
    * 原 `capture-bind:tap="click"` 替换为 `@tap.capture="click"`，原`capture-catch:tap="click"`替换为`@tap.capture.stop="click"`。
-   * 更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
+   * 更多`@`符用法，参见[组件自定义事件](https://tencent.github.io/wepy/document.html#/?id=%E7%BB%84%E4%BB%B6%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E5%87%BD%E6%95%B0)。
    
 6. 事件传参使用优化后语法代替。
    原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
    
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
-   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
+   不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://tencent.github.io/wepy/document.html#/?id=%E7%BB%84%E4%BB%B6%E7%9A%84%E5%BE%AA%E7%8E%AF%E6%B8%B2%E6%9F%93)。
 
 
 ## 主要功能特性
@@ -410,7 +410,7 @@ async onLoad() {
 
 ### wepy.config.js配置文件说明
 
-执行`wepy new demo`后，会生成类似下面这样的配置文件。
+执行`wepy init standard demo`后，会生成类似下面这样的配置文件。
 
 ```javascript
 
@@ -1034,7 +1034,7 @@ props = {
     },
     
     twoWayTitle: {
-        type: Number,
+        type: String,
         default: 'nothing',
         twoWay: true
     }
@@ -1223,14 +1223,14 @@ WePY允许使用基于WePY开发的第三方组件，开发第三方组件规范
 
 ### Mixin 混合
 
-混合可以将组之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分为两种：
+混合可以将组件之间的可复用部分抽离，从而在组件中使用混合时，可以将混合的数据，事件以及方法注入到组件之中。混合分为两种：
 
 * 默认式混合
 * 兼容式混合
 
 #### 默认式混合
 
-对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件这中。对于组件已声明的选项将不受影响。
+对于组件`data`数据，`components`组件，`events`事件以及其它自定义方法采用**默认式混合**，即如果组件未声明该数据，组件，事件，自定义方法等，那么将混合对象中的选项将注入组件之中。对于组件已声明的选项将不受影响。
 
 ```Javascript
 // mixins/test.js
@@ -1375,7 +1375,9 @@ import wepy from 'wepy';
 
 export default class extends wepy.app {
     constructor () {
-        //拦截request请求
+        // this is not allowed before super()
+        super();
+        // 拦截request请求
         this.intercept('request', {
             // 发出请求时的回调函数
             config (p) {
@@ -1430,7 +1432,7 @@ WePY使用脏数据检查对setData进行封装，在函数运行周期结束时
 this.title = 'this is title';
 ```
 
-需注意的是，在异步函数中更新数据的时，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
+需注意的是，在异步函数中更新数据的时候，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
 
 ```javascript
 setTimeout(() => {
@@ -1461,8 +1463,14 @@ wx.request({
     }
 });
 
-// WePY 使用方式
+// WePY 使用方式, 需要开启 Promise 支持，参考开发规范章节
 wepy.request('xxxx').then((d) => console.log(d));
+
+// async/await 的使用方式, 需要开启 Promise 和 async/await 支持，参考 WIKI
+async function request () {
+   let d = await wepy.request('xxxxx');
+   console.log(d);
+}
 ```
 
 #### 2. 优化事件参数传递
@@ -1555,3 +1563,29 @@ var item = require('item.js')
     }
 </script>
 ```
+
+### 存在的问题
+
+WePY 1.x 版本中，组件使用的是静态编译组件，即组件是在编译阶段编译进页面的，每个组件都是唯一的一个实例，目前只提供简单的 `repeat` 支持。不支持在 `repeat` 的组件中去使用 `props`, `computed`, `watch` 等等特性。
+
+```
+<!-- 错误使用 --->
+// list.wpy
+<view>{{test.name}}</view>
+
+// index.wpy
+<repeat for="{{mylist}}">
+   <List :test.sync="item"></List>
+</repeat>
+
+<!-- 推荐用法 --->
+// list.wpy
+<repeat for="{{mylist}}">
+    <view>{{item.name}}</view>
+</repeat>
+
+// index.wpy
+<List :mylist.sync="mylist"></List>
+```
+
+* 另外，在 1.7.2-alpha4 的实验版本中提供了对原生组件的支持。*
