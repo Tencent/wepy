@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "婷婷诗教",
+            "email": "likun@icloud.com",
+            "link": "",
+            "opensource": "http://ttsing.com/",
+            "qrcode": "https://cdn.changguwen.com/default/ttsing_weiapp_code.jpeg",
+            "company": "唱道（上海）文化传播有限公司"
+        },
+        {
             "name": "表情演员",
             "email": "medivhzhan@gmail.com",
             "link": "",
