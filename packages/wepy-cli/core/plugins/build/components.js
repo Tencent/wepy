@@ -11,14 +11,14 @@ exports = module.exports = function () {
 
       let styleCode = '';
       styles.forEach(v => {
-        styleCode += v.parsed.css + '\n';
+        styleCode += v.parsed.code + '\n';
       });
 
       config.parsed.component = true;
       config.outputCode = JSON.stringify(config.parsed, null, 4);
 
       this.hookSeq('script-dep-fix', script.parsed);
-      this.hookSeq('script-injection', script.parsed, template.rel);
+      this.hookSeq('script-injection', script.parsed, template.parsed.rel);
        script.outputCode = script.parsed.source.source();
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;

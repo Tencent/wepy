@@ -23,7 +23,7 @@ const genRel = (rel) => {
   let copy = Object.assign({}, rel);
   delete copy.handlers;
 
-  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr} }`; 
+  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr} }`;
 };
 
 

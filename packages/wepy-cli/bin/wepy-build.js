@@ -4,6 +4,8 @@ exports = module.exports = (program) => {
 
   let compilation = compile(program);
 
-  compilation.start();
+  compilation.init().then(() => {
+    compilation.start();
+  })
 
 }

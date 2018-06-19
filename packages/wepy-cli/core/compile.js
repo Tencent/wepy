@@ -20,19 +20,18 @@ const Hook = require('./hook');
 const tag = require('./tag');
 const walk = require("acorn/dist/walk");
 
+const initCompiler = require('./init/compiler');
+const initParser = require('./init/parser');
+const initPlugin = require('./init/plugin');
+
 const ENTRY_FILE = 'app.wpy';
-
-const initHooks = function (vm, plugins) {
-  if (typeof plugins === 'function')
-    plugins = [plugins];
-
-  plugins.forEach(plugin => plugin.call(vm));
-};
 
 class Compile extends Hook {
   constructor (opt) {
     super();
     let self = this;
+
+    this.version = require('../package.json').version;
     this.options = opt;
     this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
@@ -94,13 +93,10 @@ class Compile extends Hook {
       });
     };
 
-    this.parsers = {};
-    ['wpy', 'script', 'style', 'template', 'config'].forEach(k => {
-      let parser = k[0].toUpperCase() + k.slice(1);
-      this.parsers[k] = require('./parse' + parser);
-      this.parsers[k].compilation = this;
-    });
 
+  }
+
+  init () {
     const styleHooker = (content, options, ctx) => {
       options.supportObject = true;
     };
@@ -108,20 +104,6 @@ class Compile extends Hook {
     this.register('before-compiler-less', styleHooker);
     this.register('before-compiler-sass', styleHooker);
     this.register('before-compiler-stylus', styleHooker);
-
-    let plugins = [
-      './plugins/scriptDepFix',
-      './plugins/scriptInjection',
-      './plugins/build/app',
-      './plugins/build/pages',
-      './plugins/build/components',
-      './plugins/build/vendor',
-
-      './plugins/template/parse',
-      './plugins/template/parseClassAndStyle',
-    ].map(v => require(v));
-
-    initHooks(this, plugins);
 
     ['output-app', 'output-pages', 'output-components'].forEach(k => {
       this.register(k, function (data) {
@@ -135,11 +117,15 @@ class Compile extends Hook {
     this.register('output-vendor', function (data) {
       fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
     });
+
+    initPlugin(this);
+    initParser(this);
+    return initCompiler(this, this.options.compilers);
   }
 
   start () {
 
-    this.parsers.wpy.parse(this.options.entry, 'app').then(app => {
+    this.hookUnique('wepy-parser-wpy', this.options.entry, 'app').then(app => {
 
       let sfc = app.sfc;
       let script = sfc.script;
@@ -158,7 +144,7 @@ class Compile extends Hook {
       }
 
       let tasks = pages.map(v => {
-        return this.parsers.wpy.parse(v);
+        return this.hookUnique('wepy-parser-wpy', v);
       });
 
       this.hookSeq('build-app', app);
@@ -182,7 +168,7 @@ class Compile extends Hook {
         });
 
         tasks = components.map(v => {
-          return this.parsers.wpy.parse(v);
+          return this.hookUnique('wepy-parser-wpy', v);
         });
       });
 
@@ -194,30 +180,32 @@ class Compile extends Hook {
       let vendorData = this.hookSeq('build-vendor', {});
       this.hookUnique('output-vendor', vendorData);
     }).catch(e => {
-      console.error(e);
+      this.logger.error(e);
     });
 
 
   }
 
-  applyCompiler (sfcItem, ctx) {
+  applyCompiler (node, ctx) {
     let compiler;
-    if (sfcItem.lang) {
-      let compilerOptions = this.options.compilers[sfcItem.lang] || [];
-      if (['css', 'wxss', 'wxml', 'js', 'json'].indexOf(sfcItem.lang) > -1) {
-        let parser = this.parsers[sfcItem.type];
-        sfcItem.code = sfcItem.content;
-        return parser.parse(sfcItem, ctx);
-      }
-      return this.resolvers.context.resolve({}, this.context, 'wepy-compiler-' + sfcItem.lang, {}).then(rst => {
-        let compiler = require(rst.path).default;
+    if (node.lang) {
+      let compilerOptions = this.options.compilers[node.lang] || [];
 
-        return compiler.apply(this, this.hookReturnOrigin('before-compiler-' + sfcItem.lang, sfcItem.content, compilerOptions, ctx.file)).then(rst => {
-          let parser = this.parsers[sfcItem.type];
-          return parser.parse.apply(parser, this.hookReturnOrigin('before-parser-' + sfcItem.type, rst, ctx));
-        });
-      }).catch(e => {
-        console.error(e);
+      /*
+      if (['css', 'wxss', 'wxml', 'js', 'json'].indexOf(node.lang) > -1) {
+        let parser = this.parsers[node.type];
+        node.code = node.content;
+        return parser.parse(node, ctx);
+      }*/
+
+      let hookKey = 'wepy-compiler-' + node.lang;
+
+      if (!this.hasHook(hookKey)) {
+        throw `Missing plugins ${hookKey}`;
+      }
+
+      return this.hookUnique(hookKey, node, ctx.file).then(node => {
+        return this.hookUnique('wepy-parser-' + node.type, node, ctx);
       });
     }
   }

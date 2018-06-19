@@ -19,7 +19,7 @@ exports = module.exports = function () {
     let styleCode = '';
 
     styles.forEach(v => {
-      styleCode += v.parsed.css + '\n';
+      styleCode += v.parsed.code + '\n';
     });
 
     styles.outputCode = styleCode;

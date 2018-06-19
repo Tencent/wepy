@@ -11,6 +11,10 @@ exports = module.exports = class Hook {
     this._hooks[key].push(fn);
   }
 
+  hasHook (key) {
+    return (this._hooks[key] || []).length > 0;
+  }
+
   hook (key, ...args) {
     let rst = [];
     let fns = this._hooks[key] || [];
@@ -69,6 +73,7 @@ exports = module.exports = class Hook {
     let count = 0;
     let allRst = [];
     let lastRst = rst;
+    let argLength = args.length;
 
     if (hooks.length === 0) {
       return Promise.resolve(args);
@@ -92,7 +97,7 @@ exports = module.exports = class Hook {
 
       hooks = hooks.concat(() => Promise.resolve());
       hooks.reduce(iterateFunc, Promise.resolve(args)).then(() => {
-        resolve(lastRst);
+        resolve(argLength === 1 ? lastRst[0] : lastRst);
       });
     });
   }
