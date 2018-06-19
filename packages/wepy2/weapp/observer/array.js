@@ -27,17 +27,22 @@ methodsToPatch.forEach(function (method) {
   def(arrayMethods, method, function mutator (...args) {
     const result = original.apply(this, args);
     const ob = this.__ob__;
+    const vm = ob.vm;
+
+    // push parent key to dirty, wait to setData
+    vm.$dirty.push(ob.key, ob.path, ob.value);
+
     let inserted;
     switch (method) {
       case 'push':
       case 'unshift':
-        inserted = args;
+        inserted = ob.value;
         break;
       case 'splice':
         inserted = args.slice(2);
         break;
     }
-    if (inserted) ob.observeArray(inserted);
+    if (inserted) ob.observeArray(ob.key, inserted);
     // notify change
     ob.dep.notify();
     return result;

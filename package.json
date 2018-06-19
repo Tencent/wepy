@@ -5,6 +5,7 @@
   "main": "lib/wepy.js",
   "scripts": {
     "dev:wepy2": "rollup -w -c scripts/config.js --environment TARGET:wepy2",
+    "dev:all": "chokidar '**/*.wpy' '**/*.js' -c 'npm run dev:all' -i '/dist/'",
     "docs": "cd docs && node server.js",
     "prepublish": "npm run build",
     "bootstrap": "./scripts/clean.sh && ./scripts/bootstrap.sh && npm run build",

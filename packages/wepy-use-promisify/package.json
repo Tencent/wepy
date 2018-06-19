@@ -1,0 +1,11 @@
+{
+  "name": "@wepy/use-promisify",
+  "version": "0.0.1",
+  "description": "wepy promisify",
+  "main": "/dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gcaufy <gcaufy@gmail.com>",
+  "license": "MIT"
+}

@@ -15,10 +15,19 @@ const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSyste
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const loader = require('./loader');
-const logger = require('./logger');
+const logger = require('./util/logger');
 const Hook = require('./hook');
+const tag = require('./tag');
+const walk = require("acorn/dist/walk");
 
 const ENTRY_FILE = 'app.wpy';
+
+const initHooks = function (vm, plugins) {
+  if (typeof plugins === 'function')
+    plugins = [plugins];
+
+  plugins.forEach(plugin => plugin.call(vm));
+};
 
 class Compile extends Hook {
   constructor (opt) {
@@ -32,6 +41,17 @@ class Compile extends Hook {
     this.resolvers = {};
 
     this.context = process.cwd();
+
+    let appConfig = opt.appConfig || {};
+    let userDefinedTags = appConfig.tags || {};
+
+    this.tags = {
+      htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
+      wxmlTags: tag.combineTag(tag.WXML_TAGS, userDefinedTags.wxmlTags),
+      html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
+    };
+
+    this.logger = logger;
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
@@ -89,19 +109,44 @@ class Compile extends Hook {
     this.register('before-compiler-sass', styleHooker);
     this.register('before-compiler-stylus', styleHooker);
 
+    let plugins = [
+      './plugins/scriptDepFix',
+      './plugins/scriptInjection',
+      './plugins/build/app',
+      './plugins/build/pages',
+      './plugins/build/components',
+      './plugins/build/vendor',
+
+      './plugins/template/parse',
+      './plugins/template/parseClassAndStyle',
+    ].map(v => require(v));
+
+    initHooks(this, plugins);
+
+    ['output-app', 'output-pages', 'output-components'].forEach(k => {
+      this.register(k, function (data) {
+        if (!Array.isArray(data))
+          data = [data];
+
+        data.forEach(v => this.output(v));
+      });
+    });
+
+    this.register('output-vendor', function (data) {
+      fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
+    });
   }
 
   start () {
 
     this.parsers.wpy.parse(this.options.entry, 'app').then(app => {
-debugger;
+
       let sfc = app.sfc;
       let script = sfc.script;
       let styles = sfc.styles;
       let config = sfc.config;
 
       let appConfig = config.parsed;
-      debugger;
       let pages = appConfig.pages.map(v => {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
       });
@@ -115,10 +160,14 @@ debugger;
       let tasks = pages.map(v => {
         return this.parsers.wpy.parse(v);
       });
-      this.buildApp(app);
+
+      this.hookSeq('build-app', app);
+      this.hookUnique('output-app', app);
       return Promise.all(tasks);
     }).then(pages => {
-      this.buildPage(pages);
+
+      this.hookSeq('build-pages', pages);
+      this.hookUnique('output-pages', pages);
 
       let components = [];
       let tasks = [];
@@ -137,13 +186,13 @@ debugger;
         });
       });
 
-
-      this.buildNPM();
-
       return Promise.all(tasks);
     }).then(comps => {
-      debugger;
-      this.buildComponent(comps);
+      this.hookSeq('build-components', comps);
+      this.hookUnique('output-components', comps);
+    }).then(() => {
+      let vendorData = this.hookSeq('build-vendor', {});
+      this.hookUnique('output-vendor', vendorData);
     }).catch(e => {
       console.error(e);
     });
@@ -202,178 +251,9 @@ debugger;
       }
     }
   }
-
-  buildApp (app) {
-    logger.info('app', 'building App');
-
-    let sfc = app.sfc;
-    let script = sfc.script;
-    let styles = sfc.styles;
-    let config = sfc.config;
-
-    let targetFile = path.join(this.context, this.options.target, 'app');
-
-
-    config.outputCode = JSON.stringify(config.parsed, null, 4);
-    script.outputCode = this.fixDep(script.parsed);
-
-    let styleCode = '';
-
-    styles.forEach(v => {
-      styleCode += v.parsed.css + '\n';
-    });
-
-    styles.outputCode = styleCode;
-
-    app.outputFile = targetFile;
-
-    this.output(app);
-  }
-
-  buildPage (pages) {
-    logger.info('page', 'building pages');
-
-    pages.forEach(page => {
-      let sfc = page.sfc;
-      let { script, styles, config, template } = sfc;
-
-      let styleCode = '';
-      styles.forEach(v => {
-        styleCode += v.parsed.css + '\n';
-      });
-
-      config.outputCode = JSON.stringify(config.parsed, null, 4);
-      script.outputCode = this.fixDep(script.parsed);
-      styles.outputCode = styleCode;
-      template.outputCode = template.parsed.code;
-
-      let targetFile = this.getTarget(page.file);
-      let target = path.parse(targetFile);
-      page.outputFile = path.join(target.dir, target.name);
-
-      this.output(page);
-    });
-  }
-
-  buildComponent (comps) {
-    logger.info('component', 'building components');
-
-    comps.forEach(comp => {
-      let sfc = comp.sfc;
-      let { script, styles, config, template } = sfc;
-
-      let styleCode = '';
-      styles.forEach(v => {
-        styleCode += v.parsed.css + '\n';
-      });
-
-      config.parsed.component = true;
-      config.outputCode = JSON.stringify(config.parsed, null, 4);
-      script.outputCode = this.fixDep(script.parsed);
-      styles.outputCode = styleCode;
-      template.outputCode = template.parsed.code;
-
-
-
-      let targetFile = this.getTarget(comp.file);
-      let target = path.parse(targetFile);
-      comp.outputFile = path.join(target.dir, target.name);
-
-      this.output(comp);
-    });
-  }
-
-  buildNPM () {
-    logger.info('npm', 'building npm');
-
-    let npmList = this.npm.array();
-    let npmCode = '';
-
-    npmList.forEach((npm, i) => {
-      let data = this.npm.data(npm);
-      npmCode += '/***** module ' + i + ' start *****/\n';
-      npmCode += '/***** ' + data.file + ' *****/\n';
-      npmCode += 'function(module, exports, __wepy_require) {';
-      npmCode += this.fixDep(data, true) + '\n';
-      npmCode += '}';
-      if (i !== npmList.length - 1) {
-          npmCode += ',';
-      }
-      npmCode += '/***** module ' + i + ' end *****/\n\n\n';
-    });
-
-    npmCode = `
-(function(modules) {
-   // The module cache
-   var installedModules = {};
-   // The require function
-   function __wepy_require(moduleId) {
-       // Check if module is in cache
-       if(installedModules[moduleId])
-           return installedModules[moduleId].exports;
-       // Create a new module (and put it into the cache)
-       var module = installedModules[moduleId] = {
-           exports: {},
-           id: moduleId,
-           loaded: false
-       };
-       // Execute the module function
-       modules[moduleId].call(module.exports, module, module.exports, __wepy_require);
-       // Flag the module as loaded
-       module.loaded = true;
-       // Return the exports of the module
-       return module.exports;
-   }
-   // expose the modules object (__webpack_modules__)
-   __wepy_require.m = modules;
-   // expose the module cache
-   __wepy_require.c = installedModules;
-   // __webpack_public_path__
-   __wepy_require.p = "/";
-   // Load entry module and return exports
-   module.exports = __wepy_require;
-   return __wepy_require;
-})([
-${npmCode}
-]);
-`
-    let targetFile = path.join(this.context, this.options.target, 'npm.js');
-    fs.outputFile(targetFile, npmCode, function () {});
-  }
-
-
-  fixDep (parsed, inNPM) {
-    let code = parsed.code;
-    let fixPos = 0;
-    parsed.parser.deps.forEach((dep, i) => {
-      let depMod = parsed.depModules[i];
-      let moduleId = (typeof depMod === 'object') ? depMod.id : depMod;
-      let repleaceMent = '';
-      if (inNPM) {
-        repleaceMent = `__wepy_require(${moduleId})`;
-      } else {
-        if (typeof moduleId === 'number') {
-          let npmfile = path.join(this.context, this.options.src, 'npm.js');
-          let relativePath = path.relative(path.dirname(parsed.file), npmfile);
-          repleaceMent = `require('${relativePath}')(${moduleId})`;
-        } else if (depMod && depMod.sfc) {
-          let relativePath = path.relative(path.dirname(parsed.file), depMod.file);
-          let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
-          relativePath = relativePath.replace(reg, '.js');
-          repleaceMent = `require('${relativePath}')`;
-        } else if (depMod === false) {
-          repleaceMent = '{}';
-        } else {
-          repleaceMent = `require('${dep.module}')`;
-        }
-      }
-      code = code.substring(0, dep.expr.start + fixPos) + repleaceMent + code.substr(dep.expr.end + fixPos);
-      fixPos += repleaceMent.length - dep.expr.end + dep.expr.start;
-    });
-    return code;
-  }
-
 }
+
+
 
 
 exports = module.exports = (program) => {

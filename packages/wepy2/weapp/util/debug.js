@@ -4,6 +4,10 @@ import { noop } from '../../shared/util';
 export let warn = noop;
 export let tip = noop;
 
+const generateComponentTrace = function (vm) {
+  return `Found in component: "${vm.$is}"`;
+};
+
 if (process.env.NODE_ENV !== 'production') {
   const hasConsole = typeof console !== 'undefined';
   const classifyRE = /(?:^|[-_])(\w)/g;

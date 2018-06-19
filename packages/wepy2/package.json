@@ -1,0 +1,12 @@
+{
+  "name": "wepy",
+  "version": "2.0.0",
+  "description": "",
+  "main": "./dist/wepy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

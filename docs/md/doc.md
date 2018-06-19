@@ -12,30 +12,33 @@ WePY的安装或更新都通过`npm`进行。
 npm install wepy-cli -g
 ```
 
-**在开发目录中生成Demo开发项目, 1.7.0之后版本请移步[wepy-cli文档](./doc.cli.md)**
+**在开发目录中生成Demo开发项目**
 
 ```bash
-wepy new myproject
-# 1.7.0之后的版本使用 wepy init standard myproject 初始化项目，使用 wepy list 查看项目模板
+# 初始化项目，使用 wepy list 查看项目模板
+# 1.7.0 之前的版本使用 wepy new myproject
+$ wepy init standard myproject
 ```
 
 **切换至项目目录**
 
 ```bash
-cd myproject
+$ cd myproject
 ```
 
 **安装依赖**
 
 ```bash
-npm  install
+$ npm  install
 ```
 
 **开启实时编译**
 
 ```bash
-wepy build --watch
+$ wepy build --watch
 ```
+
+**更多命令用法，见[wepy-cli文档](./doc.cli.md)**
 
 ### WePY项目的目录结构
 
@@ -1379,7 +1382,7 @@ export default class extends wepy.app {
             // 发出请求时的回调函数
             config (p) {
                 // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
-                p.timestamp = +new Date();
+                p.timestamp = new Date().getTime();
                 console.log('config request: ', p);
                 // 必须返回OBJECT参数对象，否则无法发送请求到服务端
                 return p;

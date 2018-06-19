@@ -9,7 +9,7 @@
 
 WePY资源汇总：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
 
-WePY 是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions的引入都是为了能让开发小程序项目变得更加简单，高效。
+WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions的引入都是为了能让开发小程序项目变得更加简单，高效。
 
 同时WePY也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果WePY有不足地方，或者你有更好的想法，欢迎提交ISSUE或者PR。
 
@@ -54,7 +54,7 @@ WePY 是一款让小程序支持组件化开发的框架，通过预编译的手
             myprop: {}
         };
         computed = {
-            now () { return +new Date(); }
+            now () { return new Date().getTime(); }
         };
         async onLoad() {
             await sleep(3);
@@ -81,6 +81,13 @@ npm install wepy-cli -g
 
 ```console
 wepy init standard myproject
+```
+
+#### 安装依赖
+
+```console
+cd myproject
+npm install
 ```
 
 #### 开发实时编译

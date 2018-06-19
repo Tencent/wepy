@@ -1,28 +1,9 @@
-import Base from './base';
-import $global from './global';
-import { initAppLifecycle } from './init/lifecycle';
+import { patchAppLifecycle } from './init/index';
 
-class WepyApp extends Base {
+export default function app (option, rel) {
+  let appConfig = {};
 
-  constructor () {
+  patchAppLifecycle(appConfig, rel, option);
 
-  }
-
-  $init (option) {
-    let appConfig = {};
-
-    this.$option = option;
-
-    initAppLifecycle(this, appConfig);
-
-    return appConfig;
-  }
-}
-
-export default function app (options) {
-  let app = new WepyApp();
-  $global.$app = app;
-
-  let appConfig = app.$init(options);
   return App(appConfig);
 }

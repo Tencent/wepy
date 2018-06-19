@@ -15,7 +15,7 @@ let RequestMQ = {
     running: [],
     MAX_REQUEST: 5,
     push (param) {
-        param.t = +new Date();
+        param.t = new Date().getTime();
         while ((this.mq.indexOf(param.t) > -1 || this.running.indexOf(param.t) > -1)) {
             param.t += Math.random() * 10 >> 0;
         }

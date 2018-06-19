@@ -3,6 +3,10 @@
  */
 export const isStr = (v) => typeof v === 'string';
 /**
+ * Number type check
+ */
+export const isNum = (v) => typeof v === 'number';
+/**
  * Array type check
  */
 export const isArr = Array.isArray;

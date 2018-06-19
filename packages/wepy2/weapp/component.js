@@ -1,27 +1,24 @@
-import Base from './base';
-import { initProps } from './init/props';
+import { patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
 
-class WepyComponent extends Base {
-  $init (option) {
-    let compConfig = {};
+function component (option, rel) {
 
-    if (option.properties) {
-      compConfig.properties = option.properties;
-      if (option.props) {
-        console.warn(`props will be ignore, if properties is set`);
-      }
-    } else if (option.props) {
-      initProps(this, compConfig, option.props);
+  let compConfig = {};
+
+  if (option.properties) {
+    compConfig.properties = option.properties;
+    if (option.props) {
+      console.warn(`props will be ignore, if properties is set`);
     }
-    return option;
+  } else if (option.props) {
+    patchProps(compConfig, option.props);
   }
-};
 
+  patchMethods(compConfig, option.methods, true);
 
-function component (option) {
-  let vm = new WepyComponent();
+  patchData(compConfig, option.data, true);
 
-  let compConfig = vm.$init(option);
+  patchLifecycle(compConfig, option, rel, true);
+
   return Component(compConfig);
 }
 

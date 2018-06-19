@@ -12,6 +12,8 @@ const path = require('path');
 
 const acorn = require('acorn-dynamic-import').default;
 const Walker = require('./astWalk');
+const ReplaceSource = require('webpack-sources').ReplaceSource;
+const RawSource = require('webpack-sources').RawSource;
 
 
 const ECMA_VERSION = 2017;
@@ -44,6 +46,7 @@ exports = module.exports =  {
       }
       npmModules.add(ctx.file);
     }
+    let source = new ReplaceSource(new RawSource(compiled.code));
     let astData = this.ast(compiled.code);
 
     let walker = new Walker(astData);
@@ -61,6 +64,7 @@ exports = module.exports =  {
         file: ctx.file,
         parser: walker,
         code: compiled.code,
+        source: source,
         depModules: rst
       };
       if (ctx.npm) {

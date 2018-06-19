@@ -1,7 +1,50 @@
-import { isFunc, isArr, isStr, isObj, isUndef  } from './../util/index';
+import { observe } from './../observer/index';
+import { proxy } from './data';
+import { initRender } from './render';
+import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
+
 const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 
-export function initProps (vm, compConfig, props) {
+const propOberverHandler = function (prop, newVal, oldVal, changedPaths) {
+  console.log(prop);
+  debugger;
+}
+
+const observerFn = function (output, props, prop) {
+  return function (newVal, oldVal, changedPaths) {
+    let vm = this.$wepy;
+    if (vm._fromSelf) {
+      vm._fromSelf = false;
+      return;
+    }
+    let _props;
+    let _data = newVal;
+    let key = changedPaths[0];
+    if (typeof _data === 'function') {
+      _data = _data.call(vm);
+    }
+
+    _props = vm._props || {};
+    _props[key] = _data;
+    vm._props = _props;
+    Object.keys(_props).forEach(key => {
+      proxy(vm, '_props', key);
+    });
+
+    observe({
+      vm: vm,
+      key: '',
+      value: _props,
+      root: true
+    });
+
+    initRender(vm, Object.keys(_props));
+  };
+};
+/*
+ * patch props option
+ */
+export function patchProps (output, props) {
   let newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -9,7 +52,8 @@ export function initProps (vm, compConfig, props) {
   if (isArr(props)) {
     props.forEach(prop => {
       newProps[prop] = {
-        type: null
+        type: null,
+        observer: observerFn(output, props, prop)
       };
     });
   } else if (isObj(props)) {
@@ -33,7 +77,7 @@ export function initProps (vm, compConfig, props) {
       // props.default
       if (prop.default) {
         if (isFunc(prop.default)) {
-          newProp.value = prop.default.call(vm);
+          newProp.value = prop.default.call(output);
         } else {
           newProp.value = prop.default;
         }
@@ -42,9 +86,38 @@ export function initProps (vm, compConfig, props) {
       // props.validator
       // props.required
 
+      newProp.observer = observerFn(this.$wepy, output, props, prop);
+
       newProps[k] = newProp;
     }
   }
 
-  compConfig.properties = newProps;
-}
+  Object.keys(newProps).forEach(prop => {
+
+  });
+
+  output.properties = newProps;
+};
+
+/*
+ * init props
+ */
+export function initProps (vm, properties) {
+  vm._props = {};
+
+  if (!properties) {
+    return;
+  }
+
+  Object.keys(properties).forEach(key => {
+    vm._props[key] = properties[key].value;
+    proxy(vm, '_props', key);
+  });
+
+  observe({
+    vm: vm,
+    key: '',
+    value: vm._props,
+    root: true
+  });
+};

@@ -18,6 +18,13 @@ const builds = {
     env: 'development',
     format: 'cjs',
     banner
+  },
+  'wepy-use-promisify': {
+    entry: 'packages/wepy-use-promisify/index.js',
+    dest: 'packages/wepy-use-promisify/dist/index.js',
+    env: 'development',
+    format: 'cjs',
+    banner
   }
 };
 
@@ -27,7 +34,9 @@ function getConfig (name) {
     input: opt.entry,
     external: opt.external,
     plugins: [
-      buble()
+      buble({
+        objectAssign: 'Object.assign'
+      })
     ].concat(opt.options || []),
     output: {
       file: opt.dest,
@@ -43,7 +52,6 @@ function getConfig (name) {
   }
   return config;
 }
-
 if (process.env.TARGET) {
   module.exports = getConfig(process.env.TARGET);
 } else {

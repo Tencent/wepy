@@ -232,8 +232,16 @@ export default {
         if (!compiler) {
             return;
         }
+        
+        const compileConfig = Object.assign({}, config.compiler[lang] || {});
+        
+        // typescript compiler need the filename to generate right sourcemap
+        // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#transpiling-a-single-file
+        if (lang === 'typescript') {
+            compileConfig.fileName = opath.base;
+        }
 
-        compiler(code, config.compilers[lang] || {}).then(compileResult => {
+        compiler(code, compileConfig).then(compileResult => {
             let sourceMap;
             if (typeof(compileResult) === 'string') {
                 code = compileResult;
