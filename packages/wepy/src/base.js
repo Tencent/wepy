@@ -143,13 +143,13 @@ export default {
             let secParams = {};
             secParams.from = prevPage ? prevPage : undefined;
 
-            if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
+            if (prevPage && prevPage.$preloadData) {
                 secParams.preload = prevPage.$preloadData;
-                prevPage.$preloadData = {};
+                prevPage.$preloadData = undefined;
             }
-            if (page.$prefetchData && Object.keys(page.$prefetchData).length > 0) {
+            if (page.$prefetchData) {
                 secParams.prefetch = page.$prefetchData;
-                page.$prefetchData = {};
+                page.$prefetchData = undefined;
             }
             args.push(secParams);
 

@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -152,7 +152,7 @@ describe('page.js', () => {
 
     it('$preload', () => {
 
-        
+
         wepy.$instance.__prevPage__ = page;
 
         let page2 = page2Config.$page;
@@ -165,7 +165,7 @@ describe('page.js', () => {
         assert.strictEqual(page.$preloadData.a, 1, 'page preload testing params 1');
         assert.strictEqual(page.$preloadData.b, 2, 'page preload testing params 2');
         assert.strictEqual(page.$preloadData.c, 3, 'page preload testing params 3');
-        
+
 
 
         page2.onPrefetch = function (params, data) {
@@ -182,7 +182,7 @@ describe('page.js', () => {
         page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
         page2Config.onShow.call(wxfake.getWxPage());
 
-        assert.strictEqual(Object.keys(page.$preloadData).length, 0, 'page preload data will be cleared after redirect');
+        assert.strictEqual(page.$preloadData, undefined, 'page preload data will be cleared after redirect');
 
 
         page2.$back();
@@ -212,7 +212,7 @@ describe('page.js', () => {
 
 
 
-    it('onPrefetch', () => {
+    it('onPrefetch', (done) => {
         wepy.$instance.__prevPage__ = page;
 
         let page2 = page2Config.$page;
@@ -234,6 +234,19 @@ describe('page.js', () => {
 
         page.$redirect('./page2', {a: 1, b: 2});
 
+        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
+
+        page2.onPrefetch = function () {
+            return Promise.resolve(1);
+        };
+
+        page2.onLoad = function (params, data) {
+            data.prefetch.then(res => {
+                assert.strictEqual(res, 1, 'page prefetch data is a promise data');
+                done();
+            });
+        };
+        page.$redirect('./page2', {a: 1, b: 2});
         page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
     });
 
