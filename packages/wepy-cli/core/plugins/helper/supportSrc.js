@@ -1,24 +1,32 @@
 const path = require('path');
 const fs = require('fs');
+const loaderUtils = require('loader-utils');
+
+const trailingSlash = /[/\\]$/;
 
 exports = module.exports = function () {
   this.register('pre-check-sfc', function (ctx) {
     let node = ctx.node;
     let file = ctx.file;
-    return new Promise((resolve, reject) => {
-      if (node && node.src) {
-        let srcPath = path.resolve(path.dirname(file), node.src);
-        try {
-          node.content = fs.readFileSync(srcPath, 'utf-8');
-          node.dirty = true;
-        } catch (e) {
-          reject(new Error(`Unable to open file "${node.src}" in ${file}`));
-        }
-      }
-      resolve({
+    let dir = path.parse(file).dir;
+
+    if (node && node.src) {
+      let src = node.src;
+      const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
+      dir = dir.replace(trailingSlash, '');
+      return this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
+        node.content = fs.readFileSync(rst.path, 'utf-8');
+        node.dirty = true;
+        return {
+          node: node,
+          file: file
+        };
+      });
+    } else {
+      return Promise.resolve({
         node: node,
         file: file
       });
-    });
+    }
   });
 }
