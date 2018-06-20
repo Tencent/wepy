@@ -74,9 +74,9 @@ export default {
      */
     resolveRelation (xml) {
         let requires = [];
-        let matchs = xml.match(/<component[^/>]*\/>/ig);
+        let matches = xml.match(/<component[^/>]*\/>/ig);
 
-        (matchs || []).forEach(function (m) {
+        (matches || []).forEach(function (m) {
             let rst;
             if (m.indexOf('path') > -1) {
                 rst = m.match(/path\s*=\s*['"](.*)['"]/);
