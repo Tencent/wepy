@@ -391,6 +391,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/15193414/41582998-bebc70ea-73d5-11e8-8222-7d95410ae37b.jpeg",
             "company": "唱道（上海）文化传播有限公司"
+        },
+        {
+            "name": "球迷Battle赛",
+            "email": "alvinxu@algforce.com",
+            "link": "",
+            "opensource": "https://github.com/zenofzhen/worldcupbattle",
+            "qrcode": "https://raw.githubusercontent.com/zenofzhen/worldcupbattle/dev/src/image/qrcode.jpg",
+            "company": "上海幽孚网络科技有限公司"
         }
     ]
 }
