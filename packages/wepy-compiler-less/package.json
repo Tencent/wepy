@@ -10,7 +10,8 @@
     "less"
   ],
   "dependencies": {
-    "less": "^2.7.1"
+    "less": "^2.7.1",
+    "loader-utils": "^1.1.0"
   },
   "author": "Gcaufy",
   "license": "MIT"

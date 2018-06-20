@@ -10,15 +10,18 @@
 
 const path = require('path');
 const less = require('less');
+const createPlugin = require('./createPlugin');
 
 exports = module.exports = function (options) {
   return function () {
 
     this.register('wepy-compiler-less', function (node, file) {
 
-      let config = Object.assign({}, options);
+      let config = Object.assign({
+        plugins: []
+      }, options);
 
-      config.paths = [path.parse(file).dir];
+      config.plugins.push(createPlugin(this));
 
       return less.render(node.content || '', config).then(rst => {
         node.compiled = {
