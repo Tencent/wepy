@@ -4,6 +4,7 @@ const loaderUtils = require('loader-utils');
 
 const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
 const isModuleName = /^~[^/\\]+$/;
+const trailingSlash = /[/\\]$/;
 
 function createPlugin (compliation) {
   class aliasManager extends less.FileManager {
@@ -26,7 +27,7 @@ function createPlugin (compliation) {
         url.charAt(0) === '/' ? '' : null
       );
 
-      return compliation.resolvers.normal.resolve({}, compliation.context, moduleRequest, {}).then(rst => {
+      return compliation.resolvers.normal.resolve({}, dir.replace(trailingSlash, ''), moduleRequest, {}).then(rst => {
         return {
           contents: fs.readFileSync(rst.path, 'utf-8'),
           filename: rst.path

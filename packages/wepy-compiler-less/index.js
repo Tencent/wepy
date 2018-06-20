@@ -18,8 +18,11 @@ exports = module.exports = function (options) {
     this.register('wepy-compiler-less', function (node, file) {
 
       let config = Object.assign({
+        relativeUrls: true,
         plugins: []
       }, options);
+
+      config.filename = file;
 
       config.plugins.push(createPlugin(this));
 
