@@ -16,15 +16,15 @@ const errorHandler = require('./util/error');
 const astParser = require('./ast/toAST');
 const paramsDetect = require('./ast/paramsDetect');
 const vueWithTransform = require('vue-template-es2015-compiler');
-
-
-const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
-const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
-const stripParensRE = /^\(|\)$/g;
-const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
-const onRE = /^@|^v-on:/;
-const modifierRE = /\.[^.]+/g;
-
+const {
+  forAliasRE,
+  forIteratorRE,
+  stripParensRE,
+  variableRE,
+  onRE,
+  modelRE,
+  modifierRE
+} = require('./shared/reg');
 
 exports = module.exports =  {
 
@@ -109,65 +109,40 @@ exports = module.exports =  {
   },
 
   transforAttr (item = {}, attrs = {}) {
-    let rst = {};
-    if (attrs['class']) {
-      rst.class = attrs['class'];
-      delete attrs['class'];
-    } else if (attrs['v-for']) {
-      // {for: "list", alias: "value", iterator1: "key", iterator2: "index"}
-      let forExp = this.parseFor(attrs['v-for']);
-      rst['wx:for'] = `{{ ${forExp.for} }}`;
-      rst['wx:for-index'] = `${forExp.iterator1 || 'index'} `;
-      rst['wx:for-item'] = `${forExp.alias || 'item'} `;
-      rst['wx:key'] = `${forExp.iterator2 || forExp.iterator1 || 'index'} `;
-      delete attrs['v-for'];
-    } else if (attrs['v-show']) {
-      let exp = `{{!(${attrs['v-show']})}}`;
-      rst.hidden = exp;
-      delete attrs['v-show'];
-    } else if (attrs['v-if']) {
-      rst['wx:if'] = `{{ ${attrs['v-if']} }}`;
-      delete attrs['v-if'];
-    } else if (attrs['v-else-if']) {
-      rst['wx:elif'] = `{{ ${attrs['v-else-if']} }}`;
-      delete attrs['v-else-if'];
-    } else if (attrs['v-else-if']) {
-      rst['wx:else'] = `{{ ${attrs['v-else']} }}`;
-      delete attrs['v-else'];
-    }
+    let parsedAttr = {};
+    
+    parsedAttr = this.hookUnique('template-parse-ast-attr', attrs);
 
-    for (let k in attrs) {
-      let val = attrs[k];
-      let modifiers = this.parseModifiers(k);
+    for (let name in attrs) {
+      let expr = attrs[name];
+      let modifiers = this.parseModifiers(name);
       if (modifiers) {
-        k = k.replace(modifierRE, '');
+        name= name.replace(modifierRE, '');
       }
       let handlers = {};
       let isHandler = false;
-      if (onRE.test(k)) {  // @ or v-on:
-        k = k.replace(onRE, '');
-        let info = this.parseHandler(k, val, modifiers);
-
-        info.params.forEach((p, i) => {
-          let paramAttr = 'data-wpy' + info.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
-          if (paramAttr.length > 31) {
-            this.compilation.logger.warn(`Function name is too long, it may cause an Error. "${info.handler}"`);
-          }
-          rst[paramAttr] = `{{ ${p} }}`;
-        });
-        rst[info.type] = info.handler;
+      if (modelRE.test(name)) {
+        // v-model
+        // e.g: <input v-model="lovingWepy">
+        const parsedModel = this.hookUnique('template-parse-ast-attr-v-model', name, expr, modifiers);
+        // Todo
+      } else if (onRE.test(name)) {  
+        // @ or v-on:
+        // e.g: <input @tap="tapHandle">
+        const parsedOn = this.hookUnique('template-parse-ast-attr-v-on', name, expr, modifiers);
+        parsedAttr = Object.assign({}, parsedAttr, parsedOn);
 
         handlers[info.event] = info.proxy;
         isHandler = true;
       }
       if (isHandler) {
-        rst['data-wpy-evt'] = this.eventHandlers.length;
+        parsedAttr['data-wpy-evt'] = this.eventHandlers.length;
         this.eventHandlers.push(handlers);
       } else {
-        rst[k] = attrs[k];
+        parsedAttr[name] = attrs[name];
       }
     }
-    return rst;
+    return parsedAttr;
   },
 
   /**
