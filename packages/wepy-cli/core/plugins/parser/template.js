@@ -52,7 +52,7 @@ exports = module.exports = function () {
       parsedAttr['wx:else'] = `{{ ${attrs['v-else']} }}`;
       delete attrs['v-else'];
     }
-    return rst;
+    return parsedAttr;
   });
 
   // hook for event transf
