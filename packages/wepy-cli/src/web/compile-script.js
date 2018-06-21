@@ -193,16 +193,16 @@ export default {
                 wpy.script.code = rst;
             }
 
-            let matchs = wpy.script.code.match(/exports\.default\s*=\s*(((?!undefined).)*);/i), defaultExport;
-            // let matchs = wpy.script.code.match(/exports\.default\s*=\s*(\w+);/i), defaultExport;
+            let matches = wpy.script.code.match(/exports\.default\s*=\s*(((?!undefined).)*);/i), defaultExport;
+            // let matches = wpy.script.code.match(/exports\.default\s*=\s*(\w+);/i), defaultExport;
 
-            if (matchs && matchs.length) {
-                defaultExport = matchs[1];
+            if (matches && matches.length) {
+                defaultExport = matches[1];
 
                 if (wpy.type === 'page') {
                     main.addPage(wpy.path, wpy);
                 } else if (wpy.type === 'app') {
-                    if (matchs) {
+                    if (matches) {
                         let appConfig = JSON.stringify(config.appConfig || {});
 
                         wpy.script.code = wpy.script.code.replace(/exports\.default\s*=\s*(\w+);/i, '');

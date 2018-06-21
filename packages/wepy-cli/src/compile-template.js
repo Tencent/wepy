@@ -107,14 +107,14 @@ export default {
         if (!prefix)
             return content;
         // replace {{ param ? 'abc' : 'efg' }} => {{ $prefix_param ? 'abc' : 'efg' }}
-        return content.replace(/\{\{([^}]+)\}\}/ig, (matchs, words) => {
-            return matchs.replace(/[^\.\w'"](\.{0}|\.{3})([a-z_\$][\w\d\._\$]*)/ig, (match, expand, word, n) => {
-                //console.log(matchs + '------' + match + '--' + word + '--' + n);
+        return content.replace(/\{\{([^}]+)\}\}/ig, (matches, words) => {
+            return matches.replace(/[^\.\w'"](\.{0}|\.{3})([a-z_\$][\w\d\._\$]*)/ig, (match, expand, word, n) => {
+                //console.log(matches + '------' + match + '--' + word + '--' + n);
                 let char = match[0];
                 let tmp = word.match(/^([\w\$]+)(.*)/);
                 let w = tmp[1];
                 let rest = tmp[2];
-                if (ignores[w] || this.isInQuote(matchs, n)) {
+                if (ignores[w] || this.isInQuote(matches, n)) {
                     return match;
                 } else {
                     if (mapping.items && mapping.items[w] && mapping.items[w].bind) {
