@@ -14,7 +14,7 @@ module.exports = {
         } else if (typeof(global) !== 'undefined') {
             global = global;
         } else {
-            gloabl = Function('return this')();
+            global = Function('return this')();
         }
 
         global.wx = {
