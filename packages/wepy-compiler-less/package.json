@@ -4,7 +4,7 @@
   "description": "wepy compile less",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test/helpers/lessc.js && mocha ./test/*.test.js"
   },
   "keywords": [
     "less"
@@ -14,5 +14,9 @@
     "loader-utils": "^1.1.0"
   },
   "author": "Gcaufy",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0",
+    "fs-extra": "^6.0.1"
+  }
 }

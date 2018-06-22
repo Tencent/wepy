@@ -1,0 +1,7 @@
+.no-math {
+  @var: 50vh/2;
+  width: calc(50% + (@var - 20px));
+  foo: 1 + 2 calc(3 + 4) 5 + 6;
+  @floor: floor(1 + .1);
+  bar: calc(@floor + 20%);
+}
