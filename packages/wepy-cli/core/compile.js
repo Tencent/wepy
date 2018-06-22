@@ -133,9 +133,8 @@ class Compile extends Hook {
       let config = sfc.config;
 
       let appConfig = config.parsed;
-      appConfig.pages = [].concat(appConfig.pages || []);
-      if (appConfig.pages.length === 0) {
-        throw `'page' is requied in app config`;
+      if (!appConfig.pages || appConfig.pages.length === 0) {
+        throw `"pages" is missing in the App config`;
       }
       let pages = appConfig.pages.map(v => {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
