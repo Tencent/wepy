@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "Teamin群协作",
+            "email": "service_chainton@teamin.cc",
+            "link": "https://www.teamin.cc/lite",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/9954739/41836904-a60bc286-788e-11e8-9f47-5054fba7f21c.png",
+            "company": "北京圈动科技有限公司"
+        },
+        {
             "name": "表情演员",
             "email": "medivhzhan@gmail.com",
             "link": "",
