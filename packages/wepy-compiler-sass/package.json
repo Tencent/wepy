@@ -1,10 +1,10 @@
 {
   "name": "wepy-compiler-sass",
-  "version": "1.3.8",
+  "version": "2.0.0",
   "description": "wepy compile sass",
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test/helpers/generate.js && mocha ./test/*.test.js"
   },
   "keywords": [
     "sass"
@@ -12,6 +12,10 @@
   "author": "Gcaufy",
   "license": "MIT",
   "dependencies": {
+    "loader-utils": "^1.1.0",
     "node-sass": "^4.0.0"
+  },
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0"
   }
 }
