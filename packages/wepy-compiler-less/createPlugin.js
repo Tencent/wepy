@@ -14,7 +14,7 @@ function createPlugin (compliation) {
     loadFile (filename, dir, options) {
       let url;
       if (less.version[0] >= 3) {
-        if (options.ext && !isModuleNmae.test(filename)) {
+        if (options.ext && !isModuleName.test(filename)) {
           url = this.tryAppendExtension(filename, options.ext);
         } else {
           url = filename;
