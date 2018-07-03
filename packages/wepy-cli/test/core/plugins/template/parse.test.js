@@ -7,7 +7,7 @@ const tag = require(`${alias.core}/tag`);
 const pt = require(`${alias.plugins}/template/parse`);
 
 const spec = {
-  attr: ['v-if'],
+  attr: ['v-if', 'v-for', 'v-show'],
   event: ['v-on'],
   directives: ['v-model']
 }
@@ -49,9 +49,9 @@ function assertCodegen (originalRaw, assertRaw, options = {}, done) {
 
 describe('template-parse', function () {
 
-  it('test attr', function (done) {
+  spec.attr.forEach(file => {
 
-    spec.attr.forEach(file => {
+    it('test attr: ' + file, function (done) {
       const { originalRaw, assertRaw } = getRaw(file);
       assertCodegen(originalRaw, assertRaw, {}, done)
     })
