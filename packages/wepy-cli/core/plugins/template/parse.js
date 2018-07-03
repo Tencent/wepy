@@ -168,7 +168,7 @@ exports = module.exports = function () {
     'v-show': ({item, name, expr}) => ({ hidden: `{{!(${expr})}}` }),
     'v-if': ({item, name, expr}) => ({ 'wx:if': `{{ ${expr} }}` }),
     'v-else-if': ({item, name, expr}) => ({ 'wx:elif': `{{ ${expr} }}` }),
-    'wx:else': ({item, name, expr}) => ({ 'wx:else': `{{ ${expr} }}` })
+    'v-else': ({item, name, expr}) => ({ 'wx:else': `{{ ${expr} }}` })
   };
 
   for (let name in ATTR_HANDLERS) {
