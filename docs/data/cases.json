@@ -407,6 +407,14 @@
             "opensource": "https://github.com/zenofzhen/worldcupbattle",
             "qrcode": "https://raw.githubusercontent.com/zenofzhen/worldcupbattle/dev/src/image/qrcode.jpg",
             "company": "上海幽孚网络科技有限公司"
+        },
+        {
+            "name": "小呱商城",
+            "email": "zhxxx1993@163.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "http://p75v9dn5u.bkt.clouddn.com/logo.png",
+            "company": "上海卓开网络科技有限公司"
         }
     ]
 }
