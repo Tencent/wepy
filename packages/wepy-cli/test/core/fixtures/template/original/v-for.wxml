@@ -1,0 +1,3 @@
+<view v-for="items"></view>
+<view v-for="(item, index) in items"></view>
+<view v-for="(value, key, index) in object"></view>

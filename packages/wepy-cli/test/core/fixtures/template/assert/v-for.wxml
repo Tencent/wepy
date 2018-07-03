@@ -1,0 +1,3 @@
+<view wx:for="{{ items }}" wx:for-index="index" wx:for-item="item" wx:key="index"></view>
+<view wx:for="{{ items }}" wx:for-index="index" wx:for-item="item" wx:key="index"></view>
+<view wx:for="{{ object }}" wx:for-index="key" wx:for-item="value" wx:key="index"></view>
