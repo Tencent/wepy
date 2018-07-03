@@ -1,6 +1,7 @@
 const htmlparser = require('htmlparser2');
 const paramsDetect = require('./../../ast/paramsDetect');
 const vueWithTransform = require('vue-template-es2015-compiler');
+const tools = require('../../util/tools');
 
 
 const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
@@ -140,35 +141,33 @@ exports = module.exports = function () {
         // e.g: v-for="items"
         res.alias = 'item';
         res.for = variableMatch[0].trim();
-        return res;
       }
 
-      if (!inMatch) {
-        return res;
-      }
-      res.for = inMatch[2].trim();
-      let alias = inMatch[1].trim().replace(stripParensRE, '');
-      let iteratorMatch = alias.match(forIteratorRE);
-      if (iteratorMatch) {
-        res.alias = alias.replace(forIteratorRE, '').trim();
-        res.iterator1 = iteratorMatch[1].trim();
-        if (iteratorMatch[2]) {
-          res.iterator2 = iteratorMatch[2].trim();
+      if (inMatch) {
+        res.for = inMatch[2].trim();
+        let alias = inMatch[1].trim().replace(stripParensRE, '');
+        let iteratorMatch = alias.match(forIteratorRE);
+        if (iteratorMatch) {
+          res.alias = alias.replace(forIteratorRE, '').trim();
+          res.iterator1 = iteratorMatch[1].trim();
+          if (iteratorMatch[2]) {
+            res.iterator2 = iteratorMatch[2].trim();
+          }
+        } else {
+          res.alias = alias;
         }
-      } else {
-        res.alias = alias;
       }
       return {
         'wx:for': `{{ ${res.for} }}`,
-        'wx:for-index': `${res.iterator1 || 'index'} `,
-        'wx:for-item': `${res.alias || 'item'} `,
-        'wx:key': `${res.iterator2 || res.iterator1 || 'index'} `
+        'wx:for-index': `${res.iterator1 || 'index'}`,
+        'wx:for-item': `${res.alias || 'item'}`,
+        'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
       };
     },
-    'v-show': ({item, name, expr}) => ({ hidden: `{{!(${expr})}}` }),
+    'v-show': ({item, name, expr}) => ({ hidden: `{{ !(${expr}) }}` }),
     'v-if': ({item, name, expr}) => ({ 'wx:if': `{{ ${expr} }}` }),
     'v-else-if': ({item, name, expr}) => ({ 'wx:elif': `{{ ${expr} }}` }),
-    'v-else': ({item, name, expr}) => ({ 'wx:else': `{{ ${expr} }}` })
+    'v-else': ({item, name, expr}) => ({ 'wx:else': true })
   };
 
   for (let name in ATTR_HANDLERS) {
@@ -259,8 +258,10 @@ exports = module.exports = function () {
         str += '<' + item.name;
         if (item.parsedAttr) {
           Object.keys(item.parsedAttr).forEach(attr => {
-            if (attr !== 'class' && attr !== 'style')
-              str += ` ${attr}="${item.parsedAttr[attr]}"`;
+            if (item.parsedAttr[attr] && attr !== 'class' && attr !== 'style')
+              str += tools.isTrue(item.parsedAttr[attr])
+                ? ` ${attr}`
+                : ` ${attr}="${item.parsedAttr[attr]}"`;
           });
         }
         if (item.parsedAttr.style || (item.bindStyle && item.bindStyle.length)) {
