@@ -14,7 +14,7 @@ const DEFAULT_OPTIONS = {
   'build.web.htmlOutput': { type: String },
   'build.web.jsOutput': { type: String },
   'build.web.resolve': { type: Object, link: 'resolve' },
-  'resolve': { type: Object },
+  'resolve': { type: Object, default: {} },
   'compilers': { type: Object },
   'plugins': { type: Array, default: []},
   'appConfig': { type: Object },
@@ -100,7 +100,7 @@ function parse (opt = {}, baseOpt = DEFAULT_OPTIONS) {
 
 function convert (args) {
   if (!fs.existsSync(DEFAULT_CONFIG)) {
-    throw `No configuration file found in the current directory.` 
+    throw `No configuration file found in the current directory.`
   }
 
   let opt = require(DEFAULT_CONFIG);
@@ -108,7 +108,7 @@ function convert (args) {
 
   argOpt.watch = !!args.watch;
   argOpt.noCache = !!args.noCache;
-  
+
   return Object.assign({}, parse(opt), parse(args));
 }
 
