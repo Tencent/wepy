@@ -26,7 +26,7 @@ function createCompiler (options = {}) {
 }
 
 function getRaw (file, lang = 'wxml') {
-  const original = path.join(__dirname, '..', '..', 'fixtures/template/original', file + '.wxml');
+  const original = path.join(__dirname, '..', '..', 'fixtures/template/original', file + '.html');
   const assert = path.join(__dirname, '..', '..', 'fixtures/template/assert', file + '.wxml');
 
   return {
