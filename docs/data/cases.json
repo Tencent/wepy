@@ -415,6 +415,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/2182004/42253762-df597ef0-7f75-11e8-926e-1de3fc131c58.png",
             "company": "上海卓开网络科技有限公司"
-        }
+        },
+        {
+            "name": "日日課",
+            "email": "developer@wendict.com",
+            "link": "https://wendict.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/10745/42270019-648a31a0-7fb2-11e8-9cab-fb4951a5a4d1.jpg",
+            "company": "问典（天津）文化传播有限公司"
+        } 
     ]
 }
