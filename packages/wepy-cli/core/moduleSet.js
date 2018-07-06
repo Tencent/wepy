@@ -14,9 +14,10 @@ class ModuleSet {
     this._map = {};
     this._set = {};
     this._array = {};
+    this._type = {};
   }
 
-  add (file) {
+  add (file, type) {
     let id = this.get(file);
 
     if (id === undefined) {
@@ -25,6 +26,7 @@ class ModuleSet {
       id = this._index;
       this._map[file] = id;
       this._array[id] = file;
+      this._type[file] = type;
     }
 
     return id;
@@ -38,18 +40,27 @@ class ModuleSet {
     return this.get(file) !== undefined && this._set[file] === undefined;
   }
 
-  update (file, data) {
+  update (file, data, type) {
+    if (!this.get(file)) {
+      this.add(file, type);
+    }
     this._set[file] = data;
+    this._type[file] = type;
   }
 
   data (file) {
     return this._set[file];
   }
 
-  array () {
-    this._array.length = this.length;
-    return Array.prototype.slice.apply(this._array);
+  array (type) {
+    if (!type) {
+      this._array.length = this.length;
+      return Array.prototype.slice.apply(this._array);
+    } else {
+      return this.array().filter(file => this._type[file] === type);
+    }
   }
+
 }
 
 

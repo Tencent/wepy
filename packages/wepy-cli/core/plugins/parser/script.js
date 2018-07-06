@@ -75,12 +75,13 @@ function ast (source) {
 function parseDep (issuer, dep) {
   return this.compilation.resolvers.normal.resolve({issuer: issuer}, path.dirname(issuer), dep.module, {}).then(rst => {
     let npm = rst.meta.descriptionFileRoot !== this.compilation.context;
-    let npmModules = this.compilation.npm;
+
+    let assets = this.compilation.assets;
 
     if (!rst.path) {
       return rst.path;
     }
-    let id = npmModules.get(rst.path);
+    let id = assets.get(rst.path);
     if (id !== undefined) {
       return id;
     }
@@ -110,16 +111,16 @@ exports = module.exports = function () {
   this.register('wepy-parser-dep', function (node, ctx, dep) {
     return this.resolvers.normal.resolve({issuer: ctx.file}, path.dirname(ctx.file), dep.module, {}).then(rst => {
       let npm = rst.meta.descriptionFileRoot !== this.context;
-      let npmModules = this.npm;
+
+      let assets = this.assets;
 
       if (!rst.path) {
         return rst.path;
       }
-      let id = npmModules.get(rst.path);
+      let id = assets.get(rst.path);
       if (id !== undefined) {
         return id;
       }
-
       let ext = path.extname(rst.path);
 
       if (ext === '.js') {
@@ -132,21 +133,34 @@ exports = module.exports = function () {
             file: rst.path,
             npm: npm
           });
+        } else {
+          return this.applyCompiler({
+            type: 'script',
+            lang: 'babel', // TODO: default js files compile mode
+            content: fs.readFileSync(rst.path, 'utf-8')
+          }, {
+            file: rst.path,
+            npm: npm
+          });
         }
       } else if (ext === this.options.wpyExt) {
+        debugger;
+        // TODO: why they import a wpy file.
         return this.parsers.wpy.parse(rst.path);
       }
     });
   });
 
   this.register('wepy-parser-script', function (node, ctx) {
+    let assets = this.assets;
     let npmModules = this.npm;
     if (ctx.npm) {
-      if (npmModules.pending(ctx.file)) {
-        return Promise.resolve(npmModules.get(ctx.file));
+      if (assets.pending(ctx.file)) {
+        return Promise.resolve(assets.get(ctx.file));
       }
-      npmModules.add(ctx.file);
+      assets.add(ctx.file, 'npm');
     }
+
     let source = new ReplaceSource(new RawSource(node.compiled.code));
     let astData = toAst(node.compiled.code);
 
@@ -167,10 +181,9 @@ exports = module.exports = function () {
         source: source,
         depModules: rst
       };
-      if (ctx.npm) {
-        this.npm.update(ctx.file, obj);
-        obj.id = npmModules.get(ctx.file);
-      }
+      let assets = this.assets;
+      assets.update(ctx.file, obj, ctx.npm ? 'npm' : (ctx.sfc ? 'app' : 'require'));
+      obj.id = assets.get(ctx.file);
       return obj;
     });
   });

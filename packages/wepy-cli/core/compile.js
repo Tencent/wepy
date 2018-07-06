@@ -37,6 +37,7 @@ class Compile extends Hook {
 
     this.compiled = {};
     this.npm = new moduleSet();
+    this.assets = new moduleSet();
     this.resolvers = {};
 
     this.context = process.cwd();
@@ -118,6 +119,12 @@ class Compile extends Hook {
       fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
     });
 
+    this.register('output-assets', function (list) {
+      list.forEach(file => {
+        fs.outputFile(file.targetFile, file.outputCode, 'utf-8');
+      });
+    });
+
     initPlugin(this);
     initParser(this);
     return initCompiler(this, this.options.compilers);
@@ -182,6 +189,9 @@ class Compile extends Hook {
     }).then(() => {
       let vendorData = this.hookSeq('build-vendor', {});
       this.hookUnique('output-vendor', vendorData);
+    }).then(() => {
+      let assetsData = this.hookSeq('build-assets');
+      this.hookUnique('output-assets', assetsData);
     }).catch(e => {
       this.logger.error(e);
     });

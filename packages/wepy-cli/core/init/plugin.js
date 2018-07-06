@@ -7,6 +7,7 @@ exports = module.exports = function (ins) {
     './../plugins/build/pages',
     './../plugins/build/components',
     './../plugins/build/vendor',
+    './../plugins/build/assets',
 
     './../plugins/template/parse',
     './../plugins/template/parseClassAndStyle',

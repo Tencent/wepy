@@ -33,6 +33,9 @@ exports = module.exports = function () {
     let relstr = genRel(ref);
     let code = parsed.code;
     let entry = parsed.parser.entry;
+    if (!entry) {
+      throw new Error('Missing wepy entry');
+    }
     let args = entry.arguments;
     let pos = 0;
     if (args === 0) {
