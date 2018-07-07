@@ -431,6 +431,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/11532418/42368789-96008e8a-813a-11e8-84fd-94e161857c2c.jpg",
             "company": "上海合起跃信息技术有限公司"
+        },
+        {
+            "name": "自媒社",
+            "email": "wu_zhuojun@sina.com",
+            "link": "https://www.zimeishe.net",
+            "opensource": "",
+            "qrcode": "https://www.zimeishe.net/static/img/mini-apps-qrCode.7d1f024.jpg",
+            "company": "深圳南友圈网络科技有限公司"
         }
     ]
 }
