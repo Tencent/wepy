@@ -23,6 +23,26 @@ const options = {
         '@': path.resolve(__dirname, '../fixtures/less/vars')
       }
     }
+  },
+  uri: {
+    replace: [
+      [/~@/g, '../less/imgs']
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '../fixtures/less/imgs')
+      }
+    }
+  },
+  extend: {
+    replace: [
+      [/~@/g, '../less/vars']
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '../fixtures/less/vars')
+      }
+    }
   }
 }
 

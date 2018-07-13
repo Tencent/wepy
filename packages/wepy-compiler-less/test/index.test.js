@@ -71,8 +71,7 @@ function compare(id, done) {
     expect(css).to.equal(spec.expect);
     done();
   }).catch(e => {
-    done();
-    throw e;
+    done(e);
   });
 }
 

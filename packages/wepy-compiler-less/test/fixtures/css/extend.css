@@ -1,0 +1,17 @@
+.some-module,
+#it-works,
+#it-works-all {
+  color: red;
+  transform: scale(2);
+}
+.some-module .sub-module,
+#it-works-all .sub-module {
+  color: green;
+}
+#it-works {
+  margin: 0;
+  transform: rotate(15deg);
+}
+#it-works-all {
+  margin: 0;
+}
