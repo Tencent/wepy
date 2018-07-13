@@ -1345,8 +1345,6 @@ var observerFn = function (output, props, prop) {
  * patch props option
  */
 function patchProps (output, props) {
-  var this$1 = this;
-
   var newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -1388,7 +1386,7 @@ function patchProps (output, props) {
       // props.validator
       // props.required
 
-      newProp.observer = observerFn(this$1.$wepy, output, props, prop);
+      newProp.observer = observerFn(output, props, prop);
 
       newProps[k] = newProp;
     }

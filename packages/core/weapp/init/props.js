@@ -86,7 +86,7 @@ export function patchProps (output, props) {
       // props.validator
       // props.required
 
-      newProp.observer = observerFn(this.$wepy, output, props, prop);
+      newProp.observer = observerFn(output, props, prop);
 
       newProps[k] = newProp;
     }
