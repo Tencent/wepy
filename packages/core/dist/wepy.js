@@ -1482,12 +1482,16 @@ function patchMethods (output, methods, isComponent) {
     return;
   }
 
-  var target = output;
-  if (isComponent) {
-    output.methods = {};
-    target = output.methods;
-  }
+  output.methods = {};
+  var target = output.methods;
 
+  target._initComponent = function (e) {
+    var child = e.detail;
+    var vm = this.$wepy;
+    vm.$children.push(child);
+    child.$parent = vm;
+    return vm;
+  };
   target._proxy = proxyHandler;
 }
 
@@ -1568,6 +1572,7 @@ function patchLifecycle (output, option, rel, isComponent) {
     var vm = new initClass();
 
     vm.$dirty = new Dirty('path');
+    vm.$children = [];
 
     this.$wepy = vm;
     vm.$wx = this;
@@ -1597,29 +1602,32 @@ function patchLifecycle (output, option, rel, isComponent) {
     return callUserMethod(vm, vm.$option, isComponent ? 'created' : ['onLoad', 'created'], args);
   };
 
+  output.created = initLifecycle;
   if (isComponent) {
-    output.created = initLifecycle;
-    output.attached = function () {
-      console.log('attached');
-      console.log(this);
+    output.attached = function () { // Component attached
       var outProps = output.properties;
       // this.propperties are includes datas
       var acceptProps = this.properties;
       var vm = this.$wepy;
+      var parent = this.triggerEvent('_init', vm);
+
       Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
     };
   } else {
-    output.onLoad = initLifecycle;
+    output.attached = function () { // Page attached
+      // TODO: page attached
+      console.log('TODO: page attached');
+    };
   }
 
   output.ready = function () {
-    console.log('ready');
-    console.log(this);
+    // TODO: ready
+    console.log('TODO: ready');
   };
 
   output.moved = function () {
-    console.log('moved');
-    console.log(this);
+    // TODO: moved
+    console.log('TODO: moved');
   };
 }
 
@@ -1633,7 +1641,7 @@ function page (option, rel) {
 
   patchLifecycle(pageConfig, option, rel);
 
-  return Page(pageConfig);
+  return Component(pageConfig);
 }
 
 function app (option, rel) {

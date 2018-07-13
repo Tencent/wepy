@@ -81,11 +81,15 @@ export function patchMethods (output, methods, isComponent) {
     return;
   }
 
-  let target = output;
-  if (isComponent) {
-    output.methods = {};
-    target = output.methods;
-  }
+  output.methods = {};
+  let target = output.methods;
 
+  target._initComponent = function (e) {
+    let child = e.detail;
+    let vm = this.$wepy;
+    vm.$children.push(child);
+    child.$parent = vm;
+    return vm;
+  };
   target._proxy = proxyHandler;
 };

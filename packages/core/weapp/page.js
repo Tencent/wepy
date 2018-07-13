@@ -10,7 +10,7 @@ function page (option, rel) {
 
   patchLifecycle(pageConfig, option, rel);
 
-  return Page(pageConfig);
+  return Component(pageConfig);
 }
 
 

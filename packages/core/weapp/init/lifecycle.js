@@ -47,45 +47,6 @@ export function patchAppLifecycle (appConfig, option) {
   };
 };
 
-export function initLifecycle_bak (vm, pageConfig) {
-  pageConfig.onLoad = function () {
-    let wxpage = this;
-    vm.$wxpage = wxpage;
-
-    if (!vm.$app) {
-      vm.$app = $global.$app;
-    }
-
-    let init = false;
-
-    vm.$dirty = {};
-    let renderWatcher = new Watcher(vm, function () {
-      if (!init) {
-        for (let k in vm._data) {
-          // initialize getter dep
-          vm._data[k];
-        }
-        init = true;
-      }
-
-      if (vm.$dirty.length) {
-        let dirtyData = {};
-        vm.$dirty.concat(Object.keys(vm._computedWatchers || {})).forEach(k => {
-          dirtyData[k] = vm[k];
-        });
-        vm.$dirty = {};
-        wxpage.setData(dirtyData);
-      }
-    }, function () {
-
-    }, null, true);
-
-    let result;
-    (typeof vm.$option.onLoad === 'function') && (result = vm.$option.onLoad.call(vm));
-    return result;
-  }
-};
-
 export function patchComponentLifecycle (compConfig, option) {
 
   compConfig.created = function () {
@@ -109,6 +70,7 @@ export function patchLifecycle (output, option, rel, isComponent) {
     let vm = new initClass();
 
     vm.$dirty = new Dirty('path');
+    vm.$children = [];
 
     this.$wepy = vm;
     vm.$wx = this;
@@ -138,29 +100,32 @@ export function patchLifecycle (output, option, rel, isComponent) {
     return callUserMethod(vm, vm.$option, isComponent ? 'created' : ['onLoad', 'created'], args);
   };
 
+  output.created = initLifecycle;
   if (isComponent) {
-    output.created = initLifecycle;
-    output.attached = function () {
-      console.log('attached');
-      console.log(this);
+    output.attached = function () { // Component attached
       let outProps = output.properties;
       // this.propperties are includes datas
       let acceptProps = this.properties;
       let vm = this.$wepy;
+      let parent = this.triggerEvent('_init', vm);
+
       Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
     };
   } else {
-    output.onLoad = initLifecycle;
+    output.attached = function () { // Page attached
+      // TODO: page attached
+      console.log('TODO: page attached');
+    }
   }
 
   output.ready = function () {
-    console.log('ready');
-    console.log(this);
+    // TODO: ready
+    console.log('TODO: ready');
   };
 
   output.moved = function () {
-    console.log('moved');
-    console.log(this);
+    // TODO: moved
+    console.log('TODO: moved');
   };
 };
 
