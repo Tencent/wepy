@@ -36,7 +36,7 @@ class Compile extends Hook {
     this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
     this.compiled = {};
-    this.npm = new moduleSet();
+    this.vendors = new moduleSet();
     this.assets = new moduleSet();
     this.resolvers = {};
 

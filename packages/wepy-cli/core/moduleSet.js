@@ -61,6 +61,14 @@ class ModuleSet {
     }
   }
 
+  type (v) {
+    if (typeof v === 'number') {
+      return this._type[this._array[v]];
+    } else {
+      return this._type[v];
+    }
+  }
+
 }
 
 

@@ -72,40 +72,6 @@ function ast (source) {
   return ast;
 }
 
-function parseDep (issuer, dep) {
-  return this.compilation.resolvers.normal.resolve({issuer: issuer}, path.dirname(issuer), dep.module, {}).then(rst => {
-    let npm = rst.meta.descriptionFileRoot !== this.compilation.context;
-
-    let assets = this.compilation.assets;
-
-    if (!rst.path) {
-      return rst.path;
-    }
-    let id = assets.get(rst.path);
-    if (id !== undefined) {
-      return id;
-    }
-
-
-    let ext = path.extname(rst.path);
-
-    if (ext === '.js') {
-      if (npm) {
-        return this.parse({
-          code: fs.readFileSync(rst.path, 'utf-8')
-        }, {
-          file: rst.path,
-          npm: npm
-        });
-      }
-    } else if (ext === this.compilation.options.wpyExt) {
-      return this.compilation.parsers.wpy.parse(rst.path);
-    }
-  }).catch(e => {
-    console.error(e);
-  });
-}
-
 exports = module.exports = function () {
 
   this.register('wepy-parser-dep', function (node, ctx, dep) {
@@ -155,10 +121,10 @@ exports = module.exports = function () {
     let assets = this.assets;
     let npmModules = this.npm;
     if (ctx.npm) {
-      if (assets.pending(ctx.file)) {
-        return Promise.resolve(assets.get(ctx.file));
+      if (this.vendors.pending(ctx.file)) {
+        return Promise.resolve(this.vendors.get(ctx.file));
       }
-      assets.add(ctx.file, 'npm');
+      this.vendors.add(ctx.file, 'npm');
     }
 
     let source = new ReplaceSource(new RawSource(node.compiled.code));
@@ -174,15 +140,17 @@ exports = module.exports = function () {
     });
 
     return Promise.all(depTasks).then(rst => {
+      let type = ctx.npm ? 'npm' : (ctx.sfc ? 'component' : 'require');
       let obj = {
         file: ctx.file,
         parser: walker,
         code: node.compiled.code,
         source: source,
-        depModules: rst
+        depModules: rst,
+        type: type
       };
-      let assets = this.assets;
-      assets.update(ctx.file, obj, ctx.npm ? 'npm' : (ctx.sfc ? 'app' : 'require'));
+      let assets = ctx.npm ? this.vendors : this.assets;
+      assets.update(ctx.file, obj, type);
       obj.id = assets.get(ctx.file);
       return obj;
     });

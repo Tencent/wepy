@@ -45,27 +45,27 @@ exports = module.exports = function () {
 
     this.logger.info('vendor', 'building vendor');
 
-    let npmList = this.npm.array();
-    let npmCode = '';
+    let vendorList = this.vendors.array();
+    let code = '';
 
-    npmList.forEach((npm, i) => {
-      let data = this.npm.data(npm);
+    vendorList.forEach((item, i) => {
+      let data = this.vendors.data(item);
 
       this.hookSeq('script-dep-fix', data, true);
 
-      npmCode += '/***** module ' + i + ' start *****/\n';
-      npmCode += '/***** ' + data.file + ' *****/\n';
-      npmCode += 'function(module, exports, __wepy_require) {';
-      npmCode += data.source.source() + '\n';
-      npmCode += '}';
-      if (i !== npmList.length - 1) {
-          npmCode += ',';
+      code += '/***** module ' + i + ' start *****/\n';
+      code += '/***** ' + data.file + ' *****/\n';
+      code += 'function(module, exports, __wepy_require) {';
+      code += data.source.source() + '\n';
+      code += '}';
+      if (i !== vendorList.length - 1) {
+          code += ',';
       }
-      npmCode += '/***** module ' + i + ' end *****/\n\n\n';
+      code += '/***** module ' + i + ' end *****/\n\n\n';
     });
 
     let template = VENDOR_INJECTION.concat([]);
-    template[1] = npmCode;
+    template[1] = code;
 
     vendor.outputCode = template.join('');
     vendor.targetFile = path.join(this.context, this.options.target, 'vendor.js');
