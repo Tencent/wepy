@@ -12,9 +12,9 @@ const banner = `
 
 
 const builds = {
-  'wepy2': {
-    entry: 'packages/wepy2/index.js',
-    dest: 'packages/wepy2/dist/wepy.js',
+  'core': {
+    entry: 'packages/core/index.js',
+    dest: 'packages/core/dist/wepy.js',
     env: 'development',
     format: 'cjs',
     banner
