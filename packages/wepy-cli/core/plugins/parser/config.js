@@ -9,6 +9,8 @@ exports = module.exports = function () {
     } catch (e) {
       return Promise.reject(`invalid json: ${configString}`);
     }
+    config.component = true;
+    config.usingComponents = config.usingComponents || {};
     return Promise.resolve(config);
   });
 }

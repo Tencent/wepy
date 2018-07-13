@@ -10,7 +10,19 @@ exports = module.exports = function () {
       errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
 
-    return this.hookUnique('template-parse', node.content).then(rst => {
+    let components = {};
+    let sfcConfig = ctx.sfc.config;
+
+    if (sfcConfig  && sfcConfig.parsed.usingComponents) {
+      let usingComponents = sfcConfig.parsed.usingComponents;
+      for (let k in usingComponents) {
+        components[k] = {
+          path: usingComponents[k]
+        };
+      }
+    }
+
+    return this.hookUnique('template-parse', node.content, components).then(rst => {
       let parsed = {
         code: rst.code,
         rel: rst.rel
