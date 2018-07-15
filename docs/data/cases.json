@@ -439,6 +439,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/2182004/42427538-9bc88c7c-8361-11e8-878e-421e7192337d.png",
             "company": "深圳南友圈网络科技有限公司"
+        },
+        {
+            "name": "有趣视频",
+            "email": "oxtiger@gmail.com",
+            "link": "",
+            "opensource": "https://github.com/terryso/youqu",
+            "qrcode": "http://7xnju0.dl1.z0.glb.clouddn.com/gh_588352b71fbf_258.jpg",
+            "company": "南京厚建云计算有限公司"
         }
     ]
 }
