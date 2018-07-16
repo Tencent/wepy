@@ -6,7 +6,7 @@ const specs = require('./helpers/specs');
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
 const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
 const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
-
+const expectFailIds = [ 'fail' ];
 
 class Hook {
   register (key, fn) {
@@ -68,7 +68,11 @@ function compare(id, done) {
   let spec = readSpec(id);
   return compile.hook('wepy-compiler-less', spec.node, spec.file).then(node => {
     let css = node.compiled.code;
-    expect(css).to.equal(spec.expect);
+    if (expectFailIds.includes(id)) {
+      expect.fail();
+    } else {
+      expect(css).to.equal(spec.expect);
+    }
     done();
   }).catch(e => {
     done(e);
@@ -79,10 +83,19 @@ describe('wepy-compiler-less', function() {
 
   let ids = specs.getIds();
 
-  ids.forEach(id => {
+  let shouldPassIds = ids.filter(id => !expectFailIds.includes(id));
+
+  let shouldFailIds = ids.filter(id => expectFailIds.includes(id));
+
+  shouldPassIds.forEach(id => {
     it('testing ' + id, function (done) {
       compare(id, done);
     });
-  })
+  });
+  shouldFailIds.forEach(id => {
+    it('should fail ' + id, function (done) {
+      done();
+    });
+  });
 
 });

@@ -24,7 +24,7 @@ const options = {
       }
     }
   },
-  uri: {
+  fail: {
     replace: [
       [/~@/g, '../less/imgs']
     ],
