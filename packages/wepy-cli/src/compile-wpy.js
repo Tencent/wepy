@@ -468,6 +468,9 @@ export default {
         if (filepath === path.join(util.currentDir, src, 'app' + wpyExt)) {
             type = 'app';
             util.log('入口: ' + relative, '编译');
+        } else if (opath.npm) {
+            type = 'npm'
+            util.log('第三方组件: ' + relative, '编译');
         } else if (pages.indexOf(relative) > -1) {
             type = 'page';
             util.log('页面: ' + relative, '编译');

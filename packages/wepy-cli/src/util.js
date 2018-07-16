@@ -147,6 +147,9 @@ const utils = {
         let o = resolve.getMainFile(lib);
         if (o) {
             if (main) {
+                if (o.pkg && o.pkg._activeFields.length) {
+                    main = resolve.resolveSelfFields(o.dir, o.pkg, main) || main;
+                }
                 src = path.join(o.dir, main);
             } else {
                 src = path.join(o.dir, o.file);
@@ -187,6 +190,18 @@ const utils = {
     },
     isArray (obj) {
         return Array.isArray(obj);
+    },
+    isTrue (v) {
+        return v === true;
+    },
+    isFalse (v) {
+        return v === false;
+    },
+    isUndef (v) {
+        return v === undefined || v === null;
+    },
+    isDef (v) {
+        return v !== undefined && v !== null;
     },
     isFile (p) {
         p = (typeof(p) === 'object') ? path.join(p.dir, p.base) : p;
@@ -455,7 +470,8 @@ const utils = {
         ext = (ext ? (ext[0] === '.' ? ext : ('.' + ext)) : opath.ext);
         // 第三组件
         if (opath.npm) {
-            relative = path.relative(opath.npm.modulePath, opath.npm.dir);
+            // maybe it's node_modules/moduleA/xxx/yyy/zzz/index.js
+            relative = path.relative(opath.npm.modulePath, opath.dir);
             relative = path.join('npm', relative);
         } else {
             relative = path.relative(path.join(this.currentDir, src), opath.dir);
@@ -517,8 +533,23 @@ const utils = {
         return rst;
     },
     getVersion () {
+        let version;
         let filepath = path.resolve(__dirname, '../package.json');
-        let version = JSON.parse(this.readFile(filepath)).version;
+        try {
+            version = JSON.parse(this.readFile(filepath)).version;
+        } catch (e) {
+            version = '';
+        }
+        return version;
+    },
+    getProjectVersion () {
+        let version;
+        let filepath = path.resolve(this.currentDir, 'package.json');
+        try {
+            version = JSON.parse(this.readFile(filepath)).version;
+        } catch (e) {
+            version = '';
+        }
         return version;
     },
     datetime (date = new Date(), format = 'HH:mm:ss') {
@@ -597,7 +628,8 @@ const utils = {
             msg = msg.replace(/`/g, '\\`');
         }
         try {
-            fs.appendFileSync(file, `console.${type}(\`CLI报错：${msg}\`);\r\n`);
+            msg = msg.replace(/\n/g, '\\n').replace(/\"/g, '\\"');
+            fs.appendFileSync(file, `console.${type}("CLI报错：${msg}");\r\n`);
         } catch (e) {
             console.log(e);
         }

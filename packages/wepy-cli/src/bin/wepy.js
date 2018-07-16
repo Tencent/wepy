@@ -13,15 +13,15 @@ program
     .option('-c --clone', 'use git clone')
     .option('--offline', 'use cached template')
     .on('--help', () => {
-      console.log();
-      console.log('  Example:');
-      console.log();
-      console.log(chalk.gray('   # create a new project with an official template'));
-      console.log('  $ wepy init standard my-project');
-      console.log();
-      console.log(chalk.gray('   # create a new project straight from a github template'));
-      console.log('  $ wepy init username/repo my-project');
-      console.log();
+        console.log();
+        console.log('  Example:');
+        console.log();
+        console.log(chalk.gray('   # create a new project with an official template'));
+        console.log('  $ wepy init standard my-project');
+        console.log();
+        console.log(chalk.gray('   # create a new project straight from a github template'));
+        console.log('  $ wepy init username/repo my-project');
+        console.log();
     });
 
 program
@@ -55,5 +55,22 @@ program
     .command('new')
     .description('deprecated command, use "wepy init <template-name> <project-name>" instead')
     .action(require('./wepy-new'));
+
+program
+    .command('devtool <action-name> [path]')
+    .description('commander for login, preview, upload and other operations.')
+    .action(require('./wepy-devtool'))
+    .option('--login-qr-output [format[@path]]', '指定二维码输出形式.')
+    .option('--preview-qr-output [format[@path]]', '指定二维码输出形式，语义同登录用的选项 --login-qr-output.')
+    .option('--upload-desc <desc>', '上传代码时的备注.')
+    .option('-q, --quiet', '不提供参数引导')
+    .on('--help', () => {
+        console.log();
+        console.log('  Example:');
+        console.log();
+        console.log(chalk.gray('   # 启动登录逻辑，将二维码打印在命令行中。'));
+        console.log('  $ wepy devtool login');
+        console.log();
+    });
 
 program.parse(process.argv);
