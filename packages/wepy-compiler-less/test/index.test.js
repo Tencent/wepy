@@ -68,11 +68,7 @@ function compare(id, done) {
   let spec = readSpec(id);
   return compile.hook('wepy-compiler-less', spec.node, spec.file).then(node => {
     let css = node.compiled.code;
-    if (expectFailIds.includes(id)) {
-      expect.fail();
-    } else {
-      expect(css).to.equal(spec.expect);
-    }
+    expect(css).to.equal(spec.expect);
     done();
   }).catch(e => {
     done(e);
