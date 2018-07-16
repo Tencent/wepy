@@ -447,6 +447,14 @@
             "opensource": "https://github.com/terryso/youqu",
             "qrcode": "https://user-images.githubusercontent.com/2182004/42741125-29192ebc-88e2-11e8-9e29-14491a1c3c3c.png",
             "company": "南京厚建云计算有限公司"
+        },
+        {
+            "name": "荣耀闯关",
+            "email": "819729209@qq.com",
+            "link": "",
+            "opensource": "https://github.com/gaodeha/wangzherongyao",
+            "qrcode": "https://wwwwzry.oss-cn-shenzhen.aliyuncs.com/wzrycg.jpg",
+            "company": ""
         }
     ]
 }
