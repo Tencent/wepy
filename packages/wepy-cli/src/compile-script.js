@@ -14,7 +14,7 @@ import cache from './cache';
 import cWpy from './compile-wpy';
 
 import loader from './loader';
-
+import eslint from './eslint';
 import resolve from './resolve';
 
 
@@ -215,16 +215,23 @@ export default {
     },
 
     compile (lang, code, type, opath) {
+        const filepath = path.join(opath.dir, opath.base);
+        
         let config = util.getConfig();
         src = cache.getSrc();
         dist = cache.getDist();
         npmPath = path.join(currentPath, dist, 'npm' + path.sep);
 
         if (!code) {
-            code = util.readFile(path.join(opath.dir, opath.base));
+            code = util.readFile(filepath);
             if (code === null) {
-                throw '打开文件失败: ' + path.join(opath.dir, opath.base);
+                throw '打开文件失败: ' + filepath;
             }
+        }
+        
+        const suffix = filepath.substr(filepath.lastIndexOf('.'));
+        if (config.eslintExt && ~config.eslintExt.indexOf(suffix) && !~config.wpyExt.indexOf(opath.ext)) {
+            eslint(filepath);
         }
 
         let compiler = loader.loadCompiler(lang);
