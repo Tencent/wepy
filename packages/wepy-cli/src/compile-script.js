@@ -230,7 +230,8 @@ export default {
         }
         
         const suffix = filepath.substr(filepath.lastIndexOf('.'));
-        if (config.eslintExt && ~config.eslintExt.indexOf(suffix) && !~config.wpyExt.indexOf(opath.ext)) {
+        const { eslintExt = '', wpyExt } = config;
+        if (~eslintExt.indexOf(suffix) && !~wpyExt.indexOf(opath.ext)) {
             eslint(filepath);
         }
 
