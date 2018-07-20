@@ -228,10 +228,9 @@ export default {
                 throw '打开文件失败: ' + filepath;
             }
         }
-        
-        const suffix = filepath.substr(filepath.lastIndexOf('.'));
+
         const { eslintExt = '', wpyExt } = config;
-        if (~eslintExt.indexOf(suffix) && !~wpyExt.indexOf(opath.ext)) {
+        if (~eslintExt.indexOf(opath.ext) && !~wpyExt.indexOf(opath.ext)) {
             eslint(filepath);
         }
 
