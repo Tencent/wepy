@@ -23,6 +23,27 @@ const options = {
         '@': path.resolve(__dirname, '../fixtures/less/vars')
       }
     }
+  },
+  'fail-missing-file': {
+    error: 'Can\'t resolve' // Error message.
+  },
+  'fail-uri-alias': {
+    then: true, // Consider as a success test case.
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '../fixtures/less/imgs')
+      }
+    }
+  },
+  extend: {
+    replace: [
+      [/~@/g, '../less/vars']
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, '../fixtures/less/vars')
+      }
+    }
   }
 }
 

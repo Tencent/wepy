@@ -32,8 +32,6 @@ function createPlugin (compliation) {
           contents: fs.readFileSync(rst.path, 'utf-8'),
           filename: rst.path
         };
-      }).catch(e => {
-        compliation.logger.error(e);
       });
     }
   }
