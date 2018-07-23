@@ -11,9 +11,11 @@ const lessPath = path.resolve(fixturesPath, 'less');
 const cssPath = path.resolve(fixturesPath, 'css');
 
 
-let ids = specs.getIds();
 
-specs.getIds().forEach(id => {
+// Ignore the fail test cases;
+let ids = specs.getIds().filter(v => !/^fail-/.test(v));
+
+ids.forEach(id => {
   const less = path.join(lessPath, `${id}.less`);
   const css = path.join(cssPath, `${id}.css`);
   const tmpless = path.join(lessPath, `${id}.tmp.less`);
