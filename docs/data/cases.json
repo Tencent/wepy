@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "SVNBucket-免费SVN仓库",
+            "email": "atsoar@qq.com",
+            "link": "https://svnbucket.com",
+            "opensource": "",
+            "qrcode": "https://raw.githubusercontent.com/atsoar/test/master/svnbucketqrcode.jpg",
+            "company": "广州云科信息科技有限公司"
+        },
+        {
             "name": "Teamin群协作",
             "email": "service_chainton@teamin.cc",
             "link": "https://www.teamin.cc/lite",
