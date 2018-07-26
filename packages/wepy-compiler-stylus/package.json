@@ -10,6 +10,7 @@
     "stylus"
   ],
   "dependencies": {
+    "lodash.flatten": "^4.4.0",
     "stylus": "^0.54.5"
   },
   "author": "Gcaufy",

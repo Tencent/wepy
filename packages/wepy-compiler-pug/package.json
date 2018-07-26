@@ -12,6 +12,8 @@
   "author": "Gcaufy",
   "license": "MIT",
   "dependencies": {
-    "pug": "^2.0.0-beta6"
+    "jade": "^1.11.0",
+    "pretty": "^2.0.0",
+    "pug": "^2.0.3"
   }
 }
