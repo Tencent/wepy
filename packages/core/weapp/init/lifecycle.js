@@ -10,6 +10,7 @@ import { initRender } from './render';
 import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
+import { initEvents } from './events';
 import { isStr, isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
 
@@ -89,6 +90,8 @@ export function patchLifecycle (output, option, rel, isComponent) {
 
     initMethods(vm, option.methods);
 
+    // initEvents(vm);
+
     vm._watchers = [];
 
     // create render watcher
@@ -103,11 +106,13 @@ export function patchLifecycle (output, option, rel, isComponent) {
   output.created = initLifecycle;
   if (isComponent) {
     output.attached = function () { // Component attached
-      let outProps = output.properties;
+      let outProps = output.properties || {};
       // this.propperties are includes datas
       let acceptProps = this.properties;
       let vm = this.$wepy;
       let parent = this.triggerEvent('_init', vm);
+
+      initEvents(vm);
 
       Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
     };

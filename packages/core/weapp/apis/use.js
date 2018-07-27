@@ -8,7 +8,7 @@ export function use (plugin, ...args) {
   let install = plugin.install || plugin;
 
   if (isFunc(install)) {
-    install.apply(plugin, args);
+    install.apply(plugin, [this].concat(args));
   }
 
   plugin.installed = 1;

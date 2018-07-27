@@ -47,7 +47,11 @@ const proxyHandler = function (e) {
   let $event = new Event(e);
 
   if (isFunc(fn)) {
-    return fn.apply(vm, [$event].concat(params));
+    if (fn.name === 'proxyHandlerWithEvent') {
+      return fn.apply(vm, params.concat($event));
+    } else {
+      return fn.apply(vm, params);
+    }
   } else {
     throw 'Unrecognized event';
   }
@@ -57,9 +61,11 @@ const proxyHandler = function (e) {
  * initialize page methods
  */
 export function initMethods (vm, methods) {
-  Object.keys(methods).forEach(method => {
-    vm[method] = methods[method];
-  });
+  if (methods) {
+    Object.keys(methods).forEach(method => {
+      vm[method] = methods[method];
+    });
+  }
 };
 
 /*

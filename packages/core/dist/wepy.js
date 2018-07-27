@@ -88,6 +88,20 @@ function hasOwn (obj, key) {
  */
 function noop (a, b, c) {}
 
+/**
+ * Convert an Array-lik object to a real Array
+ */
+function toArray (list, start) {
+  if ( start === void 0 ) start = 0;
+
+  var i = list.length - start;
+  var rst = new Array(i);
+  while(i--) {
+    rst[i] = list[i + start];
+  }
+  return rst;
+}
+
 /*
  * extend objects
  * e.g.
@@ -1208,15 +1222,84 @@ var Base = function Base () {
 
 };
 
-Base.prototype.$on = function $on () {
+Base.prototype.$on = function $on (event, fn) {
+    var this$1 = this;
 
+  if (isArr(event)) {
+    event.forEach(function (item) {
+      if (isStr(item)) {
+        this$1.$on(item, fn);
+      } else if (isObj(item)) {
+        this$1.$on(item.event, item.fn);
+      }
+    });
+  } else {
+    (this._events[event] || (this._events[event] = [])).push(fn);
+  }
+  return this;
 };
 
 Base.prototype.$once = function $once () {};
 
-Base.prototype.$off = function $off () {};
+Base.prototype.$off = function $off (event, fn) {
+    var this$1 = this;
 
-Base.prototype.$emit = function $emit () {};
+  if (!event && !fn) {
+    this._events = Object.create(null);
+    return this;
+  }
+
+  if (isArr(event)) {
+    event.forEach(function (item) {
+      if (isStr(item)) {
+        this$1.$off(item, fn);
+      } else if (isObj(item)) {
+        this$1.$off(item.event, item.fn);
+      }
+    });
+    return this;
+  }
+  if (!this._events[event])
+    { return this; }
+
+  if (!fn) {
+    this._event[event] = null;
+    return this;
+  }
+
+  if (fn) {
+    var fns = this._events[event];
+    var i = fns.length;
+    while (i--) {
+      var tmp = fns[i];
+      if (tmp === fn || tmp.fn === fn) {
+        fns.splice(i, 1);
+        break;
+      }
+    }
+  }
+  return this;
+};
+
+Base.prototype.$emit = function $emit (event) {
+    var this$1 = this;
+
+  var lowerCaseEvent = event.toLowerCase();
+
+  var fns = this._events[event] || [];
+  if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
+    // TODO: handler warn
+  }
+  var args = toArray(arguments, 1);
+  (this._events[event] || []).forEach(function (fn) {
+    try {
+      fn.apply(this$1, args);
+    } catch (e) {
+      handleError(e, vm, ("event handnler for \"" + event + "\""));
+    }
+  });
+  return this;
+};
 
 var WepyApp = (function (Base$$1) {
   function WepyApp () {
@@ -1460,7 +1543,11 @@ var proxyHandler = function (e) {
   var $event = new Event(e);
 
   if (isFunc(fn)) {
-    return fn.apply(vm, [$event].concat(params));
+    if (fn.name === 'proxyHandlerWithEvent') {
+      return fn.apply(vm, params.concat($event));
+    } else {
+      return fn.apply(vm, params);
+    }
   } else {
     throw 'Unrecognized event';
   }
@@ -1470,9 +1557,11 @@ var proxyHandler = function (e) {
  * initialize page methods
  */
 function initMethods (vm, methods) {
-  Object.keys(methods).forEach(function (method) {
-    vm[method] = methods[method];
-  });
+  if (methods) {
+    Object.keys(methods).forEach(function (method) {
+      vm[method] = methods[method];
+    });
+  }
 }
 /*
  * patch method option
@@ -1493,6 +1582,25 @@ function patchMethods (output, methods, isComponent) {
     return vm;
   };
   target._proxy = proxyHandler;
+}
+
+/*
+ * initialize events
+ */
+function initEvents (vm) {
+  var parent = vm.$parent;
+  var rel = parent.$rel;
+  vm._events = {};
+  var on = rel.info.on;
+  var loop = function ( event ) {
+    var index = on[event];
+    vm.$on(event, function () {
+      var fn = rel.handlers[index][event];
+      fn.apply(parent, arguments);
+    });
+  };
+
+  for (var event in on) loop( event );
 }
 
 var Dirty = function Dirty (type) {
@@ -1591,6 +1699,8 @@ function patchLifecycle (output, option, rel, isComponent) {
 
     initMethods(vm, option.methods);
 
+    // initEvents(vm);
+
     vm._watchers = [];
 
     // create render watcher
@@ -1605,11 +1715,13 @@ function patchLifecycle (output, option, rel, isComponent) {
   output.created = initLifecycle;
   if (isComponent) {
     output.attached = function () { // Component attached
-      var outProps = output.properties;
+      var outProps = output.properties || {};
       // this.propperties are includes datas
       var acceptProps = this.properties;
       var vm = this.$wepy;
       var parent = this.triggerEvent('_init', vm);
+
+      initEvents(vm);
 
       Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
     };
@@ -1685,7 +1797,7 @@ function use (plugin) {
   var install = plugin.install || plugin;
 
   if (isFunc(install)) {
-    install.apply(plugin, args);
+    install.apply(plugin, [this].concat(args));
   }
 
   plugin.installed = 1;

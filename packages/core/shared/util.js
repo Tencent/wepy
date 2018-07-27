@@ -59,3 +59,15 @@ export function isValidArrayIndex (val) {
   const n = parseFloat(String(val))
   return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
+
+/**
+ * Convert an Array-lik object to a real Array
+ */
+export function toArray (list, start = 0) {
+  let i = list.length - start;
+  let rst = new Array(i);
+  while(i--) {
+    rst[i] = list[i + start];
+  }
+  return rst;
+}

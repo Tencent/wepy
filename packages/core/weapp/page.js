@@ -1,4 +1,4 @@
-import { patchData, patchMethods, patchLifecycle, initWatch, initComputed } from './init/index';
+import { patchData, patchMethods, patchLifecycle } from './init/index';
 
 function page (option, rel) {
 
