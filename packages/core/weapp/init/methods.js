@@ -37,7 +37,7 @@ const proxyHandler = function (e) {
   while (i++ < 26) {
     let alpha = String.fromCharCode(64 + i);
     let key = 'wpy' + type + alpha;
-    if (!dataset[key]) {
+    if (!(key in dataset)) { // it can be undefined;
       break;
     }
     params.push(dataset[key]);
@@ -95,6 +95,7 @@ export function patchMethods (output, methods, isComponent) {
     let vm = this.$wepy;
     vm.$children.push(child);
     child.$parent = vm;
+    child.$root = vm.$root;
     return vm;
   };
   target._proxy = proxyHandler;

@@ -78,6 +78,9 @@ export function patchLifecycle (output, option, rel, isComponent) {
     vm.$is = this.is;
     vm.$option = option;
     vm.$rel = rel;
+    if (!isComponent) {
+      vm.$root = vm;
+    }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
     if (!vm.$app) {
