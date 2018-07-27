@@ -24,6 +24,10 @@ export default class {
             return;
         }
 
+        if (c instanceof Object && !c.filter) {
+            this.setting = Object.assign({}, c);
+            return;
+        }
         this.setting = Object.assign({}, def, c);
     }
     apply (op) {
