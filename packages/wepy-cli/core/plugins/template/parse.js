@@ -9,6 +9,7 @@ const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
 const stripParensRE = /^\(|\)$/g;
 const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
 const onRE = /^@|^v-on:/;
+const bindRE = /^:|^v-bind:/;
 const modifierRE = /\.[^.]+/g;
 
 
@@ -46,31 +47,37 @@ const parseModifiers = (name = '') => {
  * @param {String} expr   function expression, e.g. doSomething(a,b,c); item++;
  * @return {Object}       AST result
  */
-const parseHandlerProxy = (expr) => {
+const parseHandlerProxy = (expr, scope) => {
 
   let injectParams = [];
   let handlerExpr = expr;
+  let functionName = 'proxyHandler';
 
   if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
     injectParams.push('$event');
     handlerExpr += '($event)';
   } else {
-    let detected = paramsDetect(handlerExpr);
-
-    if (detected.$event) {
-      injectParams.push('$event');
+    let detected;
+    try {
+      detected = paramsDetect(handlerExpr);
+    } catch (e) {
+      throw new Error(`Can not parse "${handlerExpr}"`);
     }
 
     Object.keys(detected).forEach(d => {
-      if (!detected[d].callable) {
-        //injectParams.push(d);
+      if (!detected[d].callable && scope.declared.indexOf(d) !== -1) {
+        injectParams.push(d);
       }
     });
+
+    if (detected.$event) {
+      injectParams.push('$event');
+      functionName = 'proxyHandlerWithEvent';
+    }
   }
 
 
-
-  let proxy = `function proxyHandler (${injectParams.join(', ')}) {
+  let proxy = `function ${functionName} (${injectParams.join(', ')}) {
     with (this) {
       return (function () {
         ${handlerExpr}
@@ -91,11 +98,11 @@ const parseHandlerProxy = (expr) => {
  * @param  {String} value event value, e.g. doSomething(item)
  * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
  */
-const parseHandler = (key = '', value = '', modifiers = {}) => {
+const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
   let handler = '';
   let type = '';
   let info;
-  info = parseHandlerProxy(value.trim());
+  info = parseHandlerProxy(value.trim(), scope);
 
   if (key === 'click')
     key = 'tap';
@@ -114,9 +121,18 @@ const parseHandler = (key = '', value = '', modifiers = {}) => {
 exports = module.exports = function () {
 
 
-  this.register('template-parse-ast-attr-v-on', function parseAstOn (evt, handler, modifiers) {
+  this.register('template-parse-ast-attr-v-bind', function parseAstBind (name, value, modifiers) {
+    return {
+      name: name,
+      prop: name.replace(bindRE, ''),
+      value: value,
+      expr: `{{ ${value} }}`
+    };
+  });
+
+  this.register('template-parse-ast-attr-v-on', function parseAstOn (evt, handler, modifiers, scope) {
     evt = evt.replace(onRE, '');
-    let info = parseHandler(evt, handler, modifiers);
+    let info = parseHandler(evt, handler, modifiers, scope);
     let parsed = {};
 
     info.params.forEach((p, i) => {
@@ -133,41 +149,58 @@ exports = module.exports = function () {
   });
 
   const ATTR_HANDLERS = {
-    'v-for': ({item, name, expr}) => {
+    'v-for': ({item, name, expr, parentScope}) => {
       let res = {};
+      let scope = {};
       let inMatch = expr.match(forAliasRE);
       let variableMatch = expr.match(variableRE);
       if (variableMatch) {
         // e.g: v-for="items"
         res.alias = 'item';
         res.for = variableMatch[0].trim();
+        scope.for = res.for;
+        scope.declared = [];
       }
 
       if (inMatch) {
+        scope.declared = scope.declared || [];
         res.for = inMatch[2].trim();
         let alias = inMatch[1].trim().replace(stripParensRE, '');
         let iteratorMatch = alias.match(forIteratorRE);
         if (iteratorMatch) {
           res.alias = alias.replace(forIteratorRE, '').trim();
+          scope.declared.push(res.alias);
+          scope.alias = res.alias;
           res.iterator1 = iteratorMatch[1].trim();
+          scope.iterator1 = res.iterator1;
+          scope.declared.push(res.iterator1);
           if (iteratorMatch[2]) {
             res.iterator2 = iteratorMatch[2].trim();
+            scope.iterator2 = res.iterator2;
+            scope.declared.push(res.iterator2);
           }
         } else {
           res.alias = alias;
+          scope.alias = alias;
+          scope.declared.push(alias);
         }
       }
+      if (parentScope)
+        scope.parent = parentScope;
       return {
-        'wx:for': `{{ ${res.for} }}`,
-        'wx:for-index': `${res.iterator1 || 'index'}`,
-        'wx:for-item': `${res.alias || 'item'}`,
-        'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
+        scope: scope,
+        attrs: {
+          'wx:for': `{{ ${res.for} }}`,
+          'wx:for-index': `${res.iterator1 || 'index'}`,
+          'wx:for-item': `${res.alias || 'item'}`,
+          'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
+        }
       };
     },
-    'v-show': ({item, name, expr}) => ({ hidden: `{{ !(${expr}) }}` }),
-    'v-if': ({item, name, expr}) => ({ 'wx:if': `{{ ${expr} }}` }),
-    'v-else-if': ({item, name, expr}) => ({ 'wx:elif': `{{ ${expr} }}` }),
-    'v-else': ({item, name, expr}) => ({ 'wx:else': true })
+    'v-show': ({item, name, expr}) => ({attrs: { hidden: `{{ !(${expr}) }}` }}),
+    'v-if': ({item, name, expr}) => ({attrs: { 'wx:if': `{{ ${expr} }}` }}),
+    'v-else-if': ({item, name, expr}) => ({attrs: { 'wx:elif': `{{ ${expr} }}` }}),
+    'v-else': ({item, name, expr}) => ({attrs: { 'wx:else': true }})
   };
 
   for (let name in ATTR_HANDLERS) {
@@ -175,16 +208,22 @@ exports = module.exports = function () {
   }
 
 
-  this.register('template-parse-ast-attr', function parseAstAttr (item, rel) {
+  this.register('template-parse-ast-attr', function parseAstAttr (item, scope, rel) {
     let attrs = item.attribs;
     let parsedAttr = {};
+    let isComponent = !!rel.components[item.name];
+    let parsed = null;
 
     for (let name in attrs) {
       let expr = attrs[name];
 
       ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
 
-      let parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr });
+      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, scope });
+
+      if (parsed && parsed.scope) {
+        scope = parsed.scope;
+      }
 
       let modifiers = parseModifiers(name);
       if (modifiers) {
@@ -192,16 +231,29 @@ exports = module.exports = function () {
       }
       let handlers = {};
       let isHandler = false;
-      if (onRE.test(name)) {  // @ or v-on:
-        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', name, expr, modifiers);
-        parsedAttr = Object.assign(parsedAttr, parsedOn.parsed);
-        parsedAttr['data-wpy-evt'] = rel.handlers.length;
+      if (bindRE.test(name)) { // :prop or v-bind:prop;
+
+        let parsedBind = this.hookUnique('template-parse-ast-attr-v-bind', name, expr, modifiers, scope);
+        if (isComponent) { // It's a prop
+          parsedAttr[parsedBind.prop] = parsedBind.expr;
+        } else {
+          // TODO:
+        }
+
+      } else if (onRE.test(name)) {  // @ or v-on:
+        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', name, expr, modifiers, scope);
+        if (isComponent) {
+          rel.on[parsedOn.event] = rel.handlers.length;
+        } else {
+          parsedAttr = Object.assign(parsedAttr, parsedOn.parsed);
+          parsedAttr['data-wpy-evt'] = rel.handlers.length;
+        }
         rel.handlers.push({
           [parsedOn.event]: parsedOn.proxy
         });
       } else {
         if (parsed) {
-          parsedAttr = Object.assign(parsedAttr, parsed);
+          parsedAttr = Object.assign(parsedAttr, parsed.attrs);
         } else {
           parsedAttr[name] = expr;
         }
@@ -210,7 +262,7 @@ exports = module.exports = function () {
 
     item.parsedAttr = parsedAttr;
 
-    return [item, rel];
+    return [item, scope, rel];
   });
 
   this.register('template-parse-ast-tag', function parseAstTag (item, rel) {
@@ -239,19 +291,19 @@ exports = module.exports = function () {
     return [item, rel];
   });
 
-  this.register('template-parse-ast', function parseAST (ast, rel) {
+  this.register('template-parse-ast', function parseAST (ast, scope, rel) {
     ast.forEach(item => {
       if (item.type === 'tag') {
         [item, rel] = this.hookSeq('template-parse-ast-tag', item, rel);
       }
-      if (item.children && item.children.length) {
-        [item.childen, rel] = this.hookSeq('template-parse-ast', item.children, rel);
-      }
       if (item.attribs) {
-        [item, rel] = this.hookSeq('template-parse-ast-attr', item, rel);
+        [item, scope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel);
+      }
+      if (item.children && item.children.length) {
+        [item.childen, scope, rel] = this.hookSeq('template-parse-ast', item.children, scope, rel);
       }
     });
-    return [ast, rel];
+    return [ast, scope, rel];
   });
 
   this.register('template-parse-ast-to-str', function astToStr (ast) {
@@ -293,9 +345,10 @@ exports = module.exports = function () {
 
     return toAST(html).then((ast) => {
 
-      let rel = { handlers: [], components: components};
+      let rel = { handlers: [], components: components, on: {}};
+      let scope = null;
 
-      [ast, rel] = this.hookSeq('template-parse-ast', ast, rel);
+      [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel);
 
       let code = this.hookUnique('template-parse-ast-to-str', ast);
 

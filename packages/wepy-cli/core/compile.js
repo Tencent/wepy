@@ -160,32 +160,40 @@ class Compile extends Hook {
       this.hookSeq('build-app', app);
       this.hookUnique('output-app', app);
       return Promise.all(tasks);
-    }).then(pages => {
-
-      this.hookSeq('build-pages', pages);
-      this.hookUnique('output-pages', pages);
-
-      let components = [];
-      let tasks = [];
-
-      pages.forEach(page => {
-        let config = page.sfc.config || {};
-        let parsed = config.parsed || {};
-        let usingComponents = parsed.usingComponents || {};
-
-        Object.keys(usingComponents).forEach(com => {
-          components.push(path.resolve(page.file, '..', usingComponents[com] + this.options.wpyExt));
-        });
-
-        tasks = components.map(v => {
-          return this.hookUnique('wepy-parser-wpy', v);
-        });
-      });
-
-      return Promise.all(tasks);
     }).then(comps => {
-      this.hookSeq('build-components', comps);
-      this.hookUnique('output-components', comps);
+
+      function buildComponents (comps) {
+        if (!comps) {
+          return null;
+        }
+
+        this.hookSeq('build-components', comps);
+        this.hookUnique('output-components', comps);
+
+        let components = [];
+        let tasks = [];
+
+        comps.forEach(comp => {
+          let config = comp.sfc.config || {};
+          let parsed = config.parsed || {};
+          let usingComponents = parsed.usingComponents || {};
+
+          Object.keys(usingComponents).forEach(com => {
+            components.push(path.resolve(comp.file, '..', usingComponents[com] + this.options.wpyExt));
+          });
+          tasks = components.map(v => {
+            return this.hookUnique('wepy-parser-wpy', v);
+          });
+        });
+
+        if (tasks.length) {
+          return Promise.all(tasks).then(buildComponents.bind(this));
+        } else {
+          return null;
+        }
+      }
+      debugger;
+      return buildComponents.bind(this)(comps);
     }).then(() => {
       let vendorData = this.hookSeq('build-vendor', {});
       this.hookUnique('output-vendor', vendorData);

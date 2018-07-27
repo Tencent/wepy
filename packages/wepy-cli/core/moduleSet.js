@@ -48,8 +48,12 @@ class ModuleSet {
     this._type[file] = type;
   }
 
-  data (file) {
-    return this._set[file];
+  data (v) {
+    if (typeof v === 'number') {
+      return this._set[this._array[v]];
+    } else {
+      return this._set[v];
+    }
   }
 
   array (type) {

@@ -81,11 +81,12 @@ exports = module.exports = function () {
       let assets = this.assets;
 
       if (!rst.path) {
+        // TODO: resovle fail ?
         return rst.path;
       }
       let id = assets.get(rst.path);
       if (id !== undefined) {
-        return id;
+        return assets.data(rst.path);
       }
       let ext = path.extname(rst.path);
 
@@ -110,8 +111,8 @@ exports = module.exports = function () {
           });
         }
       } else if (ext === this.options.wpyExt) {
-        debugger;
         // TODO: why they import a wpy file.
+        throw `Can not import a wepy component, please use "usingComponents" to declear`;
         return this.parsers.wpy.parse(rst.path);
       }
     });

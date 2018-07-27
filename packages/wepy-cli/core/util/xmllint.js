@@ -3,7 +3,7 @@
  const DEFAULT_RULES = {
   // Component can be uppercase
   "tagname-lowercase": false,
-  "attr-lowercase": true,
+  "attr-lowercase": false,
   "attr-value-double-quotes": true,
   "attr-value-not-empty": false,
   "attr-no-duplication": true,
