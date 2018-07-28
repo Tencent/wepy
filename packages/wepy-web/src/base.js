@@ -18,6 +18,9 @@ import {camelize, hyphenate} from './helper/word';
 const pageEvent = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
 
 const addStyle = (stylelist) => {
+    // fix style inject sort, https://github.com/Tencent/wepy/issues/1645
+    stylelist = stylelist.reverse()
+    
     let styleElement = document.createElement('style');
     let head = document.head || document.getElementsByTagName('head')[0];
 
