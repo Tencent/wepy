@@ -195,10 +195,8 @@ function clone (sth, deep) {
     return sth;
   } else if (isPlainObject(sth)) {
     return extend(deep, {}, sth);
-  } else if (isNum(sth) || isStr(sth)) {
-    return sth;
   } else {
-    throw new Error(("Do not support to clone a \"" + (typeof sth) + "\" data"));
+    return sth;
   }
 }
 
@@ -1314,15 +1312,45 @@ var WepyApp = (function (Base$$1) {
 }(Base));
 
 var WepyPage = (function (Base$$1) {
-	function WepyPage () {
-		Base$$1.apply(this, arguments);
-	}if ( Base$$1 ) WepyPage.__proto__ = Base$$1;
-	WepyPage.prototype = Object.create( Base$$1 && Base$$1.prototype );
-	WepyPage.prototype.constructor = WepyPage;
+  function WepyPage () {
+    Base$$1.apply(this, arguments);
+  }
 
-	
+  if ( Base$$1 ) WepyPage.__proto__ = Base$$1;
+  WepyPage.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyPage.prototype.constructor = WepyPage;
 
-	return WepyPage;
+  WepyPage.prototype.$navigate = function $navigate (url, params) {
+    this.$route('navigate', url, params);
+  };
+
+  WepyPage.prototype.$redirect = function $redirect (url, params) {
+    this.$route('redirect', url, params);
+  };
+
+  WepyPage.prototype.$back = function $back () {};
+
+  WepyPage.prototype.$route = function $route (type, url, params) {
+    if ( params === void 0 ) params = {};
+
+    if (isStr(url)) {
+      if (isObj(params)) {
+        for (var k in params) {
+          if (isObj(params[k])) {
+            s += k + "=" + (encodeURIComponent(params[k]));
+          }
+        }
+      } else if (isStr(params) && params[0] === '?') {
+      }
+    } else {
+      // TODO: { url: './a?a=1&b=2' }
+    }
+
+    var fn = wx[type + 'To'];
+    fn && fn(url);
+  };
+
+  return WepyPage;
 }(Base));
 
 var WepyComponent = (function (Base$$1) {
@@ -1408,7 +1436,7 @@ var observerFn = function (output, props, prop) {
     }
 
     _props = vm._props || {};
-    _props[key] = _data;
+    // _props[key] = _data;
     vm._props = _props;
     Object.keys(_props).forEach(function (key) {
       proxy(vm, '_props', key);
@@ -1422,6 +1450,8 @@ var observerFn = function (output, props, prop) {
     });
 
     initRender(vm, Object.keys(_props));
+
+    vm[key] = _data;
   };
 };
 /*
@@ -1504,6 +1534,15 @@ function initProps (vm, properties) {
   });
 }
 
+function initWatch (vm, watch) {
+  vm._watchers = vm._watchers || [];
+  if (watch) {
+    Object.keys(watch).forEach(function (key) {
+      vm.$watch(key, watch[key]);
+    });
+  }
+}
+
 var Event = function Event (e) {
   var detail = e.detail;
   var target = e.target;
@@ -1533,7 +1572,7 @@ var proxyHandler = function (e) {
   while (i++ < 26) {
     var alpha = String.fromCharCode(64 + i);
     var key = 'wpy' + type + alpha;
-    if (!dataset[key]) {
+    if (!(key in dataset)) { // it can be undefined;
       break;
     }
     params.push(dataset[key]);
@@ -1579,6 +1618,8 @@ function patchMethods (output, methods, isComponent) {
     var vm = this.$wepy;
     vm.$children.push(child);
     child.$parent = vm;
+    child.$app = vm.$app;
+    child.$root = vm.$root;
     return vm;
   };
   target._proxy = proxyHandler;
@@ -1639,13 +1680,15 @@ Dirty.prototype.length = function length () {
 };
 
 var comid = 0;
+var app;
+
 
 var callUserMethod = function (vm, userOpt, method, args) {
   var result;
   if (isStr(method) && isFunc(userOpt[method])) {
     result = userOpt[method].apply(vm, args);
   } else if (isArr(method)) {
-    for (var i = method, l = method.length; i < l; i++) {
+    for (var i = 0, l = method.length; i < l; i++) {
       if (isFunc(userOpt[method[i]])) {
         result = userOpt[method[i]].apply(vm, args);
         break;
@@ -1661,7 +1704,9 @@ var callUserMethod = function (vm, userOpt, method, args) {
 function patchAppLifecycle (appConfig, option) {
   appConfig.onLaunch = function (params) {
     var vm = new WepyApp();
+    app = vm;
     vm.$option = option;
+    vm.$route = {};
 
     var result;
     vm.$wx = this;
@@ -1687,11 +1732,12 @@ function patchLifecycle (output, option, rel, isComponent) {
     vm.$is = this.is;
     vm.$option = option;
     vm.$rel = rel;
+    if (!isComponent) {
+      vm.$root = vm;
+      vm.$app = app;
+    }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
-    if (!vm.$app) {
-      vm.$app = $global.$app;
-    }
 
     initProps(vm, output.properties);
 
@@ -1699,9 +1745,9 @@ function patchLifecycle (output, option, rel, isComponent) {
 
     initMethods(vm, option.methods);
 
-    // initEvents(vm);
+    initWatch(vm, option.watch);
 
-    vm._watchers = [];
+    // initEvents(vm);
 
     // create render watcher
     initRender(vm, Object.keys(vm._data));
@@ -1709,12 +1755,15 @@ function patchLifecycle (output, option, rel, isComponent) {
     // not need to patch computed to ouput
     initComputed(vm, option.computed, true);
 
-    return callUserMethod(vm, vm.$option, isComponent ? 'created' : ['onLoad', 'created'], args);
+    return callUserMethod(vm, vm.$option, 'created', args);
   };
 
   output.created = initLifecycle;
   if (isComponent) {
-    output.attached = function () { // Component attached
+    output.attached = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+ // Component attached
       var outProps = output.properties || {};
       // this.propperties are includes datas
       var acceptProps = this.properties;
@@ -1724,11 +1773,30 @@ function patchLifecycle (output, option, rel, isComponent) {
       initEvents(vm);
 
       Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
+
+      return callUserMethod(vm, vm.$option, 'attached', args);
     };
   } else {
-    output.attached = function () { // Page attached
+    output.attached = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+ // Page attached
+      var vm = this.$wepy;
+      var app = vm.$app;
+      var pages = getCurrentPages();
+      var currentPage = pages[pages.length - 1];
+      var path = currentPage.__route__;
+      var webViewId = currentPage.__wxWebviewId__;
+      if (app.$route.path !== path) {
+        app.$route.path = path;
+        app.$route.webViewId = webViewId;
+        vm.routed && (vm.routed());
+      }
+
       // TODO: page attached
       console.log('TODO: page attached');
+
+      return callUserMethod(vm, vm.$option, 'attached', args);
     };
   }
 
@@ -1747,6 +1815,15 @@ function page (option, rel) {
 
   var pageConfig = {};
 
+  if (option.properties) {
+    pageConfig.properties = option.properties;
+    if (option.props) {
+      console.warn("props will be ignore, if properties is set");
+    }
+  } else if (option.props) {
+    patchProps(pageConfig, option.props);
+  }
+
   patchMethods(pageConfig, option.methods);
 
   patchData(pageConfig, option.data);
@@ -1756,7 +1833,7 @@ function page (option, rel) {
   return Component(pageConfig);
 }
 
-function app (option, rel) {
+function app$1 (option, rel) {
   var appConfig = {};
 
   patchAppLifecycle(appConfig, rel, option);
@@ -1806,7 +1883,7 @@ function use (plugin) {
 var wepy = {
   component: component,
   page: page,
-  app: app,
+  app: app$1,
   global: $global,
 
   // global apis
