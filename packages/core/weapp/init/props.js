@@ -25,7 +25,7 @@ const observerFn = function (output, props, prop) {
     }
 
     _props = vm._props || {};
-    _props[key] = _data;
+    // _props[key] = _data;
     vm._props = _props;
     Object.keys(_props).forEach(key => {
       proxy(vm, '_props', key);
@@ -39,6 +39,8 @@ const observerFn = function (output, props, prop) {
     });
 
     initRender(vm, Object.keys(_props));
+
+    vm[key] = _data;
   };
 };
 /*

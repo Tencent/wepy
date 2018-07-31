@@ -6,6 +6,7 @@ import { proxy } from './data';
 import Watcher from './../observer/watcher';
 import $global from './../global';
 import { initProps } from './props';
+import { initWatch } from './watch';
 import { initRender } from './render';
 import { initData } from './data';
 import { initComputed } from './computed';
@@ -16,6 +17,8 @@ import Dirty from '../class/Dirty';
 
 
 let comid = 0;
+let app;
+
 
 const callUserMethod = function (vm, userOpt, method, args) {
   let result;
@@ -38,7 +41,9 @@ const callUserMethod = function (vm, userOpt, method, args) {
 export function patchAppLifecycle (appConfig, option) {
   appConfig.onLaunch = function (params) {
     let vm = new WepyApp();
+    app = vm;
     vm.$option = option;
+    vm.$route = {};
 
     let result;
     vm.$wx = this;
@@ -57,7 +62,7 @@ export function patchComponentLifecycle (compConfig, option) {
     vm.$id = ++comid;
 
     if (!vm.$app) {
-      vm.$app = $global.$app;
+      //vm.$app = $global.$app;
     }
 
     initProps (vm, compConfig.properties, true);
@@ -80,11 +85,12 @@ export function patchLifecycle (output, option, rel, isComponent) {
     vm.$rel = rel;
     if (!isComponent) {
       vm.$root = vm;
+      vm.$app = app;
     }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
     if (!vm.$app) {
-      vm.$app = $global.$app;
+      // vm.$app = $global.$app;
     }
 
     initProps(vm, output.properties);
@@ -93,9 +99,9 @@ export function patchLifecycle (output, option, rel, isComponent) {
 
     initMethods(vm, option.methods);
 
-    // initEvents(vm);
+    initWatch(vm, option.watch);
 
-    vm._watchers = [];
+    // initEvents(vm);
 
     // create render watcher
     initRender(vm, Object.keys(vm._data));
@@ -103,12 +109,12 @@ export function patchLifecycle (output, option, rel, isComponent) {
     // not need to patch computed to ouput
     initComputed(vm, option.computed, true);
 
-    return callUserMethod(vm, vm.$option, isComponent ? 'created' : ['onLoad', 'created'], args);
+    return callUserMethod(vm, vm.$option, 'created', args);
   };
 
   output.created = initLifecycle;
   if (isComponent) {
-    output.attached = function () { // Component attached
+    output.attached = function (...args) { // Component attached
       let outProps = output.properties || {};
       // this.propperties are includes datas
       let acceptProps = this.properties;
@@ -118,11 +124,27 @@ export function patchLifecycle (output, option, rel, isComponent) {
       initEvents(vm);
 
       Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
+
+      return callUserMethod(vm, vm.$option, 'attached', args);
     };
   } else {
-    output.attached = function () { // Page attached
+    output.attached = function (...args) { // Page attached
+      let vm = this.$wepy;
+      let app = vm.$app;
+      let pages = getCurrentPages();
+      let currentPage = pages[pages.length - 1];
+      let path = currentPage.__route__;
+      let webViewId = currentPage.__wxWebviewId__;
+      if (app.$route.path !== path) {
+        app.$route.path = path;
+        app.$route.webViewId = webViewId;
+        vm.routed && (vm.routed());
+      }
+
       // TODO: page attached
       console.log('TODO: page attached');
+
+      return callUserMethod(vm, vm.$option, 'attached', args);
     }
   }
 

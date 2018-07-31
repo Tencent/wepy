@@ -95,6 +95,7 @@ export function patchMethods (output, methods, isComponent) {
     let vm = this.$wepy;
     vm.$children.push(child);
     child.$parent = vm;
+    child.$app = vm.$app;
     child.$root = vm.$root;
     return vm;
   };
