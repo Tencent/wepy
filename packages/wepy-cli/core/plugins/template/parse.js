@@ -110,7 +110,7 @@ const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
   if (modifiers.capture) {
     type = 'capture-';
   }
-  type = type + (modifiers.stop ? 'catch' : 'bind') + ':' + key;
+  type = type + (modifiers.stop ? 'catch' : 'bind') + key;
   return {
     event: key,
     type: type,
@@ -122,7 +122,7 @@ const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
 exports = module.exports = function () {
 
 
-  this.register('template-parse-ast-attr-v-bind', function parseAstBind (name, value, modifiers) {
+  this.register('template-parse-ast-attr-v-bind', function parseAstBind (item, name, value, modifiers, scope) {
     return {
       name: name,
       prop: name.replace(bindRE, ''),
@@ -131,7 +131,7 @@ exports = module.exports = function () {
     };
   });
 
-  this.register('template-parse-ast-attr-v-on', function parseAstOn (evt, handler, modifiers, scope) {
+  this.register('template-parse-ast-attr-v-on', function parseAstOn (item, evt, handler, modifiers, scope) {
     evt = evt.replace(onRE, '');
     let info = parseHandler(evt, handler, modifiers, scope);
     let parsed = {};
@@ -220,21 +220,29 @@ exports = module.exports = function () {
 
       ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
 
-      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, scope });
-
-      if (parsed && parsed.scope) {
-        scope = parsed.scope;
-      }
 
       let modifiers = parseModifiers(name);
       if (modifiers) {
         name = name.replace(modifierRE, '');
       }
+      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, modifiers, scope });
+
+      if (parsed && parsed.scope) {
+        scope = parsed.scope;
+      }
+
+      let applyHook = `template-parse-ast-attr-${name}-apply`;
+      if (this.hasHook(applyHook)) {
+        this.hookUnique('template-parse-ast-attr-' + name + '-apply', { parsed, attrs: parsedAttr, rel });
+        continue;
+      }
+
       let handlers = {};
       let isHandler = false;
+
       if (bindRE.test(name)) { // :prop or v-bind:prop;
 
-        let parsedBind = this.hookUnique('template-parse-ast-attr-v-bind', name, expr, modifiers, scope);
+        let parsedBind = this.hookUnique('template-parse-ast-attr-v-bind', item, name, expr, modifiers, scope);
         if (isComponent) { // It's a prop
           parsedAttr[parsedBind.prop] = parsedBind.expr;
         } else {
@@ -242,7 +250,7 @@ exports = module.exports = function () {
         }
 
       } else if (onRE.test(name)) {  // @ or v-on:
-        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', name, expr, modifiers, scope);
+        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', item, name, expr, modifiers, scope);
         if (isComponent) {
           rel.on[parsedOn.event] = rel.handlers.length;
           rel.handlers.push({

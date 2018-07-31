@@ -23,6 +23,11 @@ const eventHandler = function (method, fn) {
   };
 };
 
+const modelHandler = function (vm, model, e) {
+  // TODO: support test.abc & test[0]["abc"]
+  vm[model.expr] = e.detail.value;
+}
+
 const proxyHandler = function (e) {
   let vm = this.$wepy;
   let type = e.type;
@@ -31,6 +36,14 @@ const proxyHandler = function (e) {
   let rel = vm.$rel || {};
   let handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
   let fn = handlers[type];
+
+  if (rel.info.model && type === rel.info.model.type) {
+    modelHandler(vm, rel.info.model, e);
+
+    if (!fn) {
+      return;
+    }
+  }
 
   let i = 0;
   let params = [];
@@ -42,7 +55,6 @@ const proxyHandler = function (e) {
     }
     params.push(dataset[key]);
   }
-
 
   let $event = new Event(e);
 

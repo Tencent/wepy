@@ -11,7 +11,7 @@ exports = module.exports = function () {
       return `${exp} ? '${name}' : ''`;
     });
     // return {} means remove :class
-    return {};
+    return { attrs: {} };
   });
 
 
@@ -24,7 +24,7 @@ exports = module.exports = function () {
       return `'${name}:' + ${exp} + ';'`;
     });
     // return {} means remove :class
-    return {};
+    return { attrs: {} };
   });
 
 
