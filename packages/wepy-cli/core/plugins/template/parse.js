@@ -56,6 +56,7 @@ const parseHandlerProxy = (expr, scope) => {
   if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
     injectParams.push('$event');
     handlerExpr += '($event)';
+    functionName = 'proxyHandlerWithEvent';
   } else {
     let detected;
     try {
@@ -244,13 +245,20 @@ exports = module.exports = function () {
         let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', name, expr, modifiers, scope);
         if (isComponent) {
           rel.on[parsedOn.event] = rel.handlers.length;
+          rel.handlers.push({
+            [parsedOn.event]: parsedOn.proxy
+          });
         } else {
           parsedAttr = Object.assign(parsedAttr, parsedOn.parsed);
-          parsedAttr['data-wpy-evt'] = rel.handlers.length;
+          if (parsedAttr['data-wpy-evt'] === undefined) {
+            parsedAttr['data-wpy-evt'] = rel.handlers.length;
+            rel.handlers.push({
+              [parsedOn.event]: parsedOn.proxy
+            });
+          } else {
+            rel.handlers[parsedAttr['data-wpy-evt']][parsedOn.event] = parsedOn.proxy
+          }
         }
-        rel.handlers.push({
-          [parsedOn.event]: parsedOn.proxy
-        });
       } else {
         if (parsed) {
           parsedAttr = Object.assign(parsedAttr, parsed.attrs);
