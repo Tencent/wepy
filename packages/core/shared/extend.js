@@ -89,9 +89,7 @@ export function clone (sth, deep = true) {
     return sth;
   } else if (isPlainObject(sth)) {
     return extend(deep, {}, sth);
-  } else if (isNum(sth) || isStr(sth)) {
-    return sth;
   } else {
-    throw new Error(`Do not support to clone a "${typeof sth}" data`);
+    return sth;
   }
 }
