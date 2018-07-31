@@ -53,7 +53,7 @@ const proxyHandler = function (e) {
       return fn.apply(vm, params);
     }
   } else {
-    throw 'Unrecognized event';
+    throw new Error('Unrecognized event');
   }
 }
 
