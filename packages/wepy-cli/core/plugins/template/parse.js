@@ -65,7 +65,7 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     Object.keys(detected).forEach(d => {
-      if (!detected[d].callable && scope.declared.indexOf(d) !== -1) {
+      if (scope && !detected[d].callable && scope.declared.indexOf(d) !== -1) {
         injectParams.push(d);
       }
     });

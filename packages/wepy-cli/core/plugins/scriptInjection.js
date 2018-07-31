@@ -34,7 +34,7 @@ exports = module.exports = function () {
     let code = parsed.code;
     let entry = parsed.parser.entry;
     if (!entry) {
-      throw new Error('Missing wepy entry');
+      throw new Error('Missing wepy entry in file: ' + parsed.file);
     }
     let args = entry.arguments;
     let pos = 0;
