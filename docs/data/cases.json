@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "腾讯安心计划",
+            "email": "",
+            "link": "https://mp.weixin.qq.com/s/HESxEs9GHJuSZSZkufsPyw",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/43497533-3b7a2e36-9575-11e8-88bc-92699cd86b40.png",
+            "company": "Tencent"
+        },
+        {
             "name": "上海地铁线路查询",
             "email": "yuanfangde_hai@163.com",
             "link": "",
