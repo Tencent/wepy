@@ -1,8 +1,8 @@
-## Commit规范
+# Commit规范
 
-在对项目作出更改后，我们需要生成commit来记录自己的更改。以下是参照Angular对commit格式的规范：
+在对项目作出更改后，我们需要生成 commit 来记录自己的更改。以下是参照 Angular 对 commit 格式的规范：
 
-### (1) 格式
+## (1) 格式
 
 提交信息包括三个部分：`Header`，`Body` 和 `Footer`。
 
@@ -18,7 +18,7 @@
 
 #### 1> Header
 
-Header部分只有一行，包括俩个字段：`type`（必需）和`subject`（必需）。
+Header 部分只有一行，包括俩个字段：`type`（必需）和`subject`（必需）。
 
 ```
 <type>: <subject>
@@ -26,7 +26,7 @@ Header部分只有一行，包括俩个字段：`type`（必需）和`subject`�
 
 **type**
 
-type用于说明 commit 的类别，可以使用如下类别：
+type 用于说明 commit 的类别，可以使用如下类别：
 
 - feat：新功能（feature）
 - fix：修补bug
@@ -38,7 +38,7 @@ type用于说明 commit 的类别，可以使用如下类别：
 
 **subject**
 
-subject是 commit 目的的简短描述。
+subject 是 commit 目的的简短描述。
 
 - 以动词开头，使用第一人称现在时，比如改变，而不是改变了。
 - 结尾不加句号（。）
@@ -61,29 +61,29 @@ Further paragraphs come after blank lines.
 
 #### 3> Footer
 
-​	Footer 部分应该包含：(1)Breaking Changes;  (2)关闭issue；
+​	Footer 部分应该包含：(1)Breaking Changes;  (2)关闭 issue；
 
 ​	**Breaking Changes**：
 
 ​	如果当前代码与上一个版本不兼容，则 Footer 部分以`BREAKING CHANGE`开头，后面是对变动的描述、以及变动理由和迁移方法。这种使用较少，了解即可。
 
-​	**Issue部分：**
+​	**Issue 部分：**
 
-- 通过commit关联issue：
+- 通过 commit 关联 issue：
 
-  如果当前提交信息关联了某个issue，那么可以在 Footer 部分关联这个 issue：
+  如果当前提交信息关联了某个 issue，那么可以在 Footer 部分关联这个 issue：
 
   ```
   issue #2
   ```
 
-- 通过commit关闭issue，当提交到**默认分支**时，提交信息里可以使用 `fix/fixes/fixed` , `close/closes/closed` 或者 `resolve/resolves/resolved`等关键词，后面再跟上Issue号，这样就会关闭这个Issue：
+- 通过 commit 关闭 issue，当提交到**默认分支**时，提交信息里可以使用 `fix/fixes/fixed` ， `close/closes/closed` 或者 `resolve/resolves/resolved`等关键词，后面再跟上 issue 号，这样就会关闭这个 issue：
 
 ```
 Closes #1
 ```
 
-​	注意，如果不是提交到默认分支，那么并不能关闭这个issue，但是在这个issue下面会显示相关的信息表示曾经想要关闭这个issue，当这个分支合并到默认分支时，就可以关闭这个issue了。
+​	注意，如果不是提交到默认分支，那么并不能关闭这个 issue，但是在这个 issue 下面会显示相关的信息表示曾经想要关闭这个 issue，当这个分支合并到默认分支时，就可以关闭这个 issue 了。
 
 #### 4> 例子
 
