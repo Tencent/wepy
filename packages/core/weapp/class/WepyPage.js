@@ -25,8 +25,12 @@ export default class WepyPage extends Base {
       } else if (isStr(params) && params[0] === '?') {
         paramsStr = params;
       }
+      if (paramsStr)
+        url = url + '?' + paramsStr;
+
+      url = { url: url };
     } else {
-      // TODO: { url: './a?a=1&b=2' }
+       // TODO: { url: './a?a=1&b=2' }
     }
 
     let fn = wx[type + 'To'];

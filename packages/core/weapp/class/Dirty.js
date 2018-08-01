@@ -23,6 +23,11 @@ export default class Dirty {
     return data;
   }
 
+  get (type) {
+    type === type || this.type;
+    return type === 'path' ? this._path : this._keys;
+  }
+
   reset () {
     this._keys = {};
     this._path = {};

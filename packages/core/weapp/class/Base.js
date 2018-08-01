@@ -1,8 +1,13 @@
 import { isFunc, isArr, isStr, isObj, isUndef, noop, clone, toArray, handleError  } from './../util/index';
+import { set } from '../observer/index';
 
 export default class Base {
   constructor () {
 
+  }
+
+  $set (target, key, val) {
+    return set(this, target, key, val);
   }
 
   $on (event, fn) {

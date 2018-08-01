@@ -1,5 +1,5 @@
 import Event from '../class/Event';
-import { isFunc, isUndef  } from './../util/index';
+import { isFunc, isUndef, parseModel  } from './../util/index';
 
 const eventHandler = function (method, fn) {
   let methodKey = method.toLowerCase();
@@ -24,8 +24,12 @@ const eventHandler = function (method, fn) {
 };
 
 const modelHandler = function (vm, model, e) {
-  // TODO: support test.abc & test[0]["abc"]
-  vm[model.expr] = e.detail.value;
+  let parsed = parseModel(model.expr);
+  if (parsed.key === null) {
+    vm[parsed.expr] = e.detail.value;
+  } else {
+    vm.$set(parsed.expr, parsed.key, e.detail.value);
+  }
 }
 
 const proxyHandler = function (e) {

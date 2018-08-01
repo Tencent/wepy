@@ -3,6 +3,7 @@ export * from './../../shared/index';
 export * from './debug';
 export * from './error';
 export * from './next-tick';
+export * from './model';
 
 /**
  * Remove an item from an array
