@@ -1,8 +1,7 @@
 # Contributing
 
-我们提倡您通过提 issue 和 pull request 方式来促进 WePY 的发展。
+我们提倡您通过提 issue 和 pull request 方式来促进 WePY 的发展。
 
-​                 
 
 ## Acknowledgements
 
@@ -14,13 +13,13 @@
 
 其中特别致谢 dlhandsome 提交的38个 commits, 对 WePY 做出了1,350增加和362处删减(截止02/28/18日)。
 
-WePy 持续招募贡献者，即使是在 Issues 中回答问题，或者做一些简单的 bugfix ，也会给 WePY 带来很大的帮助。
+WePY 持续招募贡献者，即使是在 issue 中回答问题，或者做一些简单的 bugfix ，也会给 WePY 带来很大的帮助。
 
-Wepy 已开发近一年，在此感谢所有开发者对于 WePY 的喜欢和支持，希望你能够成为 WePY 的核心贡献者，加入 WePY ，共同打造一个更棒的小程序开发框架！🍾🎉
+WePY 已开发近一年，在此感谢所有开发者对于 WePY 的喜欢和支持，希望你能够成为 WePY 的核心贡献者，加入 WePY ，共同打造一个更棒的小程序开发框架！🍾🎉
 
 ​                       
 
-## Issue提交
+## Issue 提交
 
 #### 对于贡献者
 
@@ -35,7 +34,7 @@ Wepy 已开发近一年，在此感谢所有开发者对于 WePY 的喜欢和支
 
 ​             
 
-##  Pull requests
+##  Pull request
 
 我们除了希望听到您的反馈和建议外，我们也希望您接受代码形式的直接帮助，对我们的 GitHub 发出 pull request 请求。
 
@@ -43,55 +42,59 @@ Wepy 已开发近一年，在此感谢所有开发者对于 WePY 的喜欢和支
 
 #### Fork仓库
 
-1. 将需要参与的项目仓库 fork 到自己的 Github 中；
+点击 `Fork` 按钮，将需要参与的项目仓库 fork 到自己的 Github 中。
 
-#### git clone 这个 fork 的项目
+#### Clone 已 fork 项目
 
-1. 将自己的 github 中，找到 fork 下来的项目，git clone 到本地。
+在自己的 github 中，找到 fork 下来的项目，git clone 到本地。
+
+```bash
+$ git clone git@github.com:<yourname>/wepy.git
+```
 
 #### 添加 WePY 仓库
 
-1. 接着上一步，在该项目中，执行以下操作，将上游仓库连接到本地仓库，即我们 fork 的地址：
+将 fork 源仓库连接到本地仓库：
 
-```
-git remote add <name> <url>
-//例如：
-git remote add wepy https://github.com/Tencent/wepy.git
+```bash
+$ git remote add <name> <url>
+# 例如：
+$ git remote add wepy git@github.com:Tencent/wepy.git
 ```
 
 #### 保持与 WePY 仓库的同步
 
-1. 更新上游仓库
+更新上游仓库：
 
-```
-git pull --rebase <name> <branch>
-//等同于以下两条命令
-git fetch <name> <branch>
-git rebase <name>/<branch>
+```bash
+$ git pull --rebase <name> <branch>
+# 等同于以下两条命令
+$ git fetch <name> <branch>
+$ git rebase <name>/<branch>
 ```
 
 #### commit 信息提交
 
-`commit`信息请遵循[commit消息约定](./CONTRIBUTING_COMMIT.md)，以便可以自动生成`changelogs`。具体格式请参考 commit 文档规范。
+commit 信息请遵循[commit消息约定](./CONTRIBUTING_COMMIT.md)，以便可以自动生成 `CHANGELOG` 。具体格式请参考 commit 文档规范。
 
 
 
 #### 开发调试代码
 
-```
+```bash
 # Build code
-npm run build
+$ npm run build
 
 # Watch
-npm run watch
+$ npm run watch
 
 # Run test cases
-npm run test
+$ npm run test
 
 # Useage
-wepy build # Global wepy you installed by npm
+$ wepy build # Global wepy you installed by npm
 
-wepy-dev build # Local wepy you compiled by your local repository
+$ wepy-dev build # Local wepy you compiled by your local repository
 
-wepy-debug build # Debug local wepy using node --inspect
+$ wepy-debug build # Debug local wepy using node --inspect
 ```
