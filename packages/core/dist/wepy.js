@@ -397,7 +397,7 @@ function parseModel (str) {
     if (dot > -1) {
       return {
         expr: str.slice(0, dot),
-        key: ("\"" + (str.slice(dot + 1)) + "\"")
+        key: ("" + (str.slice(dot + 1)))
       };
     } else {
       return {
@@ -1708,7 +1708,7 @@ var modelHandler = function (vm, model, e) {
   if (parsed.key === null) {
     vm[parsed.expr] = e.detail.value;
   } else {
-    vm.$set(parsed.expr, parsed.key, e.detail.value);
+    vm.$set(vm[parsed.expr], parsed.key, e.detail.value);
   }
 };
 

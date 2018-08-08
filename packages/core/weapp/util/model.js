@@ -24,7 +24,7 @@ export function parseModel (str) {
     if (dot > -1) {
       return {
         expr: str.slice(0, dot),
-        key: `"${str.slice(dot + 1)}"`
+        key: `${str.slice(dot + 1)}`
       };
     } else {
       return {

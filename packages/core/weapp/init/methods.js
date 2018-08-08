@@ -28,7 +28,7 @@ const modelHandler = function (vm, model, e) {
   if (parsed.key === null) {
     vm[parsed.expr] = e.detail.value;
   } else {
-    vm.$set(parsed.expr, parsed.key, e.detail.value);
+    vm.$set(vm[parsed.expr], parsed.key, e.detail.value);
   }
 }
 
