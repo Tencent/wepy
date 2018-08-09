@@ -114,20 +114,26 @@ export default {
     },
 
     loadPlugin(plugins, op) {
-        let plg, plgkey, setting, config;
-        for (plgkey in plugins) {
-            let name = 'wepy-plugin-' + plgkey;
-            setting = plugins[plgkey];
-            plg = this.load(name);
+        if (util.isArray(plugins)) {
+            loadedPlugins = loadedPlugins.concat(plugins);
+            return true;
+        } else {
+            let plg, plgkey, setting, config;
+            for (plgkey in plugins) {
+                let name = 'wepy-plugin-' + plgkey;
+                setting = plugins[plgkey];
+                plg = this.load(name);
 
-            if (!plg) {
-                this.missingNPM = name;
-                util.log(`找不到插件：${name}。`, 'warning');
-                return false;
+                if (!plg) {
+                    this.missingNPM = name;
+                    util.log(`找不到插件：${name}。`, 'warning');
+                    return false;
+                }
+                loadedPlugins.push(new plg(setting));
             }
-            loadedPlugins.push(new plg(setting));
+            return true;
         }
-        return true;
+        
     },
     PluginHelper: PluginHelper
 }
