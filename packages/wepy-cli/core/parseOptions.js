@@ -4,6 +4,7 @@ const fs = require('fs');
 const DEFAULT_OPTIONS = {
   'src': { type: String, default: 'src' },
   'target': { type: String, default: 'weapp' },
+  'static': { type: String, default: 'static' },
   'output': { type: String, default: 'weapp' },
   'platform': { type: String },
   'wpyExt': { type: String, default: '.wpy' },

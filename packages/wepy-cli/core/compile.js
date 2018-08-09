@@ -125,6 +125,10 @@ class Compile extends Hook {
       });
     });
 
+    this.register('output-static', function () {
+      fs.copy(path.join(this.context, this.options.static), path.join(this.context, this.options.target, this.options.static))
+    })
+
     initPlugin(this);
     initParser(this);
     return initCompiler(this, this.options.compilers);
@@ -200,6 +204,8 @@ class Compile extends Hook {
     }).then(() => {
       let assetsData = this.hookSeq('build-assets');
       this.hookUnique('output-assets', assetsData);
+    }).then(() => {
+      this.hookUnique('output-static')
     }).catch(e => {
       this.logger.error(e);
     });
