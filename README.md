@@ -148,7 +148,12 @@ GitHub掘金版、
  WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
  ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png)
+             
+### 参与贡献
 
+如果你有好的意见或建议，欢迎给我们提 Issues 或 Pull Requests，为提升微信小程序开发体验贡献力量。<br>详见：[CONTRIBUTING.md](./CONTRIBUTING.md)
+
+[腾讯开源激励计划](https://opensource.tencent.com/contribution) 鼓励开发者的参与和贡献，期待你的加入。
 
 ### Links
 
@@ -156,7 +161,7 @@ GitHub掘金版、
 
 [Changelog](https://tencent.github.io/wepy/document.html#/changelog)
 
-[Contributing](https://github.com/tencent/wepy/blob/master/CONTRIBUTING.md)
+[Contributing](./CONTRIBUTING.md)
 
-[License MIT](https://github.com/tencent/wepy/blob/master/LICENSE)
+[License MIT](./LICENSE)
 
