@@ -108,7 +108,7 @@ function convert (args) {
   }
 
   let opt = require(DEFAULT_CONFIG);
-  let argOpt = parse(args, true);
+  let argOpt = parse(args, DEFAULT_OPTIONS, true);
 
   argOpt.watch = !!args.watch;
   argOpt.noCache = !!args.noCache;
