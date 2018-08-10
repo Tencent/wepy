@@ -4,7 +4,7 @@ const fs = require('fs');
 const DEFAULT_OPTIONS = {
   'src': { type: String, default: 'src' },
   'target': { type: String, default: 'weapp' },
-  'static': { type: String, default: 'static' },
+  'static': { type: [String, Array], default: 'static' },
   'output': { type: String, default: 'weapp' },
   'platform': { type: String },
   'wpyExt': { type: String, default: '.wpy' },
@@ -59,6 +59,9 @@ function getValue (obj, key) {
 }
 
 function check (t, val) {
+  if (Array.isArray(t)) {
+    return t.some((type) => check(type, val));
+  }
   switch (t) {
     case String:
       return typeof(val) === 'string';
@@ -77,7 +80,7 @@ function check (t, val) {
   }
 }
 
-function parse (opt = {}, baseOpt = DEFAULT_OPTIONS) {
+function parse (opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
 
   let ret = {};
 
@@ -86,7 +89,7 @@ function parse (opt = {}, baseOpt = DEFAULT_OPTIONS) {
     let val = getValue(opt, k);
 
     if (val === undefined) {
-      if (defaultItem.default !== undefined) {
+      if (defaultItem.default !== undefined && !fromCommandLine) {
         setValue(ret, k, defaultItem.default);
       }
     } else {
@@ -105,12 +108,12 @@ function convert (args) {
   }
 
   let opt = require(DEFAULT_CONFIG);
-  let argOpt = parse(args);
+  let argOpt = parse(args, true);
 
   argOpt.watch = !!args.watch;
   argOpt.noCache = !!args.noCache;
 
-  return Object.assign({}, parse(opt), parse(args));
+  return Object.assign({}, parse(opt), argOpt);
 }
 
 exports = module.exports = {

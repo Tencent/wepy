@@ -126,8 +126,16 @@ class Compile extends Hook {
     });
 
     this.register('output-static', function () {
-      fs.copy(path.join(this.context, this.options.static), path.join(this.context, this.options.target, this.options.static))
-    })
+      let paths = this.options.static;
+      let copy = (p) => {
+        let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
+        fs.copy(path.join(this.context, p), path.join(this.context, this.options.target, relative[0] === '.' ? p : relative));
+      }
+      if (typeof paths === 'string')
+        copy(paths);
+      else if (Array.isArray(paths))
+        paths.forEach(copy);
+    });
 
     initPlugin(this);
     initParser(this);
