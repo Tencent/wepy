@@ -11,6 +11,7 @@ exports = module.exports = function (ins) {
 
     './../plugins/template/parse',
     './../plugins/template/parseClassAndStyle',
+    './../plugins/template/parseAssetUrls',
     './../plugins/template/directives/v-model',
 
 

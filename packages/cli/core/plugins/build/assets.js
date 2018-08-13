@@ -4,25 +4,32 @@ const path = require('path');
 exports = module.exports = function () {
 
   this.register('build-assets', function buildAssets () {
+    
+    let result = [];
+    let assets = this.assets;
 
-    let filelist = this.assets.array('require');
+    let requires = assets.array('require');
+    let urls = assets.array('url');
 
-    let result = {};
-
-    return filelist.map(file => {
+    [].concat(requires, urls).forEach(file => {
 
       let fileData = this.assets.data(file);
 
-      this.hookSeq('script-dep-fix', fileData);
+      if (fileData.type === 'require') {
+        this.hookSeq('script-dep-fix', fileData);
+      }
 
       let targetFile = this.getTarget(file);
 
-      return {
+      result.push({
         src: file,
         targetFile: targetFile,
-        outputCode: fileData.source.source()
-      };
+        outputCode: fileData.source.source(),
+        encoding: fileData.encoding
+      });
     });
+
+    return result;
   });
 
 };

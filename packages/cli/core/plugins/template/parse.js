@@ -209,13 +209,14 @@ exports = module.exports = function () {
   }
 
 
-  this.register('template-parse-ast-attr', function parseAstAttr (item, scope, rel) {
+  this.register('template-parse-ast-attr', function parseAstAttr (item, scope, rel, ctx) {
     let attrs = item.attribs;
     let parsedAttr = {};
     let isComponent = !!rel.components[item.name];
     let parsed = null;
 
     for (let name in attrs) {
+
       let expr = attrs[name];
 
       ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
@@ -225,7 +226,7 @@ exports = module.exports = function () {
       if (modifiers) {
         name = name.replace(modifierRE, '');
       }
-      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, modifiers, scope });
+      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, modifiers, scope, ctx });
 
       if (parsed && parsed.scope) {
         scope = parsed.scope;
@@ -307,16 +308,16 @@ exports = module.exports = function () {
     return [item, rel];
   });
 
-  this.register('template-parse-ast', function parseAST (ast, scope, rel) {
+  this.register('template-parse-ast', function parseAST (ast, scope, rel, ctx) {
     ast.forEach(item => {
       if (item.type === 'tag') {
         [item, rel] = this.hookSeq('template-parse-ast-tag', item, rel);
       }
       if (item.attribs) {
-        [item, scope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel);
+        [item, scope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel, ctx);
       }
       if (item.children && item.children.length) {
-        [item.childen, scope, rel] = this.hookSeq('template-parse-ast', item.children, scope, rel);
+        [item.childen, scope, rel] = this.hookSeq('template-parse-ast', item.children, scope, rel, ctx);
       }
     });
     return [ast, scope, rel];
@@ -357,14 +358,14 @@ exports = module.exports = function () {
     return str;
   });
 
-  this.register('template-parse', function parse (html, components) {
+  this.register('template-parse', function parse (html, components, ctx) {
 
     return toAST(html).then((ast) => {
 
       let rel = { handlers: [], components: components, on: {}};
       let scope = null;
 
-      [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel);
+      [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel, ctx);
 
       let code = this.hookUnique('template-parse-ast-to-str', ast);
 

@@ -10,6 +10,7 @@ const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs-extra');
 const path = require('path');
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
+const node = require("enhanced-resolve/lib/node");
 const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
 const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
 const parseOptions = require('./parseOptions');
@@ -39,6 +40,7 @@ class Compile extends Hook {
     this.vendors = new moduleSet();
     this.assets = new moduleSet();
     this.resolvers = {};
+    this.resolversSync = {};
 
     this.context = process.cwd();
 
@@ -62,6 +64,15 @@ class Compile extends Hook {
     }, this.options.resolve));
 
     this.resolvers.context = ResolverFactory.createResolver(Object.assign({
+      fileSystem: this.inputFileSystem,
+      resolveToContext: true
+    }, this.options.resolve));
+
+    this.resolvers.normal.resolveSync = node.create.sync(Object.assign({
+      fileSystem: this.inputFileSystem
+    }, this.options.resolve))
+
+    this.resolvers.context.resolveSync = node.create.sync(Object.assign({
       fileSystem: this.inputFileSystem,
       resolveToContext: true
     }, this.options.resolve));
@@ -121,7 +132,7 @@ class Compile extends Hook {
 
     this.register('output-assets', function (list) {
       list.forEach(file => {
-        fs.outputFile(file.targetFile, file.outputCode, 'utf-8');
+        fs.outputFile(file.targetFile, file.outputCode, file.encoding);
       });
     });
 

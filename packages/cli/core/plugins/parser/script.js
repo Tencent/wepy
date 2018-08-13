@@ -146,6 +146,7 @@ exports = module.exports = function () {
         file: ctx.file,
         parser: walker,
         code: node.compiled.code,
+        encoding: node.compiled.encoding || 'utf-8',
         source: source,
         depModules: rst,
         type: type
