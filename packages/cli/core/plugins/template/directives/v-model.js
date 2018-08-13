@@ -1,5 +1,32 @@
 const CONST = require('../../../util/const');
 
+const MODEL_MAP = {
+  input: {
+    type: 'input',
+    value: 'value'
+  },
+  picker: {
+    type: 'change',
+    value: 'value'
+  },
+  switch: {
+    type: 'change',
+    value: 'checked'
+  },
+  "checkbox-group": { // TODO: Can not set data for checkbox-group
+    type: 'change',
+    value: null
+  },
+  "radio-group": {
+    type: 'change',
+    value: null
+  },
+  picker: {
+    type: 'change',
+    value: 'value'
+  }
+};
+
 exports = module.exports = function () {
 
   this.register('template-parse-ast-attr-v-model', function parseBindClass ({item, name, expr, modifiers, scope}) {
@@ -14,6 +41,14 @@ exports = module.exports = function () {
     });
 
     expr = expr.trim();
+
+    let param = '', i = 0;
+    while (i < expr.length && expr[i] !== '.' && expr[i] !== '[') {  // get v-model params, like item.checked or item[0]
+      params += expr[i];
+    }
+    if (scope && scope.declared.indexOf(param) > -1) {
+      // TODO: v-model in v-for
+    }
 
     return {
       model: {
@@ -32,17 +67,24 @@ exports = module.exports = function () {
       return;
     }
 
-    if (model.tag === 'input') {
+    if (model.tag === 'radio' || model.tag === 'checkbox') { // checkbox and radio do not have bindchange event.
+      this.logger.warn('v-model', `<${model.tag} /> do not support v-model, please use <${model.tag}-group /> instead.`);
+    }
 
-      attrs.value = `{{ ${expr} }}`;
-
-      if (!attrs.bindinput) {
-        attrs.bindinput = CONST.EVENT_PROXY;
+    let map = MODEL_MAP[model.tag];
+    if (map) {
+      if (map.value) {
+        attrs[map.value] = `{{ ${expr} }}`;
       }
+
+      if (!attrs[`bind${map.type}`]) {
+        attrs[`bind${map.type}`] = CONST.EVENT_PROXY;
+      }
+
       rel.model = {
-        type: 'input',
+        type: map.type,
         expr: expr
-      };
+      }
     }
   });
 };
