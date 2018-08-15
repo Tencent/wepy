@@ -10,9 +10,8 @@ exports = module.exports = function (ins) {
     './../plugins/build/assets',
 
     './../plugins/template/parse',
-    './../plugins/template/parseClassAndStyle',
-    './../plugins/template/parseAssetUrls',
-    './../plugins/template/directives/v-model',
+    './../plugins/template/attrs',
+    './../plugins/template/directives',
 
 
     './../plugins/helper/supportSrc',

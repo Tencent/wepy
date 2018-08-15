@@ -40,7 +40,6 @@ class Compile extends Hook {
     this.vendors = new moduleSet();
     this.assets = new moduleSet();
     this.resolvers = {};
-    this.resolversSync = {};
 
     this.context = process.cwd();
 
@@ -132,7 +131,7 @@ class Compile extends Hook {
 
     this.register('output-assets', function (list) {
       list.forEach(file => {
-        fs.outputFile(file.targetFile, file.outputCode, file.encoding);
+        fs.outputFile(file.targetFile, file.outputCode, file.encoding || 'utf-8');
       });
     });
 
