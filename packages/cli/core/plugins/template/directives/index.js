@@ -1,6 +1,6 @@
 exports = module.exports = function parseDirectives () {
   [
-    './additions',
+    './condition',
     './bind',
     './for',
     './model',
