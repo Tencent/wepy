@@ -11,7 +11,9 @@ exports = module.exports = function (ins) {
 
     './../plugins/template/parse',
     './../plugins/template/parseClassAndStyle',
+
     './../plugins/template/directives/v-model',
+    './../plugins/template/directives/v-on',
 
 
     './../plugins/helper/supportSrc',

@@ -1717,27 +1717,41 @@ var proxyHandler = function (e) {
   var type = e.type;
   var dataset = e.currentTarget.dataset;
   var evtid = dataset.wpyEvt;
+  var modelId = dataset.modelId;
   var rel = vm.$rel || {};
   var handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
-  var fn = handlers[type];
-
-  if (rel.info.model && type === rel.info.model.type) {
-    modelHandler(vm, rel.info.model, e);
-
-    if (!fn) {
-      return;
-    }
-  }
+  var model = rel.models[modelId];
 
   var i = 0;
   var params = [];
-  while (i++ < 26) {
+  var modelParams = [];
+
+  var noParams = false;
+  var noModelParams = false;
+  while (i++ < 26 && (!noParams || !noModelParams)) {
     var alpha = String.fromCharCode(64 + i);
-    var key = 'wpy' + type + alpha;
-    if (!(key in dataset)) { // it can be undefined;
-      break;
+    if (!noParams) {
+      var key = 'wpy' + type + alpha;
+      if (!(key in dataset)) { // it can be undefined;
+        noParams = true;
+      } else {
+        params.push(dataset[key]);
+      }
     }
-    params.push(dataset[key]);
+    if (!noModelParams && model) {
+      var modelKey = 'model' + alpha;
+      if (!(modelKey in dataset)) {
+        noModelParams = true;
+      } else {
+        modelParams.push(dataset[modelKey]);
+      }
+    }
+  }
+
+  if (model) {
+    if (type === model.type) {
+      modelHandler(vm, model, e.detail.value, modelParams);
+    }
   }
 
   var $event = new Event(e);

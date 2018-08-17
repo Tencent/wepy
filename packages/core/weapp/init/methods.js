@@ -23,41 +23,48 @@ const eventHandler = function (method, fn) {
   };
 };
 
-const modelHandler = function (vm, model, e) {
-  let parsed = parseModel(model.expr);
-  if (parsed.key === null) {
-    vm[parsed.expr] = e.detail.value;
-  } else {
-    vm.$set(vm[parsed.expr], parsed.key, e.detail.value);
-  }
-}
-
 const proxyHandler = function (e) {
   let vm = this.$wepy;
   let type = e.type;
   let dataset = e.currentTarget.dataset;
   let evtid = dataset.wpyEvt;
+  let modelId = dataset.modelId;
   let rel = vm.$rel || {};
   let handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
-  let fn = handlers[type];
-
-  if (rel.info.model && type === rel.info.model.type) {
-    modelHandler(vm, rel.info.model, e);
-
-    if (!fn) {
-      return;
-    }
-  }
+  let model = rel.models[modelId];
 
   let i = 0;
   let params = [];
-  while (i++ < 26) {
+  let modelParams = [];
+
+  let noParams = false;
+  let noModelParams = false;
+  while (i++ < 26 && (!noParams || !noModelParams)) {
     let alpha = String.fromCharCode(64 + i);
-    let key = 'wpy' + type + alpha;
-    if (!(key in dataset)) { // it can be undefined;
-      break;
+    if (!noParams) {
+      let key = 'wpy' + type + alpha;
+      if (!(key in dataset)) { // it can be undefined;
+        noParams = true;
+      } else {
+        params.push(dataset[key]);
+      }
     }
-    params.push(dataset[key]);
+    if (!noModelParams && model) {
+      let modelKey = 'model' + alpha;
+      if (!(modelKey in dataset)) {
+        noModelParams = true;
+      } else {
+        modelParams.push(dataset[modelKey]);
+      }
+    }
+  }
+
+  if (model) {
+    if (type === model.type) {
+      if (isFunc(mode.handler)) {
+        model.handler.call(vm, e.detail.value, modelParams);
+      }
+    }
   }
 
   let $event = new Event(e);

@@ -3,9 +3,9 @@ const genRel = (rel) => {
   if (typeof rel === 'string')
     return rel;
 
-  let handlerStr = '['
+  let handlerStr = '{'
   rel.handlers.forEach((handler, i) => {
-    handlerStr += '{';
+    handlerStr += `'${i}': {`;
     let events = Object.keys(handler);
     events.forEach((e, p) => {
       handlerStr += `${e}: ${handler[e]}`;
@@ -18,14 +18,24 @@ const genRel = (rel) => {
       handlerStr += ',';
     }
   });
-  handlerStr += ']';
+  handlerStr += '}';
+
+  let modelStr = '';
+  for (let i in rel.models) {
+    modelStr += `'${i}': {
+      type: ${JSON.stringify(rel.models[i].type)},
+      expr: ${JSON.stringify(rel.models[i].expr)},
+      handler: ${rel.models[i].handler}
+    },`;
+  }
+  modelStr = '{' + modelStr.substring(0, modelStr.length - 1) + '}';
 
   let copy = Object.assign({}, rel);
   delete copy.handlers;
+  delete copy.models;
 
-  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr} }`;
+  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr}, models: ${modelStr} }`;
 };
-
 
 exports = module.exports = function () {
   this.register('script-injection', function scriptInjection (parsed, ref) {

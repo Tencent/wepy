@@ -1,6 +1,5 @@
 const htmlparser = require('htmlparser2');
 const paramsDetect = require('./../../ast/paramsDetect');
-const vueWithTransform = require('vue-template-es2015-compiler');
 const tools = require('../../util/tools');
 
 
@@ -42,85 +41,7 @@ const parseModifiers = (name = '') => {
 };
 
 
-/**
- * parsse handler AST
- * @param {String} expr   function expression, e.g. doSomething(a,b,c); item++;
- * @return {Object}       AST result
- */
-const parseHandlerProxy = (expr, scope) => {
-
-  let injectParams = [];
-  let handlerExpr = expr;
-  let functionName = 'proxyHandler';
-
-  if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
-    injectParams.push('$event');
-    handlerExpr += '($event)';
-    functionName = 'proxyHandlerWithEvent';
-  } else {
-    let detected;
-    try {
-      detected = paramsDetect(handlerExpr);
-    } catch (e) {
-      throw new Error(`Can not parse "${handlerExpr}"`);
-    }
-
-    Object.keys(detected).forEach(d => {
-      if (scope && !detected[d].callable && scope.declared.indexOf(d) !== -1) {
-        injectParams.push(d);
-      }
-    });
-
-    if (detected.$event) {
-      injectParams.push('$event');
-      functionName = 'proxyHandlerWithEvent';
-    }
-  }
-
-
-  let proxy = `function ${functionName} (${injectParams.join(', ')}) {
-    with (this) {
-      return (function () {
-        ${handlerExpr}
-      })();
-    }
-  }`;
-
-  proxy = vueWithTransform(proxy);  // transform this
-  proxy = proxy.replace('var _h=_vm.$createElement;var _c=_vm._self._c||_h;', ''); // removed unused vue code;
-  return {
-    proxy: proxy,
-    params: injectParams
-  };
-};
-/**
- * parse event handler
- * @param  {String} key   event key, e.g. tap
- * @param  {String} value event value, e.g. doSomething(item)
- * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
- */
-const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
-  let handler = '';
-  let type = '';
-  let info;
-  info = parseHandlerProxy(value.trim(), scope);
-
-  if (key === 'click')
-    key = 'tap';
-  if (modifiers.capture) {
-    type = 'capture-';
-  }
-  type = type + (modifiers.stop ? 'catch' : 'bind') + key;
-  return {
-    event: key,
-    type: type,
-    params: info.params,
-    proxy: info.proxy
-  };
-};
-
 exports = module.exports = function () {
-
 
   this.register('template-parse-ast-attr-v-bind', function parseAstBind (item, name, value, modifiers, scope) {
     return {
@@ -130,7 +51,7 @@ exports = module.exports = function () {
       expr: `{{ ${value} }}`
     };
   });
-
+/*
   this.register('template-parse-ast-attr-v-on', function parseAstOn (item, evt, handler, modifiers, scope) {
     evt = evt.replace(onRE, '');
     let info = parseHandler(evt, handler, modifiers, scope);
@@ -148,48 +69,57 @@ exports = module.exports = function () {
     info.parsed = parsed;
     return info;
   });
+*/
 
   const ATTR_HANDLERS = {
-    'v-for': ({item, name, expr, parentScope}) => {
+    'v-for': ({item, name, expr, modifiers, scope}) => {
       let res = {};
-      let scope = {};
+      let currentScope = {};
       let inMatch = expr.match(forAliasRE);
       let variableMatch = expr.match(variableRE);
+      currentScope.expr = expr;
       if (variableMatch) {
         // e.g: v-for="items"
         res.alias = 'item';
         res.for = variableMatch[0].trim();
-        scope.for = res.for;
-        scope.declared = [];
+        currentScope.for = res.for;
+        currentScope.declared = [];
       }
 
       if (inMatch) {
-        scope.declared = scope.declared || [];
+        currentScope.declared = currentScope.declared || [];
         res.for = inMatch[2].trim();
+        currentScope.for = res.for;
         let alias = inMatch[1].trim().replace(stripParensRE, '');
         let iteratorMatch = alias.match(forIteratorRE);
         if (iteratorMatch) {
           res.alias = alias.replace(forIteratorRE, '').trim();
-          scope.declared.push(res.alias);
-          scope.alias = res.alias;
+          currentScope.declared.push(res.alias);
+          currentScope.alias = res.alias;
           res.iterator1 = iteratorMatch[1].trim();
-          scope.iterator1 = res.iterator1;
-          scope.declared.push(res.iterator1);
+          currentScope.iterator1 = res.iterator1;
+          currentScope.declared.push(res.iterator1);
           if (iteratorMatch[2]) {
             res.iterator2 = iteratorMatch[2].trim();
-            scope.iterator2 = res.iterator2;
-            scope.declared.push(res.iterator2);
+            currentScope.iterator2 = res.iterator2;
+            currentScope.declared.push(res.iterator2);
           }
         } else {
           res.alias = alias;
-          scope.alias = alias;
-          scope.declared.push(alias);
+          currentScope.alias = alias;
+          currentScope.declared.push(alias);
         }
       }
-      if (parentScope)
-        scope.parent = parentScope;
+      if (scope) {
+        currentScope.parent = scope;
+        if (!scope.parent)
+          currentScope.root = scope;
+        else {
+          currentScope.root = scope.root;
+        }
+      }
       return {
-        scope: scope,
+        scope: currentScope,
         attrs: {
           'wx:for': `{{ ${res.for} }}`,
           'wx:for-index': `${res.iterator1 || 'index'}`,
@@ -250,7 +180,13 @@ exports = module.exports = function () {
         }
 
       } else if (onRE.test(name)) {  // @ or v-on:
-        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', item, name, expr, modifiers, scope);
+        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', item, name.replace(onRE, ''), expr, modifiers, scope);
+
+
+        this.hookUnique('template-parse-ast-attr-v-on-apply', { parsed: parsedOn, attrs: parsedAttr, rel });
+        continue;
+
+        /*
         if (isComponent) {
           rel.on[parsedOn.event] = rel.handlers.length;
           rel.handlers.push({
@@ -267,6 +203,7 @@ exports = module.exports = function () {
             rel.handlers[parsedAttr['data-wpy-evt']][parsedOn.event] = parsedOn.proxy
           }
         }
+        */
       } else {
         if (parsed) {
           parsedAttr = Object.assign(parsedAttr, parsed.attrs);
@@ -329,6 +266,23 @@ exports = module.exports = function () {
         str += item.data;
       } else if (item.type === 'tag') {
         str += '<' + item.name;
+        if (item.events) {
+          item.events.forEach(evt => {
+            item.parsedAttr['data-wpy-evt'] = evt.evtid;
+            item.parsedAttr[evt.type] = '_proxy';
+            evt.params.forEach((p, i) => {
+              if (i > 26) { // Maxium params.
+                this.logger.warn(`Too many params`);
+              } else {
+                let evtAttr = 'data-wpy' + evt.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
+                if (evtAttr.length > 31) {
+                  this.logger.warn(`Function name is too long, it may cause an Error. "${evt.handler}"`);
+                }
+                item.parsedAttr[evtAttr] = `{{ ${p} }}`;
+              }
+            });
+          });
+        }
         if (item.parsedAttr) {
           Object.keys(item.parsedAttr).forEach(attr => {
             if (item.parsedAttr[attr] !== undefined && attr !== 'class' && attr !== 'style')
