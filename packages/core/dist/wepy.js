@@ -385,81 +385,6 @@ function nextTick (cb, ctx) {
  * - test.xxx.a["asa"][test1[key]]
  *
  */
-function parseModel (str) {
-  str = str.trim();
-  var len = str.length;
-
-  // e.g.
-  // test[0].a
-  // test.a.b
-  if (str.indexOf('[') < 0 || str.lastIndexOf(']') < len - 1) {
-    var dot = str.lastIndexOf('.');
-    if (dot > -1) {
-      return {
-        expr: str.slice(0, dot),
-        key: ("" + (str.slice(dot + 1)))
-      };
-    } else {
-      return {
-        expr: str,
-        key: null
-      };
-    }
-  }
-
-  /*
-   * e.g.
-   * test[a[b]]
-   */
-
-  var index = 0;
-  var exprStart = 0;
-  var exprEnd = 0;
-
-  var isQuoteStart = function (chr) {
-    return chr === 0x22 || chr === 0x27;
-  };
-
-  var parseString = function (chr) {
-    while (index < len && str.charCodeAt(++index) !== chr) {}
-  };
-
-  var parseBracket = function (chr) {
-    var inBracket = 1;
-    exprStart = index;
-    while (index < len) {
-      chr = str.charCodeAt(++index);
-      if (isQuoteStart(chr)) {
-        parseString(chr);
-        continue;
-      }
-      if (chr === 0x5B)
-        { inBracket++; }
-      if (chr === 0x5D)
-        { inBracket--; }
-
-      if (inBracket === 0) {
-        exprEnd = index;
-        break;
-      }
-
-    }
-  };
-
-  while (index < len) {
-    var chr = str.charCodeAt(++index);
-    if (isQuoteStart(chr)) {
-      parseString(chr);
-    } else if (chr === 0x5B) {
-      parseBracket(chr);
-    }
-  }
-
-  return {
-    expr: str.slice(0, exprStart),
-    key: str.slice(exprStart + 1, exprEnd)
-  };
-}
 
 /**
  * Remove an item from an array
@@ -1703,15 +1628,6 @@ var Event = function Event (e) {
   this.touches = e.touches;
 };
 
-var modelHandler = function (vm, model, e) {
-  var parsed = parseModel(model.expr);
-  if (parsed.key === null) {
-    vm[parsed.expr] = e.detail.value;
-  } else {
-    vm.$set(vm[parsed.expr], parsed.key, e.detail.value);
-  }
-};
-
 var proxyHandler = function (e) {
   var vm = this.$wepy;
   var type = e.type;
@@ -1750,7 +1666,9 @@ var proxyHandler = function (e) {
 
   if (model) {
     if (type === model.type) {
-      modelHandler(vm, model, e.detail.value, modelParams);
+      if (isFunc(mode.handler)) {
+        model.handler.call(vm, e.detail.value, modelParams);
+      }
     }
   }
 
