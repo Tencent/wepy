@@ -22,7 +22,7 @@ exports = module.exports = function () {
       }
     }
 
-    return this.hookUnique('template-parse', node.content, components).then(rst => {
+    return this.hookUnique('template-parse', node.content, components, ctx).then(rst => {
       let parsed = {
         code: rst.code,
         rel: rst.rel
