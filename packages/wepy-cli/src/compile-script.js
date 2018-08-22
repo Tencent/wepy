@@ -106,6 +106,9 @@ export default {
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
                 let requireInfo = lib.split('/');
+                if (lib[0]==='@') // require('@abc/somePkg/someFile')
+                    requireInfo = [requireInfo.slice(0,2).join('/'), ...requireInfo.slice(2)];
+
                 let mainFile = resolve.getMainFile(requireInfo[0]);
 
                 if (!mainFile) {
