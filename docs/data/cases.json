@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "武侯的猫",
+            "email": "jia@wuhou123.com",
+            "link": "",
+            "opensource": "https://github.com/wuhou123/wxxcx",
+            "qrcode": "http://osk1hpe2y.bkt.clouddn.com/18-8-26/87348357.jpg",
+            "company": ""
+        },
+        {
             "name": "腾讯安心计划",
             "email": "",
             "link": "https://mp.weixin.qq.com/s/HESxEs9GHJuSZSZkufsPyw",
