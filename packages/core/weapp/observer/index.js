@@ -218,6 +218,12 @@ export function set (vm, target, key, val) {
     target.splice(key, 1, val)
     return val
   }
+  let {root, path} = getRootAndPath(key, target);
+
+  // push parent key to dirty, wait to setData
+  vm.$dirty.push(root, path, val);
+
+
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val

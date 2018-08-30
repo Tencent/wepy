@@ -61,7 +61,7 @@ const proxyHandler = function (e) {
 
   if (model) {
     if (type === model.type) {
-      if (isFunc(mode.handler)) {
+      if (isFunc(model.handler)) {
         model.handler.call(vm, e.detail.value, modelParams);
       }
     }

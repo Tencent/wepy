@@ -759,6 +759,14 @@ function set (vm, target, key, val) {
     target.splice(key, 1, val);
     return val
   }
+  var ref = getRootAndPath(key, target);
+  var root = ref.root;
+  var path = ref.path;
+
+  // push parent key to dirty, wait to setData
+  vm.$dirty.push(root, path, val);
+
+
   if (key in target && !(key in Object.prototype)) {
     target[key] = val;
     return val
@@ -1666,7 +1674,7 @@ var proxyHandler = function (e) {
 
   if (model) {
     if (type === model.type) {
-      if (isFunc(mode.handler)) {
+      if (isFunc(model.handler)) {
         model.handler.call(vm, e.detail.value, modelParams);
       }
     }

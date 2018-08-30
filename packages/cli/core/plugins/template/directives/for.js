@@ -4,47 +4,49 @@ const stripParensRE = /^\(|\)$/g;
 const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
 
 exports = module.exports = function () {
-  
-  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, parentScope}) {
+
+  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, scope}) {
     let res = {};
-    let scope = {};
+    let currentScope = {};
     let inMatch = expr.match(forAliasRE);
     let variableMatch = expr.match(variableRE);
     if (variableMatch) {
       // e.g: v-for="items"
       res.alias = 'item';
       res.for = variableMatch[0].trim();
-      scope.for = res.for;
-      scope.declared = [];
+      currentScope.for = res.for;
+      currentScope.declared = [];
     }
 
     if (inMatch) {
-      scope.declared = scope.declared || [];
+      currentScope.declared = currentScope.declared || [];
       res.for = inMatch[2].trim();
+      currentScope.for = res.for;
       let alias = inMatch[1].trim().replace(stripParensRE, '');
       let iteratorMatch = alias.match(forIteratorRE);
       if (iteratorMatch) {
         res.alias = alias.replace(forIteratorRE, '').trim();
-        scope.declared.push(res.alias);
-        scope.alias = res.alias;
+        currentScope.declared.push(res.alias);
+        currentScope.alias = res.alias;
         res.iterator1 = iteratorMatch[1].trim();
-        scope.iterator1 = res.iterator1;
-        scope.declared.push(res.iterator1);
+        currentScope.iterator1 = res.iterator1;
+        currentScope.declared.push(res.iterator1);
         if (iteratorMatch[2]) {
           res.iterator2 = iteratorMatch[2].trim();
-          scope.iterator2 = res.iterator2;
-          scope.declared.push(res.iterator2);
+          currentScope.iterator2 = res.iterator2;
+          currentScope.declared.push(res.iterator2);
         }
       } else {
         res.alias = alias;
-        scope.alias = alias;
-        scope.declared.push(alias);
+        currentScope.alias = alias;
+        currentScope.declared.push(alias);
       }
     }
-    if (parentScope)
-      scope.parent = parentScope;
+    if (scope) {
+      currentScope.parent = scope;
+    }
     return {
-      scope: scope,
+      scope: currentScope,
       attrs: {
         'wx:for': `{{ ${res.for} }}`,
         'wx:for-index': `${res.iterator1 || 'index'}`,
