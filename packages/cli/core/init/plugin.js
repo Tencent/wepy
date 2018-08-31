@@ -16,6 +16,8 @@ exports = module.exports = function (ins) {
 
 
     './../plugins/helper/supportSrc',
+    './../plugins/helper/generateCodeFrame',
+    './../plugins/helper/errorHandler',
 
     './../plugins/compiler/index',
 

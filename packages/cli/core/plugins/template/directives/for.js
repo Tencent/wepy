@@ -2,10 +2,11 @@ const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
 const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
 const stripParensRE = /^\(|\)$/g;
 const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
+const Check = require('../util/check');
 
 exports = module.exports = function () {
 
-  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, scope}) {
+  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, scope, ctx}) {
     let res = {};
     let currentScope = {};
     let inMatch = expr.match(forAliasRE);
@@ -45,6 +46,21 @@ exports = module.exports = function () {
     if (scope) {
       currentScope.parent = scope;
     }
+
+    let err = Check.checkExpression(res.for, `v-for="${expr}"`);
+    if (err) {
+      this.hookUnique('error-handler', 'template', {
+        ctx: ctx,
+        message: err,
+        type: 'error',
+        title: 'v-for'
+      }, {
+        item: item,
+        attr: name,
+        expr: expr
+      });
+    }
+
     return {
       scope: currentScope,
       attrs: {

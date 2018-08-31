@@ -13,7 +13,7 @@ const toAST = (html) => {
       } else {
         resolve(dom);
       }
-    });
+    }, { withStartIndices: true, withEndIndices: true });
     const parser = new htmlparser.Parser(handler, { xmlMode: true });
     parser.write(html);
     parser.end();
