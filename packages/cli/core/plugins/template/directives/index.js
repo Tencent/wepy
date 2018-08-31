@@ -4,6 +4,6 @@ exports = module.exports = function parseDirectives () {
     './bind',
     './for',
     './model',
-    './on'
+    './v-on'
   ].map(v => require(v).call(this));
 };

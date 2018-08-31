@@ -1644,14 +1644,19 @@ var proxyHandler = function (e) {
   var modelId = dataset.modelId;
   var rel = vm.$rel || {};
   var handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
+  var fn = handlers[type];
   var model = rel.models[modelId];
+
+  if (!fn && !model) {
+    return;
+  }
 
   var i = 0;
   var params = [];
   var modelParams = [];
 
   var noParams = false;
-  var noModelParams = false;
+  var noModelParams = !model;
   while (i++ < 26 && (!noParams || !noModelParams)) {
     var alpha = String.fromCharCode(64 + i);
     if (!noParams) {
@@ -1688,7 +1693,7 @@ var proxyHandler = function (e) {
     } else {
       return fn.apply(vm, params);
     }
-  } else {
+  } else if (!model) {
     throw new Error('Unrecognized event');
   }
 };
