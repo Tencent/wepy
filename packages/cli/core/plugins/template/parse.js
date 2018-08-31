@@ -14,7 +14,7 @@ const toAST = (html) => {
         resolve(dom);
       }
     });
-    const parser = new htmlparser.Parser(handler);
+    const parser = new htmlparser.Parser(handler, { xmlMode: true });
     parser.write(html);
     parser.end();
   });
