@@ -21,6 +21,7 @@ exports = module.exports = function () {
     }
     let wpyTask = [];
     if (!sfc) {
+      this.involved[file] = 1;
       let entryContent = fs.readFileSync(file, 'utf-8');
       sfc = sfcCompiler.parseComponent(entryContent, { pad: 'line' });
       this.compiled[file].sfc = sfc;

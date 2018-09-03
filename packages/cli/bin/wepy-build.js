@@ -6,6 +6,6 @@ exports = module.exports = (program) => {
 
   compilation.init().then(() => {
     compilation.start();
-  })
+  });
 
 }

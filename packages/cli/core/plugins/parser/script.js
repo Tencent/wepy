@@ -89,7 +89,7 @@ exports = module.exports = function () {
         return assets.data(rst.path);
       }
       let ext = path.extname(rst.path);
-
+      this.involved[rst.path] = 1;
       if (ext === '.js') {
         if (npm) {
           return this.hookUnique('wepy-parser-script', {

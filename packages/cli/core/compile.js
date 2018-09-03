@@ -9,6 +9,7 @@
 const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs-extra');
 const path = require('path');
+const chokidar = require('chokidar');
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
 const node = require("enhanced-resolve/lib/node");
 const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
@@ -37,6 +38,7 @@ class Compile extends Hook {
     this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
     this.compiled = {};
+    this.involved = {};
     this.vendors = new moduleSet();
     this.assets = new moduleSet();
     this.resolvers = {};
@@ -149,6 +151,7 @@ class Compile extends Hook {
 
     initPlugin(this);
     initParser(this);
+
     return initCompiler(this, this.options.compilers);
   }
 
@@ -214,7 +217,6 @@ class Compile extends Hook {
           return null;
         }
       }
-      debugger;
       return buildComponents.bind(this)(comps);
     }).then(() => {
       let vendorData = this.hookSeq('build-vendor', {});
@@ -224,11 +226,46 @@ class Compile extends Hook {
       this.hookUnique('output-assets', assetsData);
     }).then(() => {
       this.hookUnique('output-static')
+    }).then(() => {
+      this.logger.info('process finished');
+      if (this.options.watch) {
+        this.logger.info('watching...');
+        this.watch();
+      }
     }).catch(e => {
       this.logger.error(e);
     });
 
 
+  }
+
+  watch () {
+    if (this.watchInitialized) {
+      return;
+    }
+    this.watchInitialized = true;
+    let watchOption = Object.assign({ ignoreInitial: true }, this.options.watchOption || {});
+    let target = path.resolve(this.context, this.options.target);
+
+    if (!watchOption.ignore) {
+      let type = Object.prototype.toString.call(watchOption.ignore);
+      if (type === '[object String]' || type === '[object RegExp]') {
+        watchOption.ignored = [watchOption.ignored];
+        watchOption.ignored.push(this.options.target);
+      } else if (type === '[object Array]') {
+        watchOption.ignored.push(this.options.target);
+      }
+    }
+
+    chokidar.watch(['.', '!./weapp'], watchOption).on('all', (evt, filepath) => {
+      if (evt === 'change') {
+        let absolutePath = path.resolve(filepath);
+        if (this.involved[absolutePath]) {
+          this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
+          this.start();
+        }
+      }
+    })
   }
 
   applyCompiler (node, ctx) {
@@ -249,6 +286,7 @@ class Compile extends Hook {
         throw `Missing plugins ${hookKey}`;
       }
 
+      this.involved[ctx.file] = 1;
       return this.hookUnique(hookKey, node, ctx.file).then(node => {
         return this.hookUnique('wepy-parser-' + node.type, node, ctx);
       });
