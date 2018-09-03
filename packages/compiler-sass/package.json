@@ -1,5 +1,5 @@
 {
-  "name": "wepy-compiler-sass",
+  "name": "@wepy/compiler-sass",
   "version": "2.0.0",
   "description": "wepy compile sass",
   "main": "index.js",
