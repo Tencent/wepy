@@ -13,12 +13,12 @@ exports = module.exports = function () {
 
     let codeFrame = '';
 
-    if (extra.item && extra.attr && extra.expr) {
+    if (extra) {
       extra.type = 'template';
-      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', ctx.sfc.template.content, extra);
+      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', ctx.sfc.template.content, extra, message);
     }
-    let output = 'Message:\n' + message;
-    output += '\n' + 'File:\n' + ctx.file;
+    let output = 'Message:\n  ' + message;
+    output += '\n' + 'File:\n  ' + ctx.file;
     output += '\n' + codeFrame;
     this.logger[type](title, output);
   });

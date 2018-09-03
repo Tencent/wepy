@@ -7,7 +7,15 @@ exports = module.exports = function () {
     let msg = xmllint.verify(code);
     msg.forEach(item => {
       let type = item.type === 'warning' ? 'warn' : 'error';
-      errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
+      this.hookUnique('error-handler', 'template', {
+        ctx: ctx,
+        message: item.message,
+        type: type,
+        title: 'verify'
+      }, {
+        start: {line: item.line, column: item.col}
+      });
+      //errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
 
     let components = {};

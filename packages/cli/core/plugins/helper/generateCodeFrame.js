@@ -24,7 +24,9 @@ exports = module.exports = function () {
   this.register('gen-code-frame', function (code, pos, msg, options) {
 
     if (pos.type === 'template') {
-      return this.hookUnique('gen-code-frame-html', code, pos.item, pos.attr, pos.expr, msg, options);
+      if (pos.item) {
+        return this.hookUnique('gen-code-frame-html', code, pos.item, pos.attr, pos.expr, msg, options);
+      }
     }
 
     options = Object.assign({}, {
