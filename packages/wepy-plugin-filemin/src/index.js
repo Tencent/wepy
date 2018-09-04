@@ -37,7 +37,7 @@ export default class {
 
             let match = setting.filter.exec(op.file);
             if(match && match.length) {
-                if(match[1] === 'json') {
+                if(match[0] === '.json') {
                     op.code = pd.jsonmin(op.code || '');
                 } else {
                     op.code = pd.xmlmin(op.code || '');
