@@ -1,11 +1,12 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
+
 
 import native from './native';
 
@@ -30,20 +31,19 @@ let RequestMQ = {
 
         if (this.running.length < this.MAX_REQUEST - 1) {
             let newone = this.mq.shift();
-                let obj = this.map[newone];
-                let oldComplete = obj.complete;
-                obj.complete = (...args) => {
-                    me.running.splice(me.running.indexOf(obj.t), 1);
-                    delete me.map[obj.t];
-                    oldComplete && oldComplete.apply(obj, args);
-                    me.next();
-                }
-                this.running.push(obj.t);
-                return my.request(obj);
+            let obj = this.map[newone];
+            let oldComplete = obj.complete;
+            obj.complete = (...args) => {
+                me.running.splice(me.running.indexOf(obj.t), 1);
+                delete me.map[obj.t];
+                oldComplete && oldComplete.apply(obj, args);
+                me.next();
+            }
+            this.running.push(obj.t);
+            return my.httpRequest(obj);
         }
     },
     request (obj) {
-        let me = this;
 
         obj = obj || {};
         obj = (typeof(obj) === 'string') ? {url: obj} : obj;
@@ -67,7 +67,7 @@ export default class {
 
 
     $init (wepy, config = {}) {
-        this.$initAPI(wepy, config.promisifyAPI);
+        this.$initAPI(wepy, config.noPromiseAPI);
         this.$initDiffAPI(wepy);
         this.$wxapp = getApp();
     }
@@ -92,25 +92,63 @@ export default class {
     requestfix () {
     }
 
-    $initAPI (wepy, promisifyAPI) {
-        var self = this;
+    $initAPI (wepy, noPromiseAPI) {
+        const self = this;
         let noPromiseMethods = {
+            // 媒体
             stopRecord: true,
+            getRecorderManager: true,
             pauseVoice: true,
             stopVoice: true,
             pauseBackgroundAudio: true,
             stopBackgroundAudio: true,
+            getBackgroundAudioManager: true,
+            createAudioContext: true,
+            createInnerAudioContext: true,
+            createVideoContext: true,
+            createCameraContext: true,
+
+            // 位置
+            createMapContext: true,
+
+            // 设备
+            canIUse: true,
+            startAccelerometer: true,
+            stopAccelerometer: true,
+            startCompass: true,
+            stopCompass: true,
+            onBLECharacteristicValueChange: true,
+            onBLEConnectionStateChange: true,
+
+            // 界面
+            hideToast: true,
+            hideLoading: true,
             showNavigationBarLoading: true,
             hideNavigationBarLoading: true,
+            navigateBack: true,
             createAnimation: true,
-            createContext: true,
+            pageScrollTo: true,
+            createSelectorQuery: true,
             createCanvasContext: true,
+            createContext: true,
+            drawCanvas: true,
             hideKeyboard: true,
-            stopPullDownRefresh: true
+            stopPullDownRefresh: true,
+
+            // 自定义分析
+            reportAnalytics: true,
+
+            // 拓展接口
+            arrayBufferToBase64: true,
+            base64ToArrayBuffer: true
         };
-        if (promisifyAPI) {
-            for (let k in promisifyAPI) {
-                noPromiseMethods[k] = promisifyAPI[k];
+        if (noPromiseAPI) {
+            if (Array.isArray(noPromiseAPI)) {
+                noPromiseAPI.forEach(v => noPromiseMethods[v] = true);
+            } else {
+                for (let k in noPromiseAPI) {
+                    noPromiseMethods[k] = noPromiseAPI[k];
+                }
             }
         }
         Object.keys(my).forEach((key) => {
@@ -131,17 +169,17 @@ export default class {
                                 }
                                 obj = rst;
                             }
-                            if (key === 'request') {
+                            if (key === 'httpRequest') {
                                 obj = (typeof(obj) === 'string') ? {url: obj} : obj;
-                            }
-                            if (key === 'getAuthCode') {
-                                obj.scopes = obj.scopes || 'auth_user'
+                                obj.headers = obj.header;
+                                delete obj.header;
                             }
                             if (typeof obj === 'string') {
                                 return my[key](obj);
                             }
                             if (self.$addons.promisify) {
-                                return new Promise((resolve, reject) => {
+                                let task;
+                                const p = new Promise((resolve, reject) => {
                                     let bak = {};
                                     ['fail', 'success', 'complete'].forEach((k) => {
                                         bak[k] = obj[k];
@@ -150,16 +188,29 @@ export default class {
                                                 res = self.$interceptors[key][k].call(self, res);
                                             }
                                             if (k === 'success')
-                                                resolve(res)
+                                                resolve(res);
                                             else if (k === 'fail')
                                                 reject(res);
                                         };
                                     });
-                                    if (self.$addons.requestfix && key === 'request') {
+                                    if (self.$addons.requestfix && key === 'httpRequest') {
                                         RequestMQ.request(obj);
-                                    } else
-                                        my[key](obj);
+                                    } else {
+                                        task = my[key](obj);
+                                    }
                                 });
+                                if (key === 'uploadFile' || key === 'downloadFile') {
+                                    p.progress = (cb) => {
+                                        task.onProgressUpdate(cb);
+                                        return p;
+                                    };
+                                    p.abort = (cb) => {
+                                        cb && cb();
+                                        task.abort();
+                                        return p;
+                                    }
+                                }
+                                return p;
                             } else {
                                 let bak = {};
                                 ['fail', 'success', 'complete'].forEach((k) => {
@@ -171,10 +222,11 @@ export default class {
                                         bak[k] && bak[k].call(self, res);
                                     };
                                 });
-                                if (self.$addons.requestfix && key === 'request') {
+                                if (self.$addons.requestfix && key === 'httpRequest') {
                                     RequestMQ.request(obj);
-                                } else
-                                    my[key](obj);
+                                } else {
+                                    return my[key](obj);
+                                }
                             }
                         };
                     }
@@ -227,7 +279,7 @@ export default class {
             };
             wepy.getUserInfo = () => {
                 return new Promise((resolve, reject) => {
-                    wepy.getAuthUserInfo(res => {
+                    wepy.getAuthUserInfo().then(res => {
                         let rst = {};
                         for (let k in res) {
                             rst[k === 'avatar' ? 'avatarUrl' : k] = res[k]

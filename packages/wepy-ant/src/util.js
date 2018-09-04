@@ -1,12 +1,28 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
+function isImmutable (maybeImmutable) {
+    // https://github.com/facebook/immutable-js/blob/master/src/Predicates.js
+    if (!maybeImmutable || typeof maybeImmutable !== 'object') {
+        return false;
+    }
+
+    const IMMUTABLE_KEYS = [
+        '@@__IMMUTABLE_ITERABLE__@@',
+        '@@__IMMUTABLE_KEYED__@@',
+        '@@__IMMUTABLE_INDEXED__@@',
+        '@@__IMMUTABLE_ORDERED__@@',
+        '@@__IMMUTABLE_RECORD__@@'
+    ]
+
+    return !!IMMUTABLE_KEYS.filter(key => maybeImmutable[key]).length;
+}
 
 export default {
     $isEmpty (obj) {
@@ -14,6 +30,9 @@ export default {
     },
 
     $isEqual (a, b, aStack, bStack) {
+        if (isImmutable(a)) return a.equals(b)
+        if (isImmutable(b)) return b.equals(a)
+
         // Identical objects are equal. `0 === -0`, but they aren't identical.
         // See the [Harmony `egal` proposal](http://wiki.ecmascript.org/doku.php?id=harmony:egal).
         if (a === b) return a !== 0 || 1 / a === 1 / b;
@@ -28,47 +47,51 @@ export default {
     },
 
     $isDeepEqual (a, b, aStack, bStack) {
+        if (isImmutable(a)) a = a.toJS()
+
+        if (isImmutable(b)) b = b.toJS()
+
         let self = this;
         // Compare `[[Class]]` names.
         var className = toString.call(a);
         if (className !== toString.call(b)) return false;
         switch (className) {
-          // Strings, numbers, regular expressions, dates, and booleans are compared by value.
-          case '[object RegExp]':
-          // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
-          case '[object String]':
-            // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
-            // equivalent to `new String("5")`.
-            return '' + a === '' + b;
-          case '[object Number]':
-            // `NaN`s are equivalent, but non-reflexive.
-            // Object(NaN) is equivalent to NaN.
-            if (+a !== +a) return +b !== +b;
-            // An `egal` comparison is performed for other numeric values.
-            return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-          case '[object Date]':
-          case '[object Boolean]':
-            // Coerce dates and booleans to numeric primitive values. Dates are compared by their
-            // millisecond representations. Note that invalid dates with millisecond representations
-            // of `NaN` are not equivalent.
-            return +a === +b;
-          case '[object Symbol]':
-            var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
-            return SymbolProto.valueOf.call(a) === SymbolProto.valueOf.call(b);
+            // Strings, numbers, regular expressions, dates, and booleans are compared by value.
+            case '[object RegExp]':
+            // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')
+            case '[object String]':
+                // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
+                // equivalent to `new String("5")`.
+                return '' + a === '' + b;
+            case '[object Number]':
+                // `NaN`s are equivalent, but non-reflexive.
+                // Object(NaN) is equivalent to NaN.
+                if (+a !== +a) return +b !== +b;
+                // An `egal` comparison is performed for other numeric values.
+                return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+            case '[object Date]':
+            case '[object Boolean]':
+                // Coerce dates and booleans to numeric primitive values. Dates are compared by their
+                // millisecond representations. Note that invalid dates with millisecond representations
+                // of `NaN` are not equivalent.
+                return +a === +b;
+            case '[object Symbol]':
+                var SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;
+                return SymbolProto.valueOf.call(a) === SymbolProto.valueOf.call(b);
         }
 
         var areArrays = className === '[object Array]';
         if (!areArrays) {
-          if (typeof a !== 'object' || typeof b !== 'object') return a === b;
+            if (typeof a !== 'object' || typeof b !== 'object') return a === b;
 
-          // Objects with different constructors are not equivalent, but `Object`s or `Array`s
-          // from different frames are.
-          var aCtor = a.constructor, bCtor = b.constructor;
-          if (aCtor !== bCtor && !(typeof aCtor === 'function' && aCtor instanceof aCtor &&
-                                   typeof bCtor === 'function' && bCtor instanceof bCtor)
-                              && ('constructor' in a && 'constructor' in b)) {
-            return false;
-          }
+            // Objects with different constructors are not equivalent, but `Object`s or `Array`s
+            // from different frames are.
+            var aCtor = a.constructor, bCtor = b.constructor;
+            if (aCtor !== bCtor && !(typeof aCtor === 'function' && aCtor instanceof aCtor &&
+                    typeof bCtor === 'function' && bCtor instanceof bCtor)
+                && ('constructor' in a && 'constructor' in b)) {
+                return false;
+            }
         }
         // Assume equality for cyclic structures. The algorithm for detecting cyclic
         // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.
@@ -79,9 +102,9 @@ export default {
         bStack = bStack || [];
         var length = aStack.length;
         while (length--) {
-          // Linear search. Performance is inversely proportional to the number of
-          // unique nested structures.
-          if (aStack[length] === a) return bStack[length] === b;
+            // Linear search. Performance is inversely proportional to the number of
+            // unique nested structures.
+            if (aStack[length] === a) return bStack[length] === b;
         }
 
         // Add the first object to the stack of traversed objects.
@@ -90,24 +113,24 @@ export default {
 
         // Recursively compare objects and arrays.
         if (areArrays) {
-          // Compare array lengths to determine if a deep comparison is necessary.
-          length = a.length;
-          if (length !== b.length) return false;
-          // Deep compare the contents, ignoring non-numeric properties.
-          while (length--) {
-            if (!self.$isEqual(a[length], b[length], aStack, bStack)) return false;
-          }
+            // Compare array lengths to determine if a deep comparison is necessary.
+            length = a.length;
+            if (length !== b.length) return false;
+            // Deep compare the contents, ignoring non-numeric properties.
+            while (length--) {
+                if (!self.$isEqual(a[length], b[length], aStack, bStack)) return false;
+            }
         } else {
-          // Deep compare objects.
-          var keys = Object.keys(a), key;
-          length = keys.length;
-          // Ensure that both objects contain the same number of properties before comparing deep equality.
-          if (Object.keys(b).length !== length) return false;
-          while (length--) {
-            // Deep compare each member
-            key = keys[length];
-            if (!(self.$has(b, key) && self.$isEqual(a[key], b[key], aStack, bStack))) return false;
-          }
+            // Deep compare objects.
+            var keys = Object.keys(a), key;
+            length = keys.length;
+            // Ensure that both objects contain the same number of properties before comparing deep equality.
+            if (Object.keys(b).length !== length) return false;
+            while (length--) {
+                // Deep compare each member
+                key = keys[length];
+                if (!(self.$has(b, key) && self.$isEqual(a[key], b[key], aStack, bStack))) return false;
+            }
         }
         // Remove the first object from the stack of traversed objects.
         aStack.pop();
@@ -132,10 +155,10 @@ export default {
 
     $extend () {
         var options, name, src, copy, copyIsArray, clone,
-        target = arguments[ 0 ] || {},
-        i = 1,
-        length = arguments.length,
-        deep = false;
+            target = arguments[ 0 ] || {},
+            i = 1,
+            length = arguments.length,
+            deep = false;
         var self = this;
 
         // Handle a deep copy situation
@@ -175,7 +198,7 @@ export default {
 
                     // Recurse if we're merging plain objects or arrays
                     if ( deep && copy && ( self.$isPlainObject( copy ) ||
-                        ( copyIsArray = Array.isArray( copy ) ) ) ) {
+                            ( copyIsArray = Array.isArray( copy ) ) ) ) {
 
                         if ( copyIsArray ) {
                             copyIsArray = false;
@@ -188,7 +211,7 @@ export default {
                         // Never move original objects, clone them
                         target[ name ] = self.$extend( deep, clone, copy );
 
-                    // Don't bring in undefined values => bring undefined values
+                        // Don't bring in undefined values => bring undefined values
                     } else {
                         target[ name ] = copy;
                     }
@@ -206,6 +229,7 @@ export default {
         } else if ('' + obj === 'null') {
             return obj;
         } else if (typeof (obj) === 'object') {
+            if (isImmutable(obj)) return obj
             return this.$extend(deep, {}, obj);
         } else
             return obj;
@@ -285,12 +309,15 @@ export default {
                 tmp = v.split('=');
                 rst[tmp[0]] = decodeURIComponent(tmp[1]);
             });
-       }
-       return rst;
+        }
+        return rst;
     },
+
+    isImmutable,
+
     /**
-    * Hyphenate a camelCase string.
-    */
+     * Hyphenate a camelCase string.
+     */
     hyphenate (str) {
         return str
             .replace(/([^-])([A-Z])/g, '$1-$2')

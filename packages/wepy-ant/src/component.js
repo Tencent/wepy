@@ -1,12 +1,11 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-
 
 import event from './event';
 import util from './util';
@@ -69,7 +68,7 @@ const Props = {
         }
         return valid;
     },
-    getValue (props, key, value) {
+    getValue (props, key, value, com) {
         var rst;
         if (value !== undefined && this.valid(props, key, value)) {
             rst = value;
@@ -77,13 +76,14 @@ const Props = {
             rst = props[key].default();
         } else
             rst = props[key].default;
-        return props[key].coerce ? props[key].coerce(rst) : rst;
+        return props[key].coerce ? props[key].coerce.call(com, rst) : rst;
     }
 };
 
 export default class {
 
     $com = {};
+    $events = {};
     $mixins = [];
 
     $isComponent = true;
@@ -137,61 +137,75 @@ export default class {
 
         if (props) {
             for (key in props) {
-                val = undefined;
-                if ($parent && $parent.$props && $parent.$props[this.$name]) {
-                    val = $parent.$props[this.$name][key];
-                    binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
-                    if (binded) {
-                        if (typeof(binded) === 'object') {
-                            props[key].repeat = binded.for;
-                            
-                            inRepeat = true;
+                if (keyCheck(this, key)) {
+                    val = undefined;
+                    if ($parent && $parent.$props && $parent.$props[this.$name]) {
+                        val = $parent.$props[this.$name][key];
+                        binded = $parent.$props[this.$name][`v-bind:${key}.once`] || $parent.$props[this.$name][`v-bind:${key}.sync`];
+                        if (binded) {
+                            if (typeof(binded) === 'object') {
+                                props[key].repeat = binded.for;
+                                props[key].item = binded.item;
+                                props[key].index = binded.index;
+                                props[key].key = binded.key;
+                                props[key].value = binded.value;
 
-                            let bindfor = binded.for, binddata = $parent;
-                            bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
-                            });
-                            repeatKey = Object.keys(binddata)[0];
+                                inRepeat = true;
 
+                                let bindfor = binded.for, binddata = $parent;
+                                bindfor.split('.').forEach(t => {
+                                    binddata = binddata ? binddata[t] : {};
+                                });
+                                if (binddata && (typeof binddata === 'object' || typeof binddata === 'string')) {
+                                    repeatKey = Object.keys(binddata)[0];
+                                }
 
-                            if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                            this.$mappingProps[key]['parent'] = {
-                                mapping: binded.for,
-                                from: key
-                            };
-                        } else {
-                            val = $parent[binded];
-                            if (props[key].twoWay) {
                                 if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
-                                this.$mappingProps[key]['parent'] = binded;
+                                this.$mappingProps[key]['parent'] = {
+                                    mapping: binded.for,
+                                    from: key
+                                };
+                            } else {
+                                val = $parent[binded];
+                                if (props[key].twoWay) {
+                                    if (!this.$mappingProps[key]) this.$mappingProps[key] = {};
+                                    this.$mappingProps[key]['parent'] = binded;
+                                }
                             }
+                        } else if (typeof val === 'object' && val.value !== undefined) { // 静态传值
+                            this.data[key] = val.value;
                         }
-                    } else if (typeof val === 'object' && val.value !== undefined) { // 静态传值
-                        this.data[key] = val.value;
                     }
-                }
-                if (!this.data[key] && !props[key].repeat) {
-                    val = Props.getValue(props, key, val);
-                    this.data[key] = val;
+                    if (!this.data[key] && !props[key].repeat) {
+                        val = Props.getValue(props, key, val, this);
+                        this.data[key] = val;
+                    }
                 }
             }
         }
 
+        if (typeof this.data === 'function') {
+            this.data = this.data.apply(this.data);
+        }
+
         for (k in this.data) {
-            defaultData[`${this.$prefix}${k}`] = this.data[k];
-            this[k] = this.data[k];
-            //this[k] = util.$copy(this.data[k], true);
+            if (keyCheck(this, k)) {
+                defaultData[`${this.$prefix}${k}`] = this.data[k];
+                this[k] = this.data[k];
+            }
         }
 
         this.$data = util.$copy(this.data, true);
-        if (inRepeat)
+        if (inRepeat && repeatKey !== undefined)
             this.$setIndex(repeatKey);
 
         if (this.computed) {
             for (k in this.computed) {
-                let fn = this.computed[k];
-                defaultData[`${this.$prefix}${k}`] = fn.call(this);
-                this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
+                if (keyCheck(this, k)) {
+                    let fn = this.computed[k];
+                    defaultData[`${this.$prefix}${k}`] = fn.call(this);
+                    this[k] = util.$copy(defaultData[`${this.$prefix}${k}`], true);
+                }
             }
         }
         this.setData(defaultData);
@@ -199,14 +213,8 @@ export default class {
         let coms = Object.getOwnPropertyNames(this.$com);
         if (coms.length) {
             coms.forEach((name) => {
-                this.$com[name].$init(this.getWxPage(), $root, this);
-                this.$com[name].onLoad && this.$com[name].onLoad();
-
-                this.$com[name].$mixins.forEach((mix) => {
-                    mix['onLoad'] && mix['onLoad'].call(this.$com[name]);
-                });
-
-                this.$com[name].$apply();
+                const com = this.$com[name];
+                com.$init(this.getWxPage(), $root, this);
             });
         }
     }
@@ -226,7 +234,38 @@ export default class {
         });
     }
 
-    onLoad () {
+    $onLoad (...args) {
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onLoad'] && mix['onLoad'].apply(this, args);
+        });
+
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onLoad.call(com);
+            });
+        }
+    }
+
+    $onUnload (...args) {
+        let coms = Object.getOwnPropertyNames(this.$com);
+        if (coms.length) {
+            coms.forEach((name) => {
+                const com = this.$com[name];
+                com.$onUnload.call(com);
+            });
+        }
+
+        [].concat(this.$mixins, this).forEach((mix) => {
+            mix['onUnload'] && mix['onUnload'].apply(this, args);
+        });
+    }
+
+    onLoad() {
+    }
+
+    onUnload() {
     }
 
     setData (k, v) {
@@ -243,11 +282,28 @@ export default class {
             return this.$wxpage.setData(k);
         }
         let t = null, reg = new RegExp('^' + this.$prefix.replace(/\$/g, '\\$'), 'ig');
+
         for (t in k) {
             let noPrefix = t.replace(reg, '');
             this.$data[noPrefix] = util.$copy(k[t], true);
+
+            // `Immutable` data maybe affect performance
+            // see: https://github.com/Tencent/wepy/issues/1090#issuecomment-373893316
+            if (util.isImmutable(k[t])) {
+                k[t] = k[t].toJS()
+            }
+
+            // 1.9.2 do not allow to set a undefined value
+            if (k[t] === undefined) {
+                delete k[t];
+            }
         }
-        return this.$wxpage.setData(k);
+
+        // In the same page redirection, $wxpage does not update, so use the page $wxpage
+        if (typeof v === 'function') {
+            return this.$root.$wxpage.setData(k, v);
+        }
+        return this.$root.$wxpage.setData(k);
     }
 
     getWxPage () {
@@ -255,16 +311,13 @@ export default class {
     }
 
     getCurrentPages () {
-        return this.$wxpage.getCurrentPages();
+        return getCurrentPages();
     }
 
     /**
      * 对于在repeat中的组件，index改变时需要修改对应的数据
      */
     $setIndex (index) {
-        if (this.$index === index)
-            return;
-
         this.$index = index;
 
         let props = this.props,
@@ -279,11 +332,38 @@ export default class {
                     if (binded) {
                         if (typeof(binded) === 'object') {
                             let bindfor = binded.for, binddata = $parent;
-                            bindfor.split('.').forEach(t => {
-                                binddata = binddata[t];
-                            });
 
-                            val = binddata[index];
+                            // 处理 for="{{[var1,var2]}}"
+                            if (bindfor.indexOf('[') === 0) {
+                                let bdarr = [];
+                                bindfor = bindfor.substr(1, bindfor.length - 2).trim()
+
+                                bindfor.split(',').forEach(function (e) {
+                                    let bd = $parent;
+                                    e.trim().split('.').forEach(function (t) {
+                                        bd = bd ? bd[t] : {};
+                                    })
+                                    bdarr.push(bd)
+                                })
+
+                                binddata = bdarr
+                            } else {
+                                bindfor.split('.').forEach(t => {
+                                    binddata = binddata ? binddata[t] : {};
+                                });
+                            }
+
+                            index = Array.isArray(binddata) ? +index : index;
+
+                            if (props[key].value === props[key].item) {
+                                val = binddata[index];
+                            } else if (props[key].value === props[key].index) {
+                                val = index;
+                            } else if (props[key].value === props[key].key) {
+                                val = index;
+                            } else {
+                                val = $parent[props[key].value];
+                            }
                             this.$index = index;
                             this.data[key] = val;
                             this[key] = val;
@@ -382,14 +462,16 @@ export default class {
         let source = this;
         let $evt = new event(evtName, source, 'emit');
 
+        args = args.concat($evt);
+
         // User custom event;
-        if (this.$parent.$events && this.$parent.$events[this.$name]) {
+        if (this.$parent && this.$parent.$events && this.$parent.$events[this.$name]) {
             let method = this.$parent.$events[this.$name]['v-on:' + evtName];
             if (method && this.$parent.methods) {
                 let fn = this.$parent.methods[method];
                 if (typeof(fn) === 'function') {
                     this.$parent.$apply(() => {
-                        fn.apply(this.$parent, args.concat($evt));
+                        fn.apply(this.$parent, args);
                     });
                     return;
                 } else {
@@ -401,11 +483,70 @@ export default class {
             // 保存 com 块级作用域组件实例
             let comContext = com;
             let fn = getEventsFn(comContext, evtName);
-            fn && comContext.$apply(() => {
-                fn.apply(comContext, args.concat($evt));
-            });
+            if (fn) {
+                if (typeof fn === 'function') {
+                    comContext.$apply(() => {
+                        fn.apply(comContext, args);
+                    });
+                } else if (Array.isArray(fn)) {
+                    fn.forEach(f => {
+                        f.apply(comContext, args);
+                    })
+                    comContext.$apply();
+                }
+            }
             com = comContext.$parent;
         }
+    }
+
+    $on (evtName, fn) {
+        if (typeof evtName === 'string') {
+            (this.$events[evtName] || (this.$events[evtName] = [])).push(fn);
+        } else if (Array.isArray(evtName)) {
+            evtName.forEach(k => {
+                this.$on(k, fn);
+            });
+        } else if (typeof evtName === 'object') {
+            for (let k in evtName) {
+                this.$on(k, evtName[k]);
+            }
+        }
+        return this;
+    }
+
+    $once (evtName, fn) {
+        let self = this;
+        let oncefn = function oncefn () {
+            self.$off(evtName, oncefn);
+            fn.apply(self, arguments);
+        }
+        oncefn.fn = fn;
+        this.$on(evtName, oncefn);
+    }
+
+    $off (evtName, fn) {
+        // off all events;
+        if (evtName === undefined) {
+            this.$events = {};
+        } else if (typeof evtName === 'string') {
+            if (fn) {
+                let fns = this.$events[evtName];
+                let i = fns.length;
+                while (i--) {
+                    if (fn === fns[i] || fn === fns[i].fn) {
+                        fns.splice(i, 1);
+                        break;
+                    }
+                }
+            } else {
+                this.$events[evtName] = [];
+            }
+        } else if (Array.isArray(evtName)) {
+            evtName.forEach(k => {
+                this.$off(k, fn);
+            });
+        }
+        return this;
     }
 
     $apply (fn) {
@@ -425,8 +566,22 @@ export default class {
         let k;
         let originData = this.$data;
         this.$$phase = '$digest';
+        this.$$dc = 0;
         while (this.$$phase) {
+            this.$$dc++;
+            if (this.$$dc >= 3) {
+                throw new Error('Can not call $apply in $apply process');
+            }
             let readyToSet = {};
+            if (this.computed) {
+                for (k in this.computed) { // If there are computed property, calculated every times
+                    let fn = this.computed[k], val = fn.call(this);
+                    if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
+                        readyToSet[this.$prefix + k] = val;
+                        this[k] = util.$copy(val, true);
+                    }
+                }
+            }
             for (k in originData) {
                 if (!util.$isEqual(this[k], originData[k])) { // compare if new data is equal to original data
                     // data watch trigger
@@ -440,9 +595,15 @@ export default class {
                         }
                     }
                     // Send to ReadyToSet
-                    readyToSet[this.$prefix + k] = this[k]; 
+                    readyToSet[this.$prefix + k] = this[k];
                     this.data[k] = this[k];
                     originData[k] = util.$copy(this[k], true);
+                    if (this.$repeat && this.$repeat[k]) {
+                        let $repeat = this.$repeat[k];
+                        this.$com[$repeat.com].data[$repeat.props] = this[k];
+                        this.$com[$repeat.com].$setIndex(0);
+                        this.$com[$repeat.com].$apply();
+                    }
                     if (this.$mappingProps[k]) {
                         Object.keys(this.$mappingProps[k]).forEach((changed) => {
                             let mapping = this.$mappingProps[k][changed];
@@ -462,25 +623,71 @@ export default class {
                 }
             }
             if (Object.keys(readyToSet).length) {
-                if (this.computed) {
-                    for (k in this.computed) { // If there are computed property, calculated every times
-                        let fn = this.computed[k], val = fn.call(this);
-                        if (!util.$isEqual(this[k], val)) { // Value changed, then send to ReadyToSet
-                            readyToSet[this.$prefix + k] = val;
-                            this[k] = util.$copy(val, true);
+                this.setData(readyToSet, () => {
+                    if (this.$$nextTick) {
+                        let $$nextTick = this.$$nextTick;
+                        this.$$nextTick = null;
+                        if ($$nextTick.promise) {
+                            $$nextTick();
+                        } else {
+                            $$nextTick.call(this);
                         }
                     }
+                });
+            } else {
+                if (this.$$nextTick) {
+                    let $$nextTick = this.$$nextTick;
+                    this.$$nextTick = null;
+                    if ($$nextTick.promise) {
+                        $$nextTick();
+                    } else {
+                        $$nextTick.call(this);
+                    }
                 }
-                this.setData(readyToSet);
             }
             this.$$phase = (this.$$phase === '$apply') ? '$digest' : false;
         }
     }
+    /**
+     * setData callback
+     * @param  {Function} callback function, if fn is undefined, then return a promise
+     * @return {Promsie}  if fn is undefined, then return a promise, otherwise return undefiend
+     */
+    $nextTick (fn) {
+        if (typeof fn === 'undefined') {
+            return new Promise((resolve, reject) => {
+                this.$$nextTick = function () {
+                    resolve();
+                };
+                this.$$nextTick.promise = true;
+            });
+        }
+        this.$$nextTick = fn;
+    }
 
 }
 
+/**
+ * check if a key is allowed
+ * @param  {String} k user defined key
+ * @return {Number}   1: allowed, 0: warn, -1: error
+ */
+function keyCheck (vm, k) {
+    if (typeof vm[k] === 'function') {
+        console.warn('You are not allowed to define a function "' + k + '" in data.');
+        return 0;
+    } else if (['data', 'props', 'methods', 'events', 'mixins'].indexOf(k) !== -1) {
+        console.warn(`"${k}" is reserved word, please fix it.`);
+        return 0;
+    } else if (k[0] === '$') {
+        console.warn(`"${k}: You can not define a property started with "$"`);
+        return 0;
+    }
+    return 1;
+}
+
 function getEventsFn (comContext, evtName) {
-    let fn = comContext.events ? comContext.events[evtName] : undefined;
+    let fn = comContext.events ? comContext.events[evtName] : (comContext.$events[evtName] ? comContext.$events[evtName] : undefined);
     const typeFn = typeof(fn);
     let fnFn;
     if (typeFn === 'string') {
@@ -489,7 +696,7 @@ function getEventsFn (comContext, evtName) {
         if (typeof(method) === 'function') {
             fnFn = method;
         }
-    } else if (typeFn === 'function') {
+    } else if (typeFn === 'function' || Array.isArray(fn)) {
         fnFn = fn;
     }
     return fnFn;

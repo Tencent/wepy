@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -11,8 +11,8 @@
 import event from './event';
 import util from './util';
 
-const PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage'];
-const APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
+let PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage', 'onPageScroll', 'onTabItemTap'];
+let APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError', 'onPageNotFound'];
 
 
 let $bindEvt = (config, com, prefix) => {
@@ -71,8 +71,8 @@ let $bindEvt = (config, com, prefix) => {
                     tmpcom.$setIndex(comIndex.shift());
                 }
             }
-
-            args = [].concat(wepyParams);
+            args.length = 0;
+            args = args.concat(wepyParams);
             let rst, mixRst;
             let comfn = com.methods[method];
             if (comfn) {
@@ -97,6 +97,7 @@ export default {
         if (!this.$instance) {
             app.$init(this, appConfig);
             this.$instance = app;
+            this.$appConfig = appConfig;
         }
 
         // This is for test case
@@ -106,9 +107,13 @@ export default {
 
         app.$wxapp = getApp();
 
+        APP_EVENT = APP_EVENT.concat(appConfig.appEvents || []);
+        PAGE_EVENT = PAGE_EVENT.concat(appConfig.pageEvents || []);
+
         APP_EVENT.forEach((v) => {
             config[v] = (...args) => {
                 let rst;
+                !app.$wxapp && (app.$wxapp = getApp());
                 app[v] && (rst = app[v].apply(app, args));
                 return rst;
             };
@@ -128,6 +133,8 @@ export default {
             config.$page = page;
 
         config.onLoad = function (...args) {
+            // 修复小程序1.1.1版本this中不包含options
+            !('options' in this) && (this.options = args.length ? args[0] : {});
 
             page.$name = pageClass.name || 'unnamed';
             page.$init(this, self.$instance, self.$instance);
@@ -136,44 +143,46 @@ export default {
             let secParams = {};
             secParams.from = prevPage ? prevPage : undefined;
 
-            if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
+            if (prevPage && prevPage.$preloadData) {
                 secParams.preload = prevPage.$preloadData;
-                prevPage.$preloadData = {};
+                prevPage.$preloadData = undefined;
             }
-            if (page.$prefetchData && Object.keys(page.$prefetchData).length > 0) {
+            if (page.$prefetchData) {
                 secParams.prefetch = page.$prefetchData;
-                page.$prefetchData = {};
+                page.$prefetchData = undefined;
             }
             args.push(secParams);
-            page.onLoad && page.onLoad.apply(page, args);
 
-            page.$mixins.forEach((mix) => {
-                mix['onLoad'] && mix['onLoad'].apply(page, args);
-            });
+            page.$onLoad.apply(page, args);
 
             page.$apply();
+        };
+
+        config.onUnload = function (...args) {
+            page.$onUnload.apply(page, args);
         };
 
         config.onShow = function (...args) {
 
             self.$instance.__prevPage__ = page;
+            self.$instance.__route__ = pagePath;
 
-            page.onShow && page.onShow.apply(page, args);
-
-            page.$mixins.forEach((mix) => {
+            [].concat(page.$mixins, page).forEach((mix) => {
                 mix['onShow'] && mix['onShow'].apply(page, args);
             });
 
             let pages = getCurrentPages();
-            let pageId = pages[pages.length - 1].__route__;
+            let pageId = pages[pages.length - 1].__route__ || pages[pages.length - 1].route;
+            let webViewId = pages[pages.length - 1].__wxWebviewId__;
 
-            if (self.$instance.__route__ !== pageId) {
+            if (self.$instance.__wxWebviewId__ !== webViewId) { // if same page redirect, pageId will be the same, so changed to use webview Id
+
+                page.$wxpage = this; // same page redirect, have to update the $wxpage, otherwise setData will goes to the old view
 
                 self.$instance.__route__ = pageId;
+                self.$instance.__wxWebviewId__ = webViewId;
 
-                page.onRoute && page.onRoute.apply(page, args);
-
-                page.$mixins.forEach((mix) => {
+                [].concat(page.$mixins, page).forEach((mix) => {
                     mix['onRoute'] && mix['onRoute'].apply(page, args);
                 });
             }
@@ -182,19 +191,24 @@ export default {
         };
 
         PAGE_EVENT.forEach((v) => {
-            if (v !== 'onLoad' && v !== 'onShow') {
+            if (v !== 'onLoad' && v !== 'onUnload' && v !== 'onShow') {
                 config[v] = (...args) => {
                     let rst;
-                    page[v] && (rst = page[v].apply(page, args));
 
-                    if (v === 'onShareAppMessage')
+                    if (v === 'onShareAppMessage') {
+                        page[v] && (rst = page[v].apply(page, args));
                         return rst;
+                    }
 
-                    page.$mixins.forEach((mix) => {
+                    [].concat(page.$mixins, page).forEach((mix) => {
                         mix[v] && mix[v].apply(page, args);
                     });
 
-                    page.$apply();
+                    // DO NOT auto call $apply() for onPageScroll, otherwise
+                    // UI update will be blocked
+                    if (v !== 'onPageScroll') {
+                        page.$apply();
+                    }
 
                     return rst;
                 };
@@ -203,6 +217,12 @@ export default {
 
         if (!page.onShareAppMessage) {
             delete config.onShareAppMessage;
+        }
+
+        // if OnPageScroll not defined in page or its mixins, remove it so that
+        // useless OnPageScroll logs won't flush console
+        if ([].concat(page.$mixins, page).findIndex(mix => mix['onPageScroll']) === -1) {
+            delete config.onPageScroll;
         }
 
         return $bindEvt(config, page, '');
