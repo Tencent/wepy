@@ -38,9 +38,9 @@ function getMetadata (dir) {
     let opts = {};
     opts.status = true;
 
-    if (fs.exists(json)) {
+    if (fs.existsSync(json)) {
         opts = metadata.sync(json);
-    } else if (fs.exists(js)) {
+    } else if (fs.existsSync(js)) {
         const req = require(path.resolve(js));
         if (req !== Object(req)) {
             throw new Error('meta.js needs to expose an object');

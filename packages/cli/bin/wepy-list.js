@@ -7,7 +7,7 @@ const ta = require('time-ago');
 
 exports = module.exports = (program) => {
     request({
-        url: 'https://raw.githubusercontent.com/wepyjs/wepy-templates/master/meta.json',
+        url: 'https://raw.githubusercontent.com/wepyjs/wepy-templates/2.0.x/meta.json',
         headers: {
             'User-Agent': 'wepy-cli'
         }
