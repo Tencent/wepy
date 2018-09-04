@@ -35,10 +35,13 @@ export default class {
                 file: op.file
             });
 
-            if (/\.(wxml|axml|xml)$/.test(op.file)) {
-                op.code = pd.xmlmin(op.code || '');
-            } else if (/\.json$/.test(op.file)) {
-                op.code = pd.jsonmin(op.code || '');
+            let match = setting.filter.exec(op.file);
+            if(match && match.length) {
+                if(match[1] === 'json') {
+                    op.code = pd.jsonmin(op.code || '');
+                } else {
+                    op.code = pd.xmlmin(op.code || '');
+                }
             }
             op.next();
         }
