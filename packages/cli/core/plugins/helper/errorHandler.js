@@ -4,8 +4,20 @@ const loaderUtils = require('loader-utils');
 
 
 exports = module.exports = function () {
-  this.register('error-handler', function (type, errInfo, extra) {
-    return this.hookUnique('error-handler-' + type, errInfo, extra);
+  this.register('error-handler', function (handler, errInfo, extra) {
+    if (arguments.length === 1) {
+      if (typeof handler === 'object') {
+        errInfo = handler;
+        let { ctx, message, type, title } = errInfo;
+        let output = 'Message:\n  ' + message;
+        if (ctx.file) {
+          output += '\n' + 'File:\n  ' + ctx.file;
+        }
+        this.logger[type](title, output);
+      }
+    } else {
+      return this.hookUnique('error-handler-' + handler, errInfo, extra);
+    }
   });
 
   this.register('error-handler-template', function (errInfo, extra) {

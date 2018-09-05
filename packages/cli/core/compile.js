@@ -166,7 +166,14 @@ class Compile extends Hook {
 
       let appConfig = config.parsed;
       if (!appConfig.pages || appConfig.pages.length === 0) {
-        throw `"pages" is missing in the App config`;
+
+        this.hookUnique('error-handler', {
+          type: 'error',
+          ctx: app,
+          message: `Missing "pages" in App config`
+        });
+
+        throw new Error('EXIT');
       }
       let pages = appConfig.pages.map(v => {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
@@ -233,10 +240,25 @@ class Compile extends Hook {
         this.watch();
       }
     }).catch(e => {
-      this.logger.error(e);
+      debugger;
+      if (e.message !== 'EXIT') {
+        this.logger.error(e);
+        if (this.logger.level() !== 'trace') {
+          if (e._babel && e.codeFrame) {
+            this.logger.error(e.codeFrame);
+          }
+        }
+      }
+      if (this.logger.level() !== 'trace') {
+        this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
+      } else {
+        this.logger.error('compile', 'Compile failed.');
+      }
+      if (this.options.watch) {
+        this.logger.info('watching...');
+        this.watch();
+      }
     });
-
-
   }
 
   watch () {

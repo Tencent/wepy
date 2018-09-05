@@ -87,7 +87,7 @@ exports = module.exports = function () {
         }) ;
         return context;
       }).catch(e => {
-        this.logger.error(e);
+        throw e;
       });
 
       return this.applyCompiler(this.checkSrc(sfcConfig, file), context).then(parsed => {

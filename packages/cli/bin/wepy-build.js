@@ -4,10 +4,10 @@ exports = module.exports = (program) => {
 
   let compilation = compile(program);
 
-  compilation.init().then(() => {
+  compilation.init().then((flag) => {
     compilation.start();
   }).catch(e => {
-    // do nothing
+    compilation.logger.error('init', e.message);
   });
 
 }

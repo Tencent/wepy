@@ -22,19 +22,20 @@ const datetime = (date = new Date(), format = 'HH:mm:ss') => {
   });
 };
 
-['info', 'silly', 'verbose', 'http', 'warn', 'error'].forEach(v => {
+['info', 'silly', 'verbose', 'http', 'timing', 'notice', 'silent', 'warn', 'error'].forEach(v => {
   mylog[v] = (...args) => {
     log.heading = '[' + datetime() + ']';
     if (args.length === 1) {
       args = [''].concat(args);
     }
+    if (log.level !== 'trace') {
+      args.forEach((arg, i) => (typeof arg === 'object' && arg instanceof Error && arg.stack && arg.message) && (args[i] = arg.message));
+    }
     log.log.apply(log, [v].concat(args));
   };
 });
 
-mylog.level = (v) => {
-  log.level = v;
-};
+mylog.level = (v) => v ? (log.level = v) : log.level;
 
 exports = module.exports = mylog;
 
