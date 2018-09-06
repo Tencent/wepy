@@ -25,7 +25,7 @@ const callUserMethod = function (vm, userOpt, method, args) {
   if (isStr(method) && isFunc(userOpt[method])) {
     result = userOpt[method].apply(vm, args);
   } else if (isArr(method)) {
-    for (let i = 0, l = method.length; i < l; i++) {
+    for (let i in method) {
       if (isFunc(userOpt[method[i]])) {
         result = userOpt[method[i]].apply(vm, args);
         break;
