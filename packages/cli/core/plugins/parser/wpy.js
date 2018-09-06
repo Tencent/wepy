@@ -34,6 +34,16 @@ exports = module.exports = function () {
       sfcConfig.lang = sfcConfig.lang || 'json';
       sfc.config = sfcConfig;
 
+
+      if (!sfc.script) {
+        sfc.script = {
+          attrs: {},
+          type: 'script',
+          empty: true,
+          content: 'Component({})'
+        };
+      }
+
       return this.hookAsyncSeq('pre-check-sfc', {
         node: sfcConfig,
         file: file
@@ -88,110 +98,6 @@ exports = module.exports = function () {
         return context;
       }).catch(e => {
         throw e;
-      });
-
-      return this.applyCompiler(this.checkSrc(sfcConfig, file), context).then(parsed => {
-        sfc.config && (sfc.config.parsed = parsed);
-
-        if (sfc.template && type !== 'app') {
-          sfc.template.lang = sfc.template.lang = 'wxml';
-          return this.applyCompiler(this.checkSrc(sfc.template, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.template && (sfc.template.parsed = parsed);
-        if (sfc.script) {
-          sfc.script.lang = sfc.script.lang || 'babel';
-          return this.applyCompiler(this.checkSrc(sfc.script, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.script && (sfc.script.parsed = parsed);
-        let styleTask = [];
-        if (sfc.styles) {
-          sfc.styles.forEach(v => {
-            v.lang = v.lang || 'css';
-            styleTask.push(this.applyCompiler(this.checkSrc(v, file), context));
-          })
-        }
-        return Promise.all(styleTask);
-      }).then(parsed => {
-        parsed.forEach((parsed, i) => {
-          sfc.styles[i].parsed = parsed;
-        });
-        return context;
-      }).catch(e => {
-        console.error(e);
-        debugger;
-      });
-      return this.applyCompiler(this.checkSrc(sfcConfig, file), context).then(parsed => {
-        sfc.config && (sfc.config.parsed = parsed);
-
-        if (sfc.template && type !== 'app') {
-          sfc.template.lang = sfc.template.lang = 'wxml';
-          return this.applyCompiler(this.checkSrc(sfc.template, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.template && (sfc.template.parsed = parsed);
-        if (sfc.script) {
-          sfc.script.lang = sfc.script.lang || 'babel';
-          return this.applyCompiler(this.checkSrc(sfc.script, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.script && (sfc.script.parsed = parsed);
-        let styleTask = [];
-        if (sfc.styles) {
-          sfc.styles.forEach(v => {
-            v.lang = v.lang || 'css';
-            styleTask.push(this.applyCompiler(this.checkSrc(v, file), context));
-          })
-        }
-        return Promise.all(styleTask);
-      }).then(parsed => {
-        parsed.forEach((parsed, i) => {
-          sfc.styles[i].parsed = parsed;
-        });
-        return context;
-      }).catch(e => {
-        console.error(e);
-        debugger;
-      });
-
-      return this.applyCompiler(this.checkSrc(sfcConfig, file), context).then(parsed => {
-        sfc.config && (sfc.config.parsed = parsed);
-
-        if (sfc.template && type !== 'app') {
-          sfc.template.lang = sfc.template.lang = 'wxml';
-          return this.applyCompiler(this.checkSrc(sfc.template, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.template && (sfc.template.parsed = parsed);
-        if (sfc.script) {
-          sfc.script.lang = sfc.script.lang || 'babel';
-          return this.applyCompiler(this.checkSrc(sfc.script, file), context);
-        }
-        return null;
-      }).then(parsed => {
-        sfc.script && (sfc.script.parsed = parsed);
-        let styleTask = [];
-        if (sfc.styles) {
-          sfc.styles.forEach(v => {
-            v.lang = v.lang || 'css';
-            styleTask.push(this.applyCompiler(this.checkSrc(v, file), context));
-          })
-        }
-        return Promise.all(styleTask);
-      }).then(parsed => {
-        parsed.forEach((parsed, i) => {
-          sfc.styles[i].parsed = parsed;
-        });
-        return context;
-      }).catch(e => {
-        console.error(e);
-        debugger;
       });
     } else {
       return Promise.reject('error component');
