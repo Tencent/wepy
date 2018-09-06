@@ -10,6 +10,7 @@ exports = module.exports = function evaluate (exp, data) {
     try {
         return fn(data);
     } catch (e) {
-        console.error(chalk.red('Error when evaluating filter condition: ' + exp));
+        return null;
+        //console.error(chalk.red('Error when evaluating filter condition: ' + exp));
     }
 }

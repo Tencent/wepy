@@ -111,9 +111,18 @@ exports = module.exports = function () {
           });
         }
       } else if (ext === this.options.wpyExt) {
+
         // TODO: why they import a wpy file.
-        throw `Can not import a wepy component, please use "usingComponents" to declear`;
-        return this.parsers.wpy.parse(rst.path);
+        this.hookUnique('error-handler', 'script', {
+          ctx: ctx,
+          type: 'error',
+          message: `Can not import a wepy component, please use "usingComponents" to declear a component`,
+          title: 'dependence'
+        }, {
+          sourcemap: node.compiled.map,
+          start: dep.loc.start
+        });
+        throw new Error('EXIT');
       }
     });
   });

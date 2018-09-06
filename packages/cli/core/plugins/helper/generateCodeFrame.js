@@ -1,4 +1,5 @@
 const codeFrameColumns = require('@babel/code-frame').codeFrameColumns;
+const SourceMap = require('source-map');
 
 function indexToLineColumns(code, index) {
   let line = 1;
@@ -43,7 +44,16 @@ exports = module.exports = function () {
         newpos.end = indexToLineColumns(code, pos.endIndex);
       }
       pos = newpos;
+    } else if (pos.sourcemap) {
+      let consumer = SourceMap.SourceMapConsumer(pos.sourcemap);
+      if (pos.start) {
+        pos.start = consumer.originalPositionFor(pos.start);
+      }
+      if (pos.end) {
+        pos.end = consumer.oiringalPositionFor(pos.end);
+      }
     }
+
     return codeFrameColumns(code, pos, options);
   });
 

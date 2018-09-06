@@ -240,14 +240,8 @@ class Compile extends Hook {
         this.watch();
       }
     }).catch(e => {
-      debugger;
       if (e.message !== 'EXIT') {
         this.logger.error(e);
-        if (this.logger.level() !== 'trace') {
-          if (e._babel && e.codeFrame) {
-            this.logger.error(e.codeFrame);
-          }
-        }
       }
       if (this.logger.level() !== 'trace') {
         this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');

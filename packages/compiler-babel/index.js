@@ -18,6 +18,13 @@ exports = module.exports = function (options) {
         node.compiled = compiled;
         p = Promise.resolve(node);
       } catch (e) {
+        this.hookUnqiue('error-handler', {
+          type: 'error',
+          title: 'babel',
+          file: file,
+          message: e.message,
+          snapshot: e.codeFrame
+        });
         p = Promise.reject(e);
       }
       return p;
