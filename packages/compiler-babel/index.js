@@ -18,7 +18,7 @@ exports = module.exports = function (options) {
         node.compiled = compiled;
         p = Promise.resolve(node);
       } catch (e) {
-        this.hookUnqiue('error-handler', {
+        this.hookUnique('error-handler', {
           type: 'error',
           title: 'babel',
           file: file,
