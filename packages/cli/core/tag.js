@@ -48,6 +48,8 @@ const WXML_TAGS = [
 'map',
 // canvas
 'canvas',
+// slot
+'slot',
 // ability
 'open-data,web-view,ad'
 ].join(',').split(',');

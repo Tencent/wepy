@@ -104,7 +104,7 @@ export function patchLifecycle (output, option, rel, isComponent) {
     // initEvents(vm);
 
     // create render watcher
-    initRender(vm, Object.keys(vm._data));
+    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)));
 
     // not need to patch computed to ouput
     initComputed(vm, option.computed, true);

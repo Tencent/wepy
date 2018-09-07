@@ -111,9 +111,6 @@ export function initComponentMethods (comConfig, methods) {
  * patch method option
  */
 export function patchMethods (output, methods, isComponent) {
-  if (!methods) {
-    return;
-  }
 
   output.methods = {};
   let target = output.methods;

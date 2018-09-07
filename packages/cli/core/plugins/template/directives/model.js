@@ -122,9 +122,11 @@ function generateModelFunction (expr) {
   let func = '';
   let parsed = parseModel(expr);
   if (parsed.key === null) {
+    // it has to be  " something = $v "
+    // cannot be  ['something'] = $v
     func = `function set ($v) {
       with (this) {
-        ['${expr}'] = $v;
+        ${expr} = $v;
       }
     }`;
   } else {
