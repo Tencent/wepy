@@ -802,6 +802,93 @@ function dependArray (value) {
   }
 }
 
+var Base = function Base () {
+  this._events = {};
+};
+
+Base.prototype.$set = function $set (target, key, val) {
+  return set(this, target, key, val);
+};
+
+Base.prototype.$on = function $on (event, fn) {
+    var this$1 = this;
+
+  if (isArr(event)) {
+    event.forEach(function (item) {
+      if (isStr(item)) {
+        this$1.$on(item, fn);
+      } else if (isObj(item)) {
+        this$1.$on(item.event, item.fn);
+      }
+    });
+  } else {
+    (this._events[event] || (this._events[event] = [])).push(fn);
+  }
+  return this;
+};
+
+Base.prototype.$once = function $once () {};
+
+Base.prototype.$off = function $off (event, fn) {
+    var this$1 = this;
+
+  if (!event && !fn) {
+    this._events = Object.create(null);
+    return this;
+  }
+
+  if (isArr(event)) {
+    event.forEach(function (item) {
+      if (isStr(item)) {
+        this$1.$off(item, fn);
+      } else if (isObj(item)) {
+        this$1.$off(item.event, item.fn);
+      }
+    });
+    return this;
+  }
+  if (!this._events[event])
+    { return this; }
+
+  if (!fn) {
+    this._event[event] = null;
+    return this;
+  }
+
+  if (fn) {
+    var fns = this._events[event];
+    var i = fns.length;
+    while (i--) {
+      var tmp = fns[i];
+      if (tmp === fn || tmp.fn === fn) {
+        fns.splice(i, 1);
+        break;
+      }
+    }
+  }
+  return this;
+};
+
+Base.prototype.$emit = function $emit (event) {
+    var this$1 = this;
+
+  var lowerCaseEvent = event.toLowerCase();
+
+  var fns = this._events[event] || [];
+  if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
+    // TODO: handler warn
+  }
+  var args = toArray(arguments, 1);
+  (this._events[event] || []).forEach(function (fn) {
+    try {
+      fn.apply(this$1, args);
+    } catch (e) {
+      handleError(e, vm, ("event handnler for \"" + event + "\""));
+    }
+  });
+  return this;
+};
+
 var sharedPropertyDefinition = {
   enumerable: true,
   configurable: true,
@@ -1279,93 +1366,6 @@ function initComputed (vm, computed) {
   });
 }
 
-var Base = function Base () {
-
-};
-
-Base.prototype.$set = function $set (target, key, val) {
-  return set(this, target, key, val);
-};
-
-Base.prototype.$on = function $on (event, fn) {
-    var this$1 = this;
-
-  if (isArr(event)) {
-    event.forEach(function (item) {
-      if (isStr(item)) {
-        this$1.$on(item, fn);
-      } else if (isObj(item)) {
-        this$1.$on(item.event, item.fn);
-      }
-    });
-  } else {
-    (this._events[event] || (this._events[event] = [])).push(fn);
-  }
-  return this;
-};
-
-Base.prototype.$once = function $once () {};
-
-Base.prototype.$off = function $off (event, fn) {
-    var this$1 = this;
-
-  if (!event && !fn) {
-    this._events = Object.create(null);
-    return this;
-  }
-
-  if (isArr(event)) {
-    event.forEach(function (item) {
-      if (isStr(item)) {
-        this$1.$off(item, fn);
-      } else if (isObj(item)) {
-        this$1.$off(item.event, item.fn);
-      }
-    });
-    return this;
-  }
-  if (!this._events[event])
-    { return this; }
-
-  if (!fn) {
-    this._event[event] = null;
-    return this;
-  }
-
-  if (fn) {
-    var fns = this._events[event];
-    var i = fns.length;
-    while (i--) {
-      var tmp = fns[i];
-      if (tmp === fn || tmp.fn === fn) {
-        fns.splice(i, 1);
-        break;
-      }
-    }
-  }
-  return this;
-};
-
-Base.prototype.$emit = function $emit (event) {
-    var this$1 = this;
-
-  var lowerCaseEvent = event.toLowerCase();
-
-  var fns = this._events[event] || [];
-  if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
-    // TODO: handler warn
-  }
-  var args = toArray(arguments, 1);
-  (this._events[event] || []).forEach(function (fn) {
-    try {
-      fn.apply(this$1, args);
-    } catch (e) {
-      handleError(e, vm, ("event handnler for \"" + event + "\""));
-    }
-  });
-  return this;
-};
-
 var WepyApp = (function (Base$$1) {
   function WepyApp () {
 
@@ -1699,7 +1699,7 @@ var proxyHandler = function (e) {
 };
 
 /*
- * initialize page methods
+ * initialize page methods, also the app
  */
 function initMethods (vm, methods) {
   if (methods) {
@@ -1796,7 +1796,7 @@ var callUserMethod = function (vm, userOpt, method, args) {
   if (isStr(method) && isFunc(userOpt[method])) {
     result = userOpt[method].apply(vm, args);
   } else if (isArr(method)) {
-    for (var i = 0, l = method.length; i < l; i++) {
+    for (var i in method) {
       if (isFunc(userOpt[method[i]])) {
         result = userOpt[method[i]].apply(vm, args);
         break;
@@ -1809,18 +1809,21 @@ var callUserMethod = function (vm, userOpt, method, args) {
 /*
  * patch app lifecyle
  */
-function patchAppLifecycle (appConfig, option) {
-  appConfig.onLaunch = function (params) {
+function patchAppLifecycle (appConfig, option, rel) {
+  appConfig.onLaunch = function () {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
     var vm = new WepyApp();
     app = vm;
     vm.$option = option;
     vm.$route = {};
-
-    var result;
     vm.$wx = this;
     this.$wepy = vm;
-    (typeof option.onLaunch === 'function') && (result = option.onLaunch.call(vm, params));
-    return result;
+
+    initMethods(vm, option.methods);
+
+    return callUserMethod(vm, vm.$option, 'onLaunch', args);
   };
 }
 function patchLifecycle (output, option, rel, isComponent) {
@@ -1944,7 +1947,7 @@ function page (option, rel) {
 function app$1 (option, rel) {
   var appConfig = {};
 
-  patchAppLifecycle(appConfig, rel, option);
+  patchAppLifecycle(appConfig, option, rel);
 
   return App(appConfig);
 }
@@ -1988,7 +1991,9 @@ function use (plugin) {
   plugin.installed = 1;
 }
 
-var wepy = {
+var wepy = Base;
+
+Object.assign(wepy, {
   component: component,
   page: page,
   app: app$1,
@@ -1996,6 +2001,6 @@ var wepy = {
 
   // global apis
   use: use
-}
+});
 
 module.exports = wepy;
