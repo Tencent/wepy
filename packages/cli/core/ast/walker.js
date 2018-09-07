@@ -248,7 +248,7 @@ class AstWalker {
 
   // Declarations
   prewalkFunctionDeclaration(statement) {
-    
+
     if(statement.id) {
       this.scope.renames["$" + statement.id.name] = undefined;
       this.scope.definitions.push(statement.id.name);
@@ -270,7 +270,7 @@ class AstWalker {
   }
 
   prewalkImportDeclaration(statement) {
-    
+
     const source = statement.source.value;
     // this.applyPluginsBailResult("import", statement, source);
     statement.specifiers.forEach(function(specifier) {
@@ -419,7 +419,7 @@ class AstWalker {
   }
 
   prewalkVariableDeclarators(declarators) {
-    
+
     declarators.forEach(declarator => {
       switch(declarator.type) {
         case "VariableDeclarator":
@@ -766,9 +766,8 @@ class AstWalker {
 
       if (expression.callee.type === 'MemberExpression') {
         let exprName = this.getNameForExpression(expression.callee);
-        
-        if (this.scope.instances && this.scope.instances.indexOf(exprName.instance) !== -1) {  // calling wepy instance
-          if (['app', 'page', 'component'].indexOf(exprName.callee) !== -1) {  
+        if (this.scope.instances && exprName && this.scope.instances.indexOf(exprName.instance) !== -1) {  // calling wepy instance
+          if (['app', 'page', 'component'].indexOf(exprName.callee) !== -1) {
             this.entry = expression;
           }
         }
