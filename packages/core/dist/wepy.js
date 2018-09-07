@@ -208,6 +208,37 @@ function clone (sth, deep) {
   }
 }
 
+var WEAPP_APP_LIFECYCLE = [
+  'onLaunch',
+  'onShow',
+  'onHide',
+  'onError',
+  'onPageNotFound'
+];
+
+var WEAPP_PAGE_LIFECYCLE = [
+  'onLoad',
+  'onShow',
+  'onReady',
+  'onHide',
+  'onUnload',
+  'onPullDownRefresh',
+  'onReachBottom',
+  'onShareAppMessage',
+  'onPageScroll',
+  'onTabItemTap'
+];
+
+var WEAPP_COMPONENT_LIFECYCLE = [
+  'created',
+  'attached',
+  'ready',
+  'moved',
+  'detached'
+];
+
+var WEAPP_LIFECYCLE = [].concat(WEAPP_APP_LIFECYCLE).concat(WEAPP_PAGE_LIFECYCLE).concat(WEAPP_COMPONENT_LIFECYCLE);
+
 var config = {
 
 }
@@ -1793,13 +1824,13 @@ var app;
 
 var callUserMethod = function (vm, userOpt, method, args) {
   var result;
-  if (isStr(method) && isFunc(userOpt[method])) {
+  var methods = userOpt[method];
+  if (isFunc(methods)) {
     result = userOpt[method].apply(vm, args);
-  } else if (isArr(method)) {
-    for (var i in method) {
-      if (isFunc(userOpt[method[i]])) {
-        result = userOpt[method[i]].apply(vm, args);
-        break;
+  } else if (isArr(methods)) {
+    for (var i in methods) {
+      if (isFunc(methods[i])) {
+        result = methods[i].apply(vm, args);
       }
     }
   }
@@ -1922,9 +1953,77 @@ function patchLifecycle (output, option, rel, isComponent) {
   };
 }
 
+var config$1 = {
+  optionMergeStrategies: {},
+  constants: {
+    WEAPP_LIFECYCLE: WEAPP_LIFECYCLE,
+    WEAPP_APP_LIFECYCLE: WEAPP_APP_LIFECYCLE,
+    WEAPP_PAGE_LIFECYCLE: WEAPP_PAGE_LIFECYCLE,
+    WEAPP_COMPONENT_LIFECYCLE: WEAPP_COMPONENT_LIFECYCLE
+  }
+};
+
+var defaultStrat = function (parentVal, childVal) { return childVal ? childVal : parentVal; };
+var strats = null;
+
+
+function simpleMerge(parentVal, childVal) {
+  return (!parentVal || !childVal) ? (parentVal || childVal) : Object.assign({}, parentVal, childVal);
+}
+
+function initStrats () {
+  if (strats)
+    { return strats; }
+
+  strats = config$1.optionMergeStrategies;
+
+  strats.data = strats.props = strats.methods = strats.computed = strats.watch = function (output, option, key, data) {
+    option[key] = simpleMerge(option[key], data);
+  };
+
+  WEAPP_LIFECYCLE.forEach(function (lifecycle) {
+    if (!strats[lifecycle]) {
+      strats[lifecycle] = function (output, option, key, data) {
+        if (!option[key]) {
+          option[key] = isArr(data) ? data: [data];
+        } else {
+          if (isArr(option[key])) {
+            option[key].push(data);
+          } else {
+            option[key] = [ option[key] ].concat(data);
+          }
+        }
+      };
+    }
+  });
+}
+
+function patchMixins (output, option, mixins) {
+  if (!mixins) {
+    return;
+  }
+
+  if (isArr(mixins)) {
+    mixins.forEach(function (mixin) { return patchMixins(output, option, mixin); });
+  } else {
+
+    if (!strats) {
+      initStrats();
+    }
+    for (var k in mixins) {
+      var strat = strats[k] || defaultStrat;
+      strat(output, option, k, mixins[k]);
+    }
+  }
+}
+
 function page (option, rel) {
+  if ( option === void 0 ) option = {};
+
 
   var pageConfig = {};
+
+  patchMixins(pageConfig, option, option.mixins);
 
   if (option.properties) {
     pageConfig.properties = option.properties;
