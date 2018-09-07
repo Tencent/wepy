@@ -38,7 +38,7 @@ const callUserMethod = function (vm, userOpt, method, args) {
 /*
  * patch app lifecyle
  */
-export function patchAppLifecycle (appConfig, option) {
+export function patchAppLifecycle (appConfig, option, rel) {
   appConfig.onLaunch = function (params) {
     let vm = new WepyApp();
     app = vm;
