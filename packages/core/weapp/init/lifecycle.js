@@ -22,13 +22,13 @@ let app;
 
 const callUserMethod = function (vm, userOpt, method, args) {
   let result;
-  if (isStr(method) && isFunc(userOpt[method])) {
+  let methods = userOpt[method];
+  if (isFunc(methods)) {
     result = userOpt[method].apply(vm, args);
-  } else if (isArr(method)) {
-    for (let i in method) {
-      if (isFunc(userOpt[method[i]])) {
-        result = userOpt[method[i]].apply(vm, args);
-        break;
+  } else if (isArr(methods)) {
+    for (let i in methods) {
+      if (isFunc(methods[i])) {
+        result = methods[i].apply(vm, args);
       }
     }
   }
