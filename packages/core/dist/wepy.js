@@ -1557,7 +1557,7 @@ function patchProps (output, props) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
         newProp.type = null;
-        console.warn(("In mini-app, mutiple type is not allowed. The type of \"" + num + "\" will changed to \"null\""));
+        console.warn(("In mini-app, mutiple type is not allowed. The type of \"" + k + "\" will changed to \"null\""));
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
         console.warn(("Type property of props \"" + k + "\" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component"));
