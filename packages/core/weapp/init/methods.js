@@ -86,7 +86,7 @@ const proxyHandler = function (e) {
 }
 
 /*
- * initialize page methods
+ * initialize page methods, also the app
  */
 export function initMethods (vm, methods) {
   if (methods) {

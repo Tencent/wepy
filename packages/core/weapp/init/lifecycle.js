@@ -39,7 +39,7 @@ const callUserMethod = function (vm, userOpt, method, args) {
  * patch app lifecyle
  */
 export function patchAppLifecycle (appConfig, option, rel) {
-  appConfig.onLaunch = function (params) {
+  appConfig.onLaunch = function (...args) {
     let vm = new WepyApp();
     app = vm;
     vm.$option = option;
@@ -48,8 +48,10 @@ export function patchAppLifecycle (appConfig, option, rel) {
     let result;
     vm.$wx = this;
     this.$wepy = vm;
-    (typeof option.onLaunch === 'function') && (result = option.onLaunch.call(vm, params));
-    return result;
+
+    initMethods(vm, option.methods);
+
+    return callUserMethod(vm, vm.$option, 'onLaunch', args);
   };
 };
 

@@ -3,7 +3,7 @@ import { set } from '../observer/index';
 
 export default class Base {
   constructor () {
-
+    this._events = {};
   }
 
   $set (target, key, val) {
