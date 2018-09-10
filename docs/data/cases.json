@@ -3,6 +3,14 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "cases": [
+        { 
+          "name": "旅行者一号Lite", 
+          "email": "1093674548@qq.com", 
+          "link": "", 
+          "opensource": "", 
+          "qrcode": "https://user-images.githubusercontent.com/9388085/45285541-f9853f00-b515-11e8-8321-b28266fe9fde.jpg", 
+          "company": "深圳市盛夏光年科技有限公司" 
+        }, 
         {
             "name": "武侯的猫",
             "email": "jia@wuhou123.com",
