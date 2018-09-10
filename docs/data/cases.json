@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "旅行者一号Lite",
+            "email": "1093674548@qq.com",
+            "link": "https://shengxiagn.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/9388085/45285541-f9853f00-b515-11e8-8321-b28266fe9fde.jpg",
+            "company": "深圳市盛夏光年科技有限公司"
+        },
+        {
             "name": "武侯的猫",
             "email": "jia@wuhou123.com",
             "link": "",
