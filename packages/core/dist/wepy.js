@@ -903,18 +903,18 @@ Base.prototype.$off = function $off (event, fn) {
 Base.prototype.$emit = function $emit (event) {
     var this$1 = this;
 
+  var vm = this;
   var lowerCaseEvent = event.toLowerCase();
-
   var fns = this._events[event] || [];
   if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
     // TODO: handler warn
   }
   var args = toArray(arguments, 1);
-  (this._events[event] || []).forEach(function (fn) {
+  fns.forEach(function (fn) {
     try {
       fn.apply(this$1, args);
     } catch (e) {
-      handleError(e, vm, ("event handnler for \"" + event + "\""));
+      handleError(e, vm, ("event handler for \"" + event + "\""));
     }
   });
   return this;
@@ -1840,24 +1840,24 @@ var callUserMethod = function (vm, userOpt, method, args) {
 /*
  * patch app lifecyle
  */
-function patchAppLifecycle (appConfig, option, rel) {
+function patchAppLifecycle (appConfig, options, rel) {
   appConfig.onLaunch = function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
 
     var vm = new WepyApp();
     app = vm;
-    vm.$option = option;
+    vm.$options = options;
     vm.$route = {};
     vm.$wx = this;
     this.$wepy = vm;
 
-    initMethods(vm, option.methods);
+    initMethods(vm, options.methods);
 
-    return callUserMethod(vm, vm.$option, 'onLaunch', args);
+    return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 }
-function patchLifecycle (output, option, rel, isComponent) {
+function patchLifecycle (output, options, rel, isComponent) {
 
   var initClass = isComponent ? WepyComponent : WepyPage;
   var initLifecycle = function () {
@@ -1872,7 +1872,7 @@ function patchLifecycle (output, option, rel, isComponent) {
     this.$wepy = vm;
     vm.$wx = this;
     vm.$is = this.is;
-    vm.$option = option;
+    vm.$options = options;
     vm.$rel = rel;
     if (!isComponent) {
       vm.$root = vm;
@@ -1885,9 +1885,9 @@ function patchLifecycle (output, option, rel, isComponent) {
 
     initData(vm, output.data, isComponent);
 
-    initMethods(vm, option.methods);
+    initMethods(vm, options.methods);
 
-    initWatch(vm, option.watch);
+    initWatch(vm, options.watch);
 
     // initEvents(vm);
 
@@ -1895,9 +1895,9 @@ function patchLifecycle (output, option, rel, isComponent) {
     initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)));
 
     // not need to patch computed to ouput
-    initComputed(vm, option.computed, true);
+    initComputed(vm, options.computed, true);
 
-    return callUserMethod(vm, vm.$option, 'created', args);
+    return callUserMethod(vm, vm.$options, 'created', args);
   };
 
   output.created = initLifecycle;
@@ -1916,7 +1916,7 @@ function patchLifecycle (output, option, rel, isComponent) {
 
       Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
 
-      return callUserMethod(vm, vm.$option, 'attached', args);
+      return callUserMethod(vm, vm.$options, 'attached', args);
     };
   } else {
     output.attached = function () {
@@ -1938,7 +1938,7 @@ function patchLifecycle (output, option, rel, isComponent) {
       // TODO: page attached
       console.log('TODO: page attached');
 
-      return callUserMethod(vm, vm.$option, 'attached', args);
+      return callUserMethod(vm, vm.$options, 'attached', args);
     };
   }
 
