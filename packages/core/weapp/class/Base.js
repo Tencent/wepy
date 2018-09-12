@@ -66,18 +66,18 @@ export default class Base {
   }
 
   $emit (event) {
+    let vm = this;
     let lowerCaseEvent = event.toLowerCase();
-
     let fns = this._events[event] || [];
     if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
       // TODO: handler warn
     }
     let args = toArray(arguments, 1);
-    (this._events[event] || []).forEach(fn => {
+    fns.forEach(fn => {
       try {
         fn.apply(this, args);
       } catch (e) {
-        handleError(e, vm, `event handnler for "${event}"`);
+        handleError(e, vm, `event handler for "${event}"`);
       }
     });
     return this;
