@@ -226,7 +226,7 @@ export default {
     $copy (obj, deep = false) {
         if (Array.isArray(obj)) {
             return this.$extend(deep, [], obj);
-        } else if ('' + obj === 'null') {
+        } else if (obj === null) {
             return obj;
         } else if (typeof (obj) === 'object') {
             if (isImmutable(obj)) return obj
@@ -331,5 +331,3 @@ export default {
         return str.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '');
     }
 };
-
-
