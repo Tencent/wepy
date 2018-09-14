@@ -3,6 +3,9 @@ import { WEAPP_LIFECYCLE } from '../../shared/index';
 import { patchProps } from './props';
 import { patchData } from './data';
 import { config } from '../config';
+import $global from '../global';
+
+let globalMixinPatched = false;
 
 const defaultStrat = (parentVal, childVal) => childVal ? childVal : parentVal;
 let strats = null;
@@ -42,6 +45,12 @@ function initStrats () {
 export function patchMixins (output, option, mixins) {
   if (!mixins) {
     return;
+  }
+
+  if (!globalMixinPatched) {
+    const globalMixin = $global.mixin || {};
+    mixins = [].concat(mixins).concat(globalMixin);
+    globalMixinPatched = true;
   }
 
   if (isArr(mixins)) {
