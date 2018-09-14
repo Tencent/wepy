@@ -1963,6 +1963,8 @@ var config$1 = {
   }
 };
 
+var globalMixinPatched = false;
+
 var defaultStrat = function (parentVal, childVal) { return childVal ? childVal : parentVal; };
 var strats = null;
 
@@ -2001,6 +2003,12 @@ function initStrats () {
 function patchMixins (output, option, mixins) {
   if (!mixins) {
     return;
+  }
+
+  if (!globalMixinPatched) {
+    var globalMixin = $global.mixin || {};
+    mixins = [].concat(mixins).concat(globalMixin);
+    globalMixinPatched = true;
   }
 
   if (isArr(mixins)) {
@@ -2090,6 +2098,12 @@ function use (plugin) {
   plugin.installed = 1;
 }
 
+function mixin (options) {
+  if ( options === void 0 ) options = {};
+
+  $global.mixin = options;
+}
+
 var wepy = Base;
 
 Object.assign(wepy, {
@@ -2099,7 +2113,8 @@ Object.assign(wepy, {
   global: $global,
 
   // global apis
-  use: use
+  use: use,
+  mixin: mixin
 });
 
 module.exports = wepy;

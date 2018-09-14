@@ -3,7 +3,7 @@ import page from './page';
 import app from './app';
 import component from './component';
 import $global from './global';
-import { use } from './apis/index';
+import { use, mixin } from './apis/index';
 
 
 let wepy = Base;
@@ -15,7 +15,8 @@ Object.assign(wepy, {
   global: $global,
 
   // global apis
-  use
+  use,
+  mixin
 });
 
 
