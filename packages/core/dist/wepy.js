@@ -2007,7 +2007,7 @@ function patchMixins (output, option, mixins) {
 
   if (!globalMixinPatched) {
     var globalMixin = $global.mixin || {};
-    mixins = [].concat(mixins).concat(globalMixin);
+    mixins = [globalMixin].concat(mixins);
     globalMixinPatched = true;
   }
 
@@ -2101,7 +2101,19 @@ function use (plugin) {
 function mixin (options) {
   if ( options === void 0 ) options = {};
 
-  $global.mixin = options;
+  if (isPlainObject(options)) {
+    $global.mixin = options;
+  } else {
+    console.error(
+      'Mixin global api supports plain object only\n\n' +
+      'e.g: \n\n' +
+      'wepy.mixin({\n' +
+      '  created () {\n' +
+      '    console.log(\'global mixin created\')\n' +
+      '  }\n' +
+      '})'
+    );
+  }
 }
 
 var wepy = Base;
