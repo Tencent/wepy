@@ -135,6 +135,13 @@ customFileTypes:
 
 &emsp;&emsp;5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
+&emsp;&emsp;6. 在VS Code编辑器设置中设置。
+//文件-首选项-设置-settings.json
+settings.json
+"files.associations": {
+"*.wpy": "vue"
+}
+
 - **VIM**
 
 &emsp;&emsp;1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
