@@ -8,7 +8,7 @@ const genRel = (rel) => {
     handlerStr += `'${i}': {`;
     let events = Object.keys(handler);
     events.forEach((e, p) => {
-      handlerStr += `'${e}': ${handler[e]}`;
+      handlerStr += `${e}: ${handler[e]}`;
       if (p !== events.length - 1) {
         handlerStr += ',';
       }
