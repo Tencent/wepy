@@ -79,6 +79,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
     vm.$dirty = new Dirty('path');
     vm.$children = [];
+    vm.$refs = {};
 
     this.$wepy = vm;
     vm.$wx = this;

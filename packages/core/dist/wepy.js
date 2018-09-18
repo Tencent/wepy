@@ -1749,8 +1749,19 @@ function patchMethods (output, methods, isComponent) {
 
   target._initComponent = function (e) {
     var child = e.detail;
+    var ref = e.target.dataset.ref;
     var vm = this.$wepy;
     vm.$children.push(child);
+    if (ref) {
+      if (vm.$refs[ref]) {
+        warn(
+          'duplicate ref "' + ref +
+          '" will be covered by the last instance.\n',
+          vm
+        );
+      }
+      vm.$refs[ref] = child;
+    }
     child.$parent = vm;
     child.$app = vm.$app;
     child.$root = vm.$root;
@@ -1868,6 +1879,7 @@ function patchLifecycle (output, options, rel, isComponent) {
 
     vm.$dirty = new Dirty('path');
     vm.$children = [];
+    vm.$refs = {};
 
     this.$wepy = vm;
     vm.$wx = this;
