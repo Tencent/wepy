@@ -1,5 +1,5 @@
 import Event from '../class/Event';
-import { isFunc, isUndef, parseModel  } from './../util/index';
+import { isFunc, isUndef, parseModel, warn } from './../util/index';
 
 const eventHandler = function (method, fn) {
   let methodKey = method.toLowerCase();
@@ -117,8 +117,19 @@ export function patchMethods (output, methods, isComponent) {
 
   target._initComponent = function (e) {
     let child = e.detail;
+    let ref = e.target.dataset.ref;
     let vm = this.$wepy;
     vm.$children.push(child);
+    if (ref) {
+      if (vm.$refs[ref]) {
+        warn(
+          'duplicate ref "' + ref +
+          '" will be covered by the last instance.\n',
+          vm
+        )
+      }
+      vm.$refs[ref] = child;
+    }
     child.$parent = vm;
     child.$app = vm.$app;
     child.$root = vm.$root;
