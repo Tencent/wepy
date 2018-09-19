@@ -486,6 +486,12 @@ export default {
                 if (['hidden', tagprefix + ':if', tagprefix + ':elif', tagprefix + ':else', 'class'].indexOf(attr.name) > -1) {
                     comAttributes[attr.name] = attr.value;
                 }
+
+                // 支持 `data-` 开头的自定义属性
+                // see: https://github.com/Tencent/wepy/issues/1401
+                if (/^data-/.test(attr.name)) {
+                    comAttributes[attr.name] = attr.value;
+                }
             });
             if (com.nodeName === 'component') {
                 comid = util.getComId(com);
