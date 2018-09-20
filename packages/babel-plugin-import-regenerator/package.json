@@ -4,7 +4,7 @@
   "description": "A babel plugin to add a global generator import",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,11 @@
   },
   "homepage": "https://github.com/Tencent/wepy#readme",
   "dependencies": {
-    "@babel/helper-module-imports": "^7.0.0"
+    "@babel/helper-module-imports": "^7.0.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "chai": "^4.1.2"
   }
 }
