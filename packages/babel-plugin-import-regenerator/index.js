@@ -2,7 +2,7 @@ const imports = require('@babel/helper-module-imports');
 
 let importedName;
 
-module.exports = module = ({types: t}) => {
+exports = module.exports = ({types: t}) => {
   return {
     visitor: {
       CallExpression (path, file) {
