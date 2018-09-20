@@ -1,5 +1,5 @@
 {
-  "name": "@wepy/babel-async-to-generator",
+  "name": "@wepy/babel-plugin-import-regenerator",
   "version": "0.0.1",
   "description": "A babel plugin to add a global generator import",
   "main": "index.js",
