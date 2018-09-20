@@ -1,0 +1,25 @@
+{
+  "name": "@wepy/babel-async-to-generator",
+  "version": "0.0.1",
+  "description": "A babel plugin to add a global generator import",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tencent/wepy.git"
+  },
+  "keywords": [
+    "regenerator-runtime"
+  ],
+  "author": "Gcaufy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tencent/wepy/issues"
+  },
+  "homepage": "https://github.com/Tencent/wepy#readme",
+  "dependencies": {
+    "@babel/helper-module-imports": "^7.0.0"
+  }
+}
