@@ -218,6 +218,21 @@ export default class {
             });
         }
     }
+    $resetData() {
+      let k;
+      let pages = getCurrentPages();
+      let _resetData = pages[pages.length - 1].data;
+      for (k in this.data) {
+        this[k] = _resetData[this.$prefix + k];
+      }
+      let coms = Object.getOwnPropertyNames(this.$com);
+      if (coms.length) {
+        coms.forEach((name) => {
+          const com = this.$com[name];
+          com.$resetData();
+        });
+      }
+    }
 
     $initMixins () {
         if (this.mixins) {

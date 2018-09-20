@@ -180,7 +180,7 @@ export default {
 
                 self.$instance.__route__ = pageId;
                 self.$instance.__wxWebviewId__ = webViewId;
-
+                page.$resetData();
                 [].concat(page.$mixins, page).forEach((mix) => {
                     mix['onRoute'] && mix['onRoute'].apply(page, args);
                 });
