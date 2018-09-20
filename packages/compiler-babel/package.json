@@ -12,6 +12,7 @@
   "author": "Gcaufy",
   "license": "MIT",
   "dependencies": {
-    "babel-core": "^6.20.0"
-  }
+    "@babel/core": "^7.1.0"
+  },
+  "devDependencies": {}
 }
