@@ -31,7 +31,7 @@ exports = module.exports = function () {
           }
         }
       }
-      parsed.source.replace(dep.expr.start, dep.expr.end, replaceMent);
+      parsed.source.replace(dep.expr.start, dep.expr.end - 1, replaceMent);
     });
   });
 }
