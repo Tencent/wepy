@@ -37,10 +37,7 @@ class Compile extends Hook {
     this.options = opt;
     this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
-    this.compiled = {};
-    this.involved = {};
-    this.vendors = new moduleSet();
-    this.assets = new moduleSet();
+    this.clear();
     this.resolvers = {};
 
     this.context = process.cwd();
@@ -107,6 +104,14 @@ class Compile extends Hook {
     };
 
 
+  }
+
+  clear () {
+    this.compiled = {};
+    this.involved = {};
+    this.vendors = new moduleSet();
+    this.assets = new moduleSet();
+    return this;
   }
 
   init () {
@@ -278,7 +283,7 @@ class Compile extends Hook {
         let absolutePath = path.resolve(filepath);
         if (this.involved[absolutePath]) {
           this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
-          this.start();
+          this.clear().start();
         }
       }
     })
