@@ -1,15 +1,12 @@
 {
-  "name": "wepy-cli",
-  "version": "1.7.0",
+  "name": "@wepy/cli",
+  "version": "2.0.0-alpha.1",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
     "wepy": "bin/wepy.js"
   },
   "scripts": {
-    "build": "babel --presets es2015,stage-1 src/ --out-dir lib/ --source-maps",
-    "watch-compile": "npm run build -- --watch",
-    "watch": "npm run watch-compile",
     "test": "mocha test/*"
   },
   "repository": {
@@ -69,8 +66,7 @@
     "validate-npm-package-name": "^3.0.0",
     "vue-template-compiler": "^2.5.16",
     "vue-template-es2015-compiler": "^1.6.0",
-    "webpack-sources": "^1.1.0",
-    "xmldom": "^0.1.27"
+    "webpack-sources": "^1.1.0"
   },
   "engines": {
     "node": ">=5.0.0"
