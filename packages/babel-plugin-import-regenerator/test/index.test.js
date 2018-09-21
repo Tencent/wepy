@@ -9,17 +9,17 @@ describe('babel-plugin-import-regenerator', () => {
   let fixtures = readdirSync(fixturesDir);
 
   fixtures.forEach(caseName => {
-    fixturesDir = join(fixturesDir, caseName);
-    const actualFile = join(fixturesDir, 'actual.js');
-    const expectedFile = join(fixturesDir, 'expected.js');
+    const actualFile = join(fixturesDir, caseName, 'actual.js');
+    const expectedFile = join(fixturesDir, caseName, 'expected.js');
 
     it(`should work with ${caseName.split('-').join(' ')}`, () => {
+
       actual = transform(readFileSync(actualFile), {
         presets: [
           'env'
         ],
         plugins: [plugin]
-      }).code
+      }).code;
 
       const expected = readFileSync(expectedFile, 'utf-8');
       expect(actual.trim()).to.equal(expected.trim());
