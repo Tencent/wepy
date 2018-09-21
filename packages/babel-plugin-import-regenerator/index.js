@@ -5,6 +5,9 @@ let importedName;
 exports = module.exports = ({types: t}) => {
   return {
     visitor: {
+      Program (path) {
+        importedName = '';
+      },
       CallExpression (path, file) {
         let callee = path.get('callee');
         if (callee.node && callee.node.object && callee.node.property) {
