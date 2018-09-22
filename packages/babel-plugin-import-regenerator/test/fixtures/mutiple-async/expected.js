@@ -1,8 +1,8 @@
 "use strict";
 
-var _regeneratorRuntime = require("regenerator-runtime");
+var _regeneratorRuntime2 = require("regenerator-runtime");
 
-var _regeneratorRuntime2 = _interopRequireDefault(_regeneratorRuntime);
+var _regeneratorRuntime3 = _interopRequireDefault(_regeneratorRuntime2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17,8 +17,8 @@ exports = module.exports = {
   bar: function () {
     var _ref = _asyncToGenerator(
     /*#__PURE__*/
-    _regeneratorRuntime2.default.mark(function _callee() {
-      return _regeneratorRuntime2.default.wrap(function _callee$(_context) {
+    _regeneratorRuntime3.default.mark(function _callee() {
+      return _regeneratorRuntime3.default.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
@@ -48,8 +48,8 @@ exports = module.exports = {
   bar2: function () {
     var _ref2 = _asyncToGenerator(
     /*#__PURE__*/
-    _regeneratorRuntime2.default.mark(function _callee2() {
-      return _regeneratorRuntime2.default.wrap(function _callee2$(_context2) {
+    _regeneratorRuntime3.default.mark(function _callee2() {
+      return _regeneratorRuntime3.default.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
@@ -76,9 +76,9 @@ exports = module.exports = {
   bar3: function () {
     var _ref3 = _asyncToGenerator(
     /*#__PURE__*/
-    _regeneratorRuntime2.default.mark(function _callee3() {
+    _regeneratorRuntime3.default.mark(function _callee3() {
       var result;
-      return _regeneratorRuntime2.default.wrap(function _callee3$(_context3) {
+      return _regeneratorRuntime3.default.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:

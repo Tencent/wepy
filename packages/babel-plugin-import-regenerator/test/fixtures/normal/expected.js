@@ -1,8 +1,8 @@
 "use strict";
 
-var _regeneratorRuntime = require("regenerator-runtime");
+var _regeneratorRuntime2 = require("regenerator-runtime");
 
-var _regeneratorRuntime2 = _interopRequireDefault(_regeneratorRuntime);
+var _regeneratorRuntime3 = _interopRequireDefault(_regeneratorRuntime2);
 
 var _core = require("@wepy/core");
 
@@ -26,9 +26,9 @@ _core2.default.page({
     testAsync: function () {
       var _ref = _asyncToGenerator(
       /*#__PURE__*/
-      _regeneratorRuntime2.default.mark(function _callee() {
+      _regeneratorRuntime3.default.mark(function _callee() {
         var result;
-        return _regeneratorRuntime2.default.wrap(function _callee$(_context) {
+        return _regeneratorRuntime3.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
