@@ -940,27 +940,23 @@ function proxy (target, sourceKey, key) {
 /*
  * patch data option
  */
-function patchData (output, data) {
-  if (!data) {
-    data = {};
-  }
-  output.data = data;
-}
+function patchData (output, data, vm) {
+  output.data = isFunc(data)
+    ? getData(vm, data)
+    : data || {};
 
+  if (!isPlainObject(output.data)) {
+    warn(
+      'data functions should return an object:\n' +
+      vm
+    );
+  }
+}
 /*
  * init data
  */
-function initData (vm, data) {
-  if (!data) {
-    data = {};
-  }
-  var _data;
-  if (typeof data === 'function') {
-    _data = data.call(vm);
-  } else {
-    _data = clone(data);
-  }
-  vm._data = _data;
+function initData (vm, data, output) {
+  vm._data = data || {};
   Object.keys(_data).forEach(function (key) {
     proxy(vm, '_data', key);
   });
@@ -973,6 +969,18 @@ function initData (vm, data) {
     root: true
   });
   //observe(vm, _data, null, true);
+}
+function getData (vm, data) {
+  // disable dep collection when invoking data getters
+  pushTarget();
+  try {
+    return data.call(vm, vm);
+  } catch (e) {
+    handleError(e, vm, 'data()');
+    return {};
+  } finally {
+    popTarget();
+  }
 }
 
 var seenObjects = new _Set();
@@ -1869,13 +1877,15 @@ function patchAppLifecycle (appConfig, options, rel) {
   };
 }
 function patchLifecycle (output, options, rel, isComponent) {
-
   var initClass = isComponent ? WepyComponent : WepyPage;
+  var vm = new initClass();
+
+  patchData(output, options.data, vm, isComponent);
+
   var initLifecycle = function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
 
-    var vm = new initClass();
 
     vm.$dirty = new Dirty('path');
     vm.$children = [];
@@ -1935,7 +1945,6 @@ function patchLifecycle (output, options, rel, isComponent) {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
  // Page attached
-      var vm = this.$wepy;
       var app = vm.$app;
       var pages = getCurrentPages();
       var currentPage = pages[pages.length - 1];
@@ -2056,8 +2065,6 @@ function page (option, rel) {
 
   patchMethods(pageConfig, option.methods);
 
-  patchData(pageConfig, option.data);
-
   patchLifecycle(pageConfig, option, rel);
 
   return Component(pageConfig);
@@ -2085,8 +2092,6 @@ function component (option, rel) {
   }
 
   patchMethods(compConfig, option.methods, true);
-
-  patchData(compConfig, option.data, true);
 
   patchLifecycle(compConfig, option, rel, true);
 

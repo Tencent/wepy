@@ -1,5 +1,7 @@
-import { observe } from './../observer/index';
-import { noop, clone } from './../../shared/index';
+import { observe } from '../observer/index';
+import { pushTarget, popTarget } from '../observer/dep';
+import { noop, isFunc, isPlainObject } from '../../shared/index';
+import { handleError, warn } from '../util/index';
 
 export const sharedPropertyDefinition = {
   enumerable: true,
@@ -22,28 +24,24 @@ export function proxy (target, sourceKey, key) {
 /*
  * patch data option
  */
-export function patchData (output, data) {
-  if (!data) {
-    data = {};
-  }
-  output.data = data;
-};
+export function patchData (output, data, vm) {
+  output.data = isFunc(data)
+    ? getData(vm, data)
+    : data || {};
 
+  if (!isPlainObject(output.data)) {
+    warn(
+      'data functions should return an object:\n' +
+      vm
+    )
+  }
+};
 
 /*
  * init data
  */
-export function initData (vm, data) {
-  if (!data) {
-    data = {};
-  }
-  let _data;
-  if (typeof data === 'function') {
-    _data = data.call(vm);
-  } else {
-    _data = clone(data);
-  }
-  vm._data = _data;
+export function initData (vm, data, output) {
+  vm._data = data || {};
   Object.keys(_data).forEach(key => {
     proxy(vm, '_data', key);
   });
@@ -56,4 +54,17 @@ export function initData (vm, data) {
     root: true
   });
   //observe(vm, _data, null, true);
-}
+};
+
+export function getData (vm, data) {
+  // disable dep collection when invoking data getters
+  pushTarget();
+  try {
+    return data.call(vm, vm);
+  } catch (e) {
+    handleError(e, vm, 'data()');
+    return {};
+  } finally {
+    popTarget();
+  }
+};
