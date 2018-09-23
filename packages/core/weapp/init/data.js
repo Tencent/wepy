@@ -41,7 +41,8 @@ export function patchData (output, data, vm) {
  * init data
  */
 export function initData (vm, data, output) {
-  vm._data = data || {};
+  let _data = data || {};
+  vm._data = _data;
   Object.keys(_data).forEach(key => {
     proxy(vm, '_data', key);
   });

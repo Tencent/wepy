@@ -956,7 +956,8 @@ function patchData (output, data, vm) {
  * init data
  */
 function initData (vm, data, output) {
-  vm._data = data || {};
+  var _data = data || {};
+  vm._data = _data;
   Object.keys(_data).forEach(function (key) {
     proxy(vm, '_data', key);
   });
