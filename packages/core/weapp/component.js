@@ -15,8 +15,6 @@ function component (option, rel) {
 
   patchMethods(compConfig, option.methods, true);
 
-  patchData(compConfig, option.data, true);
-
   patchLifecycle(compConfig, option, rel, true);
 
   return Component(compConfig);

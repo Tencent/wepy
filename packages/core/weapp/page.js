@@ -1,4 +1,4 @@
-import { patchMixins, patchData, patchMethods, patchLifecycle, patchProps } from './init/index';
+import { patchMixins, patchMethods, patchLifecycle, patchProps } from './init/index';
 
 function page (option = {}, rel) {
 
@@ -16,8 +16,6 @@ function page (option = {}, rel) {
   }
 
   patchMethods(pageConfig, option.methods);
-
-  patchData(pageConfig, option.data);
 
   patchLifecycle(pageConfig, option, rel);
 

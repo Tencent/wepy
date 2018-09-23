@@ -8,7 +8,7 @@ import $global from './../global';
 import { initProps } from './props';
 import { initWatch } from './watch';
 import { initRender } from './render';
-import { initData } from './data';
+import { patchData, initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
 import { initEvents } from './events';
@@ -72,10 +72,12 @@ export function patchComponentLifecycle (compConfig, options) {
 };
 
 export function patchLifecycle (output, options, rel, isComponent) {
-
   const initClass = isComponent ? WepyComponent : WepyPage;
+  let vm = new initClass();
+
+  patchData(output, options.data, vm, isComponent);
+
   const initLifecycle = function (...args) {
-    let vm = new initClass();
 
     vm.$dirty = new Dirty('path');
     vm.$children = [];
@@ -132,7 +134,6 @@ export function patchLifecycle (output, options, rel, isComponent) {
     };
   } else {
     output.attached = function (...args) { // Page attached
-      let vm = this.$wepy;
       let app = vm.$app;
       let pages = getCurrentPages();
       let currentPage = pages[pages.length - 1];
