@@ -168,7 +168,7 @@ customFileTypes:
    * 更多`@`符用法，参见[组件自定义事件](https://github.com/wepyjs/wepy#组件自定义事件)。
    
 6. 事件传参使用优化后语法代替。
-   原`bindtap="click" data-index={{index}}`替换为`@tap="click({{index}})"`。
+   原`bindtap="click" data-index="{{index}}"`替换为`@tap="click({{index}})"`。
    
 7. 自定义组件命名应避开微信原生组件名称以及功能标签`<repeat>`。
    不可以使用`input、button、view、repeat`等微信小程序原生组件名称命名自定义组件；另外也不要使用WePY框架定义的辅助标签`repeat`命名。有关`repeat`的详细信息，请参见[循环列表组件引用](https://github.com/wepyjs/wepy#循环列表组件引用)。
