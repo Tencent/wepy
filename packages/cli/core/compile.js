@@ -185,13 +185,8 @@ class Compile extends Hook {
       });
 
       if (appConfig.subPackages) {
-        let self = this
         appConfig.subPackages.forEach(sub => {
-           self.logger.info(JSON.stringify(sub));
-           sub.pages.forEach(v => {
-            pages.push(path.resolve(app.file, '../'+sub.root || '', v + this.options.wpyExt));
-          });
-          
+          pages.push(path.resolve(app.file, '..', sub + this.options.wpyExt));
         });
       }
 
