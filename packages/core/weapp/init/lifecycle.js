@@ -149,6 +149,72 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
       return callUserMethod(vm, vm.$options, 'attached', args);
     }
+
+    // Page lifecycle will be called under methods
+    // e.g:
+    // Component({
+    //   methods: {
+    //     onLoad () {
+    //       console.log('page onload')
+    //     }
+    //   }
+    // })
+    
+    let pageLifecycle = output.methods;
+    
+    pageLifecycle.onLoad = function (...args) {
+      // TODO: onLoad
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onLoad', args);
+    }
+
+    pageLifecycle.onShow = function (...args) {
+      // TODO: onShow
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onShow', args);
+    }
+
+    pageLifecycle.onHide = function (...args) {
+      // TODO: onHide
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onHide', args);
+    }
+
+    pageLifecycle.onUnload = function (...args) {
+      // TODO: onUnload
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onUnload', args);
+    }
+
+    pageLifecycle.onPullDownRefresh = function (...args) {
+      // TODO: onPullDownRefresh
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onPullDownRefresh', args);
+    }
+
+    pageLifecycle.onReachBottom = function (...args) {
+      // TODO: onReachBottom
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onReachBottom', args);
+    }
+
+    pageLifecycle.onShareAppMessage = function (...args) {
+      // TODO: onShareAppMessage
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onShareAppMessage', args);
+    }
+
+    pageLifecycle.onPageScroll = function (...args) {
+      // TODO: onPageScroll
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onPageScroll', args);
+    }
+
+    pageLifecycle.onTabItemTap = function (...args) {
+      // TODO: onTabItemTap
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
+    }
   }
 
   output.ready = function () {
