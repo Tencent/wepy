@@ -19,7 +19,7 @@ export default class WepyPage extends Base {
       if (isObj(params)) {
         for (let k in params) {
           if (isObj(params[k])) {
-            s += `${k}=${encodeURIComponent(params[k])}`;
+            paramsStr += `${k}=${encodeURIComponent(params[k])}`;
           }
         }
       } else if (isStr(params) && params[0] === '?') {
