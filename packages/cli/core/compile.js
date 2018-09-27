@@ -216,7 +216,16 @@ class Compile extends Hook {
           let usingComponents = parsed.usingComponents || {};
 
           Object.keys(usingComponents).forEach(com => {
-            components.push(path.resolve(comp.file, '..', usingComponents[com] + this.options.wpyExt));
+            let file = path.resolve(comp.file, '..', usingComponents[com]);
+            if (fs.existsSync(file + this.options.wpyExt)) { // It's a wpy component
+              components.push(file + this.options.wpyExt);
+            } else if (fs.existsSync(file + '.json')) { // It's a original component
+              // TODO:
+              // do nothing for original component or ?
+            } else {
+              // e.g.
+              // plugin://
+            }
           });
           tasks = components.map(v => {
             return this.hookUnique('wepy-parser-wpy', v);

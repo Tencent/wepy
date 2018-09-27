@@ -1,6 +1,8 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
 
+const pluginRE = /plugin\:/;
+
 
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
@@ -26,6 +28,9 @@ exports = module.exports = function () {
 
     let resolved = Object.keys(config.usingComponents).map(comp => {
       const url = config.usingComponents[comp];
+      if (pluginRE.test(url)) {
+        return Promise.resolve([comp, url]);
+      }
       const moduleRequest = loaderUtils.urlToRequest(url, url.charAt(0) === '/' ? '' : null);
       return this.resolvers.normal.resolve({}, path.dirname(ctx.file), moduleRequest, {}).then(rst => {
         let parsed = path.parse(rst.path);
