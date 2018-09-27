@@ -1436,7 +1436,7 @@ var WepyPage = (function (Base$$1) {
       if (isObj(params)) {
         for (var k in params) {
           if (isObj(params[k])) {
-            s += k + "=" + (encodeURIComponent(params[k]));
+            paramsStr += k + "=" + (encodeURIComponent(params[k]));
           }
         }
       } else if (isStr(params) && params[0] === '?') {
@@ -1951,6 +1951,99 @@ function patchLifecycle (output, options, rel, isComponent) {
       console.log('TODO: page attached');
 
       return callUserMethod(vm, vm.$options, 'attached', args);
+    };
+
+    // Page lifecycle will be called under methods
+    // e.g:
+    // Component({
+    //   methods: {
+    //     onLoad () {
+    //       console.log('page onload')
+    //     }
+    //   }
+    // })
+    
+    var pageLifecycle = output.methods;
+    
+    pageLifecycle.onLoad = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onLoad
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onLoad', args);
+    };
+
+    pageLifecycle.onShow = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onShow
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onShow', args);
+    };
+
+    pageLifecycle.onHide = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onHide
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onHide', args);
+    };
+
+    pageLifecycle.onUnload = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onUnload
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onUnload', args);
+    };
+
+    pageLifecycle.onPullDownRefresh = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onPullDownRefresh
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onPullDownRefresh', args);
+    };
+
+    pageLifecycle.onReachBottom = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onReachBottom
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onReachBottom', args);
+    };
+
+    pageLifecycle.onShareAppMessage = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onShareAppMessage
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onShareAppMessage', args);
+    };
+
+    pageLifecycle.onPageScroll = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onPageScroll
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onPageScroll', args);
+    };
+
+    pageLifecycle.onTabItemTap = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onTabItemTap
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
     };
   }
 
