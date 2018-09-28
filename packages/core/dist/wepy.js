@@ -1435,7 +1435,7 @@ var WepyPage = (function (Base$$1) {
       var paramsStr = '';
       if (isObj(params)) {
         for (var k in params) {
-          if (isObj(params[k])) {
+          if (isStr(params[k])) {
             paramsStr += k + "=" + (encodeURIComponent(params[k]));
           }
         }
@@ -2106,7 +2106,7 @@ function initStrats () {
 }
 
 function patchMixins (output, option, mixins) {
-  if (!mixins) {
+  if (!mixins && !$global.mixin) {
     return;
   }
 
@@ -2118,6 +2118,7 @@ function patchMixins (output, option, mixins) {
 
   if (isArr(mixins)) {
     mixins.forEach(function (mixin) { return patchMixins(output, option, mixin); });
+    globalMixinPatched = false;
   } else {
 
     if (!strats) {
@@ -2167,6 +2168,8 @@ function app$1 (option, rel) {
 function component (option, rel) {
 
   var compConfig = {};
+  
+  patchMixins(compConfig, option, option.mixins);
 
   if (option.properties) {
     compConfig.properties = option.properties;

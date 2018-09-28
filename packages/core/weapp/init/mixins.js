@@ -43,7 +43,7 @@ function initStrats () {
 }
 
 export function patchMixins (output, option, mixins) {
-  if (!mixins) {
+  if (!mixins && !$global.mixin) {
     return;
   }
 
@@ -55,6 +55,7 @@ export function patchMixins (output, option, mixins) {
 
   if (isArr(mixins)) {
     mixins.forEach(mixin => patchMixins(output, option, mixin));
+    globalMixinPatched = false;
   } else {
 
     if (!strats) {
