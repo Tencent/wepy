@@ -18,7 +18,7 @@ export default class WepyPage extends Base {
       let paramsStr = '';
       if (isObj(params)) {
         for (let k in params) {
-          if (isObj(params[k])) {
+          if (isStr(params[k])) {
             paramsStr += `${k}=${encodeURIComponent(params[k])}`;
           }
         }
