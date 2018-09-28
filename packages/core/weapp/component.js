@@ -1,8 +1,10 @@
-import { patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
+import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
 
 function component (option, rel) {
 
   let compConfig = {};
+  
+  patchMixins(compConfig, option, option.mixins);
 
   if (option.properties) {
     compConfig.properties = option.properties;
