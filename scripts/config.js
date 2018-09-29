@@ -19,9 +19,9 @@ const builds = {
     format: 'cjs',
     banner
   },
-  'wepy-use-promisify': {
-    entry: 'packages/wepy-use-promisify/index.js',
-    dest: 'packages/wepy-use-promisify/dist/index.js',
+  'use-promisify': {
+    entry: 'packages/use-promisify/index.js',
+    dest: 'packages/use-promisify/dist/index.js',
     env: 'development',
     format: 'cjs',
     banner
