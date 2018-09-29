@@ -10,9 +10,6 @@ const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
 
-const ENTRY_FILE = 'app.wpy';
-
-
 exports = module.exports = function () {
   this.register('wepy-parser-wpy', function (file, type) {
     let sfc;

@@ -211,6 +211,7 @@ class Compile extends Hook {
         this.hookUnique('output-components', comps);
 
         let components = [];
+        let originalComponents = [];
         let tasks = [];
 
         comps.forEach(comp => {
@@ -223,8 +224,7 @@ class Compile extends Hook {
             if (fs.existsSync(file + this.options.wpyExt)) { // It's a wpy component
               components.push(file + this.options.wpyExt);
             } else if (fs.existsSync(file + '.json')) { // It's a original component
-              // TODO:
-              // do nothing for original component or ?
+              originalComponents.push(file);
             } else {
               // e.g.
               // plugin://
@@ -232,7 +232,7 @@ class Compile extends Hook {
           });
           tasks = components.map(v => {
             return this.hookUnique('wepy-parser-wpy', v);
-          });
+          }).concat(originalComponents.map(v => this.hookUnique('wepy-parser-component', v)));
         });
 
         if (tasks.length) {

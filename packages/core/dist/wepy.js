@@ -1768,6 +1768,14 @@ function patchMethods (output, methods, isComponent) {
     return vm;
   };
   target._proxy = proxyHandler;
+
+  // TODO: perf
+  // Only orginal component method goes to target. no need to add all methods.
+  if (methods) {
+    Object.keys(methods).forEach(function (method) {
+      target[method] = methods[method];
+    });
+  }
 }
 
 /*
