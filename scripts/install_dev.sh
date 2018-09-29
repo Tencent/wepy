@@ -76,11 +76,11 @@ EOF
 
     cat > "$globalDirForPosix/wepy-$mod.cmd" <<- EOF
 @IF EXIST "%~dp0\node.exe" (
-"%~dp0\node.exe"$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
+"%~dp0\node.exe"$params "$currentDirForWin\packages\cli\bin\wepy.js" %*
 ) ELSE (
 @SETLOCAL
 @SET PATHEXT=%PATHEXT:;.JS;=;%
-node$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
+node$params "$currentDirForWin\packages\cli\bin\wepy.js" %*
 
 )
 EOF
