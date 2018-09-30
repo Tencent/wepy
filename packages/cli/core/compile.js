@@ -18,6 +18,7 @@ const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const loader = require('./loader');
 const logger = require('./util/logger');
+const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
 const walk = require("acorn/dist/walk");
@@ -169,7 +170,7 @@ class Compile extends Hook {
       let styles = sfc.styles;
       let config = sfc.config;
 
-      let appConfig = config.parsed;
+      let appConfig = config.parsed.output;
       if (!appConfig.pages || appConfig.pages.length === 0) {
 
         this.hookUnique('error-handler', {
@@ -189,7 +190,7 @@ class Compile extends Hook {
            sub.pages.forEach(v => {
             pages.push(path.resolve(app.file, '../'+sub.root || '', v + this.options.wpyExt));
           });
-          
+
         });
       }
 
@@ -217,22 +218,15 @@ class Compile extends Hook {
         comps.forEach(comp => {
           let config = comp.sfc.config || {};
           let parsed = config.parsed || {};
-          let usingComponents = parsed.usingComponents || {};
+          let parsedComponents = parsed.components || [];
 
-          Object.keys(usingComponents).forEach(com => {
-            let file = path.resolve(comp.file, '..', usingComponents[com]);
-            if (fs.existsSync(file + this.options.wpyExt)) { // It's a wpy component
-              components.push(file + this.options.wpyExt);
-            } else if (fs.existsSync(file + '.json')) { // It's a original component
-              originalComponents.push(file);
-            } else {
-              // e.g.
-              // plugin://
+          parsedComponents.forEach(com => {
+            if (com.type === 'wepy') { // wepy 组件
+              tasks.push(this.hookUnique('wepy-parser-wpy', com.source, com.prefix === 'module' ? 'module' : 'normal'));
+            } else if (com.type === 'weapp') { // 原生组件
+              tasks.push(this.hookUnique('wepy-parser-component', com.source));
             }
           });
-          tasks = components.map(v => {
-            return this.hookUnique('wepy-parser-wpy', v);
-          }).concat(originalComponents.map(v => this.hookUnique('wepy-parser-component', v)));
         });
 
         if (tasks.length) {
@@ -326,10 +320,19 @@ class Compile extends Hook {
     }
   }
 
-  getTarget (file) {
+  getTarget (file, targetDir) {
     let relative = path.relative(path.join(this.context, this.options.src), file);
-    let target = path.join(this.context, this.options.target, relative);
-    return target;
+    let targetFile = path.join(this.context, targetDir || this.options.target, relative);
+    return targetFile;
+  }
+
+  getModuleTarget (file, targetDir) {
+    let relative = path.relative(this.context, file);
+    let dirs = relative.split(path.sep);
+    dirs.shift();  // shift node_modules
+    relative = dirs.join(path.sep);
+    let targetFile = path.join(this.context, targetDir || this.options.target, VENDOR_DIR, relative);
+    return targetFile;
   }
 
   output (item) {

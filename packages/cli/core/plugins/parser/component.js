@@ -12,6 +12,8 @@ const path = require('path');
 
 exports = module.exports = function () {
   this.register('wepy-parser-component', function (file, type) {
+    let parsedPath = path.parse(file);
+    file = path.join(parsedPath.dir, parsedPath.name);
     let sfc = {
       styles: [],
       script: {},

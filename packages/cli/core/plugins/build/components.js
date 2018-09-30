@@ -14,8 +14,8 @@ exports = module.exports = function () {
         styleCode += v.parsed.code + '\n';
       });
 
-      config.parsed.component = true;
-      config.outputCode = JSON.stringify(config.parsed, null, 4);
+      config.parsed.output.component = true;
+      config.outputCode = JSON.stringify(config.parsed.output, null, 4);
 
       this.hookSeq('script-dep-fix', script.parsed);
       if (!script.empty && !comp.wxComponent) {
@@ -25,7 +25,7 @@ exports = module.exports = function () {
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 
-      let targetFile = this.getTarget(comp.file);
+      let targetFile = comp.type === 'module' ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
       let target = path.parse(targetFile);
       comp.outputFile = path.join(target.dir, target.name);
     });

@@ -10,7 +10,7 @@ exports = module.exports = function () {
 
     let targetFile = path.join(this.context, this.options.target, 'app');
 
-    config.outputCode = JSON.stringify(config.parsed, null, 4);
+    config.outputCode = JSON.stringify(config.parsed.output, null, 4);
 
     this.hookSeq('script-dep-fix', script.parsed);
     this.hookSeq('script-injection', script.parsed, '{a: 1}');

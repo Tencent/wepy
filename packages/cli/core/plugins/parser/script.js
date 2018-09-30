@@ -130,7 +130,7 @@ exports = module.exports = function () {
   this.register('wepy-parser-script', function (node, ctx) {
     let assets = this.assets;
     let npmModules = this.npm;
-    if (ctx.npm) {
+    if (ctx.npm && !ctx.component) {
       if (this.vendors.pending(ctx.file)) {
         return Promise.resolve(this.vendors.get(ctx.file));
       }
@@ -148,9 +148,8 @@ exports = module.exports = function () {
     walker.deps.forEach(dep => {
       depTasks.push(this.hookUnique('wepy-parser-dep', node, ctx, dep));
     });
-
     return Promise.all(depTasks).then(rst => {
-      let type = ctx.npm ? 'npm' : (ctx.sfc ? 'component' : 'require');
+
       let obj = {
         file: ctx.file,
         parser: walker,
@@ -158,10 +157,13 @@ exports = module.exports = function () {
         encoding: node.compiled.encoding || 'utf-8',
         source: source,
         depModules: rst,
-        type: type
+        npm: !!ctx.npm,
+        component: !!ctx.sfc
       };
-      let assets = ctx.npm ? this.vendors : this.assets;
-      assets.update(ctx.file, obj, type);
+
+      // If it's not a component, and it's npm package, then add to vendors;
+      let assets = ctx.npm && !ctx.component ? this.vendors : this.assets;
+      assets.update(ctx.file, obj, 'test');
       obj.id = assets.get(ctx.file);
       return obj;
     });

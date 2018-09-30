@@ -1,9 +1,6 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
 
-const pluginRE = /plugin\:/;
-
-
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
     let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
@@ -21,30 +18,66 @@ exports = module.exports = function () {
     let componentKeys = Object.keys(config.usingComponents);
 
     if (componentKeys.length === 0) {
-      return Promise.resolve(config);
+      return Promise.resolve({
+        output: config
+      });
     }
 
-    // Getting resolved path for usingComponents
+    let resolvedUsingComponents = {};
+    let parseComponents = [];
+    Object.keys(config.usingComponents).forEach(name => {
+      const url = config.usingComponents[name];
 
-    let resolved = Object.keys(config.usingComponents).map(comp => {
-      const url = config.usingComponents[comp];
-      if (pluginRE.test(url)) {
-        return Promise.resolve([comp, url]);
+      let prefix = 'path';
+      // e.g.
+      // plugins://appid/xxxdfdf
+      // module:some-3rd-party-component
+      let matchs = url.match(/([^:]+)\:(.+)/);
+      let request = url;
+
+      if (matchs) {
+        prefix = matchs[1];
+        request = matchs[2];
       }
-      const moduleRequest = loaderUtils.urlToRequest(url, url.charAt(0) === '/' ? '' : null);
-      return this.resolvers.normal.resolve({}, path.dirname(ctx.file), moduleRequest, {}).then(rst => {
-        let parsed = path.parse(rst.path);
-        let fullpath = path.join(parsed.dir, parsed.name); // remove file extention
-        let relative = path.relative(path.dirname(ctx.file), fullpath);
-        return [comp, relative];
+
+      let target = request;
+      let source = request;
+
+      ([ name, prefix, source, target ] = this.hookUniqueReturnArg('wepy-parser-config-component-' + prefix, name, prefix, source, target, ctx));
+      let relativePath = path.relative(path.dirname(ctx.file), target);
+      let parsedPath = path.parse(relativePath);
+      resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+      parseComponents.push({
+        name: name,
+        prefix: prefix,
+        source: source,
+        target: target,
+        request: relativePath,
+        type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
       });
     });
 
-    return Promise.all(resolved).then(rst => {
-      rst.forEach(item => {
-        config.usingComponents[item[0]] = item[1];
-      });
-      return config;
-    });
+    config.usingComponents = resolvedUsingComponents;
+    return {
+      output: config,
+      components: parseComponents
+    };
   });
+
+  this.register('wepy-parser-config-component-module', function (name, prefix, source, target, ctx) {
+    let contextDir = path.dirname(ctx.file);
+    let modulePath = this.resolvers.normal.resolveSync({}, contextDir, source);
+
+    return [ name, prefix, modulePath, this.getModuleTarget(modulePath, this.options.src), ctx ];
+  });
+
+  this.register('wepy-parser-config-component-path', function (name, prefix, source, target, ctx) {
+    const moduleRequest = loaderUtils.urlToRequest(source, source.charAt(0) === '/' ? '' : null);
+
+    let contextDir = path.dirname(ctx.file);
+    let resolvedPath = this.resolvers.normal.resolveSync({}, contextDir, moduleRequest);
+    let relativePath = path.relative(contextDir, resolvedPath);
+    return [ name, prefix, resolvedPath, resolvedPath, ctx ];
+  });
+
 }

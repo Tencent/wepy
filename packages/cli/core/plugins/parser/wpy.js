@@ -24,7 +24,10 @@ exports = module.exports = function () {
       this.compiled[file].sfc = sfc;
       let context = {
         file: file,
-        sfc: sfc
+        sfc: sfc,
+        type: type,
+        npm: type === 'module',
+        component: true
       };
       let sfcConfig = sfc.customBlocks.filter(item => item.type === 'config');
       sfcConfig = sfcConfig.length ? sfcConfig[0] : { type: 'config', content: '' };
