@@ -163,7 +163,7 @@ exports = module.exports = function () {
 
       // If it's not a component, and it's npm package, then add to vendors;
       let assets = ctx.npm && !ctx.component ? this.vendors : this.assets;
-      assets.update(ctx.file, obj, 'test');
+      assets.update(ctx.file, obj, ctx.component ? 'component' : 'require');
       obj.id = assets.get(ctx.file);
       return obj;
     });
