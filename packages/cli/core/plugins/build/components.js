@@ -25,7 +25,7 @@ exports = module.exports = function () {
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 
-      let targetFile = comp.type === 'module' ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
+      let targetFile = comp.npm ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
       let target = path.parse(targetFile);
       comp.outputFile = path.join(target.dir, target.name);
     });

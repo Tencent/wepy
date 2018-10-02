@@ -224,7 +224,7 @@ class Compile extends Hook {
             if (com.type === 'wepy') { // wepy 组件
               tasks.push(this.hookUnique('wepy-parser-wpy', com.source, com.prefix === 'module' ? 'module' : 'normal'));
             } else if (com.type === 'weapp') { // 原生组件
-              tasks.push(this.hookUnique('wepy-parser-component', com.source));
+              tasks.push(this.hookUnique('wepy-parser-component', com.source, com.prefix === 'module' ? 'module' : 'normal'));
             }
           });
         });

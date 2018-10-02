@@ -22,6 +22,7 @@ exports = module.exports = function () {
     let context = {
       sfc: sfc,
       file: file,
+      npm: type === 'module',
       wxComponent: true   // This is a weapp original component
     };
 
