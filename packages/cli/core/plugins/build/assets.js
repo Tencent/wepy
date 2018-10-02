@@ -4,7 +4,7 @@ const path = require('path');
 exports = module.exports = function () {
 
   this.register('build-assets', function buildAssets () {
-    
+
     let result = [];
     let assets = this.assets;
 
@@ -14,11 +14,7 @@ exports = module.exports = function () {
     [].concat(requires, urls).forEach(file => {
 
       let fileData = this.assets.data(file);
-
-      if (fileData.type === 'require') {
-        this.hookSeq('script-dep-fix', fileData);
-      }
-
+      this.hookSeq('script-dep-fix', fileData);
       let targetFile = this.getTarget(file);
 
       result.push({
