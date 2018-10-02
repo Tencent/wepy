@@ -27,8 +27,6 @@ const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
 
-const ENTRY_FILE = 'app.wpy';
-
 class Compile extends Hook {
   constructor (opt) {
     super();
@@ -36,8 +34,11 @@ class Compile extends Hook {
 
     this.version = require('../package.json').version;
     this.options = opt;
-    this.options.entry = path.resolve(path.join(this.options.src, ENTRY_FILE));
 
+    if (!path.isAbsolute(opt.entry)) {
+      this.options.entry = path.resolve(path.join(opt.src, opt.entry));
+    }
+    
     this.clear();
     this.resolvers = {};
 
