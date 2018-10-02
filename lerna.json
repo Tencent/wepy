@@ -6,9 +6,7 @@
   "version": "independent",
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "wepy-cli"
-      ]
+      "commitHooks": false
     }
   }
 }
