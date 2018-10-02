@@ -4,12 +4,13 @@ const loaderUtils = require('loader-utils');
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
     let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
-    configString = configString || '{}';
+    configString = (configString || '{}').trim();
     let config = null;
     try {
       let fn = new Function('return ' + configString);
       config = fn();
     } catch (e) {
+      // TODO: added error handler code
       return Promise.reject(`invalid json: ${configString}`);
     }
     config.component = true;
