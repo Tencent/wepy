@@ -21,13 +21,12 @@ exports = module.exports = function () {
     let components = {};
     let sfcConfig = ctx.sfc.config;
 
-    if (sfcConfig  && sfcConfig.parsed.usingComponents) {
-      let usingComponents = sfcConfig.parsed.usingComponents;
-      for (let k in usingComponents) {
-        components[k] = {
-          path: usingComponents[k]
-        };
-      }
+    let usingComponents = sfcConfig && sfcConfig.parsed.output  ? sfcConfig.parsed.output.usingComponents : {};
+
+    for (let k in usingComponents) {
+      components[k] = {
+        path: usingComponents[k]
+      };
     }
 
     return this.hookUnique('template-parse', node.content, components, ctx).then(rst => {
