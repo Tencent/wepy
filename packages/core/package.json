@@ -1,6 +1,6 @@
 {
   "name": "@wepy/core",
-  "version": "2.0.1-alpha.0",
+  "version": "2.0.2-alpha.0",
   "description": "",
   "main": "./dist/wepy.js",
   "scripts": {
