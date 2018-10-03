@@ -121,9 +121,20 @@ class Compile extends Hook {
       options.supportObject = true;
     };
 
+    const parserHooker = (node, ctx) => {
+      return Promise.resolve(node);
+    }
+
     this.register('before-compiler-less', styleHooker);
     this.register('before-compiler-sass', styleHooker);
     this.register('before-compiler-stylus', styleHooker);
+
+    this.register('before-wepy-parser-config', parserHooker);
+    this.register('before-wepy-parser-script', parserHooker);
+    this.register('before-wepy-parser-template', parserHooker);
+    this.register('before-wepy-parser-style', parserHooker);
+
+
 
     ['output-app', 'output-pages', 'output-components'].forEach(k => {
       this.register(k, function (data) {
@@ -316,6 +327,9 @@ class Compile extends Hook {
 
       this.involved[ctx.file] = 1;
       return this.hookUnique(hookKey, node, ctx.file).then(node => {
+        return this.hookUnique('before-wepy-parser-' + node.type, node, ctx);
+      })
+      .then(node => {
         return this.hookUnique('wepy-parser-' + node.type, node, ctx);
       });
     }
