@@ -1,6 +1,25 @@
-exports = module.exports = function (ins) {
+const {
+  isArr,
+  isFunc
+} = require('../util/tools');
 
-  let plugins = [
+function normalizeCustomPlugins (ins, plugins) {
+  if (!isArr(plugins)) {
+    plugins = [plugins];
+  }
+
+  plugins.forEach((plg, index) => {
+    if (!isFunc(plg)) {
+      ins.logger.error('init', `Plugins init error, plugin ${plg.name} must be a function`);
+    }
+  })
+
+  return plugins;
+}
+
+exports = module.exports = function (ins) {
+  // system plugins
+  let systemPluginFns = [
     './../plugins/scriptDepFix',
     './../plugins/scriptInjection',
     './../plugins/build/app',
@@ -21,6 +40,13 @@ exports = module.exports = function (ins) {
 
     './../plugins/compiler/index',
 
-  ].map(v => require(v).call(ins));
+  ].map(p => require(p));
+  // custom plugins
+  let customPluginFns = normalizeCustomPlugins(ins, ins.options.plugins);
+  debugger
+  [
+    ...systemPluginFns,
+    ...customPluginFns
+  ].map(v => v.call(ins));
 
 }
