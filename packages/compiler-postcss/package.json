@@ -1,0 +1,25 @@
+{
+  "name": "@wepy/compiler-postcss",
+  "version": "2.0.0",
+  "description": "wepy compile postcss",
+  "keywords": [
+    "postcss"
+  ],
+  "author": "fsy0718 <fsy0718@gmail.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/helpers/postcssc.js && mocha ./test/*.test.js"
+  },
+  "peerDependencies": {
+    "postcss": "^7.0.4"
+  },
+  "dependencies": {
+    "enhanced-resolve": "^4.1.0",
+    "mocha": "^5.2.0",
+    "postcss-cssnext": "^3.1.0"
+  }
+}

@@ -1,0 +1,31 @@
+:root {
+  --mainColor: red;
+    --danger-theme: {
+    color: white;
+    background-color: red;
+  }
+}
+
+a {
+  color: var(--mainColor)
+}
+b {
+    @apply --danger-theme;
+}
+
+a {
+  /* direct nesting (& MUST be the first part of selector)*/
+  & span {
+    color: white;
+  }
+
+  /* @nest rule (for complex nesting) */
+  @nest span & {
+    color: blue;
+  }
+
+  /* media query automatic nesting */
+  @media (min-width: 30em) {
+    color: yellow;
+  }
+}
