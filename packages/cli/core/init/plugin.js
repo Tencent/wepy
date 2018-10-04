@@ -43,7 +43,7 @@ exports = module.exports = function (ins) {
   ].map(p => require(p));
   // custom plugins
   let customPluginFns = normalizeCustomPlugins(ins, ins.options.plugins);
-  debugger
+
   [
     ...systemPluginFns,
     ...customPluginFns
