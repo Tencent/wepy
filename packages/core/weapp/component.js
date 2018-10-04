@@ -2,7 +2,11 @@ import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps } from
 
 function component (option, rel) {
 
-  let compConfig = {};
+  let compConfig = {
+    // support component options property
+    // example: options: {addGlobalClass:true}
+    options: option.options || {}
+  };
   
   patchMixins(compConfig, option, option.mixins);
 
