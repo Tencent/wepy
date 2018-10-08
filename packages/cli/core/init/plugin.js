@@ -16,6 +16,7 @@ exports = module.exports = function (ins) {
 
 
     './../plugins/helper/supportSrc',
+    './../plugins/helper/sfcCustomBlock',
     './../plugins/helper/generateCodeFrame',
     './../plugins/helper/errorHandler',
 

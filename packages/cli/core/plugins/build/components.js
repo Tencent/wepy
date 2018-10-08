@@ -7,7 +7,7 @@ exports = module.exports = function () {
     this.logger.info('component', 'building components');
 
     comps.forEach(comp => {
-      let { script, styles, config, template } = comp.sfc;
+      let { script, styles, config, template, wxs } = comp.sfc;
 
       let styleCode = '';
       styles.forEach(v => {
@@ -25,6 +25,13 @@ exports = module.exports = function () {
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;
 
+      if (wxs && wxs.length) {
+        let wxsCode = '';
+        wxs.forEach(item => {
+          wxsCode += item.parsed.output + '\n';
+        });
+        template.outputCode = wxsCode + template.outputCode;
+      }
       let targetFile = comp.npm ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
       let target = path.parse(targetFile);
       comp.outputFile = path.join(target.dir, target.name);

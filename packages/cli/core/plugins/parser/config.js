@@ -3,6 +3,13 @@ const loaderUtils = require('loader-utils');
 
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
+    if (!rst) {
+      return {
+        output: {},
+        components: []
+      };
+    }
+
     let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
     configString = (configString || '{}').trim();
     let config = null;

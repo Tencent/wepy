@@ -29,11 +29,9 @@ exports = module.exports = function () {
         npm: type === 'module',
         component: true
       };
-      let sfcConfig = sfc.customBlocks.filter(item => item.type === 'config');
-      sfcConfig = sfcConfig.length ? sfcConfig[0] : { type: 'config', content: '' };
-      sfcConfig.lang = sfcConfig.lang || 'json';
-      sfc.config = sfcConfig;
 
+      // deal with the custom block, like config, wxs. etc.
+      sfc = this.hookSeq('sfc-custom-block', sfc);
 
       if (!sfc.script) {
         sfc.script = {
@@ -45,13 +43,35 @@ exports = module.exports = function () {
       }
 
       return this.hookAsyncSeq('pre-check-sfc', {
-        node: sfcConfig,
+        node: sfc.config || { type: 'config', lang: 'json', content: '' },
         file: file
       }).then(rst => {
         return this.applyCompiler(rst.node, context);
       }).then(parsed => {
+        sfc.config = sfc.config || {};
         sfc.config.parsed = parsed;
 
+        if (sfc.wxs) {
+          let p = sfc.wxs.map(wxs => {
+            wxs.lang = wxs.lang || 'js';
+            return this.hookAsyncSeq('pre-check-sfc', {
+              node: wxs,
+              file: file
+            }).then(rst => {
+              return this.applyCompiler(rst.node, context);
+            });
+          });
+          return Promise.all(p);
+        }
+        return null;
+      }).then((all = []) => {
+        if (sfc.wxs && all && all.length) {
+          all.forEach((parsed, i) => {
+            sfc.wxs[i].parsed = parsed;
+          });
+        }
+        return context;
+      }).then(context => {
         if (sfc.template && type !== 'app') {
           sfc.template.lang = sfc.template.lang = 'wxml';
           return this.hookAsyncSeq('pre-check-sfc', {
@@ -63,6 +83,7 @@ exports = module.exports = function () {
         }
         return null;
       }).then(parsed => {
+        sfc.config = sfc.config || {};
         sfc.template && (sfc.template.parsed = parsed);
         if (sfc.script) {
           sfc.script.lang = sfc.script.lang || 'babel';
