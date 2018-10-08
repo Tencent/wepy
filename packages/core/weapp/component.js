@@ -2,7 +2,10 @@ import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps } from
 
 function component (option, rel) {
 
-  let compConfig = {};
+  let compConfig = {
+    // add support component external classes
+    externalClasses: option.externalClasses || []
+  };
   
   patchMixins(compConfig, option, option.mixins);
 
