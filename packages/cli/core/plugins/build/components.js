@@ -30,7 +30,11 @@ exports = module.exports = function () {
         wxs.forEach(item => {
           wxsCode += item.parsed.output + '\n';
         });
-        template.outputCode = wxsCode + template.outputCode;
+        template.outputCode =
+          '<!----------   wxs start ----------->\n' +
+          wxsCode +
+          '<!----------   wxs end   ----------->\n' +
+          template.outputCode;
       }
       let targetFile = comp.npm ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
       let target = path.parse(targetFile);
