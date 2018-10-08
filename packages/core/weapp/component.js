@@ -1,29 +1,30 @@
 import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
 
-function component (option, rel) {
+function component (opt = {}, rel) {
 
   let compConfig = {
+    externalClasses: opt.externalClasses || [],
     // support component options property
     // example: options: {addGlobalClass:true}
-    options: option.options || {}
+    options: opt.options || {}
   };
-  
-  patchMixins(compConfig, option, option.mixins);
 
-  if (option.properties) {
-    compConfig.properties = option.properties;
-    if (option.props) {
+  patchMixins(compConfig, opt, opt.mixins);
+
+  if (opt.properties) {
+    compConfig.properties = opt.properties;
+    if (opt.props) {
       console.warn(`props will be ignore, if properties is set`);
     }
-  } else if (option.props) {
-    patchProps(compConfig, option.props);
+  } else if (opt.props) {
+    patchProps(compConfig, opt.props);
   }
 
-  patchMethods(compConfig, option.methods, true);
+  patchMethods(compConfig, opt.methods, true);
 
-  patchData(compConfig, option.data, true);
+  patchData(compConfig, opt.data, true);
 
-  patchLifecycle(compConfig, option, rel, true);
+  patchLifecycle(compConfig, opt, rel, true);
 
   return Component(compConfig);
 }
