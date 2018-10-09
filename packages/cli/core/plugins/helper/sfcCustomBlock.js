@@ -24,6 +24,7 @@ exports = module.exports = function () {
   this.register('sfc-custom-block-wxs', function ({sfc, block}) {
     if (!sfc.wxs)
       sfc.wxs = [];
+    block.lang = block.attrs.lang || 'js';
     sfc.wxs.push(block);
     return {sfc, block};
   });

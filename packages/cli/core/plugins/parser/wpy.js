@@ -53,7 +53,6 @@ exports = module.exports = function () {
 
         if (sfc.wxs) {
           let p = sfc.wxs.map(wxs => {
-            wxs.lang = wxs.lang || 'js';
             return this.hookAsyncSeq('pre-check-sfc', {
               node: wxs,
               file: file
