@@ -208,7 +208,6 @@ class Compile extends Hook {
         if (!comps) {
           return null;
         }
-        debugger
         this.hookSeq('build-components', comps);
         this.hookUnique('output-components', comps);
 
@@ -348,9 +347,6 @@ class Compile extends Hook {
     };
 
     for (let k in outputMap) {
-      if (k === 'config') {
-        debugger
-      }
       if (sfc[k] && sfc[k].outputCode) {
         let filename = item.outputFile + '.' + outputMap[k];
         logger.silly('output', 'write file: ' + filename);
