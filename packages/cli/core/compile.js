@@ -11,9 +11,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const chokidar = require('chokidar');
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
-const node = require("enhanced-resolve/lib/node");
-const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
-const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
+const node = require('enhanced-resolve/lib/node');
+const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSystem');
+const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const loader = require('./loader');
@@ -21,7 +21,7 @@ const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
-const walk = require("acorn/dist/walk");
+const walk = require('acorn/dist/walk');
 
 const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
@@ -208,7 +208,7 @@ class Compile extends Hook {
         if (!comps) {
           return null;
         }
-
+        debugger
         this.hookSeq('build-components', comps);
         this.hookUnique('output-components', comps);
 
@@ -348,6 +348,9 @@ class Compile extends Hook {
     };
 
     for (let k in outputMap) {
+      if (k === 'config') {
+        debugger
+      }
       if (sfc[k] && sfc[k].outputCode) {
         let filename = item.outputFile + '.' + outputMap[k];
         logger.silly('output', 'write file: ' + filename);

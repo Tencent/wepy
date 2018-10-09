@@ -13,7 +13,7 @@ exports = module.exports = function () {
       } else {
         if (typeof depMod === 'object' && !depMod.npm && !depMod.component) {
           // dep is not a npm package, and it's not a component
-          let relativePath = path.relative(path.dirname(parsed.file), depMod.file);
+          let relativePath = path.relative(path.dirname(parsed.file), depMod.file).replace(/\\/g, '/');
           replaceMent = `require('${relativePath}')`;
         } else {
           if (typeof moduleId === 'number') {
@@ -24,11 +24,12 @@ exports = module.exports = function () {
             } else {
               relativePath = path.relative(path.dirname(parsed.file), npmfile);
             }
+            relativePath = relativePath.replace(/\\/g, '/')
             replaceMent = `require('${relativePath}')(${moduleId})`;
           } else if (depMod && depMod.component) {
             let relativePath = path.relative(path.dirname(parsed.file), depMod.file);
             let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
-            relativePath = relativePath.replace(reg, '.js');
+            relativePath = relativePath.replace(reg, '.js').replace(/\\/g, '/');
             replaceMent = `require('${relativePath}')`;
           } else if (depMod === false) {
             replaceMent = '{}';
