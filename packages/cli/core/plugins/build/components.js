@@ -16,6 +16,16 @@ exports = module.exports = function () {
       config.parsed.output.component = true;
       const {usingComponents, ...other} = config.parsed.output
       let newUsingComponents = {}
+      /**
+       * 在windows环境中解析的usingComponent格式为
+       * usingComponent: {
+       *  test: '..\..\test'
+       * }
+       * 需要转换成
+       * usingComponent: {
+       *  test: '../../test'
+       * }
+       */
       for (let i in usingComponents) {
         newUsingComponents[i] = usingComponents[i].replace(/\\/g, '/')
       }
