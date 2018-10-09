@@ -13,10 +13,17 @@ exports = module.exports = function () {
       styles.forEach(v => {
         styleCode += v.parsed.code + '\n';
       });
-
       config.parsed.output.component = true;
-      config.outputCode = JSON.stringify(config.parsed.output, null, 4);
-
+      const {usingComponents, ...other} = config.parsed.output
+      let newUsingComponents = {}
+      for (let i in usingComponents) {
+        newUsingComponents[i] = usingComponents[i].replace(/\\/g, '/')
+      }
+      let output = {
+        ...other,
+        usingComponents: newUsingComponents
+      }
+      config.outputCode = JSON.stringify(output, null, 4);
       this.hookSeq('script-dep-fix', script.parsed);
       if (!script.empty && !comp.wxComponent) {
         this.hookSeq('script-injection', script.parsed, template.parsed.rel);
