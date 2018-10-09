@@ -1373,7 +1373,7 @@ function initComputed (vm, computed) {
     return;
   }
   var watchers = vm._computedWatchers = Object.create(null);
-  var computedWatcherOptions = { lazy: true };
+  var computedWatcherOptions = { lazy: false };
 
   Object.keys(computed).forEach(function (key) {
     var def$$1 = computed[key];
@@ -1383,7 +1383,10 @@ function initComputed (vm, computed) {
       console.error(("Getter is missing for computed property \"" + key + "\""));
     }
 
-    watchers[key] = new Watcher(vm, getter || function () {}, function () {}, computedWatcherOptions);
+    // push to dirty after dep called.
+    watchers[key] = new Watcher(vm, getter || function () {}, function (newv, oldv) {
+      vm.$dirty.push(key, key, newv);
+    }, computedWatcherOptions);
 
     if (typeof def$$1 === 'function') {
       sharedPropertyDefinition.get = createComputedGetter(key);
@@ -1511,10 +1514,6 @@ function initRender (vm, keys) {
     if (vm.$dirty.length()) {
       var keys$1 = vm.$dirty.get('key');
       var dirty = vm.$dirty.pop();
-      // TODO: optimize
-      Object.keys(vm._computedWatchers || []).forEach(function (k) {
-        dirty[k] = vm[k];
-      });
 
       // TODO: reset subs
       Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
@@ -2139,28 +2138,34 @@ function patchMixins (output, option, mixins) {
   }
 }
 
-function page (option, rel) {
-  if ( option === void 0 ) option = {};
+function page (opt, rel) {
+  if ( opt === void 0 ) opt = {};
 
 
-  var pageConfig = {};
+  var pageConfig = {
+    externalClasses: opt.externalClasses || [],
+    // support component options property
+    // example: options: {addGlobalClass:true}
+    options: opt.options || {}
+  };
 
-  patchMixins(pageConfig, option, option.mixins);
 
-  if (option.properties) {
-    pageConfig.properties = option.properties;
-    if (option.props) {
+  patchMixins(pageConfig, opt, opt.mixins);
+
+  if (opt.properties) {
+    pageConfig.properties = opt.properties;
+    if (opt.props) {
       console.warn("props will be ignore, if properties is set");
     }
-  } else if (option.props) {
-    patchProps(pageConfig, option.props);
+  } else if (opt.props) {
+    patchProps(pageConfig, opt.props);
   }
 
-  patchMethods(pageConfig, option.methods);
+  patchMethods(pageConfig, opt.methods);
 
-  patchData(pageConfig, option.data);
+  patchData(pageConfig, opt.data);
 
-  patchLifecycle(pageConfig, option, rel);
+  patchLifecycle(pageConfig, opt, rel);
 
   return Component(pageConfig);
 }
@@ -2173,26 +2178,33 @@ function app$1 (option, rel) {
   return App(appConfig);
 }
 
-function component (option, rel) {
+function component (opt, rel) {
+  if ( opt === void 0 ) opt = {};
 
-  var compConfig = {};
-  
-  patchMixins(compConfig, option, option.mixins);
 
-  if (option.properties) {
-    compConfig.properties = option.properties;
-    if (option.props) {
+  var compConfig = {
+    externalClasses: opt.externalClasses || [],
+    // support component options property
+    // example: options: {addGlobalClass:true}
+    options: opt.options || {}
+  };
+
+  patchMixins(compConfig, opt, opt.mixins);
+
+  if (opt.properties) {
+    compConfig.properties = opt.properties;
+    if (opt.props) {
       console.warn("props will be ignore, if properties is set");
     }
-  } else if (option.props) {
-    patchProps(compConfig, option.props);
+  } else if (opt.props) {
+    patchProps(compConfig, opt.props);
   }
 
-  patchMethods(compConfig, option.methods, true);
+  patchMethods(compConfig, opt.methods, true);
 
-  patchData(compConfig, option.data, true);
+  patchData(compConfig, opt.data, true);
 
-  patchLifecycle(compConfig, option, rel, true);
+  patchLifecycle(compConfig, opt, rel, true);
 
   return Component(compConfig);
 }
