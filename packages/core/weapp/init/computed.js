@@ -27,7 +27,7 @@ export function initComputed (vm, computed) {
     return;
   }
   let watchers = vm._computedWatchers = Object.create(null);
-  let computedWatcherOptions = { lazy: true };
+  let computedWatcherOptions = { lazy: false };
 
   Object.keys(computed).forEach(key => {
     let def = computed[key];
@@ -37,7 +37,10 @@ export function initComputed (vm, computed) {
       console.error(`Getter is missing for computed property "${key}"`)
     }
 
-    watchers[key] = new Watcher(vm, getter || function () {}, function () {}, computedWatcherOptions);
+    // push to dirty after dep called.
+    watchers[key] = new Watcher(vm, getter || function () {}, function (newv, oldv) {
+      vm.$dirty.push(key, key, newv);
+    }, computedWatcherOptions);
 
     if (typeof def === 'function') {
       sharedPropertyDefinition.get = createComputedGetter(key);

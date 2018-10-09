@@ -19,10 +19,6 @@ export function initRender (vm, keys) {
     if (vm.$dirty.length()) {
       let keys = vm.$dirty.get('key');
       let dirty = vm.$dirty.pop();
-      // TODO: optimize
-      Object.keys(vm._computedWatchers || []).forEach(k => {
-        dirty[k] = vm[k];
-      });
 
       // TODO: reset subs
       Object.keys(keys).forEach(key => clone(vm[key]));
