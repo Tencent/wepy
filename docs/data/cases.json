@@ -363,6 +363,14 @@
             "opensource": "",
             "qrcode": "",
             "company": ""
-       }
+       },
+       {
+            "name": "场景小程序",
+            "email": "kevin@yunlai.cn",
+            "link": "https://www.yunlai.cn",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/338079/46715787-112a2180-cc94-11e8-9e24-16e11ea47f8f.jpg",
+            "company": "深圳云来科技有限公司"
+        }
     ]
 }
