@@ -24,4 +24,6 @@ exports = module.exports = function (ins) {
 
   ].map(v => require(v).call(ins));
 
+  (ins.options.plugins || []).map(fn => fn.call(ins));
+
 }

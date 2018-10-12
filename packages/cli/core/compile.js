@@ -350,12 +350,18 @@ class Compile extends Hook {
     for (let k in outputMap) {
       if (sfc[k] && sfc[k].outputCode) {
         let filename = item.outputFile + '.' + outputMap[k];
-        logger.silly('output', 'write file: ' + filename);
-        fs.outputFile(filename, sfc[k].outputCode, function (err) {
-          if (err) {
-            console.log(err);
-          }
-        });
+        let code = sfc[k].outputCode;
+
+        this.hookAsyncSeq('output-file', { filename, code }).then(({ filename, code }) => {
+          logger.silly('output', 'write file: ' + filename);
+          fs.outputFile(filename, sfc[k].outputCode, function (err) {
+            if (err) {
+              console.log(err);
+            }
+          });
+        })
+
+
       }
     }
   }

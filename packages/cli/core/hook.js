@@ -76,7 +76,7 @@ exports = module.exports = class Hook {
     let argLength = args.length;
 
     if (hooks.length === 0) {
-      return Promise.resolve(args);
+      return args.length === 1 ? Promise.resolve(args[0]) : Promise.resolve(args);
     }
 
     return new Promise((resolve, reject) => {
