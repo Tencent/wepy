@@ -63,7 +63,9 @@ const HTML2WXML_MAP = {
   'track': 'video',
   'a': 'navigator',
   'span': 'label',
-  'contact-button': 'contact-button'
+  'contact-button': 'contact-button',
+  // support template [template](https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/template.html)
+  'wx-template': 'template'
 };
 
 /**
