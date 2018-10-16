@@ -1434,27 +1434,27 @@ var WepyPage = (function (Base$$1) {
   WepyPage.prototype.$route = function $route (type, url, params) {
     if ( params === void 0 ) params = {};
 
+    var wxparams;
     if (isStr(url)) {
-      var paramsStr = '';
+      var paramsList = [];
       if (isObj(params)) {
         for (var k in params) {
-          if (isStr(params[k])) {
-            paramsStr += k + "=" + (encodeURIComponent(params[k]));
+          if (!isUndef(params[k])) {
+            paramsList.push((k + "=" + (encodeURIComponent(params[k]))));
           }
         }
-      } else if (isStr(params) && params[0] === '?') {
-        paramsStr = params;
       }
-      if (paramsStr)
-        { url = url + '?' + paramsStr; }
+      if (paramsList.length)
+        { url = url + '?' + paramsList.join('&'); }
 
-      url = { url: url };
+      wxparams = { url: url };
     } else {
-       // TODO: { url: './a?a=1&b=2' }
+      wxparams = url;
     }
-
     var fn = wx[type + 'To'];
-    fn && fn(url);
+    if (isFunc(fn)) {
+      return fn(wxparams);
+    }
   };
 
   return WepyPage;
