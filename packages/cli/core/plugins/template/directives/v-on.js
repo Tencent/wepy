@@ -17,20 +17,26 @@ const parseHandlerProxy = (expr, scope) => {
     handlerExpr += '($event)';
     functionName = 'proxyHandlerWithEvent';
   } else {
-    let detected;
+    let identifiers;
     try {
-      detected = paramsDetect(handlerExpr);
+      identifiers = paramsDetect(handlerExpr);
     } catch (e) {
       throw new Error(`Can not parse "${handlerExpr}"`);
     }
 
-    Object.keys(detected).forEach(d => {
-      if (scope && !detected[d].callable && scope.declared.indexOf(d) !== -1) {
-        injectParams.push(d);
-      }
-    });
 
-    if (detected.$event) {
+    for (let id in identifiers) {
+      let fetch = scope;
+      while(fetch) {
+        if (!identifiers[id].callable && fetch.declared.indexOf(id) !== -1) {
+          injectParams.push(id);
+          break;
+        }
+        fetch = fetch.parent;
+      }
+    }
+
+    if (identifiers.$event) {
       injectParams.push('$event');
       functionName = 'proxyHandlerWithEvent';
     }
