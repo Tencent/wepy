@@ -1,5 +1,5 @@
 import Base from './Base';
-import { isStr, isObj } from '../../shared/index';
+import { isStr, isObj, isUndef, isFunc } from '../../shared/index';
 
 export default class WepyPage extends Base {
 
@@ -14,26 +14,26 @@ export default class WepyPage extends Base {
   $back () {}
 
   $route (type, url, params = {}) {
+    let wxparams;
     if (isStr(url)) {
-      let paramsStr = '';
+      let paramsList = [];
       if (isObj(params)) {
         for (let k in params) {
-          if (isStr(params[k])) {
-            paramsStr += `${k}=${encodeURIComponent(params[k])}`;
+          if (!isUndef(params[k])) {
+            paramsList.push(`${k}=${encodeURIComponent(params[k])}`);
           }
         }
-      } else if (isStr(params) && params[0] === '?') {
-        paramsStr = params;
       }
-      if (paramsStr)
-        url = url + '?' + paramsStr;
+      if (paramsList.length)
+        url = url + '?' + paramsList.join('&');
 
-      url = { url: url };
+      wxparams = { url: url };
     } else {
-       // TODO: { url: './a?a=1&b=2' }
+      wxparams = url;
     }
-
     let fn = wx[type + 'To'];
-    fn && fn(url);
+    if (isFunc(fn)) {
+      return fn(wxparams);
+    }
   }
 }
