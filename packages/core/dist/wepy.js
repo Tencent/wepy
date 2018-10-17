@@ -1412,54 +1412,6 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyPage = (function (Base$$1) {
-  function WepyPage () {
-    Base$$1.apply(this, arguments);
-  }
-
-  if ( Base$$1 ) WepyPage.__proto__ = Base$$1;
-  WepyPage.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyPage.prototype.constructor = WepyPage;
-
-  WepyPage.prototype.$navigate = function $navigate (url, params) {
-    this.$route('navigate', url, params);
-  };
-
-  WepyPage.prototype.$redirect = function $redirect (url, params) {
-    this.$route('redirect', url, params);
-  };
-
-  WepyPage.prototype.$back = function $back () {};
-
-  WepyPage.prototype.$route = function $route (type, url, params) {
-    if ( params === void 0 ) params = {};
-
-    var wxparams;
-    if (isStr(url)) {
-      var paramsList = [];
-      if (isObj(params)) {
-        for (var k in params) {
-          if (!isUndef(params[k])) {
-            paramsList.push((k + "=" + (encodeURIComponent(params[k]))));
-          }
-        }
-      }
-      if (paramsList.length)
-        { url = url + '?' + paramsList.join('&'); }
-
-      wxparams = { url: url };
-    } else {
-      wxparams = url;
-    }
-    var fn = wx[type + 'To'];
-    if (isFunc(fn)) {
-      return fn(wxparams);
-    }
-  };
-
-  return WepyPage;
-}(Base));
-
 var WepyComponent = (function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
@@ -1500,6 +1452,54 @@ var WepyComponent = (function (Base$$1) {
 
   return WepyComponent;
 }(Base));
+
+var WepyPage = (function (WepyComponent$$1) {
+  function WepyPage () {
+    WepyComponent$$1.apply(this, arguments);
+  }
+
+  if ( WepyComponent$$1 ) WepyPage.__proto__ = WepyComponent$$1;
+  WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
+  WepyPage.prototype.constructor = WepyPage;
+
+  WepyPage.prototype.$navigate = function $navigate (url, params) {
+    this.$route('navigate', url, params);
+  };
+
+  WepyPage.prototype.$redirect = function $redirect (url, params) {
+    this.$route('redirect', url, params);
+  };
+
+  WepyPage.prototype.$back = function $back () {};
+
+  WepyPage.prototype.$route = function $route (type, url, params) {
+    if ( params === void 0 ) params = {};
+
+    var wxparams;
+    if (isStr(url)) {
+      var paramsList = [];
+      if (isObj(params)) {
+        for (var k in params) {
+          if (!isUndef(params[k])) {
+            paramsList.push((k + "=" + (encodeURIComponent(params[k]))));
+          }
+        }
+      }
+      if (paramsList.length)
+        { url = url + '?' + paramsList.join('&'); }
+
+      wxparams = { url: url };
+    } else {
+      wxparams = url;
+    }
+    var fn = wx[type + 'To'];
+    if (isFunc(fn)) {
+      return fn(wxparams);
+    }
+  };
+
+  return WepyPage;
+}(WepyComponent));
 
 var $global = {};
 
