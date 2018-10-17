@@ -11,7 +11,7 @@
   "doctype-first": false,
   "tag-pair": true,
   "tag-self-close": false,
-  "spec-char-escape": true,
+  "spec-char-escape": false,
   "id-unique": true,
   "src-not-empty": true,
   // do not need title
