@@ -4,6 +4,8 @@ const onRE = /^@|^v-on:/;
 const bindRE = /^:|^v-bind:/;
 const modifierRE = /\.[^.]+/g;
 
+const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
+
 
 const toAST = (html) => {
   return new Promise((resolve, reject) => {
@@ -38,7 +40,7 @@ exports = module.exports = function () {
 
   this.register('template-parse-ast-attr', function parseAstAttr (item, scope, rel, ctx) {
     let attrs = item.attribs;
-    let parsedAttr = {};
+    let parsedAttr = item.parsedAttr || {};
     let isComponent = !!rel.components[item.name];
     let parsed = null;
 
@@ -65,10 +67,32 @@ exports = module.exports = function () {
         continue;
       }
 
-      let handlers = {};
-      let isHandler = false;
 
-      if (bindRE.test(name)) { // :prop or v-bind:prop;
+      if (nativeBindRE.test(name)) {
+        let bindType = name.match(nativeBindRE)[0];
+        name = name.replace(bindType, '');
+        modifiers = {};
+        if (bindType[bindType.length - 1] === ':') {
+          bindType = bindType.substring(0, bindType.length - 1);
+        }
+        switch (bindType) {
+          case 'bind':
+            break;
+          case 'catch':
+            modifiers.stop = true;
+            break;
+          case 'capture-bind':
+            modifiers.capture = true;
+            break;
+          case 'capture-catch':
+            modifiers.stop = true;
+            modifiers.capture = true;
+            break;
+        }
+
+        let parsedNativeBind = this.hookUnique('template-parse-ast-attr-v-on', item, name, expr, modifiers, scope);
+        this.hookUnique('template-parse-ast-attr-v-on-apply', { parsed: parsedNativeBind, attrs: parsedAttr, rel });
+      } else if (bindRE.test(name)) { // :prop or v-bind:prop;
 
         let parsedBind = this.hookUnique('template-parse-ast-attr-v-bind', item, name, expr, modifiers, scope);
         if (isComponent) { // It's a prop
@@ -125,8 +149,8 @@ exports = module.exports = function () {
     let components = rel.components;
     if (components[item.name]) { // It's a user defined component
       logger.silly('tag', `Found user defined component "${item.name}"`);
-      item.attribs = item.attribs || {};
-      item.attribs['bind_init'] = "_initComponent";
+      item.parsedAttr = item.parsedAttr || {};
+      item.parsedAttr['bind_init'] = "_initComponent";
     } else if (html2wxmlMap[item.name]) {  // Tag is in the map list
       logger.silly('html2wxml', `Change "${item.name}" to "${html2wxmlMap[item.name]}"`);
       item.name = html2wxmlMap[item.name];
