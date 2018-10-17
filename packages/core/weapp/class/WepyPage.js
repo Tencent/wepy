@@ -1,7 +1,7 @@
-import Base from './Base';
+import WepyComponent from './WepyComponent';
 import { isStr, isObj, isUndef, isFunc } from '../../shared/index';
 
-export default class WepyPage extends Base {
+export default class WepyPage extends WepyComponent {
 
   $navigate (url, params) {
     this.$route('navigate', url, params);
