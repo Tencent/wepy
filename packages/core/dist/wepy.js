@@ -1503,6 +1503,22 @@ var WepyPage = (function (WepyComponent$$1) {
 
 var $global = {};
 
+function callUserHook (vm, hookName, arg) {
+  var pageHook = vm.hooks[hookName];
+  var appHook = vm.$app.hooks[hookName];
+
+  arg = isFunc(pageHook) ? pageHook.call(vm, arg) : arg;
+  arg = isFunc(appHook) ? appHook.call(vm, arg) : arg;
+
+  return arg;
+}
+
+function initHooks(vm, hooks) {
+  if ( hooks === void 0 ) hooks = {};
+
+  vm.hooks = hooks;
+}
+
 function initRender (vm, keys) {
   vm._init = false;
   return new Watcher(vm, function () {
@@ -1518,9 +1534,11 @@ function initRender (vm, keys) {
       // TODO: reset subs
       Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
 
-      console.log("setData[" + (vm.$dirty.type) + "]: " + JSON.stringify(dirty));
+      dirty = callUserHook(vm, 'before-setData', dirty);
       vm._fromSelf = true;
-      vm.$wx.setData(dirty);
+      if (dirty) {
+        vm.$wx.setData(dirty);
+      }
     }
   }, function () {
 
@@ -1870,6 +1888,8 @@ function patchAppLifecycle (appConfig, options, rel) {
     vm.$wx = this;
     this.$wepy = vm;
 
+    initHooks(vm, options.hooks);
+
     initMethods(vm, options.methods);
 
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
@@ -1899,6 +1919,8 @@ function patchLifecycle (output, options, rel, isComponent) {
     }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
+
+    initHooks(vm, options.hooks);
 
     initProps(vm, output.properties);
 
@@ -1969,9 +1991,9 @@ function patchLifecycle (output, options, rel, isComponent) {
     //     }
     //   }
     // })
-    
+
     var pageLifecycle = output.methods;
-    
+
     pageLifecycle.onLoad = function () {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
