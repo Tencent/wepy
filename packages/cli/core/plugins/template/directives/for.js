@@ -6,7 +6,7 @@ const Check = require('../util/check');
 
 exports = module.exports = function () {
 
-  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, scope, ctx}) {
+  this.register('template-parse-ast-pre-attr-v-for', function preParseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
     let res = {};
     let currentScope = {};
     let inMatch = expr.match(forAliasRE);
@@ -61,14 +61,32 @@ exports = module.exports = function () {
       });
     }
 
+    item['v-for'] = {
+      'wx:for': `{{ ${res.for} }}`,
+      'wx:for-index': `${res.iterator1 || 'index'}`,
+      'wx:for-item': `${res.alias || 'item'}`,
+      'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
+    };
+
     return {
+      item,
+      name,
+      expr,
+      modifiers,
       scope: currentScope,
-      attrs: {
-        'wx:for': `{{ ${res.for} }}`,
-        'wx:for-index': `${res.iterator1 || 'index'}`,
-        'wx:for-item': `${res.alias || 'item'}`,
-        'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
-      }
+      ctx
+    };
+
+  });
+
+  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
+    let attrs = item['v-for'];
+    delete item['v-for'];
+    return {
+      attrs: attrs
     };
   });
 };
+
+
+

@@ -91,7 +91,9 @@ exports = module.exports = function () {
 
   let evtid = 0; // Global event id
 
-  this.register('template-parse-ast-attr-v-on', function parseAstOn (item, evt, handler, modifiers, scope) {
+  this.register('template-parse-ast-attr-v-on', function parseAstOn ({ item, name, expr, modifiers, scope, ctx }) {
+    let evt = name;
+    let handler = expr;
     let info = parseHandler(evt, handler, modifiers, scope);
     let parsed = {};
 
@@ -113,25 +115,31 @@ exports = module.exports = function () {
     }
     item.events.push(info);
     evtid++;
-    return info;
+    return {
+      hook: 'template-parse-ast-attr-v-on-apply',
+      'v-on': info,
+      attrs: {}
+    };
   });
 
 
-  this.register('template-parse-ast-attr-v-on-apply', function parseBindClass ({ parsed, attrs, rel }) {
+  this.register('template-parse-ast-attr-v-on-apply', function parseBindClass ({ parsed, rel }) {
+    let vOn = parsed['v-on'];
 
-    let isComponent = !!rel.components[parsed.tag];
+    let isComponent = !!rel.components[vOn.tag];
 
     if (isComponent) { // it is a custom defined component
-      rel.on[parsed.event] = rel.handlers.length;
+      rel.on[vOn.event] = rel.handlers.length;
       rel.handlers.push({
-        [parsed.event]: parsed.proxy
+        [vOn.event]: vOn.proxy
       })
     } else {
-      if (!rel.handlers[parsed.evtid])
-        rel.handlers[parsed.evtid] = {};
+      if (!rel.handlers[vOn.evtid])
+        rel.handlers[vOn.evtid] = {};
 
-      rel.handlers[parsed.evtid][parsed.event] = parsed.proxy;
+      rel.handlers[vOn.evtid][vOn.event] = vOn.proxy;
     }
+    return { parsed, rel };
   });
 };
 

@@ -44,6 +44,65 @@ exports = module.exports = function () {
     let isComponent = !!rel.components[item.name];
     let parsed = null;
 
+    let cleanAttrs = [];
+
+
+    // Pre walk attributes
+    for (let name in attrs) {
+      let expr = attrs[name];
+
+      ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
+
+      let modifiers = parseModifiers(name);
+
+      if (modifiers) {
+        name = name.replace(modifierRE, '');
+      }
+
+      let hook = 'template-parse-ast-pre-attr-' + name;
+
+      if (!this.hasHook(hook)) {
+        hook = 'template-parse-ast-pre-attr-[other]';
+      }
+
+      ({ item, name, expr, modifiers, scope, ctx } = this.hookUniqueReturnArg(hook, { item, name, expr, modifiers, scope, ctx }))
+
+      cleanAttrs.push({
+        item: item,
+        name: name,
+        expr: expr,
+        modifiers: modifiers
+      });
+    }
+
+    // Apply walk attributes
+    cleanAttrs.forEach(({ item, name, expr, modifiers }) => {
+
+      let hook = 'template-parse-ast-attr-' + name;
+      if (!this.hasHook(hook)) {
+        hook = 'template-parse-ast-attr-[other]';
+      }
+
+      parsed = this.hookUnique(hook, { item, name, expr, modifiers, scope, ctx });
+
+      let applyHook = parsed.hook || `template-parse-ast-attr-${name}-apply`;
+      if (!this.hasHook(applyHook)) {
+        applyHook = `template-parse-ast-attr-[other]-apply`;
+      }
+
+      debugger;
+      ({ parsed, rel } = this.hookUniqueReturnArg(applyHook, { parsed, rel }));
+
+      if (parsed && parsed.attrs) {
+        parsedAttr = Object.assign(parsedAttr, parsed.attrs);
+      }
+
+    });
+
+    item.parsedAttr = parsedAttr;
+
+    return [ item, scope, rel ];
+    /* REMOVE LATER
     for (let name in attrs) {
 
       let expr = attrs[name];
@@ -116,6 +175,7 @@ exports = module.exports = function () {
     item.parsedAttr = parsedAttr;
 
     return [item, scope, rel];
+    */
   });
 
   this.register('template-parse-ast-tag', function parseAstTag (item, rel) {

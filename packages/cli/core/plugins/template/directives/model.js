@@ -190,7 +190,7 @@ exports = module.exports = function () {
 
   let modelid = 0;
 
-  this.register('template-parse-ast-attr-v-model', function parseVModel ({item, name, expr, modifiers, scope}) {
+  this.register('template-parse-ast-attr-v-model', function parseVModel ({item, name, expr, modifiers, scope, ctx}) {
 
     let attrs = item.attribs;
 
@@ -209,6 +209,7 @@ exports = module.exports = function () {
     }
 
     let rst = {
+      attrs: {},
       model: {
         id: modelid++,
         tag: item.name,
@@ -255,10 +256,11 @@ exports = module.exports = function () {
 
   });
 
-  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply ({ parsed, attrs, rel }) {
+  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply ({ parsed, rel }) {
 
     let model = parsed.model;
     let expr = model.expr.trim();
+    let attrs = parsed.attrs;
 
     if (rel.model) {
       return;
@@ -308,5 +310,7 @@ exports = module.exports = function () {
         rel.models[model.id].handler = generateModelFunction(expr);
       }
     }
+
+    return { parsed, rel };
   });
 };
