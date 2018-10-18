@@ -67,7 +67,6 @@ exports = module.exports = function () {
         continue;
       }
 
-
       if (nativeBindRE.test(name)) {
         let bindType = name.match(nativeBindRE)[0];
         name = name.replace(bindType, '');
@@ -103,29 +102,8 @@ exports = module.exports = function () {
 
       } else if (onRE.test(name)) {  // @ or v-on:
         let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', item, name.replace(onRE, ''), expr, modifiers, scope);
-
-
         this.hookUnique('template-parse-ast-attr-v-on-apply', { parsed: parsedOn, attrs: parsedAttr, rel });
         continue;
-
-        /*
-        if (isComponent) {
-          rel.on[parsedOn.event] = rel.handlers.length;
-          rel.handlers.push({
-            [parsedOn.event]: parsedOn.proxy
-          });
-        } else {
-          parsedAttr = Object.assign(parsedAttr, parsedOn.parsed);
-          if (parsedAttr['data-wpy-evt'] === undefined) {
-            parsedAttr['data-wpy-evt'] = rel.handlers.length;
-            rel.handlers.push({
-              [parsedOn.event]: parsedOn.proxy
-            });
-          } else {
-            rel.handlers[parsedAttr['data-wpy-evt']][parsedOn.event] = parsedOn.proxy
-          }
-        }
-        */
       } else {
         if (parsed) {
           parsedAttr = Object.assign(parsedAttr, parsed.attrs);
