@@ -124,7 +124,7 @@ exports = module.exports = function () {
     if (isComponent) { // it is a custom defined component
       rel.on[parsed.event] = rel.handlers.length;
       rel.handlers.push({
-        [JSON.stringify(parsed.event)]: parsed.proxy
+        [parsed.event]: parsed.proxy
       })
     } else {
       if (!rel.handlers[parsed.evtid])
