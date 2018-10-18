@@ -1,4 +1,5 @@
 import Watcher from './../observer/watcher';
+import { callUserHook } from './hooks';
 import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
 
 
@@ -23,9 +24,11 @@ export function initRender (vm, keys) {
       // TODO: reset subs
       Object.keys(keys).forEach(key => clone(vm[key]));
 
-      console.log(`setData[${vm.$dirty.type}]: ` + JSON.stringify(dirty));
+      dirty = callUserHook(vm, 'before-setData', dirty);
       vm._fromSelf = true;
-      vm.$wx.setData(dirty);
+      if (dirty) {
+        vm.$wx.setData(dirty);
+      }
     }
   }, function () {
 

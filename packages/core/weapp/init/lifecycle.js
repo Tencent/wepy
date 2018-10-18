@@ -5,6 +5,7 @@ import { observe } from './../observer/index';
 import { proxy } from './data';
 import Watcher from './../observer/watcher';
 import $global from './../global';
+import { initHooks } from './hooks';
 import { initProps } from './props';
 import { initWatch } from './watch';
 import { initRender } from './render';
@@ -48,6 +49,8 @@ export function patchAppLifecycle (appConfig, options, rel) {
     let result;
     vm.$wx = this;
     this.$wepy = vm;
+
+    initHooks(vm, options.hooks);
 
     initMethods(vm, options.methods);
 
@@ -95,6 +98,8 @@ export function patchLifecycle (output, options, rel, isComponent) {
     if (!vm.$app) {
       // vm.$app = $global.$app;
     }
+
+    initHooks(vm, options.hooks);
 
     initProps(vm, output.properties);
 
@@ -159,9 +164,9 @@ export function patchLifecycle (output, options, rel, isComponent) {
     //     }
     //   }
     // })
-    
+
     let pageLifecycle = output.methods;
-    
+
     pageLifecycle.onLoad = function (...args) {
       // TODO: onLoad
       let vm = this.$wepy;
