@@ -1,0 +1,17 @@
+{
+  "name": "@wepy/compiler-stylus",
+  "version": "2.0.0",
+  "description": "wepy compile stylus",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "stylus"
+  ],
+  "dependencies": {
+    "stylus": "^0.54.5"
+  },
+  "author": "Gcaufy",
+  "license": "MIT"
+}
