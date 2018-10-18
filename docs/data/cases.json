@@ -11,22 +11,6 @@
           "qrcode": "http://ww1.sinaimg.cn/large/ad5b14bfgy1fw2wqnt7xqj20nw0nwwit.jpg", 
           "company": "" 
         },
-        { 
-          "name": "旅行者一号Lite", 
-          "email": "1093674548@qq.com", 
-          "link": "", 
-          "opensource": "", 
-          "qrcode": "https://user-images.githubusercontent.com/9388085/45285541-f9853f00-b515-11e8-8321-b28266fe9fde.jpg", 
-          "company": "深圳市盛夏光年科技有限公司" 
-        }, 
-        {
-            "name": "旅行者一号Lite",
-            "email": "1093674548@qq.com",
-            "link": "https://shengxiagn.com",
-            "opensource": "",
-            "qrcode": "https://user-images.githubusercontent.com/9388085/45285541-f9853f00-b515-11e8-8321-b28266fe9fde.jpg",
-            "company": "深圳市盛夏光年科技有限公司"
-        },
         {
             "name": "旅行者一号Lite",
             "email": "1093674548@qq.com",
@@ -299,13 +283,6 @@
             "name": "天天跟我买",
             "email": "",
             "link": "http://www.xiaohongchun.com.cn/index",
-            "opensource": "",
-            "qrcode": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg",
-            "company": ""
-        }, {
-           "name": "GitHub掘金版",
-            "email": "",
-            "link": "",
             "opensource": "",
             "qrcode": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg",
             "company": ""
