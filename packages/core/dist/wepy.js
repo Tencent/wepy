@@ -838,6 +838,8 @@ function del (target, key) {
   if (!hasOwn(target, key)) {
     return
   }
+  // set $dirty
+  target[key] = null;
   delete target[key];
   if (!ob) {
     return
