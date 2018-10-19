@@ -314,9 +314,13 @@ class Compile extends Hook {
       }
 
       this.involved[ctx.file] = 1;
-      return this.hookUnique(hookKey, node, ctx.file).then(node => {
-        return this.hookUnique('wepy-parser-' + node.type, node, ctx);
-      });
+      return this.hookUnique(hookKey, node, ctx.file)
+        .then(node => {
+          return this.hookAsyncSeq('before-wepy-parser-' + node.type, { node, ctx });
+        })
+        .then(({ node, ctx }) => {
+          return this.hookUnique('wepy-parser-' + node.type, node, ctx);
+        });
     }
   }
 
