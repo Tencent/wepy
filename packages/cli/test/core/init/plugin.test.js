@@ -1,10 +1,7 @@
 const { alias } = require('../../config');
 const expect = require('chai').expect;
 const initPlugin = require(`${alias.init}/plugin`);
-const Hook = require(`${alias.core}/hook`)
-
-const plg = function () {};
-const invalidPlg = {};
+const Hook = require(`${alias.core}/hook`);
 
 const specs = {
   normal: {
@@ -25,7 +22,7 @@ const specs = {
     plugins: {},
     error: 'EXIT'
   }
-}
+};
 
 const createCompile= (plugins) => {
   const compile = new Hook();
@@ -40,7 +37,7 @@ const createCompile= (plugins) => {
   };
 
   initPlugin(compile);
-}
+};
 
 const compare = (name, done) => {
   const spec = specs[name];
@@ -54,7 +51,7 @@ const compare = (name, done) => {
     expect(spec.called).to.be.true
     done()
   }
-}
+};
 
 describe('init plugin', function () {
 

@@ -13,7 +13,7 @@ function checkPlugins (ins, plugins) {
         'Plugins init error, plugin must be a function.\n' +
         'Please check your plugin in wepy.config.js file'
       );
-      throw new Error('EXIT')
+      throw new Error('EXIT');
     }
   })
 
