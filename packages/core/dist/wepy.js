@@ -820,6 +820,32 @@ function set (vm, target, key, val) {
 }
 
 /**
+ * Delete a property and trigger change if necessary.
+ */
+function del (target, key) {
+  if (Array.isArray(target) && isValidArrayIndex(key)) {
+    target.splice(key, 1);
+    return
+  }
+  var ob = (target).__ob__;
+  if (target._isVue || (ob && ob.vmCount)) {
+    "development" !== 'production' && warn(
+      'Avoid deleting properties on a Vue instance or its root $data ' +
+      '- just set it to null.'
+    );
+    return
+  }
+  if (!hasOwn(target, key)) {
+    return
+  }
+  delete target[key];
+  if (!ob) {
+    return
+  }
+  ob.dep.notify();
+}
+
+/**
  * Collect dependencies on array elements when the array is touched, since
  * we cannot intercept array element access like property getters.
  */
@@ -839,6 +865,10 @@ var Base = function Base () {
 
 Base.prototype.$set = function $set (target, key, val) {
   return set(this, target, key, val);
+};
+
+Base.prototype.$delete = function $delete (target, key) {
+  return del(target, key);
 };
 
 Base.prototype.$on = function $on (event, fn) {
