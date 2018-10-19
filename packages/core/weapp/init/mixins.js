@@ -21,7 +21,7 @@ function initStrats () {
 
   strats = config.optionMergeStrategies;
 
-  strats.data = strats.props = strats.methods = strats.computed = strats.watch = function (output, option, key, data) {
+  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function (output, option, key, data) {
     option[key] = simpleMerge(option[key], data);
   };
 
