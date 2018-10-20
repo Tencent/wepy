@@ -2,10 +2,6 @@ const xmllint = require('../../util/xmllint');
 const errorHandler = require('../../util/error');
 
 exports = module.exports = function () {
-  this.register('before-wepy-parser-template', function ({ node, ctx } = {}) {
-    return Promise.resolve({ node, ctx });
-  });
-
   this.register('wepy-parser-template', function (node, ctx) {
     let code = node.content;
     let msg = xmllint.verify(code);
