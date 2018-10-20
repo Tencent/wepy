@@ -41,6 +41,8 @@ export default {
 
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
+            }else if (config.output === 'baidu' && lib === 'wepy') {
+                lib = 'wepy-baidu';
             }
             lib = resolve.resolveAlias(lib, opath);
             if (lib === 'false') {
@@ -236,6 +238,13 @@ export default {
         }
 
         let compiler = loader.loadCompiler(lang);
+
+        // replace wx to swap
+        if(config.output === 'baidu') {
+            code = code.replace(/\b(wx)\b/g, function(match, p1) {
+                return 'swan';
+            })
+        }
 
         if (!compiler) {
             return;
