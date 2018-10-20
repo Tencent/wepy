@@ -127,10 +127,6 @@ exports = module.exports = function () {
     });
   });
 
-  this.register('before-wepy-parser-script', function ({ node, ctx } = {}) {
-    return Promise.resolve({ node, ctx });
-  });
-
   this.register('wepy-parser-script', function (node, ctx) {
     let assets = this.assets;
     let npmModules = this.npm;

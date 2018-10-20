@@ -2,10 +2,6 @@ const path = require('path');
 const loaderUtils = require('loader-utils');
 
 exports = module.exports = function () {
-  this.register('before-wepy-parser-config', function ({ node, ctx } = {}) {
-    return Promise.resolve({ node, ctx });
-  });
-  
   this.register('wepy-parser-config', function (rst, ctx) {
     if (!rst) {
       return {
