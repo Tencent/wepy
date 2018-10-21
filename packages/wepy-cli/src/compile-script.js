@@ -239,10 +239,15 @@ export default {
 
         let compiler = loader.loadCompiler(lang);
 
-        // replace wx to swap
+        // replace wx to swan
         if(config.output === 'baidu') {
-            code = code.replace(/\b(wx)\b/g, function(match, p1) {
-                return 'swan';
+            code = code.replace(/\b(wx)\b/g, function(match, p1, offset, s) {
+                // ignore like -wx- syntactic
+                if(s.charAt(offset - 1) === '-' || s.charAt(offset + 2 )=== '-') {
+                    return p1;
+                } else {
+                    return 'swan';
+                }
             })
         }
 
