@@ -68,10 +68,10 @@ case \`uname\` in
 esac
 
 if [ -x "\$basedir/node" ]; then
-  "\$basedir/node"$params "$currentDirForPosix/packages/wepy-cli/bin/wepy.js" "\$@"
+  "\$basedir/node"$params "$currentDirForPosix/packages/cli/bin/wepy.js" "\$@"
   ret=\$?
 else
-  node$params "$currentDirForPosix/packages/wepy-cli/bin/wepy.js" "\$@"
+  node$params "$currentDirForPosix/packages/cli/bin/wepy.js" "\$@"
   ret=\$?
 fi
 exit \$ret
@@ -86,11 +86,11 @@ EOF
 
       cat > "$globalDirForPosix/wepy-$mod.cmd" <<- EOF
 @IF EXIST "%~dp0\node.exe" (
-  "%~dp0\node.exe"$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
+  "%~dp0\node.exe"$params "$currentDirForWin\packages\cli\bin\wepy.js" %*
 ) ELSE (
   @SETLOCAL
   @SET PATHEXT=%PATHEXT:;.JS;=;%
-  node$params "$currentDirForWin\packages\wepy-cli\bin\wepy.js" %*
+  node$params "$currentDirForWin\packages\cli\bin\wepy.js" %*
 
 )
 EOF
@@ -107,8 +107,8 @@ cd $currentDirForPosix
 installPackage
 
 # Run npm install for every packages
-# Change to install wepy-cli only
-packages=$(ls -1 ./packages | grep "wepy-cli")
+# Change to install cli only
+packages=$(ls -1 ./packages | grep "cli")
 for package in ${packages[@]}
 do
     cd "$currentDirForPosix/packages/$package"
