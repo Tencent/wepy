@@ -8,6 +8,13 @@ const trailingSlash = /[/\\]$/;
 
 function createPlugin (compliation) {
   class aliasManager extends less.FileManager {
+    supportsSync () {
+      return true;
+    }
+    loadFileSync(filename, currentDirectory, options, environment) {
+      options.syncImport = true;
+      return super.loadFile(filename, currentDirectory, options, environment);
+    }
     supports () {
       return true;
     }
