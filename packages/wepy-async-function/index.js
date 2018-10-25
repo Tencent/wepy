@@ -10,13 +10,10 @@
 
 var g = require('./global');
 
-if(g) {
-    if (!g.Promise) {
-        // IOS 10.0.1 may cause IOS crash.
-        g.Promise = require('promise-polyfill');
-    }
-    if (!g.regeneratorRuntime) {
-        g.regeneratorRuntime = require('regenerator-runtime/runtime');
-    }
+if (g && !g.Promise) {
+    // IOS 10.0.1 may cause IOS crash.
+    g.Promise = require('promise-polyfill');
 }
-
+if (g && !g.regeneratorRuntime) {
+    g.regeneratorRuntime = require('regenerator-runtime/runtime');
+}

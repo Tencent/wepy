@@ -7,6 +7,6 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-// todo, 百度小程序上 this === undefined
+// 百度小程序开发工具上 this === undefined
 var global = module.exports = typeof window !== 'undefined' && window.Math === Math
   ? window : typeof self !== 'undefined' && self.Math === Math ? self : this;
