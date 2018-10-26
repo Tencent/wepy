@@ -30,7 +30,12 @@ export default {
         let ext = cache.getExt();
         let isNPM = false;
 
-        let outputExt = config.output === 'ant' ? 'acss' : 'wxss';
+        let outputExt = config.output === 'ant'
+            ? 'acss'
+            : config.output === 'baidu'
+                ? 'css'
+                : 'wxss';
+
 
         if (typeof styles === 'string') {
             // .compile('less', opath) 这种形式
