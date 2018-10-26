@@ -9,7 +9,10 @@ const trailingSlash = /[/\\]$/;
 function createPlugin (compliation) {
   class aliasManager extends less.FileManager {
     supportsSync () {
-      return true;
+      if (less.version[0] >= 3) {
+        return true;
+      }
+      return false;
     }
     loadFileSync(filename, currentDirectory, options, environment) {
       options.syncImport = true;
