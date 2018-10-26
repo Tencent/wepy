@@ -247,6 +247,29 @@ export default {
                 });
                 return false;
             }
+        } else if (config.output === 'baidu') {
+            wepyrc.build = wepyrc.build || {};
+            wepyrc.build.baidu = wepyrc.build.baidu || {};
+            wepyrc.build.baidu.dist = wepyrc.build.baidu.dist || 'baidu';
+            wepyrc.build.baidu.src = wepyrc.build.baidu.src || 'src';
+            if (wepyrc.build.baidu.resolve)
+                wepyrc.resolve = Object.assign({}, wepyrc.resolve, wepyrc.build.baidu.resolve);
+            wepyrc.output = 'baidu';
+
+            resolve.init(wepyrc.resolve || {});
+            loader.attach(resolve);
+
+            if (!resolve.getPkg('wepy-baidu')) {
+                util.log('正在尝试安装缺失资源 wepy-baidu，请稍等。', '信息');
+                util.exec(`npm install wepy-baidu --save`).then(d => {
+                    util.log(`已完成安装 wepy-baidu，重新启动编译。`, '完成');
+                    this.build(config);
+                }).catch(e => {
+                    util.log(`安装插件失败：wepy-baidu，请尝试运行命令 "npm install wepy-baidu --save" 进行安装。`, '错误');
+                    console.log(e);
+                });
+                return false;
+            }
         }
 
         return true;

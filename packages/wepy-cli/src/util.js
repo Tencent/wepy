@@ -325,6 +325,14 @@ const utils = {
                 return ' a:' + name;
             });
         }
+
+        // replace wx: to s-
+        if(config.output === 'baidu') {
+          content = content.replace(/\s+wx\:(\w+)/ig, (match, name) => {
+            return ' s-' + name;
+          });
+        }
+
         return content.replace(/<([\w-]+)\s*[\s\S]*?(\/|<\/[\w-]+)>/ig, (tag, tagName) => {
             tagName = tagName.toLowerCase();
             return tag.replace(/\s+:([\w-_]*)([\.\w]*)\s*=/ig, (attr, name, type) => { // replace :param.sync => v-bind:param.sync
