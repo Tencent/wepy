@@ -140,7 +140,7 @@ customFileTypes:
 
 - **VIM**
 
-&emsp;&emsp;1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue)。
+&emsp;&emsp;1. 安装 `Vue` 的 VIM 高亮插件，例如 [posva/vim-vue](https://github.com/posva/vim-vue) 或 [leafOfTree/vim-vue-plugin](https://github.com/leafOfTree/vim-vue-plugin)(无须第二步配置）。
 
 &emsp;&emsp;2. 配置 `.wpy` 后缀名的文件使用 `Vue` 语法高亮。
 
