@@ -100,7 +100,7 @@ export class App extends wepy.app {
 
 * `setData(key:String|Object, [value:Object])`：对原有小程序的`setData`的封装。
 
-    因为WePY的脏查检流程会自动执行setData操作，所以通常情况下不需要使用此方法。
+    因为WePY的脏检查流程会自动执行setData操作，所以通常情况下不需要使用此方法。
 
     使用方法如下:
 
