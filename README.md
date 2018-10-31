@@ -5,26 +5,27 @@
 [![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=1.7.x)](https://coveralls.io/github/Tencent/wepy?branch=1.7.x)
 [![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/Tencent/wepy)
 
-### 介绍
+### Introduction
 
-WePY资源汇总：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
+WePY resource summary: [awesome-wepy] (https://github.com/aben1188/awesome-wepy)
 
-WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions的引入都是为了能让开发小程序项目变得更加简单，高效。
+WePY (pronounced: /'wepi/) is a framework for small programs to support component development. Precompilation allows developers to choose their favorite development style to develop small programs. The optimization of the framework, Promise, and Async Functions were introduced to make the development of small program projects easier and more efficient.
 
-同时WePY也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果WePY有不足地方，或者你有更好的想法，欢迎提交ISSUE或者PR。
+At the same time, WePY is also a growing framework, which absorbs a lot of design ideas and ideas from optimizing front-end tools and frameworks. If WePY has a shortage, or if you have a better idea, please submit ISSUE or PR.
 
 
-### 特性：
 
-* 类Vue开发风格
-* 支持自定义组件开发
-* 支持引入NPM包
-* 支持[Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
-* 支持ES2015+特性，如[Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-* 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
-* 支持多种插件处理，文件压缩，图片压缩，内容替换等
-* 支持 Sourcemap，ESLint等
-* 小程序细节优化，如请求列队，事件优化等
+### Features:
+
+*Vue development style
+* Support for custom component development
+* Support for the introduction of NPM packages
+* Support [Promise] (https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94% A8Promise)
+* Support for ES2015+ features such as [Async Functions] (https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF %E7%94%A8async-await)
+* Support multiple compilers, Less/Sass/Stylus/PostCSS, Babel/Typescript, Pug
+* Support a variety of plug-in processing, file compression, image compression, content replacement, etc.
+* Support Sourcemap, ESLint, etc.
+* Small program detail optimization, such as request queues, event optimization, etc.
 
 
 ### Demo
