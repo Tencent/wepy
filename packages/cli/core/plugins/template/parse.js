@@ -90,7 +90,6 @@ exports = module.exports = function () {
         applyHook = `template-parse-ast-attr-[other]-apply`;
       }
 
-      debugger;
       ({ parsed, rel } = this.hookUniqueReturnArg(applyHook, { parsed, rel }));
 
       if (parsed && parsed.attrs) {
