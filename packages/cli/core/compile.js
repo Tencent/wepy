@@ -38,7 +38,7 @@ class Compile extends Hook {
     if (!path.isAbsolute(opt.entry)) {
       this.options.entry = path.resolve(path.join(opt.src, opt.entry));
     }
-    
+
     this.clear();
     this.resolvers = {};
 
@@ -271,10 +271,10 @@ class Compile extends Hook {
       return;
     }
     this.watchInitialized = true;
-    let watchOption = Object.assign({ ignoreInitial: true }, this.options.watchOption || {});
+    let watchOption = Object.assign({ ignoreInitial: true, depth: 99 }, this.options.watchOption || {});
     let target = path.resolve(this.context, this.options.target);
 
-    if (!watchOption.ignore) {
+    if (watchOption.ignore) {
       let type = Object.prototype.toString.call(watchOption.ignore);
       if (type === '[object String]' || type === '[object RegExp]') {
         watchOption.ignored = [watchOption.ignored];
@@ -282,9 +282,11 @@ class Compile extends Hook {
       } else if (type === '[object Array]') {
         watchOption.ignored.push(this.options.target);
       }
+    } else {
+      watchOption.ignored = [this.options.target];
     }
 
-    chokidar.watch(['.', '!./weapp'], watchOption).on('all', (evt, filepath) => {
+    chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
       if (evt === 'change') {
         let absolutePath = path.resolve(filepath);
         if (this.involved[absolutePath]) {
