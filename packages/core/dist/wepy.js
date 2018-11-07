@@ -1771,11 +1771,7 @@ var proxyHandler = function (e) {
   var $event = new Event(e);
 
   if (isFunc(fn)) {
-    if (fn.name === 'proxyHandlerWithEvent') {
-      return fn.apply(vm, params.concat($event));
-    } else {
-      return fn.apply(vm, params);
-    }
+    return fn.apply(vm, params.concat($event));
   } else if (!model) {
     throw new Error('Unrecognized event');
   }
