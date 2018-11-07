@@ -10,12 +10,11 @@ const parseHandlerProxy = (expr, scope) => {
 
   let injectParams = [];
   let handlerExpr = expr;
-  let functionName = 'proxyHandler';
+  let eventInArg = false;
 
   if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
-    injectParams.push('$event');
     handlerExpr += '($event)';
-    functionName = 'proxyHandlerWithEvent';
+    eventInArg = true;
   } else {
     let identifiers;
     try {
@@ -37,13 +36,13 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (identifiers.$event) {
-      injectParams.push('$event');
-      functionName = 'proxyHandlerWithEvent';
+      eventInArg = true;
     }
   }
 
 
-  let proxy = `function ${functionName} (${injectParams.join(', ')}) {
+  let proxy = `function proxy (${injectParams.join(', ')}) {
+    ${eventInArg ? 'let $event = arguments[arguments.length - 1];' : ''}
     with (this) {
       return (function () {
         ${handlerExpr}
