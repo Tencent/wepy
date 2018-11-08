@@ -113,6 +113,7 @@ class Compile extends Hook {
     this.involved = {};
     this.vendors = new moduleSet();
     this.assets = new moduleSet();
+    this.timeStart = new Date().getTime();
     return this;
   }
 
@@ -135,7 +136,12 @@ class Compile extends Hook {
     });
 
     this.register('output-vendor', function (data) {
-      fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
+      if (!fs.existsSync(data.targetFile) || fs.readFileSync(data.targetFile, 'utf-8') !== data.outputCode) {
+        logger.silly('output-vendor', 'write file: ' + data.targetFile);
+        fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
+      } else {
+        logger.silly('output-vendor', 'no change: ' + data.targetFile);
+      }
     });
 
     this.register('output-assets', function (list) {
@@ -203,7 +209,8 @@ class Compile extends Hook {
       this.hookUnique('output-app', app);
       return Promise.all(tasks);
     }).then(comps => {
-
+      this.timeBuildApp = new Date().getTime();
+      this.logger.info('app build time', (this.timeBuildApp - this.timeStart) + 'ms');
       function buildComponents (comps) {
         if (!comps) {
           return null;
@@ -237,15 +244,20 @@ class Compile extends Hook {
       }
       return buildComponents.bind(this)(comps);
     }).then(() => {
+      this.timeBuildComponents = new Date().getTime();
+      this.logger.info('app component time', (this.timeBuildComponents - this.timeBuildApp) + 'ms');
       let vendorData = this.hookSeq('build-vendor', {});
       this.hookUnique('output-vendor', vendorData);
     }).then(() => {
+      this.timeBuildVendor = new Date().getTime();
+      this.logger.info('app vendor time', (this.timeBuildVendor - this.timeBuildComponents) + 'ms');
       let assetsData = this.hookSeq('build-assets');
       this.hookUnique('output-assets', assetsData);
     }).then(() => {
       this.hookUnique('output-static')
     }).then(() => {
       this.logger.info('process finished');
+      this.logger.info('time', (new Date().getTime() - this.timeStart) + 'ms');
       if (this.options.watch) {
         this.logger.info('watching...');
         this.watch();
@@ -358,15 +370,17 @@ class Compile extends Hook {
         let code = sfc[k].outputCode;
 
         this.hookAsyncSeq('output-file', { filename, code }).then(({ filename, code }) => {
-          logger.silly('output', 'write file: ' + filename);
-          fs.outputFile(filename, sfc[k].outputCode, function (err) {
-            if (err) {
-              console.log(err);
-            }
-          });
-        })
-
-
+          if (!fs.existsSync(filename) || fs.readFileSync(filename, 'utf-8') !== code) {
+            logger.silly('output', 'write file: ' + filename);
+            fs.outputFile(filename, sfc[k].outputCode, function (err) {
+              if (err) {
+                console.log(err);
+              }
+            });
+          } else {
+            logger.silly('output', 'no change: ' + filename);
+          }
+        });
       }
     }
   }
