@@ -26,7 +26,7 @@ export function extend () {
   // Handle case when target is a string or something (possible in deep copy)
   if ( typeof target !== 'object' && !(typeof(target) === 'function') ) {
     target = {};
-}
+  }
 
   // Extend jQuery itself if only one argument is passed
   if ( i === length ) {
