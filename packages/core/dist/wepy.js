@@ -1556,7 +1556,6 @@ function initRender (vm, keys) {
   return new Watcher(vm, function () {
     if (!vm._init) {
       keys.forEach(function (key) { return clone(vm[key]); });
-      vm._init = true;
     }
 
     if (vm.$dirty.length()) {
@@ -1566,12 +1565,15 @@ function initRender (vm, keys) {
       // TODO: reset subs
       Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
 
-      dirty = callUserHook(vm, 'before-setData', dirty);
-      vm._fromSelf = true;
+      if (vm._init)
+        { dirty = callUserHook(vm, 'before-setData', dirty); }
+
+      // vm._fromSelf = true;
       if (dirty) {
         vm.$wx.setData(dirty);
       }
     }
+    vm._init = true;
   }, function () {
 
   }, null, true);
