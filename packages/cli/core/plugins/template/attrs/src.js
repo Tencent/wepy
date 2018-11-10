@@ -10,7 +10,7 @@ exports = module.exports = function () {
   this.register('url-to-module', function urlToModule (url) {
     const parsed = {};
     const firstChar = url.charAt(0);
-    // if first char eqs `.` `~` or `@`, It will be treated as module processing  
+    // if first char eqs `.` `~` or `@`, It will be treated as module processing
     if (
       (firstChar === '.' || firstChar === '~' || firstChar === '@') &&
       !(url.includes('{{') || url.includes('}}'))
@@ -29,7 +29,7 @@ exports = module.exports = function () {
 
 
   this.register('template-parse-ast-attr-src', function parseAssetUrl ({item, name, expr, ctx}) {
-    
+
     let parsed = {};
 
     if (!VALID_TAG.includes(item.name)) {
@@ -46,10 +46,10 @@ exports = module.exports = function () {
       const assets = this.assets;
       const type = 'url';
       const encoding = 'base64';
-      
+
       parsed.file = this.resolvers.normal.resolveSync({}, context, parsed.url, {});
       parsed.url = path.relative(path.dirname(ctx.file), parsed.file);
-      
+
       const code = fs.readFileSync(parsed.file, encoding);
       const source = new ReplaceSource(new RawSource(code));
 
@@ -63,7 +63,7 @@ exports = module.exports = function () {
         depModules: null,
         type: type
       };
-      assets.update(parsed.file, obj, type);
+      assets.update(parsed.file, obj, { src: true });
     }
     parsed.attr = { attrs: { src: parsed.url } };
     return parsed.attr;

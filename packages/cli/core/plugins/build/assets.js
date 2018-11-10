@@ -5,29 +5,30 @@ exports = module.exports = function () {
 
   this.register('build-assets', function buildAssets () {
 
+    this.logger.info('assets', 'building assets');
+
     let result = [];
     let assets = this.assets;
 
-    let requires = assets.array('require');
-    let urls = assets.array('url');
+    this.assets.array().forEach(file => {
+      let t = this.assets.type(file);
+      let d = this.assets.data(file);
 
-    [].concat(requires, urls).forEach(file => {
-
-      let fileData = this.assets.data(file);
-
-      if (fileData.type !== 'url') {
-        this.hookSeq('script-dep-fix', fileData);
+      if (t.component && t.type === 'weapp' && !t.dep) {
+        // do nothing
+      } else {
+        if (!t.url) {
+          this.hookSeq('script-dep-fix', d);
+        }
+        let targetFile = t.npm ? this.getModuleTarget(file) : this.getTarget(file);
+        result.push({
+          src: file,
+          targetFile: targetFile,
+          outputCode: d.source.source(),
+          encoding: d.encoding
+        });
       }
-      let targetFile = this.getTarget(file);
-
-      result.push({
-        src: file,
-        targetFile: targetFile,
-        outputCode: fileData.source.source(),
-        encoding: fileData.encoding
-      });
     });
-
     return result;
   });
 

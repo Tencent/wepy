@@ -11,9 +11,9 @@ const fs = require('fs');
 const path = require('path');
 
 exports = module.exports = function () {
-  this.register('wepy-parser-component', function (file, type) {
-    let parsedPath = path.parse(file);
-    file = path.join(parsedPath.dir, parsedPath.name);
+  this.register('wepy-parser-component', function (comp) {
+    let parsedPath = path.parse(comp.path);
+    let file = path.join(parsedPath.dir, parsedPath.name);
     let sfc = {
       styles: [],
       script: {},
@@ -22,8 +22,9 @@ exports = module.exports = function () {
     let context = {
       sfc: sfc,
       file: file,
-      npm: type === 'module',
-      wxComponent: true   // This is a weapp original component
+      npm: comp.npm,
+      component: true,
+      type: 'weapp', // This is a weapp original component
     };
 
     if (!this.compiled[file]) {
@@ -33,9 +34,13 @@ exports = module.exports = function () {
 
     ['.js', '.wxml', 'wxss', '.json'].forEach(v => this.involved[file + v] = 1);
 
-    let styleContent = fs.readFileSync(file + '.wxss', 'utf-8');
+    let styleContent = '';
+    if (fs.existsSync(file + '.wxss')) {  // If there is no wxss, then style is empty
+      styleContent = fs.readFileSync(file + '.wxss', 'utf-8');
+    }
+
     sfc.styles[0] = {
-      content: fs.readFileSync(file + '.wxss', 'utf-8'),
+      content: styleContent,
       type: 'style',
       lang: 'wxss'
     };

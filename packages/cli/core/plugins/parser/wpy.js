@@ -11,8 +11,10 @@ const fs = require('fs');
 const path = require('path');
 
 exports = module.exports = function () {
-  this.register('wepy-parser-wpy', function (file, type) {
+  this.register('wepy-parser-wpy', function (comp) {
     let sfc;
+    let file = comp.path;
+    let type = comp.type;
     if (!this.compiled[file]) {
       this.compiled[file] = {};
     }

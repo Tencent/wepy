@@ -35,7 +35,7 @@ exports = module.exports = function () {
       }
       config.outputCode = JSON.stringify(output, null, 4);
       this.hookSeq('script-dep-fix', script.parsed);
-      if (!script.empty && !comp.wxComponent) {
+      if (!script.empty && !(comp.component && comp.type === 'weapp')) {
         this.hookSeq('script-injection', script.parsed, template.parsed.rel);
       }
       script.outputCode = script.parsed.source.source();

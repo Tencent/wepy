@@ -164,7 +164,7 @@ class Compile extends Hook {
 
   start () {
 
-    this.hookUnique('wepy-parser-wpy', this.options.entry, 'app').then(app => {
+    this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' }).then(app => {
 
       let sfc = app.sfc;
       let script = sfc.script;
@@ -196,7 +196,7 @@ class Compile extends Hook {
       }
 
       let tasks = pages.map(v => {
-        return this.hookUnique('wepy-parser-wpy', v);
+        return this.hookUnique('wepy-parser-wpy', { path: v, type: 'page' });
       });
 
       this.hookSeq('build-app', app);
@@ -222,9 +222,9 @@ class Compile extends Hook {
 
           parsedComponents.forEach(com => {
             if (com.type === 'wepy') { // wepy 组件
-              tasks.push(this.hookUnique('wepy-parser-wpy', com.source, com.prefix === 'module' ? 'module' : 'normal'));
+              tasks.push(this.hookUnique('wepy-parser-wpy', com));
             } else if (com.type === 'weapp') { // 原生组件
-              tasks.push(this.hookUnique('wepy-parser-component', com.source, com.prefix === 'module' ? 'module' : 'normal'));
+              tasks.push(this.hookUnique('wepy-parser-component', com));
             }
           });
         });

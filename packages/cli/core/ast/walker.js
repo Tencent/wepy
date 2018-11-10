@@ -272,6 +272,14 @@ class AstWalker {
   prewalkImportDeclaration(statement) {
 
     const source = statement.source.value;
+    let dep = {
+      statement: statement,
+      expr: statement.source,
+      module: source,
+      loc: statement.source.loc
+    };
+    this.deps.push(dep);
+    return;
     // this.applyPluginsBailResult("import", statement, source);
     statement.specifiers.forEach(function(specifier) {
       const name = specifier.local.name;

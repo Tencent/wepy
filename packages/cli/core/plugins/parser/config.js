@@ -33,7 +33,7 @@ exports = module.exports = function () {
 
     let resolvedUsingComponents = {};
     let parseComponents = [];
-    Object.keys(config.usingComponents).forEach(name => {
+    let plist = Object.keys(config.usingComponents).map(name => {
       const url = config.usingComponents[name];
 
       let prefix = 'path';
@@ -51,6 +51,22 @@ exports = module.exports = function () {
       let target = request;
       let source = request;
 
+      return this.hookUnique('wepy-parser-config-component-' + prefix, name, prefix, source, target, ctx).then(({ name, prefix, resolved, target, npm }) => {
+        let relativePath = path.relative(path.dirname(ctx.file), target);
+        let parsedPath = path.parse(relativePath);
+        resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+        parseComponents.push({
+          name,
+          prefix,
+          resolved,
+          path: resolved.path,
+          target,
+          npm,
+          request: relativePath,
+          type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
+        });
+      });
+
       ([ name, prefix, source, target ] = this.hookUniqueReturnArg('wepy-parser-config-component-' + prefix, name, prefix, source, target, ctx));
       let relativePath = path.relative(path.dirname(ctx.file), target);
       let parsedPath = path.parse(relativePath);
@@ -65,6 +81,14 @@ exports = module.exports = function () {
       });
     });
 
+    return Promise.all(plist).then(() => {
+      config.usingComponents = resolvedUsingComponents;
+      return {
+        output: config,
+        components: parseComponents
+      }
+    });
+
     config.usingComponents = resolvedUsingComponents;
     return {
       output: config,
@@ -76,7 +100,15 @@ exports = module.exports = function () {
     let contextDir = path.dirname(ctx.file);
     let modulePath = this.resolvers.normal.resolveSync({}, contextDir, source);
 
-    return [ name, prefix, modulePath, this.getModuleTarget(modulePath, this.options.src), ctx ];
+    return this.resolvers.normal.resolve({}, contextDir, source, {}).then(resolved => {
+      return {
+        name: name,
+        prefix: prefix,
+        resolved: resolved,
+        target: this.getModuleTarget(resolved.path, this.options.src),
+        npm: resolved.meta.descriptionFileRoot !== this.context
+      };
+    });
   });
 
   this.register('wepy-parser-config-component-path', function (name, prefix, source, target, ctx) {
@@ -85,7 +117,16 @@ exports = module.exports = function () {
     let contextDir = path.dirname(ctx.file);
     let resolvedPath = this.resolvers.normal.resolveSync({}, contextDir, moduleRequest);
     let relativePath = path.relative(contextDir, resolvedPath);
-    return [ name, prefix, resolvedPath, resolvedPath, ctx ];
+
+    return this.resolvers.normal.resolve({}, contextDir, moduleRequest, {}).then(resolved => {
+      return {
+        name: name,
+        prefix: prefix,
+        resolved: resolved,
+        target: resolved.path,
+        npm: resolved.meta.descriptionFileRoot !== this.context
+      };
+    });
   });
 
 }
