@@ -15,12 +15,14 @@ const createPlugin = require('./createPlugin');
 exports = module.exports = function (options) {
   return function () {
 
-    this.register('wepy-compiler-less', function (node, file) {
+    this.register('wepy-compiler-less', function (node, ctx) {
 
       let config = Object.assign({
         relativeUrls: true,
         plugins: []
       }, options);
+
+      let file = typeof ctx === 'string' ? ctx : ctx.file;
 
       config.filename = file;
 
