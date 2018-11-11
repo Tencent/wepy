@@ -11,8 +11,9 @@ const babel = require('@babel/core');
 
 exports = module.exports = function (options) {
   return function () {
-    this.register('wepy-compiler-babel', function (node, file) {
+    this.register('wepy-compiler-babel', function (node, ctx) {
       let p;
+      let file = typeof ctx === 'string' ? ctx : ctx.file
       try {
         let compiled = babel.transform(node.content, options);
         node.compiled = compiled;
