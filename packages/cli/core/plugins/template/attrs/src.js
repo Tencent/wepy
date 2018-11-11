@@ -63,7 +63,7 @@ exports = module.exports = function () {
         depModules: null,
         type: type
       };
-      assets.update(parsed.file, obj, { src: true });
+      assets.update(parsed.file, obj, { url: true });
     }
     parsed.attr = { attrs: { src: parsed.url } };
     return parsed.attr;

@@ -37,6 +37,7 @@
     "commander": "^2.9.0",
     "compare-versions": "^3.0.0",
     "consolidate": "^0.15.0",
+    "css": "^2.2.4",
     "download": "^6.2.5",
     "download-git-repo": "^1.0.2",
     "enhanced-resolve": "^4.1.0",

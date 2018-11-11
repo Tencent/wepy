@@ -316,7 +316,7 @@ class Compile extends Hook {
       }
 
       this.involved[ctx.file] = 1;
-      return this.hookUnique(hookKey, node, ctx.file)
+      return this.hookUnique(hookKey, node, ctx)
         .then(node => {
           return this.hookAsyncSeq('before-wepy-parser-' + node.type, { node, ctx });
         })
