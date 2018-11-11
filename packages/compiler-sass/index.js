@@ -13,7 +13,8 @@ const sass = require('node-sass');
 const resolveImporter = require('./resolveImporter');
 
 function createSassPlugin (compilation, type, options) {
-  return function (node, file) {
+  return function (node, ctx) {
+    let file = typeof ctx === 'string' ? ctx : ctx.file;
     let config = Object.assign({
       file: file
     }, options);
