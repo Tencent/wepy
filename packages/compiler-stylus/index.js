@@ -11,16 +11,17 @@
 const stylus = require('stylus');
 
 exports = module.exports = function (options) {
-  console.log(options)
   return function () {
-    this.register('wepy-compiler-stylus', function (node, file) {
+    this.register('wepy-compiler-stylus', function (node, ctx) {
+
+      let file = typeof ctx === 'string' ? ctx : ctx.file;
 
       return new Promise ((resolve, reject) => {
         let config = Object.assign({
           relativeUrls: true,
           plugins: []
         }, options);
-  
+
         config.filename = file;
 
         stylus.render(node.content || '', config, function (err, css) {
