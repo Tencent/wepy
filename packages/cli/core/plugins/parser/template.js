@@ -3,6 +3,15 @@ const errorHandler = require('../../util/error');
 
 exports = module.exports = function () {
   this.register('wepy-parser-template', function (node, ctx) {
+
+    // If it's weapp, do not compile it.
+    if (ctx.type === 'weapp') {
+      return Promise.resolve({
+        code: node.content,
+        rel: {}
+      });
+    }
+
     let code = node.content;
     let msg = xmllint.verify(code);
     msg.forEach(item => {
