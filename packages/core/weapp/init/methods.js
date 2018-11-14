@@ -26,7 +26,8 @@ const eventHandler = function (method, fn) {
 const proxyHandler = function (e) {
   let vm = this.$wepy;
   let type = e.type;
-  let dataset = e.currentTarget.dataset;
+  // touchstart do not have currentTarget
+  let dataset = (e.currentTarget || e.target).dataset;
   let evtid = dataset.wpyEvt;
   let modelId = dataset.modelId;
   let rel = vm.$rel || {};
