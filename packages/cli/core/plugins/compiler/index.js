@@ -33,7 +33,7 @@ exports = module.exports = function () {
           // add assets dependencies
           this.assets.update(importfile, {
             encoding: encoding,
-            source: new RawSource(code),
+            source: new RawSource(fs.readFileSync(importfile, encoding)),
           }, { url: true, npm: ctx.npm });
 
           this.hookUnique('wepy-compiler-wxss', {
