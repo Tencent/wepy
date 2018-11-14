@@ -14,7 +14,7 @@ exports = module.exports = function () {
       let t = this.assets.type(file);
       let d = this.assets.data(file);
 
-      if (t.component && t.type === 'weapp' && !t.dep) {
+      if (t.component && !t.dep) { // If it's a component and it's not a dependences
         // do nothing
       } else {
         if (!t.url) {
