@@ -138,7 +138,7 @@ function extend () {
   // Handle case when target is a string or something (possible in deep copy)
   if ( typeof target !== 'object' && !(typeof(target) === 'function') ) {
     target = {};
-}
+  }
 
   // Extend jQuery itself if only one argument is passed
   if ( i === length ) {
@@ -1565,8 +1565,9 @@ function initRender (vm, keys) {
       // TODO: reset subs
       Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
 
-      if (vm._init)
-        { dirty = callUserHook(vm, 'before-setData', dirty); }
+      if (vm._init) {
+        dirty = callUserHook(vm, 'before-setData', dirty);
+      }
 
       // vm._fromSelf = true;
       if (dirty) {
@@ -1724,7 +1725,8 @@ var Event = function Event (e) {
 var proxyHandler = function (e) {
   var vm = this.$wepy;
   var type = e.type;
-  var dataset = e.currentTarget.dataset;
+  // touchstart do not have currentTarget
+  var dataset = (e.currentTarget || e.target).dataset;
   var evtid = dataset.wpyEvt;
   var modelId = dataset.modelId;
   var rel = vm.$rel || {};
