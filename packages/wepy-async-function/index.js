@@ -10,11 +10,15 @@
 
 var g = require('./global');
 
-// 百度小程序开发工具上 this === undefined
-if (g && !g.Promise) {
+// fixed global.Object is undefined in lodash/_freeGlobal.js
+if(!global.Object) {
+    global['Object'] = Object;
+}
+
+if (!g.Promise) {
     // IOS 10.0.1 may cause IOS crash.
     g.Promise = require('promise-polyfill');
 }
-if (g && !g.regeneratorRuntime) {
+if (!g.regeneratorRuntime) {
     g.regeneratorRuntime = require('regenerator-runtime/runtime');
 }
