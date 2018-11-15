@@ -10,10 +10,15 @@
 
 var g = require('./global');
 
+// fixed global.Object is undefined in lodash/_freeGlobal.js
+if(!global.Object) {
+    global['Object'] = Object;
+}
+
 if (!g.Promise) {
-  // IOS 10.0.1 may cause IOS crash.
-  g.Promise = require('promise-polyfill');
+    // IOS 10.0.1 may cause IOS crash.
+    g.Promise = require('promise-polyfill');
 }
 if (!g.regeneratorRuntime) {
-  g.regeneratorRuntime = require('regenerator-runtime/runtime');
+    g.regeneratorRuntime = require('regenerator-runtime/runtime');
 }
