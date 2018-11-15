@@ -10,9 +10,9 @@
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
 var native = require('../lib/native.js').default;
-var wxfake = require('./wxfake');
+var swanfake = require('./swanfake');
 
-wxfake.resetGlobal();
+swanfake.resetGlobal();
 
 var Index = require('./fake/page');
 var Page2 = require('./fake/page2');
@@ -27,8 +27,8 @@ let page2Config = wepy.$createPage(Page2, 'pages/page2', true);
 let page = pageConfig.$page;
 let app = appConfig.$app;
 
-pageConfig.onLoad.call(wxfake.getWxPage());
-pageConfig.onShow.call(wxfake.getWxPage(), {p: 1});
+pageConfig.onLoad.call(swanfake.getWxPage());
+pageConfig.onShow.call(swanfake.getWxPage(), {p: 1});
 
 
 describe('page.js', () => {
@@ -85,7 +85,7 @@ describe('page.js', () => {
         let pageConfig = wepy.$createPage(Index, true);
         let page = pageConfig.$page;
 
-        pageConfig.onLoad.call(wxfake.getWxPage());
+        pageConfig.onLoad.call(swanfake.getWxPage());
 
         assert.strictEqual(page.$com.coma.comprop2, 'static props', 'static props checking');
 
@@ -179,15 +179,15 @@ describe('page.js', () => {
 
         page.$redirect('./page2', {a: 1, b: 2});
 
-        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
-        page2Config.onShow.call(wxfake.getWxPage());
+        page2Config.onLoad.call(swanfake.getWxPage(), {a: 1, b: 2});
+        page2Config.onShow.call(swanfake.getWxPage());
 
         assert.strictEqual(page.$preloadData, undefined, 'page preload data will be cleared after redirect');
 
 
         page2.$back();
 
-        pageConfig.onShow.call(wxfake.getWxPage(), {p: 1});
+        pageConfig.onShow.call(swanfake.getWxPage(), {p: 1});
 
         page.$preload({e: 2, f: 3});
 
@@ -201,8 +201,8 @@ describe('page.js', () => {
 
         page.$navigate({url: './page2?aa=1&bb=2'});
 
-        page2Config.onLoad.call(wxfake.getWxPage(), {aa: 1, bb: 2});
-        page2Config.onShow.call(wxfake.getWxPage());
+        page2Config.onLoad.call(swanfake.getWxPage(), {aa: 1, bb: 2});
+        page2Config.onShow.call(swanfake.getWxPage());
 
         page2.$back(5);
 
@@ -234,7 +234,7 @@ describe('page.js', () => {
 
         page.$redirect('./page2', {a: 1, b: 2});
 
-        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
+        page2Config.onLoad.call(swanfake.getWxPage(), {a: 1, b: 2});
 
         page2.onPrefetch = function () {
             return Promise.resolve(1);
@@ -247,12 +247,12 @@ describe('page.js', () => {
             });
         };
         page.$redirect('./page2', {a: 1, b: 2});
-        page2Config.onLoad.call(wxfake.getWxPage(), {a: 1, b: 2});
+        page2Config.onLoad.call(swanfake.getWxPage(), {a: 1, b: 2});
     });
 
 
     it('onReady', () => {
-        page2Config.onReady.call(wxfake.getWxPage());
+        page2Config.onReady.call(swanfake.getWxPage());
     });
 
 

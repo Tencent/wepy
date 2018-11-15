@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -9,7 +9,7 @@
 
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
-var wxfake = require('./wxfake');
+var swanfake = require('./swanfake');
 
 var App = require('./fake/app');
 var Index = require('./fake/page');
@@ -21,25 +21,25 @@ var Index = require('./fake/page');
 
 var MixinA = require('./fake/mixin');
 
-var wxfake = require('./wxfake');
+var swanfake = require('./swanfake');
 
 
 describe('component.js', () => {
 
 
-    wxfake.resetGlobal();
+    swanfake.resetGlobal();
 
     let appConfig = wepy.$createApp(App, true);
     let pageConfig = wepy.$createPage(Index, true);
-    pageConfig.onLoad.call(wxfake.getWxPage());
+    pageConfig.onLoad.call(swanfake.getWxPage());
 
 
 
     let index = new Index();
-    index.$init(wxfake.getWxPage(), wxfake.getWxPage());
+    index.$init(swanfake.getWxPage(), swanfake.getWxPage());
 
     let com = new ComA();
-    com.$init(wxfake.getWxPage(), index, index);
+    com.$init(swanfake.getWxPage(), index, index);
 
 
     com.prefix = '$coma';
@@ -263,7 +263,7 @@ describe('component.js', () => {
         let page = pageConfig.$page;
         let app = appConfig.$app;
 
-        pageConfig.onLoad.call(wxfake.getWxPage());
+        pageConfig.onLoad.call(swanfake.getWxPage());
 
 
         page.$invoke('./coma/comaa', 'testInvoke', 'arg1', 'arg2');

@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -11,10 +11,11 @@
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
 var mixin = require('../lib/mixin.js').default;
-var wxfake = require('./wxfake');
+var swanfake = require('./swanfake');
 var Index = require('./fake/page');
 var App = require('./fake/app');
 
+swanfake.resetGlobal();
 
 describe('mixin.js', () => {
 
@@ -62,7 +63,7 @@ describe('mixin.js', () => {
         let page = pageConfig.$page;
         let app = appConfig.$app;
 
-        pageConfig.onLoad.call(wxfake.getWxPage());
+        pageConfig.onLoad.call(swanfake.getWxPage());
 
 
         assert.strictEqual(page.func1(), 'parent-func1', 'mixin customize function wont copy if parent function exsit.');

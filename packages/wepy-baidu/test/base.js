@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -9,21 +9,21 @@
 
 var assert = require('assert');
 var wepy = require('../lib/wepy.js').default;
-var wxfake = require('./wxfake');
+var swanfake = require('./swanfake');
 
 
 var App = require('./fake/app');
 var Index = require('./fake/page');
 
 
-wxfake.resetGlobal();
+swanfake.resetGlobal();
 
 
 describe('base.js', () => {
 
 
     it('create app', () => {
-        wxfake.resetGlobal();
+        swanfake.resetGlobal();
 
         let config = wepy.$createApp(App, true);
 
@@ -33,14 +33,14 @@ describe('base.js', () => {
     it('create page', () => {
         let page = wepy.$createPage(Index, true);
 
-        page.onLoad.call(wxfake.getWxPage());
+        page.onLoad.call(swanfake.getWxPage());
 
         assert.strictEqual(typeof page.onShow, 'function', 'return a page object');
 
-        //page.onLoad.call(wxfake.getWxPage(), {p: 1});
+        //page.onLoad.call(swanfake.getWxPage(), {p: 1});
 
 
-        page.onShow.call(wxfake.getWxPage(), {p: 1});
+        page.onShow.call(swanfake.getWxPage(), {p: 1});
 
         let comEvt = new wepy.event('test_com_tap', page, 'test_case');
         comEvt.$transfor({
