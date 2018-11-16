@@ -66,19 +66,6 @@ exports = module.exports = function () {
           type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
         });
       });
-
-      ([ name, prefix, source, target ] = this.hookUniqueReturnArg('wepy-parser-config-component-' + prefix, name, prefix, source, target, ctx));
-      let relativePath = path.relative(path.dirname(ctx.file), target);
-      let parsedPath = path.parse(relativePath);
-      resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
-      parseComponents.push({
-        name: name,
-        prefix: prefix,
-        source: source,
-        target: target,
-        request: relativePath,
-        type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
-      });
     });
 
     return Promise.all(plist).then(() => {
