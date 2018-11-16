@@ -204,15 +204,16 @@ exports = module.exports = function () {
   });
 
   this.register('template-parse-ast', function parseAST (ast, scope, rel, ctx) {
+    let currentScope;
     ast.forEach(item => {
       if (item.type === 'tag') {
         [item, rel] = this.hookSeq('template-parse-ast-tag', item, rel);
       }
       if (item.attribs) {
-        [item, scope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel, ctx);
+        [item, currentScope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel, ctx);
       }
       if (item.children && item.children.length) {
-        [item.childen, scope, rel] = this.hookSeq('template-parse-ast', item.children, scope, rel, ctx);
+        [item.childen, currentScope, rel] = this.hookSeq('template-parse-ast', item.children, currentScope, rel, ctx);
       }
     });
     return [ast, scope, rel];
