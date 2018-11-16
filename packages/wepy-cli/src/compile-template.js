@@ -234,7 +234,11 @@ export default {
     updateBind (node, template, rootTemplate, prefix, ignores = {}, mapping = {}) {
 
         let config = cache.getConfig();
-        let tagprefix = config.output === 'ant' ? 'a' : 'wx';
+        let tagprefix = config.output === 'ant'
+            ? 'a:'
+            : config.output === 'baidu'
+                ? 's-'
+                : 'wx:';
 
         node = this.fixRelativePath(node, template, rootTemplate);
 
@@ -273,9 +277,9 @@ export default {
                     if (attr.value.indexOf('{{') > -1) {
                         attr.value = this.parseExp(attr.value, prefix, ignores, mapping);
                     }
-                    if (attr.name === tagprefix + ':for' || attr.name === tagprefix + ':for-items') {
-                        let index = node.getAttribute(tagprefix + ':for-index') || 'index';
-                        let item = node.getAttribute(tagprefix + ':for-item') || 'item';
+                    if (attr.name === tagprefix + 'for' || attr.name === tagprefix + 'for-items') {
+                        let index = node.getAttribute(tagprefix + 'for-index') || 'index';
+                        let item = node.getAttribute(tagprefix + 'for-item') || 'item';
                         ignores[index] = true;
                         ignores[item] = true;
                         //attr.value = parseExp(attr.value, prefix, ignores);
@@ -365,7 +369,11 @@ export default {
     compileXML (node, template, rootTemplate, prefix, childNodes, comAppendAttribute = {}, propsMapping = {}) {
 
         let config = cache.getConfig();
-        let tagprefix = config.output === 'ant' ? 'a' : 'wx';
+        let tagprefix = config.output === 'ant'
+            ? 'a:'
+            : config.output === 'baidu'
+                ? 's-'
+                : 'wx:';
         this.updateSlot(node, childNodes);
 
         this.updateBind(node, template, rootTemplate, prefix, {}, propsMapping);
@@ -433,7 +441,7 @@ export default {
                 };
                 [].slice.call(com.attributes || []).forEach(attr => {
 
-                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class', 'a:if', 'a:elif', 'a:else'].indexOf(attr.name) > -1) {
+                    if (['hidden', 'wx:if', 'wx:elif', 'wx:else', 'class', 'a:if', 'a:elif', 'a:else', 's-if', 's-elif', 's-else'].indexOf(attr.name) > -1) {
                         comAttributes[attr.name] = attr.value;
                     }
                     let name = attr.name;
@@ -540,7 +548,7 @@ export default {
             let node = cWpy.createParser(opath).parseFromString(content);
             node = this.compileXML(node, template);
             opath.npm = template.npm;
-            let target = util.getDistPath(opath, config.output === 'ant' ? 'axml' : 'wxml', src, dist);
+            let target = util.getDistPath(opath, config.output === 'ant' ? 'axml' : config.output === 'baidu' ? 'swan' : 'wxml', src, dist);
 
             if (node.childNodes.length === 0) {
                 // empty node tostring will cause an error.
