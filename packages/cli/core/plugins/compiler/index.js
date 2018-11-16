@@ -30,16 +30,25 @@ exports = module.exports = function () {
         let encoding = 'utf-8';
 
         if (this.assets.get(importfile) === undefined) {
-          // add assets dependencies
-          this.assets.update(importfile, {
-            encoding: encoding,
-            source: new RawSource(fs.readFileSync(importfile, encoding)),
-          }, { url: true, npm: ctx.npm });
+          let importCode;
+          
+          try {
+            importCode = fs.readFileSync(importfile, encoding);
+          } catch(e) {
+            this.logger.warn('compiler', `Can not open file ${importfile} in ${ctx.file}`);
+          }
+          
+          if (importCode) {
+            // add assets dependencies
+            this.assets.update(importfile, {
+              encoding: encoding,
+              source: new RawSource(importCode),
+            }, { url: true, npm: ctx.npm });
 
-          this.hookUnique('wepy-compiler-wxss', {
-            content: fs.readFileSync(importfile, encoding)
-          }, Object.assign({}, ctx, { dep: true }));
-
+            this.hookUnique('wepy-compiler-wxss', {
+              content: importCode
+            }, Object.assign({}, ctx, { dep: true }));
+          }
         }
       }
     });
