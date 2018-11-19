@@ -1,0 +1,19 @@
+{
+  "name": "@wepy/plugin-eslint",
+  "version": "0.1.0",
+  "description": "wepy eslint",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy",
+    "eslint"
+  ],
+  "author": "dlhandsome",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-friendly-formatter": "^4.0.1"
+  }
+}
