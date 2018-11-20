@@ -134,6 +134,9 @@ export default class {
             hideKeyboard: true,
             stopPullDownRefresh: true,
 
+            // 自定义分析
+            reportAnalytics: true,
+
             // 拓展接口
             arrayBufferToBase64: true,
             base64ToArrayBuffer: true

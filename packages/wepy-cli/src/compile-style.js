@@ -30,7 +30,12 @@ export default {
         let ext = cache.getExt();
         let isNPM = false;
 
-        let outputExt = config.output === 'ant' ? 'acss' : 'wxss';
+        let outputExt = config.output === 'ant'
+            ? 'acss'
+            : config.output === 'baidu'
+                ? 'css'
+                : 'wxss';
+
 
         if (typeof styles === 'string') {
             // .compile('less', opath) 这种形式
@@ -80,7 +85,19 @@ export default {
                 throw `未发现相关 ${lang} 编译器配置，请检查wepy.config.js文件。`
             }
 
-            const p = compiler(content, options || {}, filepath).then((css) => {
+            options.supportObject = true;
+            const p = compiler(content, options || {}, filepath).then((compiled) => {
+                let css;
+                if (typeof compiled === 'object') {
+                    css = compiled.css;
+                    if (compiled.imports && compiled.imports.length) {
+                        compiled.imports.forEach(v => {
+                            cache.addCssDep(v, path.join(opath.dir, opath.base));
+                        });
+                    }
+                } else {
+                    css = compiled;
+                }
                 // 处理 scoped
                 if (scoped) {
                     // 存在有 scoped 的 style
@@ -119,13 +136,16 @@ export default {
                         } else {
                             let mainFile = null;
                             let sepIndex = lib.indexOf(path.sep);
-                            if (sepIndex > 0) {
+                            if (lib[0] !== '@' && sepIndex > 0) {
                                 let tmp = lib;
                                 lib = tmp.substring(0, sepIndex);
                                 mainFile = tmp.substring(sepIndex + 1, tmp.length);
                             }
                             let o = resolve.getMainFile(lib);
                             if (mainFile) {
+                                if (o.pkg && o.pkg._activeFields.length) {
+                                    mainFile = resolve.resolveSelfFields(o.dir, o.pkg, mainFile) || mainFile;
+                                }
                                 comsrc = path.join(o.dir, mainFile);
                             } else {
                                 comsrc = path.join(o.dir, o.file);

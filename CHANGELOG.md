@@ -1,3 +1,40 @@
+## 1.7.3 (waiting)
+* `F` 修复组件内@<event>.capture="handler"无法使用组件内部method的bug。[PR 1023](https://github.com/Tencent/wepy/pull/1023)
+* `F` 修复了xml报错行号定位的问题。
+* `A` 添加对immutable数据类型的检查优化。[PR 1094](https://github.com/Tencent/wepy/pull/1094)
+* `F` 忽略大于500kb的文件的编译。
+* `A` 添加了onPageNotFound事件的支持。[ISSUE 1391](https://github.com/Tencent/wepy/issues/1391)
+* `F` 修复了部分依赖 core-js 的包编译不能过的问题。[ISSUE 1381](https://github.com/Tencent/wepy/issues/1381)
+* `F` 修复了复杂的引用关系导致图片路径不正常的问题。
+
+```
+npm install wepy-cli@1.7.3-alpha1 -g
+```
+
+* `F` 修复了引入wepy的第三方npm组件使用`mainFields`的问题。[ISSUE 1449](https://github.com/Tencent/wepy/issues/1449)
+* `A` cli添加了`devtool`命令。[PR 1404](https://github.com/Tencent/wepy/pull/1404)
+
+```
+npm install wepy-cli@1.7.3-alpha2 -g
+```
+* `F` 修复了开启cliLogs时，在部分低版本机型上会报错的问题。[ISSUE 1460](https://github.com/Tencent/wepy/issues/1460)
+* `F` 修复使用prefetch返回promise时，无法获取到数据的问题。[ISSUE 1486](https://github.com/Tencent/wepy/issues/1486)
+
+
+## 1.7.2 (2018-05-08)
+* `A` 添加了对小程序原生组件的支持。
+* `F` 修复了使用`less/sass/stylus`去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
+* `F` 修复了`--output web`报错的一些问题
+* `A` 添加了`--output web`时对`wepy-redux`的支持
+* `F` 修复了 mixin 中用户自定义事件不生效的问题
+* `F` 添加了属性名检测，对于保留字段给开发者提示warning，防止开发者使用了一些保留字段导致了意想不到的结果。[ISSUE 1327](https://github.com/Tencent/wepy/issues/1327)
+* `F` 修复了使用新版本lodash编译不通过的问题。[ISSUE 1276](https://github.com/Tencent/wepy/issues/1276)
+
+## 1.7.1 (2018-02-28)
+* `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
+* `F` 修复了私有npm组件引入报错的bug。[PR 947](https://github.com/Tencent/wepy/pull/947)
+* `F` 修复了onPageScroll会导致页面卡死的bug。[PR 985](https://github.com/Tencent/wepy/pull/985)
+
 ## 1.7.0 (2018-02-06)
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)

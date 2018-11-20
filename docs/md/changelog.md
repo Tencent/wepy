@@ -1,3 +1,17 @@
+## 1.7.2 (2018-05-08)
+* `A` 添加了对小程序原生组件的支持。
+* `F` 修复了使用`less/sass/stylus`去@import另外一个样式，修改此样式文件不会触发父样式更新的问题。[ISSUE 938](https://github.com/Tencent/wepy/issues/938)
+* `F` 修复了`--output web`报错的一些问题
+* `A` 添加了`--output web`时对`wepy-redux`的支持
+* `F` 修复了 mixin 中用户自定义事件不生效的问题
+* `F` 添加了属性名检测，对于保留字段给开发者提示warning，防止开发者使用了一些保留字段导致了意想不到的结果。[ISSUE 1327](https://github.com/Tencent/wepy/issues/1327)
+* `F` 修复了使用新版本lodash编译不通过的问题。[ISSUE 1276](https://github.com/Tencent/wepy/issues/1276)
+
+## 1.7.1 (2018-02-28)
+* `F` 修复了scope 失效的bug。[ISSUE 963](https://github.com/Tencent/wepy/issues/963)
+* `F` 修复了私有npm组件引入报错的bug。[PR 947](https://github.com/Tencent/wepy/pull/947)
+* `F` 修复了onPageScroll会导致页面卡死的bug。[PR 985](https://github.com/Tencent/wepy/pull/985)
+
 ## 1.7.0 (2018-02-06)
 * `A` 添加了`cliLogs`配置项，为`true`时，会将CLI的报错信息注入到代码中，不用切回CLI去查看错误信息。[ISSUE 484](https://github.com/wepyjs/wepy/issues/484)
 * `F` 修复了组件使用`scoped`样式时，生成hash不一致的问题。[ISSUE 539](https://github.com/wepyjs/wepy/issues/539)

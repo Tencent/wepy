@@ -1,8 +1,8 @@
 ## WePY
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
-[![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=master)](https://travis-ci.org/Tencent/wepy)
-[![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=master)](https://coveralls.io/github/Tencent/wepy?branch=master)
+[![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=1.7.x)](https://travis-ci.org/Tencent/wepy)
+[![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=1.7.x)](https://coveralls.io/github/Tencent/wepy?branch=1.7.x)
 [![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/Tencent/wepy)
 
 ### 介绍
@@ -80,7 +80,7 @@ npm install wepy-cli -g
 #### 生成开发示例
 
 ```console
-wepy new myproject
+wepy init standard myproject
 ```
 
 #### 开发实时编译
@@ -153,5 +153,5 @@ GitHub掘金版、
 
 [Contributing](https://github.com/tencent/wepy/blob/master/CONTRIBUTING.md)
 
-[License MIT](https://github.com/tencent/wepy/blob/master/LICENSE)
+[License MIT](https://github.com/tencent/wepy/blob/1.7.x/LICENSE)
 

@@ -29,7 +29,7 @@ export default {
         let wpyExt = params.wpyExt;
 
 
-        return code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        return code.replace(/(^|[^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
             let npmInfo = opath.npm;
 
             if (lib === './_wepylogs.js') {
@@ -41,10 +41,12 @@ export default {
 
             if (config.output === 'ant' && lib === 'wepy') {
                 lib = 'wepy-ant';
+            }else if (config.output === 'baidu' && lib === 'wepy') {
+                lib = 'wepy-baidu';
             }
             lib = resolve.resolveAlias(lib, opath);
             if (lib === 'false') {
-                return `{}`
+                return `${char}{}`;
             } else if (path.isAbsolute(lib)) {
                 source = lib;
                 target = util.getDistPath(source);
@@ -105,23 +107,31 @@ export default {
                 ext = '';
                 needCopy = true;
             } else { // require('babel-runtime/regenerator')
-                let requieInfo = lib.split('/');
-                let mainFile = resolve.getMainFile(requieInfo[0]);
+                let requireInfo = lib.split('/');
+                let mainFile = resolve.getMainFile(requireInfo[0]);
 
                 if (!mainFile) {
                     throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
                 }
                 npmInfo = {
-                    lib: requieInfo[0],
+                    lib: requireInfo[0],
                     dir: mainFile.dir,
                     modulePath: mainFile.modulePath,
                     file: mainFile.file,
                     pkg: mainFile.pkg
                 };
-                requieInfo.shift();
+                requireInfo.shift();
 
-                source = path.join(mainFile.dir, requieInfo.join('/'));
-                target = path.join(npmPath, npmInfo.lib, requieInfo.join('/'));
+                let resolvedFile = requireInfo.join('/');
+                if (mainFile.pkg && mainFile.pkg._activeFields.length) {
+                    resolvedFile = resolve.resolveSelfFields(mainFile.dir, mainFile.pkg, resolvedFile) || resolvedFile;
+                    if (path.extname(resolvedFile) === '.wpy') {
+                        resolvedFile = resolvedFile.substr(0, resolvedFile.length - 4);
+                    }
+                }
+
+                source = path.join(mainFile.dir, resolvedFile);
+                target = path.join(npmPath, npmInfo.lib, resolvedFile);
                 ext = '';
                 needCopy = true;
 
@@ -132,7 +142,7 @@ export default {
             }
 
             if (util.isFile(source + wpyExt)) {
-                ext = '.js';
+                ext = '.wpy';
             } else if (util.isFile(source + '.js')) {
                 ext = '.js';
             } else if (util.isFile(source + '.ts')) {
@@ -142,7 +152,7 @@ export default {
             }else if (util.isFile(source)) {
                 ext = '';
             } else {
-                throw ('找不到文件: ' + source);
+                throw `Missing files: ${resolved} in ${path.join(opath.dir, opath.base)}`;
             }
             source += ext;
             target += ext;
@@ -183,7 +193,7 @@ export default {
                 resolved = path.relative(util.getDistPath(opath, opath.ext, src, dist), target);
             }
             resolved = resolved.replace(/\\/g, '/').replace(/^\.\.\//, './');
-            return `require('${resolved}')`;
+            return `${char}require('${resolved}')`;
         });
     },
 
@@ -229,6 +239,18 @@ export default {
 
         let compiler = loader.loadCompiler(lang);
 
+        // replace wx to swan
+        if(config.output === 'baidu') {
+            code = code.replace(/\b(wx)\b/g, function(match, p1, offset, s) {
+                // ignore like -wx- syntactic
+                if(s.charAt(offset - 1) === '-' || s.charAt(offset + 2 )=== '-') {
+                    return p1;
+                } else {
+                    return 'swan';
+                }
+            })
+        }
+
         if (!compiler) {
             return;
         }
@@ -265,7 +287,8 @@ export default {
 
             code = this.resolveDeps(code, type, opath);
 
-            if (type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
+            if (!opath.compiled && type === 'npm' && opath.ext === '.wpy') { // 第三方npm组件，后缀恒为wpy
+                opath.compiled = true
                 cWpy.compile(opath);
                 return;
             }
@@ -275,7 +298,8 @@ export default {
                 target = util.getDistPath(opath, 'js');
             } else {
                 code = this.npmHack(opath, code);
-                target = path.join(npmPath, path.relative(opath.npm.modulePath, path.join(opath.dir, opath.base)));
+                const base = opath.ext === '.wpy' ? opath.base.replace(opath.ext, '.js') : opath.base;
+                target = path.join(npmPath, path.relative(opath.npm.modulePath, path.join(opath.dir, base)));
             }
 
             if (sourceMap) {

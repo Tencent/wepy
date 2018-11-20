@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -42,8 +42,9 @@ export default {
         let depences = [];
 
         // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/]+)['"]\)/ig, (match, lib) => {
-        wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
-            if (lib === 'wepy') 
+        // wpy.script.code = wpy.script.code.replace(/require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, lib) => {
+        wpy.script.code = wpy.script.code.replace(/(^|[^\.\w])require\(['"]([\w\d_\-\.\/@]+)['"]\)/ig, (match, char, lib) => {
+            if (lib === 'wepy')
                 lib = 'wepy-web';
 
             let resolved = lib;
@@ -55,7 +56,7 @@ export default {
             lib = resolve.resolveAlias(lib, opath);
 
             if (lib === 'false') {
-                return '{}';
+                return `${char}{}`;
             } else if (path.isAbsolute(lib)) {
                 source = lib;
             } else if (lib[0] === '.') { // require('./something'');
@@ -73,7 +74,7 @@ export default {
                     source = path.join(opath.dir, lib);
                 }
                 npmInfo = wpy.npm;  // relative path in npm package
-            } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1) {  //        require('asset');
+            } else if (lib.indexOf('/') === -1 || lib.indexOf('/') === lib.length - 1 || lib[0] === '@' && lib.indexOf('/') !== -1 && lib.lastIndexOf('/') === lib.indexOf('/')) {
 
                 // require('stream') -> browsers: emitter->emitter-component;
                 if (wpy.npm && wpy.npm.pkg._activeFields.length) {
@@ -109,8 +110,27 @@ export default {
                 npmInfo = o;
             } else { // require('babel-runtime/regenerator')
                 //console.log('3: ' + lib);
-                source = path.join(wpy.npm.modulePath, lib);
-                npmInfo = wpy.npm;
+                let requieInfo = lib.split('/');
+                let mainFile = resolve.getMainFile(requieInfo[0]);
+
+                if (!mainFile) {
+                    throw Error('找不到模块: ' + lib + '\n被依赖于: ' + path.join(opath.dir, opath.base) + '。\n请尝试手动执行 npm install ' + lib + ' 进行安装。');
+                }
+                npmInfo = {
+                    lib: requieInfo[0],
+                    dir: mainFile.dir,
+                    modulePath: mainFile.modulePath,
+                    file: mainFile.file,
+                    pkg: mainFile.pkg
+                };
+                requieInfo.shift();
+
+                source = path.join(mainFile.dir, requieInfo.join('/'));
+
+                // It's a node_module component.
+                if (path.extname(mainFile.file) === '.wpy') {
+                    source += '.wpy';
+                }
             }
 
             if (path.extname(source)) {
@@ -130,14 +150,15 @@ export default {
                 } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
                     source += path.sep + 'index.js';
                 } else {
+                    throw `Missing files: ${resolved} in ${wpy.script.src}`;
                     source = null;
                 }
             }
 
             if (!source) {
-                throw ('找不到文件: ' + source);
+              throw `Missing files: ${resolved} in ${path.join(opath.dir, opath.base)}`;
             }
-            
+
             mmap.add(source);
 
             let wepyRequireId = mmap.get(source);
@@ -147,7 +168,7 @@ export default {
             }
             dep.id = wepyRequireId;
             depences.push(dep);
-            return `__wepy_require(${wepyRequireId})`;
+            return `${char}__wepy_require(${wepyRequireId})`;
         });
         return depences;
     },
@@ -182,8 +203,10 @@ export default {
                     main.addPage(wpy.path, wpy);
                 } else if (wpy.type === 'app') {
                     if (matchs) {
+                        let appConfig = JSON.stringify(config.appConfig || {});
+
                         wpy.script.code = wpy.script.code.replace(/exports\.default\s*=\s*(\w+);/i, '');
-                        wpy.script.code += `\nrequire('wepy').default.$createApp(${defaultExport}, $$WEPY_APP_PARAMS_PLACEHOLDER$$);\n`;
+                        wpy.script.code += `\nrequire('wepy').default.$createApp(${defaultExport}, $$WEPY_APP_PARAMS_PLACEHOLDER$$, ${appConfig});\n`;
                     }
                 }
             }
