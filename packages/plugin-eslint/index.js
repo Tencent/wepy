@@ -7,11 +7,38 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-
-const eslint = require('eslint');
-const formatter = require('eslint-friendly-formatter');
+const objectHash = require('object-hash');
 
 const cached = {};
+const engines = {};
+
+function lint(engine, file) {
+  return engine.executeOnFiles(file);
+}
+
+function printLinterOutput (res, options) {
+  if (res.warningCount && options.quiet) {
+    res.warningCount = 0;
+    res.results[0].warningCount = 0;
+    res.results[0].messages = res.results[0].messages.filter(function(
+      message
+    ) {
+      return message.severity !== 1;
+    });
+  }
+
+  // if enabled, use eslint auto-fixing where possible
+  if (options.fix && (res.results[0].fixableErrorCount > 0 || res.results[0].fixableWarningCount)) {
+    const eslint = require(options.eslintPath);
+    eslint.CLIEngine.outputFixes(res);
+  }
+
+  const fmt = options.formatter(res.results);
+
+  if (fmt && options.output) {
+    console.log(fmt);
+  }
+}
 
 exports = module.exports = function (options = {}) {
   const cwd = process.cwd();
@@ -29,26 +56,58 @@ exports = module.exports = function (options = {}) {
         }
 
         cached[ctx.file] = 1;
-      
+
         options = Object.assign({}, {
           useEslintrc: true,
+          eslintPath: 'eslint',
+          quiet: false,
+          output: true,
           extensions: ['.js', this.options.wpyExt || '.wpy']
         }, options);
-  
-        let file = ctx.file;
-  
-        if (!options.formatter) {
-          options.formatter = formatter;
+      
+        // Create singleton engine per config
+        const optionsHash = objectHash(options);
+        if (!engines[optionsHash]) {
+          const eslint = require(options.eslintPath);
+          engines[optionsHash] = new eslint.CLIEngine(options);
         }
-  
-        options.output = options.output === undefined ? true : options.output;
-        
-        const engine = new eslint.CLIEngine(options);
-        const report = engine.executeOnFiles([ctx.file]);
-        const rst = formatter(report.results);
-        if (rst && options.output) {
-          console.log(rst);
+      
+        // Create eslint formatter
+        if (typeof options.formatter === 'string') {
+          try {
+            options.formatter = require(options.formatter);
+      
+            if (
+              options.formatter &&
+              typeof options.formatter !== 'function' &&
+              typeof options.formatter.default === 'function'
+            ) {
+              options.formatter = options.formatter.default;
+            }
+          } catch (_) {
+            // ignore
+          }
         }
+      
+        if (
+          !options.formatter ||
+          typeof options.formatter !== 'function'
+        ) {
+          const userEslintPath = options.eslintPath;
+          if (userEslintPath) {
+            try {
+              options.formatter = require(userEslintPath + '/lib/formatters/stylish');
+            } catch (e) {
+              options.formatter = require('eslint/lib/formatters/stylish');
+            }
+          } else {
+            options.formatter = require('eslint/lib/formatters/stylish');
+          }
+        }
+
+        const engine = engines[optionsHash];
+
+        printLinterOutput(lint(engine, [ctx.file]), options);
 
         return Promise.resolve({ node, ctx });
       });
