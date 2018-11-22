@@ -9,7 +9,7 @@
   "keywords": [
     "less"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "less": "^3.8.1"
   },
   "author": "Gcaufy",
