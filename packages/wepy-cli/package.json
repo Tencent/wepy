@@ -1,6 +1,6 @@
 {
   "name": "wepy-cli",
-  "version": "1.7.3-alpha4",
+  "version": "1.7.3-alpha5",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
