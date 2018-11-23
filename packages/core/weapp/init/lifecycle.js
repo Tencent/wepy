@@ -56,6 +56,14 @@ export function patchAppLifecycle (appConfig, options, rel) {
 
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
+
+  ['onShow', 'onHide', 'onError', 'onPageNotFound'].forEach(k => {
+    if (options[k] && isFunc(options[k])) {
+      appConfig[k] = function (...args) {
+        return callUserMethod(app, app.$options, k, args);
+      }
+    }
+  });
 };
 
 export function patchComponentLifecycle (compConfig, options) {
