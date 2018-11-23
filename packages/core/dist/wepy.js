@@ -1434,7 +1434,7 @@ function initComputed (vm, computed) {
 
 var WepyApp = (function (Base$$1) {
   function WepyApp () {
-
+    Base$$1.call(this);
   }
 
   if ( Base$$1 ) WepyApp.__proto__ = Base$$1;
@@ -1929,6 +1929,17 @@ function patchAppLifecycle (appConfig, options, rel) {
 
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
+
+  ['onShow', 'onHide', 'onError', 'onPageNotFound'].forEach(function (k) {
+    if (options[k] && isFunc(options[k])) {
+      appConfig[k] = function () {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        return callUserMethod(app, app.$options, k, args);
+      };
+    }
+  });
 }
 function patchLifecycle (output, options, rel, isComponent) {
 
