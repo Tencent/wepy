@@ -504,6 +504,14 @@
             "opensource": "",
             "qrcode": "https://pic.juncao.cc/cms/images/project/rssfeed/app.png",
             "company": ""
-        }
+        },
+        {
+            "name": "你好点么",
+            "email": "m@huofar.com",
+            "link": "https://www.huofar.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/30314121/48991107-6fd82b80-f16c-11e8-8716-dd2449281209.jpg",
+            "company": "北京金生在线科技有限责任公司"
+        },
     ]
 }
