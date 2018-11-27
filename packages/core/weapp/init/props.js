@@ -5,11 +5,6 @@ import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/in
 
 const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 
-const propOberverHandler = function (prop, newVal, oldVal, changedPaths) {
-  console.log(prop);
-  debugger;
-}
-
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     let vm = this.$wepy;

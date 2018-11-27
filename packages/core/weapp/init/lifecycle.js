@@ -158,8 +158,6 @@ export function patchLifecycle (output, options, rel, isComponent) {
       }
 
       // TODO: page attached
-      console.log('TODO: page attached');
-
       return callUserMethod(vm, vm.$options, 'attached', args);
     }
 
@@ -232,12 +230,10 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
   output.ready = function () {
     // TODO: ready
-    console.log('TODO: ready');
   };
 
   output.moved = function () {
     // TODO: moved
-    console.log('TODO: moved');
   };
 };
 
