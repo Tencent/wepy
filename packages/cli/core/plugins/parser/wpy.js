@@ -22,7 +22,7 @@ exports = module.exports = function () {
     if (!sfc) {
       this.involved[file] = 1;
       let entryContent = fs.readFileSync(file, 'utf-8');
-      sfc = sfcCompiler.parseComponent(entryContent, { pad: 'line' });
+      sfc = sfcCompiler.parseComponent(entryContent, { pad: 'space' });
       this.compiled[file].sfc = sfc;
       let context = {
         file: file,
