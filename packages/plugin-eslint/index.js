@@ -1,7 +1,7 @@
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
+ *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
@@ -32,7 +32,10 @@ function printLinterOutput (res, options) {
     const eslint = require(options.eslintPath);
     eslint.CLIEngine.outputFixes(res);
   }
-
+  // removed file ignore warning
+  report.results.forEach(item => {
+    item.messages = item.messages.filter(msg => msg.message.indexOf('File ignored') === -1);
+  });
   const fmt = options.formatter(res.results);
 
   if (fmt && options.output) {
@@ -64,19 +67,19 @@ exports = module.exports = function (options = {}) {
           output: true,
           extensions: ['.js', this.options.wpyExt || '.wpy']
         }, options);
-      
+
         // Create singleton engine per config
         const optionsHash = objectHash(options);
         if (!engines[optionsHash]) {
           const eslint = require(options.eslintPath);
           engines[optionsHash] = new eslint.CLIEngine(options);
         }
-      
+
         // Create eslint formatter
         if (typeof options.formatter === 'string') {
           try {
             options.formatter = require(options.formatter);
-      
+
             if (
               options.formatter &&
               typeof options.formatter !== 'function' &&
@@ -88,7 +91,7 @@ exports = module.exports = function (options = {}) {
             // ignore
           }
         }
-      
+
         if (
           !options.formatter ||
           typeof options.formatter !== 'function'
