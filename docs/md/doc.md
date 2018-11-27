@@ -136,11 +136,14 @@ customFileTypes:
 &emsp;&emsp;5. 在`选择要与 .wpy 关联的语言模式` 中选择 `Vue`。
 
 &emsp;&emsp;6. 在VS Code编辑器设置中设置。
+
+```JS
 //文件-首选项-设置-settings.json
 settings.json
 "files.associations": {
 "*.wpy": "vue"
 }
+```
 
 - **VIM**
 
@@ -1439,10 +1442,49 @@ this.title = 'this is title';
 需注意的是，在异步函数中更新数据的时候，必须手动调用`$apply`方法，才会触发脏数据检查流程的运行。如：
 
 ```javascript
+//异步函数中
 setTimeout(() => {
     this.title = 'this is title';
     this.$apply();
 }, 3000);
+```
+
+
+```javascript
+//在子组件 child.wpy 中 wepy.component 
+props = {
+    // 静态传值
+    title: String,
+
+    // 父向子单向动态传值
+    syncTitle: {
+        type: String,
+        default: 'null'
+    },
+
+    twoWayTitle: {
+        type: String,
+        default: 'nothing',
+        twoWay: true
+    }
+};
+
+onLoad () {
+    console.log(this.title); // p-title
+    console.log(this.syncTitle); // p-title
+    console.log(this.twoWayTitle); // p-title
+
+    this.title = 'c-title';
+    this.$apply();
+    console.log(this.$parent.parentTitle); // p-title.
+    this.twoWayTitle = 'two-way-title';
+    this.$apply();
+    console.log(this.$parent.parentTitle); // two-way-title.  --- twoWay为true时，子组件props中的属性值改变时，会同时改变父组件对应的值
+    this.$parent.parentTitle = 'p-title-changed';
+    this.$parent.$apply();
+    console.log(this.title); // 'c-title';
+    console.log(this.syncTitle); // 'p-title-changed' --- 有.sync修饰符的props属性值，当在父组件中改变时，会同时改变子组件对应的值。
+}
 ```
 
 #### WePY脏数据检查流程
