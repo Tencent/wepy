@@ -53,10 +53,10 @@
         },
         {
             "name": "SVNBucket-免费SVN仓库",
-            "email": "atsoar@qq.com",
+            "email": "gzyunke@qq.com",
             "link": "https://svnbucket.com",
-            "opensource": "",
-            "qrcode": "https://raw.githubusercontent.com/atsoar/test/master/svnbucketqrcode.jpg",
+            "opensource": "https://github.com/gzyunke/svnbucket_mini",
+            "qrcode": "https://raw.githubusercontent.com/gzyunke/svnbucket_mini/master/doc/svnbucketqrcode.jpg",
             "company": "广州云科信息科技有限公司"
         },
         {
