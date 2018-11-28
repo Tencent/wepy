@@ -118,7 +118,6 @@ wepy build --watch
 [给你的 iPhone X 换个发型](https://bangs.baran.wang/)、
 [天天跟我买](http://www.xiaohongchun.com.cn/index)、
 [坚橙](https://zhanart.com/wepy.html)、
-[诗词墨客(开源)](https://github.com/huangjianke/weapp-poem)、
 群脱单、
 米淘联盟、
 帮助圈、
@@ -147,6 +146,8 @@ GitHub掘金版、
 [应用全球排行](https://github.com/szpnygo/wepy_ios_top)[（开源）](https://github.com/szpnygo/wepy_ios_top)、
 [we川大](https://github.com/mohuishou/scuplus-wechat)[（开源）](https://github.com/mohuishou/scuplus-wechat)、
 聊会儿、
+[诗词墨客](https://github.com/huangjianke/weapp-poem)[（开源）](https://github.com/huangjianke/weapp-poem)、
+
 ...
 
 ### 交流群
