@@ -146,7 +146,7 @@ GitHub掘金版、
 [应用全球排行](https://github.com/szpnygo/wepy_ios_top)[（开源）](https://github.com/szpnygo/wepy_ios_top)、
 [we川大](https://github.com/mohuishou/scuplus-wechat)[（开源）](https://github.com/mohuishou/scuplus-wechat)、
 聊会儿、
-[诗词墨客](https://github.com/huangjianke/weapp-poem)[（开源）](https://github.com/huangjianke/weapp-poem)、
+[诗词墨客](https://github.com/huangjianke/weapp-poem)[（开源）](https://github.com/huangjianke/weapp-poem)
 
 ...
 
