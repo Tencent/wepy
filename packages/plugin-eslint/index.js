@@ -19,27 +19,28 @@ function lint(engine, file) {
 function printLinterOutput (res, options) {
   if (res.warningCount && options.quiet) {
     res.warningCount = 0;
-    res.results[0].warningCount = 0;
-    res.results[0].messages = res.results[0].messages.filter(function(
-      message
-    ) {
-      return message.severity !== 1;
+    res.results.forEach(item => {
+      item.warningCount = 0;
+      item.messages = item.messages.filter(message => message.severity !== 1);
     });
   }
 
   // if enabled, use eslint auto-fixing where possible
-  if (options.fix && (res.results[0].fixableErrorCount > 0 || res.results[0].fixableWarningCount)) {
+  if (options.fix && (res.fixableErrorCount > 0 || res.fixableWarningCount)) {
     const eslint = require(options.eslintPath);
     eslint.CLIEngine.outputFixes(res);
   }
   // removed file ignore warning
-  report.results.forEach(item => {
+  res.results.forEach(item => {
     item.messages = item.messages.filter(msg => msg.message.indexOf('File ignored') === -1);
   });
-  const fmt = options.formatter(res.results);
 
-  if (fmt && options.output) {
-    console.log(fmt);
+  if (res.errorCount || res.warningCount) {
+    const fmt = options.formatter(res.results);
+
+    if (fmt && options.output) {
+      console.log(fmt);
+    }
   }
 }
 
