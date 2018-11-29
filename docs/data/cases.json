@@ -3,6 +3,78 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "cases": [
+        { 
+          "name": "地铁轨交线路", 
+          "email": "yuanfangde_hai@163.com", 
+          "link": "", 
+          "opensource": "", 
+          "qrcode": "http://ww1.sinaimg.cn/large/ad5b14bfgy1fw2wqnt7xqj20nw0nwwit.jpg", 
+          "company": "" 
+        },
+        {
+            "name": "旅行者一号Lite",
+            "email": "1093674548@qq.com",
+            "link": "https://shengxiagn.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/9388085/45285541-f9853f00-b515-11e8-8321-b28266fe9fde.jpg",
+            "company": "深圳市盛夏光年科技有限公司"
+        },
+        {
+            "name": "武侯的猫",
+            "email": "jia@wuhou123.com",
+            "link": "",
+            "opensource": "https://github.com/wuhou123/wxxcx",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/44644467-c49dc600-aa06-11e8-8255-1b8807cd3c7a.png",
+            "company": ""
+        },
+        {
+            "name": "腾讯安心计划",
+            "email": "",
+            "link": "https://mp.weixin.qq.com/s/HESxEs9GHJuSZSZkufsPyw",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/43497533-3b7a2e36-9575-11e8-88bc-92699cd86b40.png",
+            "company": "Tencent"
+        },
+        {
+            "name": "上海地铁路线",
+            "email": "yuanfangde_hai@163.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/43497406-8ac7f244-9574-11e8-9887-02473a0a8462.png",
+            "company": ""
+        },
+        {
+            "name": "简约图书管理系统",
+            "email": "504151911@qq.com",
+            "link": "https://www.skyactiv.xin",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/18588816/43352006-ef35d4e0-924e-11e8-9c05-70e0fa334e99.jpg",
+            "company": ""
+        },
+        {
+            "name": "SVNBucket-免费SVN仓库",
+            "email": "gzyunke@qq.com",
+            "link": "https://svnbucket.com",
+            "opensource": "https://github.com/gzyunke/svnbucket_mini",
+            "qrcode": "https://raw.githubusercontent.com/gzyunke/svnbucket_mini/master/doc/svnbucketqrcode.jpg",
+            "company": "广州云科信息科技有限公司"
+        },
+        {
+            "name": "Teamin群协作",
+            "email": "service_chainton@teamin.cc",
+            "link": "https://www.teamin.cc/lite",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/9954739/41836904-a60bc286-788e-11e8-9f47-5054fba7f21c.png",
+            "company": "北京圈动科技有限公司"
+        },
+        {
+            "name": "表情演员",
+            "email": "medivhzhan@gmail.com",
+            "link": "",
+            "opensource": "https://github.com/medivhzhan/emotion-weapp",
+            "qrcode": "https://raw.githubusercontent.com/medivhzhan/emotion-weapp/master/code.jpg",
+            "company": ""
+        },
         {
             "name": "时光倒数日",
             "email": "days_matter@126.com",
@@ -201,12 +273,12 @@
             "qrcode": "https://github.com/baisheng/podcast/raw/master/doc/wechat.jpg?raw=true",
             "company": ""
         }, {
-            "name": "坚橙",
-            "email": "",
+            "name": "坚橙艺术",
+            "email": "hyacinthus@gmail.com",
             "link": "https://zhanart.com/wepy.html",
             "opensource": "",
             "qrcode": "https://static.crandom.com/code/wepy.jpeg",
-            "company": ""
+            "company": "西安柠黄网络科技有限责任公司"
         }, {
             "name": "天天跟我买",
             "email": "",
@@ -215,25 +287,25 @@
             "qrcode": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg",
             "company": ""
         }, {
-           "name": "GitHub掘金版",
-            "email": "",
-            "link": "",
-            "opensource": "",
-            "qrcode": "https://wicdn.xiaohongchun.com/xhc-plat/1511402768167_THtbpaMaA3.jpeg",
-            "company": ""
-        }, {
            "name": "帮助圈",
             "email": "191100479@qq.com",
-            "link": "",
+            "link": "https://www.bangzhuquan.com",
             "opensource": "",
-            "qrcode": "https://user-images.githubusercontent.com/6293249/33993933-97a39268-e113-11e7-85b9-dd762c19c0e1.jpg",
-            "company": ""
+            "qrcode": "https://user-images.githubusercontent.com/6293249/47581225-69933b80-d983-11e8-9bde-c62a0c2ca64b.jpg",
+            "company": "四川生梨奇迹信息科技有限责任公司"
         }, {
             "name": "友福图书馆",
             "email": "glore@ufutx.com",
             "link": "https://library.ufutx.com",
             "opensource": "https://github.com/glore/library",
             "qrcode": "https://library.ufutx.com/imgs/mp_library.jpg",
+            "company": "深圳市友福同享信息科技有限公司"
+        }, {
+            "name": "友福聚会",
+            "email": "glore@ufutx.com",
+            "link": "https://party.ufutx.com",
+            "opensource": "https://github.com/glore/party",
+            "qrcode": "https://camo.githubusercontent.com/9b656dd8c3564124a4732070f7681e44d75356f6/68747470733a2f2f70617274792e75667574782e636f6d2f696d67732f6d705f70617274792e6a7067",
             "company": "深圳市友福同享信息科技有限公司"
         }, {
             "name": "米淘联盟",
@@ -248,13 +320,6 @@
             "link": "",
             "opensource": "",
             "qrcode": "https://raw.githubusercontent.com/davylaker/wepy-wechat-demo/697292c4767dd08e5f50ada95e295d2c37ac05c2/quntuodan.jpg",
-            "company": ""
-        }, {
-            "name": "给你的 iPhone X 换个发型",
-            "email": "",
-            "link": "https://bangs.baran.wang/",
-            "opensource": "",
-            "qrcode": "https://img.bangs.baran.wang/img/qrcode_wechat_app.jpg",
             "company": ""
         }, {
             "name": "素洁商城",
@@ -306,12 +371,147 @@
             "company": "Neobaran",
             "qrcode": "https://github.com/szpnygo/wepy_ios_top/raw/master/qr.jpg"
         }, {
+            "name": "福恋",
+            "email": "glore@ufutx.com",
+            "link": "https://love.ufutx.com",
+            "opensource": "",
+            "qrcode": "https://love.ufutx.com/imgs/mp_love.jpg",
+            "company": "深圳市友福同享信息科技有限公司"
+        },{
+            "name": "丁香人才",
+            "email": "xusy@dxy.cn",
+            "link": "https://www.jobmd.cn",
+            "opensource": "",
+            "qrcode": "https://img1.dxycdn.com/2018/0227/019/3263532083175598806-2.jpg",
+            "company": "观澜网络（杭州）有限公司（丁香园）"
+        },{
+            "name": "花赚福利社",
+            "email": "huazhuanapp@gmail.com",
+            "link": "https://www.huazhuanapp.com",
+            "opensource": "",
+            "qrcode": "https://static.huazhuanapp.tech/static/wxmini_qrcode.jpg",
+            "company": "深圳花赚科技网络有限公司"
+        },{
+            "name": "微剧电影",
+            "email": "junqiang@ouj.com",
+            "link": "http://app.duowan.com/wjy/",
+            "opensource": "",
+            "qrcode": "http://app.duowan.com/s/gh_94d63b43f057_344.jpg",
+            "company": "广州玩盒科技有限公司"
+        },{
+            "name": "爽快赔",
+            "email": "PA13837216640@163.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "",
+            "company": "中国平安财产保险股份有限公司"
+        },{
+            "name": "HiPlusBest",
+            "email": "belinchung@gmail.com",
+            "link": "https://plus.hiliaox.com",
+            "opensource": "https://github.com/BelinChung/weapp-hiapp",
+            "qrcode": "https://plus.hiliaox.com/static/image/weapp_qrcode.jpg",
+            "company": "肇庆市逆风电子商务有限公司"
+        },{
+            "name": "糖果街",
+            "email": "hi@togojoy.com",
+            "link": "https://www.togojoy.com/",
+            "opensource": "",
+            "qrcode": "https://www.togojoy.com/upload/minicode.jpg",
+            "company": "广州心花路放互联网科技有限公司"
+         }, {
             "name": "附近生鲜水果",
             "email": "",
             "link": "",
             "opensource": "",
             "qrcode": "",
             "company": ""
-       }
+        }, {
+            "name": "羽球自由对阵赛",
+            "email": "1648511816@qq.com",
+            "link": "",
+            "opensource": "https://github.com/jasscia/newBadminton",
+            "qrcode": "https://raw.githubusercontent.com/jasscia/newBadminton/master/src/image/scancode.jpg",
+            "company": ""
+        }, {
+            "name": "世界杯GO",
+            "email": "world.cup.calendar@wecode.tech",
+            "link": "https://wecode.tech/",
+            "opensource": "",
+            "qrcode": "https://github.com/fanyinghao/fanyinghao.github.io/raw/master/images/gh_e1456f383a2d_258.jpg",
+            "company": "深圳微小程序科技有限公司"
+        },
+        {
+            "name": "婷婷诗教",
+            "email": "mrlikun@icloud.com",
+            "link": "http://ttsing.com/",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/15193414/41582998-bebc70ea-73d5-11e8-8222-7d95410ae37b.jpeg",
+            "company": "唱道（上海）文化传播有限公司"
+        },
+        {
+            "name": "球迷Battle赛",
+            "email": "alvinxu@algforce.com",
+            "link": "",
+            "opensource": "https://github.com/zenofzhen/worldcupbattle",
+            "qrcode": "https://raw.githubusercontent.com/zenofzhen/worldcupbattle/dev/src/image/qrcode.jpg",
+            "company": "上海幽孚网络科技有限公司"
+        },
+        {
+            "name": "小呱商城",
+            "email": "644544623@qq.com",
+            "link": "",
+            "opensource": "https://github.com/sec-secret/x-mall-miniprogram-wepy",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/42253762-df597ef0-7f75-11e8-926e-1de3fc131c58.png",
+            "company": "上海卓开网络科技有限公司"
+        },
+        {
+            "name": "日日課",
+            "email": "developer@wendict.com",
+            "link": "https://wendict.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/10745/42270019-648a31a0-7fb2-11e8-9cab-fb4951a5a4d1.jpg",
+            "company": "问典（天津）文化传播有限公司"
+        },
+        {
+            "name": "怡起吃",
+            "email": "qiankunli@yahoo.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/11532418/42368789-96008e8a-813a-11e8-84fd-94e161857c2c.jpg",
+            "company": "上海合起跃信息技术有限公司"
+        },
+        {
+            "name": "自媒社",
+            "email": "wu_zhuojun@sina.com",
+            "link": "https://www.zimeishe.net",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/42427538-9bc88c7c-8361-11e8-878e-421e7192337d.png",
+            "company": "深圳南友圈网络科技有限公司"
+        },
+        {
+            "name": "有趣视频",
+            "email": "oxtiger@gmail.com",
+            "link": "",
+            "opensource": "https://github.com/terryso/youqu",
+            "qrcode": "https://user-images.githubusercontent.com/2182004/42741125-29192ebc-88e2-11e8-9e29-14491a1c3c3c.png",
+            "company": "南京厚建云计算有限公司"
+        },
+        {
+            "name": "RssFeed",
+            "email": "info_together@aliyun.com",
+            "link": "https://www.juncao.cc/project/rssfeed",
+            "opensource": "",
+            "qrcode": "https://pic.juncao.cc/cms/images/project/rssfeed/app.png",
+            "company": ""
+        },
+        {
+            "name": "你好点么",
+            "email": "m@huofar.com",
+            "link": "https://www.huofar.com",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/30314121/48991107-6fd82b80-f16c-11e8-8716-dd2449281209.jpg",
+            "company": "北京金生在线科技有限责任公司"
+        }
     ]
 }
