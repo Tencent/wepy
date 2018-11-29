@@ -33,7 +33,7 @@ function printLinterOutput (res, options) {
     eslint.CLIEngine.outputFixes(res);
   }
   // removed file ignore warning
-  report.results.forEach(item => {
+  res.results.forEach(item => {
     item.messages = item.messages.filter(msg => msg.message.indexOf('File ignored') === -1);
   });
   const fmt = options.formatter(res.results);
