@@ -9,12 +9,15 @@
 
 const babel = require('@babel/core');
 
-exports = module.exports = function (options) {
-  return function () {
-    this.register('wepy-compiler-babel', function (node, ctx) {
+exports = module.exports = function(options) {
+  return function() {
+    this.register('wepy-compiler-babel', function(node, ctx) {
       let p;
-      let file = typeof ctx === 'string' ? ctx : ctx.file
+      let file = typeof ctx === 'string' ? ctx : ctx.file;
       try {
+        if (node.src && node.src.endsWith('ts')) {
+          options.presets.push('@babel/preset-typescript');
+        }
         let compiled = babel.transform(node.content, options);
         node.compiled = compiled;
         p = Promise.resolve(node);
@@ -30,5 +33,5 @@ exports = module.exports = function (options) {
       }
       return p;
     });
-  }
-}
+  };
+};
