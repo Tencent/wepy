@@ -1502,7 +1502,17 @@ var WepyPage = (function (WepyComponent$$1) {
     this.$route('redirect', url, params);
   };
 
-  WepyPage.prototype.$back = function $back () {};
+  WepyPage.prototype.$back = function $back (p) {
+    if ( p === void 0 ) p = {};
+
+    if (isNum(p))
+      { p = { delta: p }; }
+
+    if (!p.delta)
+      { p.delta = 1; }
+
+    return wx.navigateBack(p);
+  };
 
   WepyPage.prototype.$route = function $route (type, url, params) {
     if ( params === void 0 ) params = {};
