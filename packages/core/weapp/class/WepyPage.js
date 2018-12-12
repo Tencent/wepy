@@ -1,5 +1,5 @@
 import WepyComponent from './WepyComponent';
-import { isStr, isObj, isUndef, isFunc } from '../../shared/index';
+import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
 export default class WepyPage extends WepyComponent {
 
@@ -11,7 +11,15 @@ export default class WepyPage extends WepyComponent {
     this.$route('redirect', url, params);
   }
 
-  $back () {}
+  $back (p = {}) {
+    if (isNum(p))
+      p = { delta: p };
+
+    if (!p.delta)
+      p.delta = 1;
+
+    return wx.navigateBack(p);
+  }
 
   $route (type, url, params = {}) {
     let wxparams;
