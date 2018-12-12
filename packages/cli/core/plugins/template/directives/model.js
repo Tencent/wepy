@@ -6,6 +6,10 @@ const MODEL_MAP = {
     type: 'input',
     value: 'value'
   },
+  textarea: {
+    type: 'input',
+    value: 'value'
+  },
   picker: {
     type: 'change',
     value: 'value'
