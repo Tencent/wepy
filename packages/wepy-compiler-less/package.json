@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-less",
-  "version": "1.3.12",
+  "version": "1.3.14",
   "description": "wepy compile less",
   "main": "lib/index.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "keywords": [
     "less"
   ],
-  "dependencies": {
-    "less": "^2.7.1"
+  "peerDependencies": {
+    "less": "^3.8.1"
   },
   "author": "Gcaufy",
   "license": "MIT"

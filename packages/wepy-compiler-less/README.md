@@ -3,7 +3,7 @@
 ## 安装
 
 ```
-npm install wepy-compiler-less --save-dev
+npm install less wepy-compiler-less --save-dev
 ```
 
 

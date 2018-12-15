@@ -17,7 +17,6 @@ Commands:
     build [options]                                build your project
     list [options]                                 list available official templates
     upgrade [options]                              upgrade to the latest version
-    devtoool [options] <action-name> [action-value] commander for login, preview, upload and other operations.
 
 ```
 
@@ -94,57 +93,4 @@ Usage: upgrade [options]
     --cli   upgrade wepy-cli
     --wepy  upgrade wepy
     -h, --help  output usage information
-```
-
-## 开发工具
-
-``` bash
-Usage: devtool [options] <action-name> [action-value]
-
-  commander for login, preview, upload and other operations.
-  
-  
-  Options:
-  
-    --login-qr-output [format[@path]]', '指定二维码输出形式.
-    --preview-qr-output [format[@path]]', '指定二维码输出形式，语义同登录用的选项 --login-qr-output.
-    --upload-desc <desc>', '上传代码时的备注.
-    
-  
-  Example:
-  
-    # 打开开发工具
-    wepy devtool open
-    
-    # 打开路径 /Users/username/demo 下的项目
-    wepy devtool open /Users/username/demo
-    
-    
-    # 登录，在终端中打印登录二维码
-    wepy devtool login
-    
-    # 登录，在终端中打印登录 base64 形式的二维码
-    wepy devtool login --login-qr-output base64
-    
-    # 登录，二维码转成 base64 并存到文件 /Users/username/code.txt 
-     wepy devtool login --login-qr-output base64@/Users/username/code.txt
-    
-    
-    
-    # 预览，在终端中打印登录二维码
-    wepy devtool preview /Users/username/demo
-    
-    # 预览，二维码转成 base64 并存到文件 /Users/username/code.txt
-    wepy devtool preview /Users/username/demo --preview-qr-output base64@/Users/username/code.txt
-    
-    
-    
-    # 上传路径 /Users/username/demo 下的项目，指定版本号为 1.0.0，版本备注为 initial release
-    wepy devtool upload 1.0.0@/Users/username/demo --upload-desc 'initial release'
-    
-    
-    
-    # 提交测试路径 /Users/username/demo 下的项目
-    wepy devtool test /Users/username/demo
-    
 ```
