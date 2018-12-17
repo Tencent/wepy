@@ -379,6 +379,30 @@ export default {
                 }
             });
         }
+
+        // add .frameworkinfo file to dist and src folder
+        if(cmd.output === 'baidu') {
+            let distFrameworkInfoPath = path.join(dist, '.frameworkinfo');
+            let srcFrameworkInfoPath = path.join(current, '.frameworkinfo');
+            let wepyCliVer = util.getVersion();
+            let wepyBaiduPkg = path.resolve(__dirname, '../../wepy-baidu/package.json');
+            let wepyBaiduVer;
+            try {
+                wepyBaiduVer = JSON.parse(util.readFile(wepyBaiduPkg)).version;
+            } catch (e) {
+                wepyBaiduVer = '';
+            }
+            let frameworkInfo = {
+                toolName: 'WePY',
+                toolCliVersion: wepyCliVer,
+                toolFrameworkVersion: wepyBaiduVer,
+                createTime: +new Date()
+            };
+            frameworkInfo = JSON.stringify(frameworkInfo);
+            util.writeFile(distFrameworkInfoPath, frameworkInfo);
+            util.writeFile(srcFrameworkInfoPath, frameworkInfo);
+        }
+
         if (cmd.watch) {
             util.isWatch = true;
             this.watch(cmd);
