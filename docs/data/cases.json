@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         { 
+          "name": "条管家--信用", 
+          "email": "app_2@54jietiao.com", 
+          "link": "https://www.54jietiao.com", 
+          "opensource": "", 
+          "qrcode": "https://user-images.githubusercontent.com/1822421/50139469-c99bc380-02dc-11e9-9ce2-6fc53652cccc.png", 
+          "company": "杭州嘿马科技有限公司" 
+        },
+        { 
           "name": "地铁轨交线路", 
           "email": "yuanfangde_hai@163.com", 
           "link": "", 
