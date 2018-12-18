@@ -1455,7 +1455,7 @@ setTimeout(() => {
 ### 其它优化细节
 
 #### 1. wx.request 接收参数修改
-点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/api/network-request.html?t=20161122" target="_blank">官方文档</a>
+点这里查看<a href="https://developers.weixin.qq.com/miniprogram/dev/api/wx.request.html" target="_blank">官方文档</a>
 
 ```javascript
 // 原生代码:
@@ -1478,7 +1478,7 @@ async function request () {
 ```
 
 #### 2. 优化事件参数传递
-点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html?t=20161122" target="_blank">官方文档</a>
+点这里查看<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/event.html" target="_blank">官方文档</a>
 
 ```javascript
 // 原生的事件传参方式:
@@ -1509,7 +1509,7 @@ methods: {
 `this.setData(target, value)`
 `this.setData(object)`
 
-点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/template.html?t=20161122" target="_blank">官方文档</a>
+点这里查看<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/data.html" target="_blank">官方文档</a>
 
 ```html
 // 原生代码:
@@ -1531,7 +1531,7 @@ onLoad () {
 
 #### 4. 组件代替模板和模块
 
-点这里查看<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/data.html?t=20161122" target="_blank">官方文档</a>
+点这里查看<a href="https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/template.html" target="_blank">官方文档</a>
 
 ```html
 // 原生代码:
