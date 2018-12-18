@@ -402,6 +402,35 @@ function nextTick (cb, ctx) {
   }
 }
 
+var renderCallbacks = [];
+
+function renderFlushCallbacks () {
+  var copies = renderCallbacks.slice(0);
+  renderCallbacks.length = 0;
+  for (var i = 0; i < copies.length; i++) {
+    copies[i]();
+  }
+}
+
+function renderNextTick (cb, ctx) {
+  var _resolve;
+  renderCallbacks.push(function () {
+    if (cb) {
+      try {
+        cb.call(ctx);
+      } catch (e) {
+        handleError(e, ctx, 'nextTick');
+      }
+    } else if (_resolve) {
+      _resolve(ctx);
+    }
+  });
+
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise(function (resolve) { _resolve = resolve; });
+  }
+}
+
 /**
  * Parse a v-model expression into a base path and a final key segment.
  * Handles both dot-path and possible square brackets.
@@ -1581,7 +1610,7 @@ function initRender (vm, keys) {
 
       // vm._fromSelf = true;
       if (dirty) {
-        vm.$wx.setData(dirty);
+        vm.$wx.setData(dirty, renderFlushCallbacks);
       }
     }
     vm._init = true;
@@ -2328,7 +2357,9 @@ Object.assign(wepy, {
 
   // global apis
   use: use,
-  mixin: mixin
+  mixin: mixin,
+
+  nextTick: renderNextTick
 });
 
 module.exports = wepy;
