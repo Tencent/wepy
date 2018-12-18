@@ -115,3 +115,32 @@ export function nextTick (cb, ctx) {
     })
   }
 }
+
+const renderCallbacks = [];
+
+export function renderFlushCallbacks () {
+  const copies = renderCallbacks.slice(0);
+  renderCallbacks.length = 0;
+  for (let i = 0; i < copies.length; i++) {
+    copies[i]();
+  }
+}
+
+export function renderNextTick (cb, ctx) {
+  let _resolve;
+  renderCallbacks.push(() => {
+    if (cb) {
+      try {
+        cb.call(ctx)
+      } catch (e) {
+        handleError(e, ctx, 'nextTick')
+      }
+    } else if (_resolve) {
+      _resolve(ctx)
+    }
+  })
+
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise(resolve => { _resolve = resolve });
+  }
+}

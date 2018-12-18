@@ -1,6 +1,7 @@
 import Watcher from './../observer/watcher';
 import { callUserHook } from './hooks';
 import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
+import { renderFlushCallbacks } from './../util/next-tick';
 
 
 export function resetDirty (vm) {
@@ -29,7 +30,7 @@ export function initRender (vm, keys) {
 
       // vm._fromSelf = true;
       if (dirty) {
-        vm.$wx.setData(dirty);
+        vm.$wx.setData(dirty, renderFlushCallbacks);
       }
     }
     vm._init = true;

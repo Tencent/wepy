@@ -4,6 +4,7 @@ import app from './app';
 import component from './component';
 import $global from './global';
 import { use, mixin } from './apis/index';
+import { renderNextTick } from './util/next-tick';
 
 
 let wepy = Base;
@@ -16,7 +17,9 @@ Object.assign(wepy, {
 
   // global apis
   use,
-  mixin
+  mixin,
+
+  nextTick: renderNextTick
 });
 
 
