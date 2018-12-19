@@ -413,11 +413,11 @@ export default {
             repeat.tagName = 'block';
             let val = repeat.getAttribute('for');
             if (val) {
-                repeat.setAttribute(tagprefix + ':for', val);
+                repeat.setAttribute(tagprefix + 'for', val);
                 repeat.removeAttribute('for');
                 ['index', 'item', 'key'].forEach(attr => {
                     let val = repeat.getAttribute(attr);
-                    let tag = attr === 'key' ? `${tagprefix}:key` : `${tagprefix}:for-${attr}`;
+                    let tag = attr === 'key' ? `${tagprefix}key` : `${tagprefix}for-${attr}`;
                     val = val || attr;
                     forDetail[attr] = val;
                     if (prefix) {
