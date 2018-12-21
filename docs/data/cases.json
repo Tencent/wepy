@@ -3,6 +3,14 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "cases": [
+        {
+          "name": "招商银行信用卡中心", 
+          "email": "cloudzqy93@gmail.com", 
+          "link": "https://xyk.cmbchina.com/", 
+          "opensource": "", 
+          "qrcode": "https://user-images.githubusercontent.com/16647306/50322561-78741580-0510-11e9-941a-bd4da4fc2d8c.jpeg", 
+          "company": "招商银行信用卡中心" 
+        },
         { 
           "name": "条管家--信用", 
           "email": "app_2@54jietiao.com", 
