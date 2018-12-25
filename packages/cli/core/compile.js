@@ -367,7 +367,7 @@ class Compile extends Hook {
 
         this.hookAsyncSeq('output-file', { filename, code }).then(({ filename, code }) => {
           logger.silly('output', 'write file: ' + filename);
-          fs.outputFile(filename, sfc[k].outputCode, function (err) {
+          fs.outputFile(filename, code, function (err) {
             if (err) {
               console.log(err);
             }
