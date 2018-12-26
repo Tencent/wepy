@@ -30,7 +30,7 @@ exports = module.exports = class Hook {
     (this._hooks[key] || []).forEach((fn, i) => {
       if (typeof fn === 'function') {
         hasHook = true;
-        if (fn.length > 1) {
+        if (rst.length > 1) {
           rst = fn.apply(this, rst);
         } else {
           rst = fn.call(this, i === 0 ? rst[0] : rst);
