@@ -4,6 +4,14 @@
     " */": "****",
     "cases": [
         {
+            "name": "Scrum敏捷估算",
+            "email": "yociduo@vip.qq.com",
+            "link": "",
+            "opensource": "https://github.com/yociduo/scrum-planning-poker",
+            "qrcode": "https://user-images.githubusercontent.com/8317101/50621847-b414d380-0f43-11e9-8c0c-c7f1c4279c82.jpg",
+            "company": ""
+        },
+        {
           "name": "招商银行信用卡中心", 
           "email": "cloudzqy93@gmail.com", 
           "link": "https://xyk.cmbchina.com/", 
