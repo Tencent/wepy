@@ -39,7 +39,6 @@ class Compile extends Hook {
       this.options.entry = path.resolve(path.join(opt.src, opt.entry));
     }
 
-    this.clear();
     this.resolvers = {};
     this.running = false;
 
@@ -109,11 +108,8 @@ class Compile extends Hook {
 
   }
 
-  clear () {
-    this.compiled = {};
-    this.involved = {};
-    this.vendors = new moduleSet();
-    this.assets = new moduleSet();
+  clear (type) {
+    this.hook('process-clear', type);
     return this;
   }
 
@@ -121,6 +117,13 @@ class Compile extends Hook {
     const styleHooker = (content, options, ctx) => {
       options.supportObject = true;
     };
+
+    this.register('process-clear', function (type) {
+      this.compiled = {};
+      this.involved = {};
+      this.vendors = new moduleSet();
+      this.assets = new moduleSet();
+    });
 
     this.register('before-compiler-less', styleHooker);
     this.register('before-compiler-sass', styleHooker);
@@ -159,6 +162,8 @@ class Compile extends Hook {
 
     initPlugin(this);
     initParser(this);
+
+    this.hook('process-clear', 'init');
 
     return initCompiler(this, this.options.compilers);
   }
@@ -299,7 +304,7 @@ class Compile extends Hook {
         let absolutePath = path.resolve(filepath);
         if (this.involved[absolutePath]) {
           this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
-          this.clear().start();
+          this.clear('watch').start();
         }
       }
     })
