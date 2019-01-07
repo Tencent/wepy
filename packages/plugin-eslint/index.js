@@ -8,9 +8,9 @@
  */
 
 const objectHash = require('object-hash');
-
-const cached = {};
 const engines = {};
+
+let cached = {};  // ESLint line cache
 
 function lint(engine, file) {
   return engine.executeOnFiles(file);
@@ -48,6 +48,13 @@ exports = module.exports = function (options = {}) {
   const cwd = process.cwd();
 
   return function () {
+
+    // Clear the eslint cache when watch process done
+    this.register('process-clear', function () {
+      cached = {};
+    });
+
+    // Registe before parse hook to every process
     [
       'wxs',
       'config',
@@ -55,6 +62,8 @@ exports = module.exports = function (options = {}) {
       'template'
     ].forEach(type => {
       this.register('before-wepy-parser-' + type, function ({ node, ctx } = {}) {
+
+        // wpy files goes here four times.
         if (cached[ctx.file]) {
           return Promise.resolve({ node, ctx });
         }
