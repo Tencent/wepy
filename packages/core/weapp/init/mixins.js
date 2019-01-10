@@ -31,11 +31,7 @@ function initStrats () {
         if (!option[key]) {
           option[key] = isArr(data) ? data: [data];
         } else {
-          if (isArr(option[key])) {
-            option[key].push(data);
-          } else {
-            option[key] = [ option[key] ].concat(data);
-          }
+          option[key] = [ data ].concat(option[key]);
         }
       }
     }
