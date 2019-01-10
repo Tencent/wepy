@@ -1513,6 +1513,9 @@ var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
   WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
   WepyPage.prototype.constructor = WepyPage;
 
+  WepyPage.prototype.$launch = function $launch (url, params) {
+    this.$route('reLaunch', url, params);
+  };
   WepyPage.prototype.$navigate = function $navigate (url, params) {
     this.$route('navigate', url, params);
   };
@@ -1553,7 +1556,7 @@ var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
     } else {
       wxparams = url;
     }
-    var fn = wx[type + 'To'];
+    var fn = wx[type] || wx[type + 'To'];
     if (isFunc(fn)) {
       return fn(wxparams);
     }
@@ -2195,12 +2198,6 @@ function initStrats () {
           option[key] = isArr(data) ? data: [data];
         } else {
           option[key] = [ data ].concat(option[key]);
-          /*
-          if (isArr(option[key])) {
-            option[key].push(data);
-          } else {
-            option[key] = [ option[key] ].concat(data);
-          }*/
         }
       };
     }
