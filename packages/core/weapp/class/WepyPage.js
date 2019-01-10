@@ -3,6 +3,9 @@ import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
 export default class WepyPage extends WepyComponent {
 
+  $launch (url, params) {
+    this.$route('reLaunch', url, params);
+  }
   $navigate (url, params) {
     this.$route('navigate', url, params);
   }
@@ -39,7 +42,7 @@ export default class WepyPage extends WepyComponent {
     } else {
       wxparams = url;
     }
-    let fn = wx[type + 'To'];
+    let fn = wx[type] || wx[type + 'To'];
     if (isFunc(fn)) {
       return fn(wxparams);
     }
