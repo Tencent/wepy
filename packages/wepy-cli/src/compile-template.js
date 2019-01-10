@@ -491,7 +491,7 @@ export default {
         componentElements.forEach((com) => {
             let comid, definePath, isCustom = false, comAttributes = {};
             [].slice.call(com.attributes || []).forEach((attr) => {
-                if (['hidden', tagprefix + ':if', tagprefix + ':elif', tagprefix + ':else', 'class'].indexOf(attr.name) > -1) {
+                if (['hidden', tagprefix + 'if', tagprefix + 'elif', tagprefix + 'else', 'class'].indexOf(attr.name) > -1) {
                     comAttributes[attr.name] = attr.value;
                 }
             });
