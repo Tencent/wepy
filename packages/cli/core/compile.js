@@ -312,6 +312,8 @@ class Compile extends Hook {
 
   applyCompiler (node, ctx) {
     let compiler;
+
+    this.assets.add(ctx.file);
     if (node.lang) {
       let compilerOptions = this.options.compilers[node.lang] || [];
 

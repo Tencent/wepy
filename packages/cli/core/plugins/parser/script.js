@@ -84,8 +84,8 @@ exports = module.exports = function () {
         // TODO: resovle fail ?
         return rst.path;
       }
-      let id = assets.get(rst.path);
-      if (id !== undefined) {
+      let data = assets.data(rst.path);
+      if (data !== undefined) {
         return assets.data(rst.path);
       }
       let ext = path.extname(rst.path);

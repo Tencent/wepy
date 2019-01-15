@@ -275,7 +275,7 @@ exports = module.exports = function () {
 
     return toAST(html).then((ast) => {
 
-      let rel = { handlers: [], components: components, on: {}};
+      let rel = { handlers: {}, components: components, on: {}};
       let scope = null;
 
       [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel, ctx);

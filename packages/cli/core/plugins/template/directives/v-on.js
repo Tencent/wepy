@@ -68,7 +68,7 @@ const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
   let handler = '';
   let type = '';
   let info;
-  info = parseHandlerProxy(value.trim(), scope);
+  info = parseHandlerProxy(value, scope);
 
   if (key === 'click')
     key = 'tap';
@@ -88,35 +88,49 @@ const parseHandler = (key = '', value = '', modifiers = {}, scope) => {
  */
 exports = module.exports = function () {
 
-  let evtid = 0; // Global event id
+  let totalEvtCache = {};  // Global event cache
 
   this.register('template-parse-ast-attr-v-on', function parseAstOn ({ item, name, expr, modifiers, scope, ctx }) {
     let evt = name;
-    let handler = expr;
-    let info = parseHandler(evt, handler, modifiers, scope);
-    let parsed = {};
+    let handler = expr.trim();
+    let parsedEvent = parseHandler(evt, handler, modifiers, scope);
 
-    info.params.forEach((p, i) => {
-      let paramAttr = 'data-wpy' + info.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
+    let assetsId = this.assets.get(ctx.file);
+    let evtCache;
+
+    if (!totalEvtCache[assetsId]) {
+      totalEvtCache[assetsId] = {
+        increaseId: 0
+      };
+    }
+
+    evtCache = totalEvtCache[assetsId];
+
+    parsedEvent.params.forEach((p, i) => {
+      let paramAttr = 'data-wpy' + parsedEvent.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
       if (paramAttr.length > 31) {
-        this.logger.warn(`Function name is too long, it may cause an Error. "${info.handler}"`);
+        this.logger.warn(`Function name is too long, it may cause an Error. "${parsedEvent.handler}"`);
       }
-      parsed[paramAttr] = `{{ ${p} }}`;
     });
-    parsed[info.type] = '_proxy';
 
-    info.tag = item.name;
+    parsedEvent.tag = item.name;
+    parsedEvent.expr = handler;
+
     if (!item.events) {
       item.events = [];
-      info.evtid = evtid;
+      parsedEvent.id = `${assetsId}-${evtCache.increaseId}`;
     } else {
-      info.evtid = item.events[item.events.length - 1].evtid;
+      parsedEvent.id = item.events[item.events.length - 1].id;
     }
-    item.events.push(info);
-    evtid++;
+    item.events.push(parsedEvent);
+    if (!ctx.events) {
+      ctx.events = [];
+    }
+    ctx.events.push(parsedEvent);
+    evtCache.increaseId++;
     return {
       hook: 'template-parse-ast-attr-v-on-apply',
-      'v-on': info,
+      'v-on': parsedEvent,
       attrs: {}
     };
   });
@@ -128,16 +142,13 @@ exports = module.exports = function () {
     let isComponent = !!rel.components[vOn.tag];
 
     if (isComponent) { // it is a custom defined component
-      rel.on[vOn.event] = rel.handlers.length;
-      rel.handlers.push({
-        [vOn.event]: vOn.proxy
-      })
-    } else {
-      if (!rel.handlers[vOn.evtid])
-        rel.handlers[vOn.evtid] = {};
-
-      rel.handlers[vOn.evtid][vOn.event] = vOn.proxy;
+      rel.on[vOn.event] = vOn.id;
     }
+    if (!rel.handlers[vOn.id])
+      rel.handlers[vOn.id] = {};
+
+    rel.handlers[vOn.id][vOn.event] = vOn.proxy;
+
     return { parsed, rel };
   });
 };

@@ -4,20 +4,24 @@ const genRel = (rel) => {
     return rel;
 
   let handlerStr = '{'
-  rel.handlers.forEach((handler, i) => {
-    handlerStr += `'${i}': {`;
-    let events = Object.keys(handler);
-    events.forEach((e, p) => {
-      handlerStr += `${JSON.stringify(e)}: ${handler[e]}`;
-      if (p !== events.length - 1) {
-        handlerStr += ',';
-      }
-    });
-    handlerStr += '}'
-    if (i !== rel.handlers.length - 1) {
-      handlerStr += ',';
+  for (let h in rel.handlers) {
+
+    let handler = rel.handlers[h];
+    handlerStr += `'${h}': {`;
+    if (typeof handler === 'object') {
+      let events = Object.keys(handler);
+      events.forEach((e, p) => {
+        handlerStr += `${JSON.stringify(e)}: ${handler[e]}`;
+        if (p !== events.length - 1) {
+          handlerStr += ', ';
+        }
+      });
     }
-  });
+    handlerStr += '},'
+  }
+  if (handlerStr.length > 2) {
+    handlerStr = handlerStr.substring(0, handlerStr.length - 1);
+  }
   handlerStr += '}';
 
   let modelStr = '';
