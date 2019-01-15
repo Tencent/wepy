@@ -2220,8 +2220,8 @@ function patchMixins (output, option, mixins) {
   }
 
   if (!globalMixinPatched) {
-    var globalMixin = $global.mixin;
-    
+    var globalMixin = $global.mixin || [];
+
     mixins = globalMixin.concat(mixins);
     globalMixinPatched = true;
   }
