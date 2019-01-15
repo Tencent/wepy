@@ -44,8 +44,8 @@ export function patchMixins (output, option, mixins) {
   }
 
   if (!globalMixinPatched) {
-    let globalMixin = $global.mixin;
-    
+    let globalMixin = $global.mixin || [];
+
     mixins = globalMixin.concat(mixins);
     globalMixinPatched = true;
   }
