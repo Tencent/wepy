@@ -304,7 +304,7 @@ class Compile extends Hook {
         let absolutePath = path.resolve(filepath);
         if (this.involved[absolutePath]) {
           this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
-          this.clear('watch').start();
+          this.start();
         }
       }
     })
@@ -313,16 +313,10 @@ class Compile extends Hook {
   applyCompiler (node, ctx) {
     let compiler;
 
-    this.assets.add(ctx.file);
+    ctx.id = this.assets.add(ctx.file);
+
     if (node.lang) {
       let compilerOptions = this.options.compilers[node.lang] || [];
-
-      /*
-      if (['css', 'wxss', 'wxml', 'js', 'json'].indexOf(node.lang) > -1) {
-        let parser = this.parsers[node.type];
-        node.code = node.content;
-        return parser.parse(node, ctx);
-      }*/
 
       let hookKey = 'wepy-compiler-' + node.lang;
 
@@ -331,8 +325,15 @@ class Compile extends Hook {
       }
 
       this.involved[ctx.file] = 1;
-      return this.hookUnique(hookKey, node, ctx)
-        .then(node => {
+
+      let task;
+
+      if (ctx.useCache && node.compiled) { // If file is not changed, and compiled cache exsit.
+        task = Promise.resolve(node);
+      } else {
+        task = this.hookUnique(hookKey, node, ctx);
+      }
+      return task.then(node => {
           return this.hookAsyncSeq('before-wepy-parser-' + node.type, { node, ctx });
         })
         .then(({ node, ctx }) => {

@@ -3,11 +3,18 @@ const loaderUtils = require('loader-utils');
 
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
+
+    // If file is not changed, then use cache.
+    if (ctx.useCache && ctx.sfc.config.parsed) {
+      return Promise.resolve(true);
+    }
+
     if (!rst) {
-      return {
+      ctx.sfc.config.parsed = {
         output: {},
         components: []
       };
+      return Promise.resolve(true);
     }
 
     let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
@@ -26,9 +33,10 @@ exports = module.exports = function () {
     let componentKeys = Object.keys(config.usingComponents);
 
     if (componentKeys.length === 0) {
-      return Promise.resolve({
+      ctx.sfc.config.parsed = {
         output: config
-      });
+      };
+      return Promise.resolve(true);
     }
 
     let resolvedUsingComponents = {};
@@ -70,17 +78,12 @@ exports = module.exports = function () {
 
     return Promise.all(plist).then(() => {
       config.usingComponents = resolvedUsingComponents;
-      return {
+      ctx.sfc.config.parsed = {
         output: config,
         components: parseComponents
-      }
+      };
+      return true;
     });
-
-    config.usingComponents = resolvedUsingComponents;
-    return {
-      output: config,
-      components: parseComponents
-    };
   });
 
   this.register('wepy-parser-config-component-module', function (name, prefix, source, target, ctx) {

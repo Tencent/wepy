@@ -17,61 +17,6 @@ const toAst = require('../../ast/toAST');
 const ReplaceSource = require('webpack-sources').ReplaceSource;
 const RawSource = require('webpack-sources').RawSource;
 
-
-const ECMA_VERSION = 2017;
-
-const POSSIBLE_AST_OPTIONS = [{
-  ranges: true,
-  locations: true,
-  ecmaVersion: ECMA_VERSION,
-  sourceType: "module",
-  plugins: {
-    dynamicImport: true
-  }
-}, {
-  ranges: true,
-  locations: true,
-  ecmaVersion: ECMA_VERSION,
-  sourceType: "script",
-  plugins: {
-    dynamicImport: true
-  }
-}];
-
-function ast (source) {
-  let ast;
-  const comments = [];
-  for(let i = 0, len = POSSIBLE_AST_OPTIONS.length; i < len; i++) {
-    if(!ast) {
-      try {
-        comments.length = 0;
-        POSSIBLE_AST_OPTIONS[i].onComment = comments;
-        ast = acorn.parse(source, POSSIBLE_AST_OPTIONS[i]);
-      } catch(e) {
-        // ignore the error
-      }
-    }
-  }
-
-  if (!ast) {
-    ast = acorn.parse(source, {
-      ranges: true,
-      locations: true,
-      ecmaVersion: ECMA_VERSION,
-      sourceType: "module",
-      plugins: {
-        dynamicImport: true
-      },
-      onComment: comments
-    });
-  }
-
-  if (!ast || typeof ast !== 'object') {
-    throw new Error(`Source could\'t be parsed`);
-  }
-  return ast;
-}
-
 exports = module.exports = function () {
 
   this.register('wepy-parser-dep', function (node, ctx, dep) {
@@ -88,45 +33,9 @@ exports = module.exports = function () {
       if (data !== undefined) {
         return assets.data(rst.path);
       }
-      let ext = path.extname(rst.path);
       this.involved[rst.path] = 1;
-      if (ext === '.js') {
-        if (npm) {
-          return this.hookUnique('wepy-parser-script', {
-            compiled: {
-              code: fs.readFileSync(rst.path, 'utf-8')
-            }
-          }, {
-            file: rst.path,
-            npm: npm,
-            component: ctx.component,
-            type: ctx.type,
-            dep: true, // It's a dep
-          });
-        } else {
-          return this.applyCompiler({
-            type: 'script',
-            lang: 'babel', // TODO: default js files compile mode
-            content: fs.readFileSync(rst.path, 'utf-8')
-          }, {
-            file: rst.path,
-            npm: npm
-          });
-        }
-      } else if (ext === this.options.wpyExt) {
 
-        // TODO: why they import a wpy file.
-        this.hookUnique('error-handler', 'script', {
-          ctx: ctx,
-          type: 'error',
-          message: `Can not import a wepy component, please use "usingComponents" to declear a component`,
-          title: 'dependence'
-        }, {
-          sourcemap: node.compiled.map,
-          start: dep.loc.start
-        });
-        throw new Error('EXIT');
-      }
+      return this.hookUnique('wepy-parser-file', node, { file: rst.path, npm: npm, component: false, type: ctx.type, dep: true });
     });
   });
 
@@ -138,44 +47,52 @@ exports = module.exports = function () {
         let moduleId = this.vendors.get(ctx.file);
         return Promise.resolve(moduleId);
       }
-      this.vendors.add(ctx.file, 'npm');
+      ctx.vendorId = this.vendors.add(ctx.file, 'npm');
     }
 
-    let source = new ReplaceSource(new RawSource(node.compiled.code));
-    let astData = toAst(node.compiled.code);
+    if (ctx.useCache && node.parsed) { // File is not changed
+      let walker = node.parsed.parser;
 
-    let walker = new Walker(astData);
-    walker.run();
+      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
 
-    let depTasks = [];
-
-    walker.deps.forEach(dep => {
-      depTasks.push(this.hookUnique('wepy-parser-dep', node, ctx, dep));
-    });
-    return Promise.all(depTasks).then(rst => {
-
-      let obj = {
-        file: ctx.file,
-        parser: walker,
-        code: node.compiled.code,
-        encoding: node.compiled.encoding || 'utf-8',
-        source: source,
-        depModules: rst,
-        npm: !!ctx.npm,
-        type: ctx.type,
-        component: ctx.component,
-      };
-
-      // If it's not a component, and it's npm package, then add to vendors;
-      let assets = ctx.npm && !(ctx.component && ctx.type === 'weapp') ? this.vendors : this.assets;
-      assets.update(ctx.file, obj, {
-        component: ctx.component,
-        npm: ctx.npm,
-        dep: ctx.dep,
-        type: ctx.type
+      return Promise.all(depTasks).then(rst => {
+        return node.parsed;
       });
-      obj.id = assets.get(ctx.file);
-      return obj;
-    });
+    } else {
+      let source = new ReplaceSource(new RawSource(node.compiled.code));
+      let astData = toAst(node.compiled.code);
+
+      let walker = new Walker(astData);
+      walker.run();
+
+      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
+      return Promise.all(depTasks).then(rst => {
+        let obj = {
+          file: ctx.file,
+          parser: walker,
+          code: node.compiled.code,
+          encoding: node.compiled.encoding || 'utf-8',
+          source: source,
+          depModules: rst,
+          npm: !!ctx.npm,
+          type: ctx.type,
+          component: ctx.component,
+        };
+
+        let types = {
+          component: ctx.component,
+          npm: ctx.npm,
+          dep: ctx.dep,
+          type: ctx.type
+        };
+        this.assets.update(ctx.file, obj, types);
+        obj.id = assets.get(ctx.file);
+        if (ctx.npm && !(ctx.component && ctx.type === 'weapp')) {
+          this.vendors.update(ctx.file, obj, types);
+          obj.vendorId = this.vendors.get(ctx.file);
+        }
+        return obj;
+      });
+    }
   });
 }

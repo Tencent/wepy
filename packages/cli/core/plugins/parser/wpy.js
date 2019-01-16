@@ -9,29 +9,40 @@
 const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
+const loaderUtils = require('loader-utils');
+
+const hashUtil = require('../../util/hash');
 
 exports = module.exports = function () {
   this.register('wepy-parser-wpy', function (comp) {
-    let sfc;
+    let sfc, flow;
     let file = comp.path;
     let type = comp.type;
-    if (!this.compiled[file]) {
-      this.compiled[file] = {};
-    }
-    let wpyTask = [];
-    if (!sfc) {
-      this.involved[file] = 1;
-      let entryContent = fs.readFileSync(file, 'utf-8');
-      sfc = sfcCompiler.parseComponent(entryContent, { pad: 'space' });
-      this.compiled[file].sfc = sfc;
-      let context = {
-        file: file,
-        sfc: sfc,
-        type: type,
-        npm: type === 'module',
-        component: true
-      };
 
+    let context = {
+      file,
+      type,
+      npm: type === 'module',
+      component: true
+    };
+
+    let fileContent = fs.readFileSync(file, 'utf-8');
+    let fileHash = hashUtil.hash(fileContent);
+
+    if (this.compiled[file] && fileHash === this.compiled[file].hash) { // 文件 hash 一致，说明文件无修改
+      context = this.compiled[file];
+      context.useCache = true;
+      sfc = context.sfc;
+
+      flow = Promise.resolve(true);
+    } else {
+      this.compiled[file] = context;
+      context.useCache = false;
+      context.hash = fileHash;
+
+      context.sfc = sfcCompiler.parseComponent(fileContent, { pad: 'space' });
+
+      sfc = context.sfc;
       // deal with the custom block, like config, wxs. etc.
       sfc = this.hookSeq('sfc-custom-block', sfc);
 
@@ -44,85 +55,76 @@ exports = module.exports = function () {
         };
       }
 
-      return this.hookAsyncSeq('pre-check-sfc', {
-        node: sfc.config || { type: 'config', lang: 'json', content: '' },
-        file: file
-      }).then(rst => {
-        return this.applyCompiler(rst.node, context);
-      }).then(parsed => {
-        sfc.config = sfc.config || {};
-        sfc.config.parsed = parsed;
+      if (!sfc.config) {
+        sfc.config = { type: 'config', empty: true, content: '{}', lang: 'json' };
+      }
 
-        if (sfc.wxs) {
-          let p = sfc.wxs.map(wxs => {
-            return this.hookAsyncSeq('pre-check-sfc', {
-              node: wxs,
-              file: file
-            }).then(rst => {
-              return this.applyCompiler(rst.node, context);
-            });
-          });
-          return Promise.all(p);
-        }
-        return null;
-      }).then((all = []) => {
-        if (sfc.wxs && all && all.length) {
-          all.forEach((parsed, i) => {
-            sfc.wxs[i].parsed = parsed;
-          });
-        }
-        return context;
-      }).then(context => {
-        if (sfc.template && type !== 'app') {
-          sfc.template.lang = sfc.template.lang = 'wxml';
-          return this.hookAsyncSeq('pre-check-sfc', {
-            node: sfc.template,
-            file: file
-          }).then(rst => {
-            return this.applyCompiler(rst.node, context);
-          })
-        }
-        return null;
-      }).then(parsed => {
-        sfc.config = sfc.config || {};
-        sfc.template && (sfc.template.parsed = parsed);
-        if (sfc.script) {
-          sfc.script.lang = sfc.script.lang || 'babel';
-          return this.hookAsyncSeq('pre-check-sfc', {
-            node: sfc.script,
-            file: file
-          }).then(rst => {
-            return this.applyCompiler(rst.node, context);
-          });
-        }
-      }).then(parsed => {
-        sfc.script && (sfc.script.parsed = parsed);
+      flow = this.hookAsyncSeq('parse-sfc-src', context);
+    }
 
-        let styleTask = [];
-        if (sfc.styles) {
-          let p = sfc.styles.map(style => {
-            style.lang = style.lang || 'css';
-            return this.hookAsyncSeq('pre-check-sfc', {
-              node: style,
-              file: file
-            }).then(rst => {
-              return this.applyCompiler(rst.node, context);
-            });
-          });
+    this.involved[file] = 1;
 
-          return Promise.all(p);
-        }
-        return null;
-      }).then((all = []) => {
+
+    return flow.then(() => {
+      return this.applyCompiler(context.sfc.config, context);
+    }).then(() => {
+      if (sfc.wxs) {
+        return Promise.all(sfc.wxs.map(wxs => {
+          return this.applyCompiler(wxs, context);
+        }));
+      }
+    }).then((all = []) => {
+      if (sfc.wxs && all && all.length) {
+        all.forEach((parsed, i) => sfc.wxs[i].parsed = parsed)
+      }
+    }).then(() => {
+      if (sfc.template && type !== 'app') {
+        sfc.template.lang = sfc.template.lang || 'wxml';
+        return this.applyCompiler(context.sfc.template, context);
+      }
+    }).then(parsed => {
+      if (sfc.script) {
+        sfc.script.lang = sfc.script.lang || 'babel';
+        return this.applyCompiler(context.sfc.script, context);
+      }
+    }).then(parsed => {
+      (sfc.script && parsed) && (sfc.script.parsed = parsed);
+      if (sfc.styles) {
+        return Promise.all(sfc.styles.map(style => {
+          style.lang = style.lang || 'css';
+          return this.applyCompiler(style, context);
+        }));
+      }
+    }).then((all = []) => {
+      if (all && all.length) {
         all.forEach((parsed, i) => {
           sfc.styles[i].parsed = parsed;
-        }) ;
-        return context;
-      }).catch(e => {
-        throw e;
-      });
-    } else {
-      return Promise.reject('error component');
+        });
+      }
+      return context;
+    });
+  });
+
+
+  const trailingSlash = /[/\\]$/;
+
+  this.register('parse-sfc-src', function (context) {
+    let sfc = context.sfc;
+
+    let tasks = [];
+    let dir = path.parse(context.file).dir;
+    dir = dir.replace(trailingSlash, '');
+
+    for (let type in sfc) {
+      let node = sfc[type];
+      if (node && node.src) {
+        const request = loaderUtils.urlToRequest(node.src, node.src.charAt(0) === '/' ? '' : null);
+        tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
+          node.content = fs.readFileSync(rst.path, 'utf-8');
+          node.dirty = true;
+        }));
+      }
     }
-  })
+    return Promise.all(tasks);
+  });
 }

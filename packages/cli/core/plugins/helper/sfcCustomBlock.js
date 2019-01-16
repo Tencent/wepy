@@ -4,8 +4,13 @@ exports = module.exports = function () {
     if (!sfc.customBlocks || sfc.customBlocks.length === 0)
       return sfc;
 
-    sfc.customBlocks.forEach(block => {
-      ({sfc, block} = this.hookSeq('sfc-custom-block-' + block.type, {sfc, block}));
+    sfc.customBlocks = sfc.customBlocks.filter(block => {
+      let hookKey = 'sfc-custom-block-' + block.type;
+      let has = this.hasHook(hookKey);
+      if (has) {
+        ({sfc, block} = this.hookSeq(hookKey, {sfc, block}));
+      }
+      return !has;
     });
 
     return sfc;
@@ -15,6 +20,7 @@ exports = module.exports = function () {
     if (!sfc.config) {
       sfc.config = block;
       sfc.config.lang = sfc.config.lang || 'json';
+      sfc.config.type = 'config';
     } else {
       this.logger.warn('config', 'mutiple config is defined');
     }
@@ -25,6 +31,7 @@ exports = module.exports = function () {
     if (!sfc.wxs)
       sfc.wxs = [];
     block.lang = block.attrs.lang || 'js';
+    block.type = 'wxs';
     sfc.wxs.push(block);
     return {sfc, block};
   });

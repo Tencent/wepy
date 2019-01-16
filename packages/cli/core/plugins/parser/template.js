@@ -4,12 +4,17 @@ const errorHandler = require('../../util/error');
 exports = module.exports = function () {
   this.register('wepy-parser-template', function (node, ctx) {
 
+    if (ctx.useCache && ctx.sfc.template.parsed) {
+      return Promise.resolve(true);
+    }
+
     // If it's weapp, do not compile it.
     if (ctx.type === 'weapp') {
-      return Promise.resolve({
+      ctx.sfc.template.parsed = {
         code: node.content,
         rel: {}
-      });
+      };
+      return Promise.resolve(true);
     }
 
     let code = node.content;
@@ -39,11 +44,11 @@ exports = module.exports = function () {
     }
 
     return this.hookUnique('template-parse', node.content, components, ctx).then(rst => {
-      let parsed = {
+      ctx.sfc.template.parsed = {
         code: rst.code,
         rel: rst.rel
       };
-      return parsed;
+      return Promise.resolve(true);
     });
   });
 }
