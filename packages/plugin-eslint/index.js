@@ -68,6 +68,10 @@ exports = module.exports = function (options = {}) {
           return Promise.resolve({ node, ctx });
         }
 
+        if (ctx.npm) {
+          return Promise.resolve({ node, ctx });
+        }
+
         cached[ctx.file] = 1;
 
         options = Object.assign({}, {
