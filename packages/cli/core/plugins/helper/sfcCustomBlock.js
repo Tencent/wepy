@@ -5,6 +5,9 @@ exports = module.exports = function () {
       return sfc;
 
     sfc.customBlocks = sfc.customBlocks.filter(block => {
+      if (block.attrs && block.attrs.src) {
+        block.src = block.attrs.src;
+      }
       let hookKey = 'sfc-custom-block-' + block.type;
       let has = this.hasHook(hookKey);
       if (has) {

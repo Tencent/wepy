@@ -116,14 +116,18 @@ exports = module.exports = function () {
     dir = dir.replace(trailingSlash, '');
 
     for (let type in sfc) {
-      let node = sfc[type];
-      if (node && node.src) {
-        const request = loaderUtils.urlToRequest(node.src, node.src.charAt(0) === '/' ? '' : null);
-        tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
-          node.content = fs.readFileSync(rst.path, 'utf-8');
-          node.dirty = true;
-        }));
-      }
+      // wxs is an array.
+      let nodes = [].concat(sfc[type]);
+      nodes.forEach(node => {
+        src = node ? node.src : '';
+        if (src) {
+          const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
+          tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
+            node.content = fs.readFileSync(rst.path, 'utf-8');
+            node.dirty = true;
+          }));
+        }
+      })
     }
     return Promise.all(tasks);
   });
