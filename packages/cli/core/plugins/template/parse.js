@@ -228,7 +228,7 @@ exports = module.exports = function () {
         str += '<' + item.name;
         if (item.events) {
           item.events.forEach(evt => {
-            item.parsedAttr['data-wpy-evt'] = evt.evtid;
+            item.parsedAttr['data-wpy-evt'] = evt.id;
             item.parsedAttr[evt.type] = '_proxy';
             evt.params.forEach((p, i) => {
               if (i > 26) { // Maxium params.
