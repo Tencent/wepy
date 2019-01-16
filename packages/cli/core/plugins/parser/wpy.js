@@ -73,10 +73,6 @@ exports = module.exports = function () {
           return this.applyCompiler(wxs, context);
         }));
       }
-    }).then((all = []) => {
-      if (sfc.wxs && all && all.length) {
-        all.forEach((parsed, i) => sfc.wxs[i].parsed = parsed)
-      }
     }).then(() => {
       if (sfc.template && type !== 'app') {
         sfc.template.lang = sfc.template.lang || 'wxml';
