@@ -146,12 +146,14 @@ var simplifyArgs = {
   // navigator
   'navigateTo': 'url',
   'redirectTo': 'url',
-  'redirectTo': 'url',
   'navigateBack': 'delta',
   'reLaunch': 'url',
 
   // pageScroll
   'pageScrollTo': 'scrollTop,duration',
+
+  // test Simplify
+  'someWxAPI': 'key1,key2,key3,key4,key5'
 };
 
 var makeObj = function (arr) {
@@ -190,12 +192,12 @@ var index = {
           var fixArgs = args[0];
           var failFn = args.pop();
           var successFn = args.pop();
-          if (simplifyArgs[key] && typeof fixArgs !== 'object') {
+          if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
             fixArgs = {};
             var ps = simplifyArgs[key];
             if (args.length) {
               ps.split(',').forEach(function (p, i) {
-                if (args[i]) {
+                if (i in args) {
                   fixArgs[p] = args[i];
                 }
               });

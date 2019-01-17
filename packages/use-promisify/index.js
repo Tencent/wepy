@@ -143,12 +143,14 @@ const simplifyArgs = {
   // navigator
   'navigateTo': 'url',
   'redirectTo': 'url',
-  'redirectTo': 'url',
   'navigateBack': 'delta',
   'reLaunch': 'url',
 
   // pageScroll
   'pageScrollTo': 'scrollTop,duration',
+
+  // test Simplify
+  'someWxAPI': 'key1,key2,key3,key4,key5'
 };
 
 const makeObj = (arr) => {
@@ -184,12 +186,12 @@ export default {
           let fixArgs = args[0];
           let failFn = args.pop();
           let successFn = args.pop();
-          if (simplifyArgs[key] && typeof fixArgs !== 'object') {
+          if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
             fixArgs = {};
             let ps = simplifyArgs[key];
             if (args.length) {
               ps.split(',').forEach((p, i) => {
-                if (args[i]) {
+                if (i in args) {
                   fixArgs[p] = args[i];
                 }
               });
