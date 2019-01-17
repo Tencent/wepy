@@ -134,21 +134,17 @@ class Compile extends Hook {
         if (!Array.isArray(data))
           data = [data];
 
-        data.forEach(v => this.output(v));
+        data.forEach(v => this.output('wpy', v));
       });
     });
 
     this.register('output-vendor', function (data) {
-      this.hookAsyncSeq('output-vendor-file', { filename: data.targetFile, code: data.outputCode, encoding: data.encoding }).then(({ filename, code, encoding }) => {
-        fs.writeFileSync(filename, code, encoding || 'utf-8');
-      })
+      this.output('vendor', data);
     });
 
     this.register('output-assets', function (list) {
       list.forEach(file => {
-        this.hookAsyncSeq('output-assets-file', { filename: file.targetFile, code: file.outputCode, encoding: file.encoding }).then(({ filename, code, encoding }) => {
-          fs.outputFile(filename, code, encoding || 'utf-8');
-        })
+        this.output('assets', file);
       });
     });
 
@@ -361,33 +357,45 @@ class Compile extends Hook {
     return targetFile;
   }
 
-  output (item) {
-    let sfc = item.sfc;
-    let { script, styles, config, template } = sfc;
+  outputFile (filename, code, encoding) {
+    this.hookAsyncSeq('output-file', { filename, code, encoding })
+      .then(({ filename, code, encoding }) => {
+        logger.silly('output', 'write file: ' + filename);
 
-    const outputMap = {
-      script: 'js',
-      styles: 'wxss',
-      config: 'json',
-      template: 'wxml'
-    };
+        fs.outputFile(filename, code, encoding || 'utf-8', (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      });
+  }
 
-    for (let k in outputMap) {
-      if (sfc[k] && sfc[k].outputCode) {
-        let filename = item.outputFile + '.' + outputMap[k];
-        let code = sfc[k].outputCode;
+  output (type, item) {
+    let filename, code, encoding;
 
-        this.hookAsyncSeq('output-file', { filename, code }).then(({ filename, code }) => {
-          logger.silly('output', 'write file: ' + filename);
-          fs.outputFile(filename, code, function (err) {
-            if (err) {
-              console.log(err);
-            }
-          });
-        })
+    if (type === 'wpy') {
+      const sfc = item.sfc;
+      const outputMap = {
+        script: 'js',
+        styles: 'wxss',
+        config: 'json',
+        template: 'wxml'
+      };
 
+      Object.keys(outputMap).forEach(k => {
+        if (sfc[k] && sfc[k].outputCode) {
+          filename = item.outputFile + '.' + outputMap[k];
+          code = sfc[k].outputCode;
 
-      }
+          this.outputFile(filename, code, encoding);
+        }
+      })
+    } else {
+      filename = item.targetFile;
+      code = item.outputCode;
+      encoding = item.encoding;
+
+      this.outputFile(filename, code, encoding);
     }
   }
 }
