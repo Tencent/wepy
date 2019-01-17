@@ -139,12 +139,16 @@ class Compile extends Hook {
     });
 
     this.register('output-vendor', function (data) {
-      fs.writeFileSync(data.targetFile, data.outputCode, 'utf-8');
+      this.hookAsyncSeq('output-vendor-file', { filename: data.targetFile, code: data.outputCode, encoding: data.encoding }).then(({ filename, code, encoding }) => {
+        fs.writeFileSync(filename, code, encoding || 'utf-8');
+      })
     });
 
     this.register('output-assets', function (list) {
       list.forEach(file => {
-        fs.outputFile(file.targetFile, file.outputCode, file.encoding || 'utf-8');
+        this.hookAsyncSeq('output-assets-file', { filename: file.targetFile, code: file.outputCode, encoding: file.encoding }).then(({ filename, code, encoding }) => {
+          fs.outputFile(filename, code, encoding || 'utf-8');
+        })
       });
     });
 
