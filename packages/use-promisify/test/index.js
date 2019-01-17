@@ -61,7 +61,7 @@ describe('wepy-use-promisify', function() {
         option.success(option.num);
       });
     },
-    someWxAPI: function (option) {
+    showActionSheet: function (option) {
       setTimeout(() => {
         (option.success && option.success(option));
       });
@@ -218,15 +218,15 @@ describe('wepy-use-promisify', function() {
     let wepy = {},
       originParamsArr = [
         {
-          key1: 0,
-          key2: 0
+          itemList: 0,
+          itemColor: 0
         },
         {
-          key1: ['A', 'B', 'C'],
-          key2: '#000'
+          itemList: ['A', 'B', 'C'],
+          itemColor: '#000'
         },
         {
-          key1: 'test?id=1'
+          itemList: 'test?id=1'
         }
       ],
       task = ensureAllTaskDone((function () {
@@ -237,14 +237,14 @@ describe('wepy-use-promisify', function() {
 
     for (let item of originParamsArr) {
       let filterParams = Object.values(item)
-      wepy.wx.someWxAPI(...filterParams).then(res => {
+      wepy.wx.showActionSheet(...filterParams).then(res => {
         delete(res.success)
         delete(res.fail)
         expect(res).to.deep.equal(item);
         task.done(originParamsArr.indexOf(item));
       }).catch(e => {
         console.log(e)
-      });
+      }); 
     }
   });
 
