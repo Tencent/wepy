@@ -60,6 +60,11 @@ describe('wepy-use-promisify', function() {
       setTimeout(() => {
         option.success(option.num);
       });
+    },
+    someWxAPI: function (option) {
+      setTimeout(() => {
+        (option.success && option.success(option));
+      });
     }
   };
 
@@ -113,7 +118,6 @@ describe('wepy-use-promisify', function() {
   it('install get rid apis', function (done) {
     let wepy = {};
     usePromisify.install(wepy, ['getStorage']);
-
     wepy.wx.getStorage({
       key: 'mydata',
       success: function (res) {
@@ -208,6 +212,40 @@ describe('wepy-use-promisify', function() {
       task.done('test-less');
     });
 
+  });
+
+  it('test simplify', function (done) {
+    let wepy = {},
+      originParamsArr = [
+        {
+          key1: 0,
+          key2: 0
+        },
+        {
+          key1: ['A', 'B', 'C'],
+          key2: '#000'
+        },
+        {
+          key1: 'test?id=1'
+        }
+      ],
+      task = ensureAllTaskDone((function () {
+        return originParamsArr.map((item, index) => index)
+      })(), done);
+
+    usePromisify.install(wepy);
+
+    for (let item of originParamsArr) {
+      let filterParams = Object.values(item)
+      wepy.wx.someWxAPI(...filterParams).then(res => {
+        delete(res.success)
+        delete(res.fail)
+        expect(res).to.deep.equal(item);
+        task.done(originParamsArr.indexOf(item));
+      }).catch(e => {
+        console.log(e)
+      });
+    }
   });
 
   after(function () {
