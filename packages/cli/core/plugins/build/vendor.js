@@ -51,7 +51,7 @@ exports = module.exports = function () {
     vendorList.forEach((item, i) => {
       let data = this.vendors.data(item);
 
-      this.hookSeq('script-dep-fix', data, true);
+      this.hook('script-dep-fix', data, true);
 
       code += '/***** module ' + i + ' start *****/\n';
       code += '/***** ' + data.file + ' *****/\n';
