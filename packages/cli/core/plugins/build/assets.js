@@ -20,7 +20,7 @@ exports = module.exports = function () {
         // do nothing
       } else {
         if (!t.url) {
-          this.hookSeq('script-dep-fix', d);
+          this.hook('script-dep-fix', d);
         }
         let targetFile = t.npm ? this.getModuleTarget(file) : this.getTarget(file);
         result.push({
