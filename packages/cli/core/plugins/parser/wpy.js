@@ -92,11 +92,6 @@ exports = module.exports = function () {
         }));
       }
     }).then((all = []) => {
-      if (all && all.length) {
-        all.forEach((parsed, i) => {
-          sfc.styles[i].parsed = parsed;
-        });
-      }
       return context;
     });
   });

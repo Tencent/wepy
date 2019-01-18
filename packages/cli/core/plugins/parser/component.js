@@ -63,20 +63,16 @@ exports = module.exports = function () {
       lang: 'json'
     };
 
-    return this.applyCompiler(sfc.config, context).then(parsed => {
-      sfc.config.parsed = parsed;
+    return Promise.resolve(true).then(() => {
+      return this.applyCompiler(sfc.config, context);
     }).then(() => {
-      return this.applyCompiler(sfc.template, context).then(parsed => {
-        sfc.template.parsed = parsed;
-      });
+      return this.applyCompiler(sfc.template, context);
     }).then(() => {
-      return this.applyCompiler(sfc.script, context).then(parsed => {
-        sfc.script.parsed = parsed;
-      });
-    }).then(() => {
-      return this.applyCompiler(sfc.styles[0], context).then(parsed => {
-        sfc.styles[0].parsed = parsed;
-      })
+      return this.applyCompiler(sfc.script, context);
+    }).then((parsed) => {
+      sfc.script.parsed = parsed;
+      return this.applyCompiler(sfc.styles[0], context);
     }).then(() => context);
+
   });
 }

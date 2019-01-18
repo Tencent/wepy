@@ -32,7 +32,7 @@ exports = module.exports = function () {
       let ext = path.extname(file);
       this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: depFileCtx.dep, component: depFileCtx.component, type: depFileCtx.type });
       if (ext === '.js') {
-        if (depFileCtx.npm) {
+        if (depFileCtx.npm && depFileCtx.type !== 'weapp') { // weapp component npm may have import in it.
           return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
         } else {
           return this.applyCompiler({ type: 'script', lang: 'babel', content: fileContent }, depFileCtx);

@@ -360,13 +360,17 @@ class Compile extends Hook {
   outputFile (filename, code, encoding) {
     this.hookAsyncSeq('output-file', { filename, code, encoding })
       .then(({ filename, code, encoding }) => {
-        logger.silly('output', 'write file: ' + filename);
+        if (!code) {
+          logger.silly('output', 'empty content: ' + filename);
+        } else {
+          logger.silly('output', 'write file: ' + filename);
 
-        fs.outputFile(filename, code, encoding || 'utf-8', (err) => {
-          if (err) {
-            console.log(err);
-          }
-        });
+          fs.outputFile(filename, code, encoding || 'utf-8', (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
       });
   }
 
