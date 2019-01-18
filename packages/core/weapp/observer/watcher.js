@@ -31,17 +31,17 @@ export default class Watcher {
     vm._watchers.push(this)
     // options
     if (options) {
-      this.deep = !!options.deep
-      this.user = !!options.user
-      this.lazy = !!options.lazy
-      this.sync = !!options.sync
+      this.deep = !!options.deep;
+      this.user = !!options.user;
+      this.computed = !!options.computed;
+      this.sync = !!options.sync;
     } else {
-      this.deep = this.user = this.lazy = this.sync = false
+      this.deep = this.user = this.computed = this.sync = false;
     }
-    this.cb = cb
-    this.id = ++uid // uid for batching
-    this.active = true
-    this.dirty = this.lazy // for lazy watchers
+    this.cb = cb;
+    this.id = ++uid; // uid for batching
+    this.active = true;
+    this.dirty = this.computed; // for computed watchers
     this.deps = []
     this.newDeps = []
     this.depIds = new Set()
@@ -65,9 +65,9 @@ export default class Watcher {
         )
       }
     }
-    this.value = this.lazy
+    this.value = this.computed
       ? undefined
-      : this.get()
+      : this.get();
   }
 
   /**
@@ -139,7 +139,7 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
-    if (this.lazy) {
+    if (this.computed) {
       this.dirty = true
     } else if (this.sync) {
       this.run()
@@ -181,20 +181,25 @@ export default class Watcher {
 
   /**
    * Evaluate the value of the watcher.
-   * This only gets called for lazy watchers.
+   * This only gets called for computed watchers.
    */
   evaluate () {
-    this.value = this.get()
-    this.dirty = false
+    if (this.dirty) {
+      this.value = this.get();
+      this.dirty = false;
+    }
+    return this.value;
   }
 
   /**
    * Depend on all deps collected by this watcher.
    */
   depend () {
-    let i = this.deps.length
-    while (i--) {
-      this.deps[i].depend()
+    if (Dep.target) {
+      let i = this.deps.length;
+      while (i--) {
+        this.deps[i].depend();
+      }
     }
   }
 
