@@ -64,7 +64,10 @@ exports = module.exports = function () {
     };
 
     return this.applyCompiler(sfc.config, context).then(parsed => {
-      sfc.config.parsed = parsed;
+      // wepy-parser-config return Promise.resolve(true);
+      if (typeof parsed === 'object') {
+        sfc.config.parsed = parsed;
+      }
     }).then(() => {
       return this.applyCompiler(sfc.template, context).then(parsed => {
         sfc.template.parsed = parsed;
