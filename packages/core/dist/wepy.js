@@ -10,7 +10,7 @@ if (typeof Set !== 'undefined' && isNative(Set)) {
   _Set = Set;
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
-  _Set = (function () {
+  _Set = /*@__PURE__*/(function () {
     function Set () {
       this.set = Object.create(null);
     }
@@ -658,11 +658,9 @@ var Observer = function Observer (ref) {
  * value type is Object.
  */
 Observer.prototype.walk = function walk (key, obj) {
-    var this$1 = this;
-
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
-    defineReactive({ vm: this$1.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+    defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
     //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
   }
 };
@@ -671,10 +669,8 @@ Observer.prototype.walk = function walk (key, obj) {
  * Observe a list of Array items.
  */
 Observer.prototype.observeArray = function observeArray (key, items) {
-    var this$1 = this;
-
   for (var i = 0, l = items.length; i < l; i++) {
-    observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
+    observe({ vm: this.vm, key: i, value: items[i], parent: items });
   }
 };
 
@@ -1223,15 +1219,15 @@ var Watcher = function Watcher (vm, expOrFn, cb, options, isRenderWatcher) {
   if (options) {
     this.deep = !!options.deep;
     this.user = !!options.user;
-    this.lazy = !!options.lazy;
+    this.computed = !!options.computed;
     this.sync = !!options.sync;
   } else {
-    this.deep = this.user = this.lazy = this.sync = false;
+    this.deep = this.user = this.computed = this.sync = false;
   }
   this.cb = cb;
   this.id = ++uid$1; // uid for batching
   this.active = true;
-  this.dirty = this.lazy; // for lazy watchers
+  this.dirty = this.computed; // for computed watchers
   this.deps = [];
   this.newDeps = [];
   this.depIds = new _Set();
@@ -1253,7 +1249,7 @@ var Watcher = function Watcher (vm, expOrFn, cb, options, isRenderWatcher) {
       );
     }
   }
-  this.value = this.lazy
+  this.value = this.computed
     ? undefined
     : this.get();
 };
@@ -1304,13 +1300,11 @@ Watcher.prototype.addDep = function addDep (dep) {
  * Clean up for dependency collection.
  */
 Watcher.prototype.cleanupDeps = function cleanupDeps () {
-    var this$1 = this;
-
   var i = this.deps.length;
   while (i--) {
-    var dep = this$1.deps[i];
-    if (!this$1.newDepIds.has(dep.id)) {
-      dep.removeSub(this$1);
+    var dep = this.deps[i];
+    if (!this.newDepIds.has(dep.id)) {
+      dep.removeSub(this);
     }
   }
   var tmp = this.depIds;
@@ -1329,7 +1323,7 @@ Watcher.prototype.cleanupDeps = function cleanupDeps () {
  */
 Watcher.prototype.update = function update () {
   /* istanbul ignore else */
-  if (this.lazy) {
+  if (this.computed) {
     this.dirty = true;
   } else if (this.sync) {
     this.run();
@@ -1371,22 +1365,25 @@ Watcher.prototype.run = function run () {
 
 /**
  * Evaluate the value of the watcher.
- * This only gets called for lazy watchers.
+ * This only gets called for computed watchers.
  */
 Watcher.prototype.evaluate = function evaluate () {
-  this.value = this.get();
-  this.dirty = false;
+  if (this.dirty) {
+    this.value = this.get();
+    this.dirty = false;
+  }
+  return this.value;
 };
 
 /**
  * Depend on all deps collected by this watcher.
  */
 Watcher.prototype.depend = function depend () {
-    var this$1 = this;
-
-  var i = this.deps.length;
-  while (i--) {
-    this$1.deps[i].depend();
+  if (Dep.target) {
+    var i = this.deps.length;
+    while (i--) {
+      this.deps[i].depend();
+    }
   }
 };
 
@@ -1394,8 +1391,6 @@ Watcher.prototype.depend = function depend () {
  * Remove self from all dependencies' subscriber list.
  */
 Watcher.prototype.teardown = function teardown () {
-    var this$1 = this;
-
   if (this.active) {
     // remove self from vm's watcher list
     // this is a somewhat expensive operation so we skip it
@@ -1405,7 +1400,7 @@ Watcher.prototype.teardown = function teardown () {
     }
     var i = this.deps.length;
     while (i--) {
-      this$1.deps[i].removeSub(this$1);
+      this.deps[i].removeSub(this);
     }
     this.active = false;
   }
@@ -1415,13 +1410,8 @@ function createComputedGetter (key) {
   return function computedGetter () {
     var watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
-      if (watcher.dirty) {
-        watcher.evaluate();
-      }
-      if (Dep.target) {
-        watcher.depend();
-      }
-      return watcher.value;
+      watcher.depend();
+      return watcher.evaluate();
     }
   }
 }
@@ -1434,7 +1424,7 @@ function initComputed (vm, computed) {
     return;
   }
   var watchers = vm._computedWatchers = Object.create(null);
-  var computedWatcherOptions = { lazy: false };
+  var computedWatcherOptions = { computed: true };
 
   Object.keys(computed).forEach(function (key) {
     var def$$1 = computed[key];
@@ -1461,7 +1451,7 @@ function initComputed (vm, computed) {
   });
 }
 
-var WepyApp = (function (Base$$1) {
+var WepyApp = /*@__PURE__*/(function (Base$$1) {
   function WepyApp () {
     Base$$1.call(this);
   }
@@ -1473,7 +1463,7 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyComponent = (function (Base$$1) {
+var WepyComponent = /*@__PURE__*/(function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
@@ -1514,7 +1504,7 @@ var WepyComponent = (function (Base$$1) {
   return WepyComponent;
 }(Base));
 
-var WepyPage = (function (WepyComponent$$1) {
+var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
   function WepyPage () {
     WepyComponent$$1.apply(this, arguments);
   }
