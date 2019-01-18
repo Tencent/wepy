@@ -1,6 +1,6 @@
 exports = module.exports = function () {
   this.register('wepy-parser-style', function (node, ctx) {
-    if (ctx.useCache && ctx.sfc.template.parsed) {
+    if (ctx.useCache && node.parsed) {
       return Promise.resolve(true);
     }
     node.parsed = node.compiled;
