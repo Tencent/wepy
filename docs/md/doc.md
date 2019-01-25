@@ -824,7 +824,7 @@ project
     //引入组件文件
     import Child from '../components/child';
    
-    export default class Index extends wepy.component {
+    export default class Index extends wepy.page {
         //声明组件，分配组件id为child
         components = {
             child: Child
