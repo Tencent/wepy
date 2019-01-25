@@ -853,7 +853,7 @@ project
     import wepy from 'wepy';
     import Child from '../components/child';
    
-    export default class Index extends wepy.component {
+    export default class Index extends wepy.page {
         components = {
             //为两个相同组件的不同实例分配不同的组件ID，从而避免数据同步变化的问题
             child: Child,
