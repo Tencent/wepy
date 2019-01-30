@@ -28,15 +28,23 @@ exports = module.exports = function () {
 
   this.register('error-handler-script', function (errInfo, extra) {
 
-    let { ctx, message, type, title } = errInfo;
+    let { ctx, message, type, title, code, filename } = errInfo;
     let codeFrame = '';
+
+    if (ctx && ctx.file) {
+      filename = filename || ctx.file;
+    }
+    if (ctx && ctx.sfc && ctx.script && ctx.script.content) {
+      code = ctx.sfc.script.content;
+    }
 
     if (extra) {
       extra.type = 'script';
-      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', ctx.sfc.script.content, extra, message);
+      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', code, extra, message);
     }
+
     let output = 'Message:\n  ' + message;
-    output += '\n' + 'File:\n  ' + ctx.file;
+    output += '\n' + 'File:\n  ' + filename;
     output += '\n' + codeFrame;
     this.logger[type](title, output);
 
