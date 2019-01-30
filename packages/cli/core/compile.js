@@ -256,6 +256,7 @@ class Compile extends Hook {
     }).then(() => {
       this.hookUnique('output-static')
     }).then(() => {
+      this.hookSeq('process-done');
       this.running = false;
       this.logger.info('process finished');
       if (this.options.watch) {
@@ -370,6 +371,13 @@ class Compile extends Hook {
               console.log(err);
             }
           });
+        }
+      }).catch(e => {
+        if (e.handler) {
+          this.hookUnique('error-handler', e.handler, e.error, e.pos);
+        } else {
+          // TODO
+          throw e
         }
       });
   }
