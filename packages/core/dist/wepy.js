@@ -1325,6 +1325,7 @@ Watcher.prototype.update = function update () {
   /* istanbul ignore else */
   if (this.computed) {
     this.dirty = true;
+    this.evaluate();
   } else if (this.sync) {
     this.run();
   } else {
@@ -1370,6 +1371,7 @@ Watcher.prototype.run = function run () {
 Watcher.prototype.evaluate = function evaluate () {
   if (this.dirty) {
     this.value = this.get();
+    this.vm.$dirty.push(this.key, this.key, this.value);
     this.dirty = false;
   }
   return this.value;
@@ -1411,6 +1413,7 @@ function createComputedGetter (key) {
     var watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
       watcher.depend();
+      watcher.key = key;
       return watcher.evaluate();
     }
   }
@@ -1436,7 +1439,8 @@ function initComputed (vm, computed) {
 
     // push to dirty after dep called.
     watchers[key] = new Watcher(vm, getter || function () {}, function (newv, oldv) {
-      vm.$dirty.push(key, key, newv);
+      // evaluate will set dirty
+      // vm.$dirty.push(key, key, newv);
     }, computedWatcherOptions);
 
     if (typeof def$$1 === 'function') {
