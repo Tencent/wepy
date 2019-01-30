@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 
 const acorn = require('acorn-dynamic-import').default;
+const hashUtil = require('../../util/hash');
 const Walker = require('../../ast/walker');
 const toAst = require('../../ast/toAST');
 const ReplaceSource = require('webpack-sources').ReplaceSource;
@@ -24,18 +25,24 @@ exports = module.exports = function () {
       let npm = rst.meta.descriptionFileRoot !== this.context;
 
       let assets = this.assets;
+      let file = rst.path;
 
-      if (!rst.path) {
+      if (!file) {
         // TODO: resovle fail ?
         return rst.path;
       }
-      let data = assets.data(rst.path);
-      if (data !== undefined) {
-        return assets.data(rst.path);
-      }
-      this.involved[rst.path] = 1;
 
-      return this.hookUnique('wepy-parser-file', node, { file: rst.path, npm: npm, component: false, type: ctx.type, dep: true });
+      let data = assets.data(file);
+      if (data !== undefined && this.compiled[file] && this.compiled[file].hash) {
+        let fileContent = fs.readFileSync(file, 'utf-8');
+        let fileHash = hashUtil.hash(fileContent);
+        if (fileHash === this.compiled[file].hash) {  // File is not changed, do not compile again
+          return assets.data(file);
+        }
+      }
+      this.involved[file] = 1;
+
+      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep: true });
     });
   });
 
