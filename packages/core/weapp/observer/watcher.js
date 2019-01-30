@@ -141,6 +141,7 @@ export default class Watcher {
     /* istanbul ignore else */
     if (this.computed) {
       this.dirty = true
+      this.evaluate();
     } else if (this.sync) {
       this.run()
     } else {
@@ -186,6 +187,7 @@ export default class Watcher {
   evaluate () {
     if (this.dirty) {
       this.value = this.get();
+      this.vm.$dirty.push(this.key, this.key, this.value);
       this.dirty = false;
     }
     return this.value;

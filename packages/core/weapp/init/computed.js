@@ -9,6 +9,7 @@ function createComputedGetter (key) {
     let watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
       watcher.depend();
+      watcher.key = key;
       return watcher.evaluate();
     }
   }
@@ -34,7 +35,8 @@ export function initComputed (vm, computed) {
 
     // push to dirty after dep called.
     watchers[key] = new Watcher(vm, getter || function () {}, function (newv, oldv) {
-      vm.$dirty.push(key, key, newv);
+      // evaluate will set dirty
+      // vm.$dirty.push(key, key, newv);
     }, computedWatcherOptions);
 
     if (typeof def === 'function') {
