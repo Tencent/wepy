@@ -28,7 +28,6 @@ const npmpublish = (tag) => execa('npm', tag ? ['publish', '.', '--tag', tag] : 
 module.exports = function autoPublish (nameOrPkg, opt) {
 
   let pkg;
-  console.log(opt.interact);
   if (!opt.interact) {
     if (!opt.name) {
       log.error('Missing a package name');
