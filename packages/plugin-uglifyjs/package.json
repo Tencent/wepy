@@ -18,5 +18,5 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/plugin-uglifyjs@function(str, flags) {\n  if (arguments.length === 0) return this._version;\n  this._version = str;\n  flags = flags || '-V, --version';\n  var versionOption = new Option(flags, 'output the version number');\n  this._versionOptionName = versionOption.long.substr(2) || 'version';\n  this.options.push(versionOption);\n  this.on('option:' + this._versionOptionName, function() {\n    process.stdout.write(str + '\\n');\n    process.exit(0);\n  });\n  return this;\n}",
-  "_commitid": "db65abf"
+  "_commitid": "05169c6"
 }
