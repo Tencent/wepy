@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-eslint",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "wepy eslint",
   "main": "index.js",
   "scripts": {
@@ -10,12 +10,17 @@
     "wepy",
     "eslint"
   ],
-  "author": "dlhandsome",
+  "author": {
+    "name": "dlhandsome"
+  },
   "license": "MIT",
   "peerDependencies": {
     "eslint": ">=1.6.0 <6.0.0"
   },
   "dependencies": {
     "object-hash": "^1.3.1"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/plugin-eslint@0.1.5",
+  "_commitid": "251e67f"
 }
