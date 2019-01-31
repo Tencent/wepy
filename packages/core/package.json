@@ -1,6 +1,6 @@
 {
   "name": "@wepy/core",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "",
   "main": "./dist/wepy.js",
   "scripts": {
@@ -8,5 +8,7 @@
   },
   "author": "",
   "license": "MIT",
-  "dependencies": {}
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/core@2.0.0-alpha.2",
+  "_commitid": "36a4450"
 }
