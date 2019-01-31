@@ -12,9 +12,9 @@ const githash = () => execa('git', ['rev-parse', '--short', 'HEAD']).then(rst =>
 
 const gitadd = (files) => execa('git', ['add'].concat(files));
 
-const gitcommit = (msg) => execa('git', ['commit', '-m', `"${msg}"` , '--no-verify']);
+const gitcommit = (msg) => execa('git', ['commit', '-m', `${msg}` , '--no-verify']);
 
-const gittag = (msg) => execa('git', ['tag', `"${msg}"`]);
+const gittag = (msg) => execa('git', ['tag', `${msg}`]);
 
 const gitpush = () => execa('git', ['push']);
 
