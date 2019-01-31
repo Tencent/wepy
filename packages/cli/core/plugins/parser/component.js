@@ -10,6 +10,8 @@ const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
 
+const wxmlAst = require('../../ast/wxml');
+
 exports = module.exports = function () {
   this.register('wepy-parser-component', function (comp) {
     let parsedPath = path.parse(comp.path);
@@ -63,7 +65,53 @@ exports = module.exports = function () {
       lang: 'json'
     };
 
-    return Promise.resolve(true).then(() => {
+    let flow = Promise.resolve(true);
+    let templateContent = sfc.template.content;
+
+    if (templateContent.indexOf('<wxs ') > -1) { // wxs tag inside
+      let templateAst = wxmlAst(sfc.template.content);
+
+      sfc.wxs = [];
+
+      flow = templateAst.then(ast => {
+        let checkSrc = false;
+        wxmlAst.walk(ast, {
+          name: {
+            wxs (item) {
+              if (item.type === 'tag' && item.name === 'wxs') {
+                if (item.attribs.src) {
+                  checkSrc = true;
+                }
+                sfc.wxs.push({
+                  attrs: item.attribs,
+                  src: checkSrc ? item.attribs.src : '',
+                  lang: 'js',
+                  type: 'wxs',
+                  content: wxmlAst.generate(item.children)
+                });
+                // Remove node;
+                item.data = '';
+                item.children = [];
+                item.type = 'text';
+              }
+            }
+          }
+        });
+        if (checkSrc) {  // has wxs with src, reset wxml
+          sfc.template.content = wxmlAst.generate(ast);
+        }
+        return checkSrc ? this.hookAsyncSeq('parse-sfc-src', context) : true;
+      });
+    }
+
+
+    return flow.then(() => {
+      if (sfc.wxs) {
+        return Promise.all(sfc.wxs.map(wxs => {
+          return this.applyCompiler(wxs, context);
+        }));
+      }
+    }).then(() => {
       return this.applyCompiler(sfc.config, context);
     }).then(() => {
       return this.applyCompiler(sfc.template, context);
