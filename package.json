@@ -8,7 +8,6 @@
     "dev:all": "node ./scripts/build.js",
     "dev:watch": "chokidar '**/*.wpy' '**/*.js' -c 'npm run dev:all' -i '/dist/'",
     "docs": "cd docs && node server.js",
-    "prepublish": "npm run build",
     "bootstrap": "./node_modules/.bin/lerna bootstrap --loglevel silly && ./scripts/install_dev.sh",
     "bootstrap:prod": "./node_modules/.bin/lerna bootstrap --loglevel -- --production --no-optional && ./scripts/install_dev.sh",
     "build": "node ./node_modules/gulp/bin/gulp build",
@@ -16,7 +15,7 @@
     "watch": "node ./node_modules/gulp/bin/gulp watch",
     "test": "./scripts/test.sh",
     "clean": "./scripts/clean.sh",
-    "publish": "npm run test && ./node_modules/.bin/lerna publish",
+    "publish": "./scripts/npm_publish/index.js publish",
     "commit": "git cz"
   },
   "repository": {
