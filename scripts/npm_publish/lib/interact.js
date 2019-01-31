@@ -72,13 +72,20 @@ module.exports = function interactPublish (name, opt) {
           value: ver
         };
       });
+      if (tag !== 'release') {
+        let prerelease = semver.inc(pkgVersion, 'prerelease', tag);
+        choices.push({
+          message: `prerelease (${prerelease})`,
+          value: prerelease
+        });
+      }
       return new Select({
         name: 'version',
         message: 'Chooice a publish version:',
         choices: choices
       }).run();
     }).then((version) => {
-      publishOpt.version = version;
+      publishOpt.ver = version;
       publishOpt.interact = true;
       return autoPublish(pkg, publishOpt);
     })
