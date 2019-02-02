@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-babel",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "wepy compile babel",
   "main": "index.js",
   "scripts": {
@@ -9,9 +9,14 @@
   "keywords": [
     "babel"
   ],
-  "author": "Gcaufy",
+  "author": {
+    "name": "Gcaufy"
+  },
   "license": "MIT",
   "dependencies": {
     "@babel/core": "^7.1.0"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/compiler-babel@2.0.2",
+  "_commitid": "cb7a242"
 }
