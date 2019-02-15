@@ -69,7 +69,7 @@ exports = module.exports = function () {
       let source = new ReplaceSource(new RawSource(node.compiled.code));
       let astData = toAst(node.compiled.code);
 
-      let walker = new Walker(astData);
+      let walker = new Walker(this, astData, node.lang);
       walker.run();
 
       let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));

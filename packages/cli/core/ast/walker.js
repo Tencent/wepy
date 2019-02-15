@@ -1,8 +1,10 @@
 class AstWalker {
-  constructor (ast) {
+  constructor (compilation, ast, lang) {
     this.ast = ast;
     this.state = {};
     this.deps = [];
+    this.compilation = compilation;
+    this.lang = lang;
   }
 
   run () {
@@ -433,15 +435,22 @@ class AstWalker {
         case "VariableDeclarator":
           {
             this.enterPattern(declarator.id, (name, decl) => {
-              if (declarator.init && declarator.init.type === 'CallExpression') {
-                if (declarator.init.callee.name === 'require') {
-                  if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === 'wepy') {
-                    this.scope.instances.push(name);
+              // For old version compiler-babel, we can remove it later
+              debugger;
+              if (this.compilation.hasHook('prewalk-' + declarator.type, this, declarator, name, decl)) {
+                this.compilation.hook('prewalk-' + declarator.type, this, declarator, name, decl);
+              } else {
+                if (declarator.init && declarator.init.type === 'CallExpression') {
+                  if (declarator.init.callee.name === 'require') {
+                    if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === 'wepy') {
+                      this.scope.instances.push(name);
+                    }
+                  } else if (declarator.init.callee.name === '_interopRequireDefault') {
+                    this.scope.instances.push(name + '.default');
                   }
-                } else if (declarator.init.callee.name === '_interopRequireDefault') {
-                  this.scope.instances.push(name + '.default');
                 }
               }
+
               if (!this.applyMethods(`var${declarator.kind}${name}`, decl)) {
                 if (!this.applyMethods(`var${name}`, decl)) {
                   this.scope.renames['$' + name] = undefined;
@@ -774,9 +783,14 @@ class AstWalker {
 
       if (expression.callee.type === 'MemberExpression') {
         let exprName = this.getNameForExpression(expression.callee);
-        if (this.scope.instances && exprName && this.scope.instances.indexOf(exprName.instance) !== -1) {  // calling wepy instance
-          if (['app', 'page', 'component'].indexOf(exprName.callee) !== -1) {
-            this.entry = expression;
+        // For old version compiler-babel, we can remove it later
+        if (this.compilation.hasHook('walker-detect-entry')) {
+          this.compilation.hook('walker-detect-entry', this, expression, exprName);
+        } else {
+          if (this.scope.instances && exprName && this.scope.instances.indexOf(exprName.instance) !== -1) {  // calling wepy instance
+            if (['app', 'page', 'component'].indexOf(exprName.callee) !== -1) {
+              this.entry = expression;
+            }
           }
         }
       }

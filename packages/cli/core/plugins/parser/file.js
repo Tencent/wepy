@@ -35,7 +35,7 @@ exports = module.exports = function () {
         if (depFileCtx.npm && depFileCtx.type !== 'weapp') { // weapp component npm may have import in it.
           return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
         } else {
-          return this.applyCompiler({ type: 'script', lang: 'babel', content: fileContent }, depFileCtx);
+          return this.applyCompiler({ type: 'script', lang: node.lang || 'babel', content: fileContent }, depFileCtx);
         }
       } else {
         if (ext === this.options.wpyExt) {
