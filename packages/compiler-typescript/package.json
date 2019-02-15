@@ -1,0 +1,21 @@
+{
+  "name": "@wepy/compiler-typescript",
+  "version": "2.0.0",
+  "description": "wepy compile typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "readme": "ERROR: No README data found!",
+  "peerDependencies": {
+    "typescript": "^3.3.3"
+  }
+}
