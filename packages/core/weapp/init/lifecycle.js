@@ -228,12 +228,22 @@ export function patchLifecycle (output, options, rel, isComponent) {
     }
   }
 
-  output.ready = function () {
+  output.ready = function (...args) {
     // TODO: ready
+    let vm = this.$wepy;
+    return callUserMethod(vm, vm.$options, 'ready', args);
   };
 
-  output.moved = function () {
+  output.moved = function (...args) {
     // TODO: moved
+    let vm = this.$wepy;
+    return callUserMethod(vm, vm.$options, 'moved', args);
+  };
+
+  output.detached = function (...args) {
+    // TODO: moved
+    let vm = this.$wepy;
+    return callUserMethod(vm, vm.$options, 'detached', args);
   };
 };
 
