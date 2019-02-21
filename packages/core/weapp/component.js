@@ -1,4 +1,4 @@
-import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps } from './init/index';
+import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps, patchRelations } from './init/index';
 
 function component (opt = {}, rel) {
 
@@ -23,6 +23,8 @@ function component (opt = {}, rel) {
   patchMethods(compConfig, opt.methods, true);
 
   patchData(compConfig, opt.data, true);
+
+  patchRelations(compConfig, opt.relations);
 
   patchLifecycle(compConfig, opt, rel, true);
 
