@@ -2264,6 +2264,13 @@ function patchMixins (output, option, mixins) {
   }
 }
 
+function patchRelations (output, relations) {
+  if (!relations) {
+    relations = {};
+  }
+  output.relations = relations;
+}
+
 function page (opt, rel) {
   if ( opt === void 0 ) opt = {};
 
@@ -2329,6 +2336,8 @@ function component (opt, rel) {
   patchMethods(compConfig, opt.methods, true);
 
   patchData(compConfig, opt.data, true);
+
+  patchRelations(compConfig, opt.relations);
 
   patchLifecycle(compConfig, opt, rel, true);
 
