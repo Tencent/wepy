@@ -3,12 +3,17 @@
   "version": "2.0.0-alpha.2",
   "description": "",
   "main": "./dist/wepy.js",
+  "typings": "types/index.d.ts",
   "scripts": {
+    "test:types": "tsc -p ./types/test/tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/core@2.0.0-alpha.2",
-  "_commitid": "36a4450"
+  "_commitid": "36a4450",
+  "devDependencies": {
+    "typescript": "^3.3.3"
+  }
 }
