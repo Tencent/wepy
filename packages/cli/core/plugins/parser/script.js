@@ -42,7 +42,7 @@ exports = module.exports = function () {
       }
       this.involved[file] = 1;
 
-      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep: true });
+      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep });
     });
   });
 

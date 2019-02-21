@@ -36,7 +36,7 @@ class Compile extends Hook {
     this.options = opt;
 
     if (!path.isAbsolute(opt.entry)) {
-      this.options.entry = path.resolve(path.join(opt.src, opt.entry));
+      this.options.entry = path.resolve(path.join(opt.src, opt.entry + opt.wpyExt));
     }
 
     this.resolvers = {};
@@ -57,7 +57,7 @@ class Compile extends Hook {
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
-    this.options.resolve.extensions = ['.js', '.json', '.node', '.wxs', this.options.wpyExt];
+    this.options.resolve.extensions = ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt];
 
     this.resolvers.normal = ResolverFactory.createResolver(Object.assign({
       fileSystem: this.inputFileSystem

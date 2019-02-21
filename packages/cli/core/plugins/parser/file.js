@@ -30,8 +30,8 @@ exports = module.exports = function () {
       depFileCtx.hash = fileHash;
 
       let ext = path.extname(file);
-      this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: depFileCtx.dep, component: depFileCtx.component, type: depFileCtx.type });
-      if (ext === '.js') {
+      this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: true, component: depFileCtx.component, type: depFileCtx.type });
+      if (ext === '.js' || ext === '.ts') {
         if (depFileCtx.npm && depFileCtx.type !== 'weapp') { // weapp component npm may have import in it.
           return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
         } else {
@@ -41,25 +41,30 @@ exports = module.exports = function () {
         if (ext === this.options.wpyExt) {
           // TODO: why they import a wpy file.
           this.hookUnique('error-handler', 'script', {
+            code: node.compiled.code,
             ctx: depFileCtx,
             type: 'error',
             message: `Can not import a wepy component, please use "usingComponents" to declear a component`,
             title: 'dependence'
-          }, {
+          }, node.compiled.map ? {
             sourcemap: node.compiled.map,
-            start: dep.loc.start
-          });
+            start: depFileCtx.dep.loc.start,
+            end: depFileCtx.dep.loc.end
+          } : depFileCtx.dep.loc);
           throw new Error('EXIT');
         } else {
+          console.log(node);
           this.hookUnique('error-handler', 'script', {
+            code: node.compiled.code,
             ctx: depFileCtx,
             type: 'error',
             message: `Unrecognized import extension: ${depFileCtx.file}`,
             title: 'dependence'
-          }, {
+          }, node.compiled.map ? {
             sourcemap: node.compiled.map,
-            start: dep.loc.start
-          });
+            start: depFileCtx.dep.loc.start,
+            end: depFileCtx.dep.loc.end
+          } : depFileCtx.dep.loc);
           throw new Error('EXIT');
         }
       }

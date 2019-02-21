@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const DEFAULT_OPTIONS = {
-  'entry': { type: String, default: 'app.wpy' },
+  'entry': { type: String, default: 'app' },
   'src': { type: String, default: 'src' },
   'target': { type: String, default: 'weapp' },
   'static': { type: [String, Array], default: 'static' },

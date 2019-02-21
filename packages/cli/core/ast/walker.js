@@ -436,7 +436,6 @@ class AstWalker {
           {
             this.enterPattern(declarator.id, (name, decl) => {
               // For old version compiler-babel, we can remove it later
-              debugger;
               if (this.compilation.hasHook('prewalk-' + declarator.type, this, declarator, name, decl)) {
                 this.compilation.hook('prewalk-' + declarator.type, this, declarator, name, decl);
               } else {
