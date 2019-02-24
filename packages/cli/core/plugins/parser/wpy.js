@@ -51,6 +51,7 @@ exports = module.exports = function () {
           attrs: {},
           type: 'script',
           empty: true,
+          lang: 'js',
           content: 'Component({})'
         };
       }
