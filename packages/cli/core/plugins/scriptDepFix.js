@@ -15,12 +15,17 @@ exports = module.exports = function () {
     if (!parsed.fixedDeps) {
       parsed.fixedDeps = [];
     }
-
     parsed.parser.deps.forEach((dep, i) => {
       if (!parsed.fixedDeps[i]) {
         let depMod = parsed.depModules[i];
         if (typeof depMod === 'number') {
           depMod = this.vendors.data(depMod);
+        }
+
+        let modFilePath = depMod.file;
+        let modFilePathObj = path.parse(modFilePath);
+        if (depMod.outputFileName && modFilePathObj.base !== depMod.outputFileName) {
+          modFilePath = path.join(modFilePathObj.dir, depMod.outputFileName);
         }
         let replaceMent = '';
         if (isNPM) {
@@ -30,14 +35,14 @@ exports = module.exports = function () {
             replaceMent = '{}';
           } else if (!depMod.npm || (depMod.component && depMod.type === 'weapp')) {
             //depMod dep is not a npm package, and it's not a component
-            let relativePath = path.relative(path.dirname(parsed.file), depMod.file).replace(/\\/g, '/');
+            let relativePath = path.relative(path.dirname(parsed.file), modFilePath).replace(/\\/g, '/');
             if (dep.statement && dep.statement.type === 'ImportDeclaration') { // import 'xxxxx' from 'xxxxx';
               replaceMent = `'${relativePath}'`;
             } else {
               replaceMent = `require('${relativePath}')`;
             }
           } else if (!depMod.npm && depMod.component) {
-            let relativePath = path.relative(path.dirname(parsed.file), depMod.file);
+            let relativePath = path.relative(path.dirname(parsed.file), modFilePath);
             let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
             relativePath = relativePath.replace(reg, '.js').replace(/\\/g, '/');
             replaceMent = `require('${relativePath}')`;

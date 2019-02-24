@@ -79,6 +79,7 @@ exports = module.exports = function () {
           parser: walker,
           code: node.compiled.code,
           encoding: node.compiled.encoding || 'utf-8',
+          outputFileName: node.compiled.outputFileName,
           source: source,
           depModules: rst,
           npm: !!ctx.npm,

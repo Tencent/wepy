@@ -6,7 +6,7 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-
+const path = require('path');
 const ts = require('typescript');
 
 exports = module.exports = function (options) {
@@ -25,8 +25,11 @@ exports = module.exports = function (options) {
       try {
         let compiled = ts.transpileModule(source, params);
         compiled.code = compiled.outputText;
+        let fileObj = path.parse(ctx.file);
         delete compiled.outputText;
         node.compiled = compiled;
+
+        compiled.outputFileName = fileObj.name + '.js';
         p = Promise.resolve(node);
       } catch (e) {
         this.hookUnique('error-handler', {

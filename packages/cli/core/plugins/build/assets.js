@@ -22,7 +22,16 @@ exports = module.exports = function () {
         if (!t.url) {
           this.hook('script-dep-fix', d);
         }
-        let targetFile = t.npm ? this.getModuleTarget(file) : this.getTarget(file);
+
+        let filepath = file;
+        let fileobj = path.parse(file);
+
+        // For typescript, it should output .js
+        if (d.outputFileName && d.outputFileName !== fileobj.base) {
+          filepath = path.join(fileobj.dir, d.outputFileName);
+        }
+
+        let targetFile = t.npm ? this.getModuleTarget(filepath) : this.getTarget(filepath);
         result.push({
           src: file,
           targetFile: targetFile,
