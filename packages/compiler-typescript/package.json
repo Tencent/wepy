@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-typescript",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "wepy compile typescript",
   "main": "index.js",
   "scripts": {
@@ -13,9 +13,10 @@
     "name": "Gcaufy"
   },
   "license": "MIT",
-  "dependencies": {},
   "readme": "ERROR: No README data found!",
   "peerDependencies": {
     "typescript": "^3.3.3"
-  }
+  },
+  "_id": "@wepy/compiler-typescript@2.0.1",
+  "_commitid": "6fb9d78"
 }
