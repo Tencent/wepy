@@ -1760,6 +1760,7 @@ var Event = function Event (e) {
   if (detail) {
     this.x = detail.x;
     this.y = detail.y;
+    this.detail = detail;
   }
 
   this.target = target;
