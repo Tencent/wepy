@@ -41,7 +41,7 @@ module.exports = function interactPublish (name, opt) {
     let pkg = readPkg.sync({ cwd: './' });
     let pkgVersion = pkg.version;
 
-    log.info('Publish package: ' + chalk.cyan(pkg.name));
+    log.info('Publish package: ' + chalk.cyan(`${pkg.name}@${pkg.version}`));
 
     let publishOpt = {
       version: opt.ver || '',
