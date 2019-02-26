@@ -30,7 +30,14 @@ export function initRender (vm, keys) {
 
       // vm._fromSelf = true;
       if (dirty) {
-        vm.$wx.setData(dirty, renderFlushCallbacks);
+        // init render is in lifecycle, setData in lifecycle will not work, so setTimeout is needed.
+        if (!vm._init) {
+          setTimeout(() => {
+            vm.$wx.setData(dirty, renderFlushCallbacks);
+          });
+        } else {
+          vm.$wx.setData(dirty, renderFlushCallbacks);
+        }
       }
     }
     vm._init = true;
