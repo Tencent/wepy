@@ -21,7 +21,7 @@ exports = module.exports = function (options) {
           esModuleInterop: true,
           module: ts.ModuleKind.CommonJS
         }
-      });
+      }, options);
       try {
         let compiled = ts.transpileModule(source, params);
         compiled.code = compiled.outputText;
