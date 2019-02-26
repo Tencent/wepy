@@ -552,6 +552,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/18657438/51070298-da401f00-1679-11e9-9dce-ead15d294ce3.jpg",
             "company": "深圳骏马车服科技有限公司"
-        }
+        },
+        {
+            "name": "洁账",
+            "email": "yigger@163.com",
+            "link": "",
+            "opensource": "https://github.com/yigger/jiezhang",
+            "qrcode": "https://user-images.githubusercontent.com/9440426/53391906-cb67be80-39d2-11e9-96b3-68f35166d4b5.png",
+            "company": ""
+        },
     ]
 }
