@@ -9,12 +9,13 @@ export function initEvents (vm) {
   let rel = parent.$rel;
   vm._events = {};
   let on = rel.info.on;
-  for (let event in on) {
-    let index = on[event];
-    vm.$on(event, function () {
-      let fn = rel.handlers[index][event];
+  let wpyEvt = vm.$wpyEvt;
+  let evtNames = on[wpyEvt];
+
+  evtNames.forEach(evtName => {
+    vm.$on(evtName, function () {
+      let fn = rel.handlers[wpyEvt][evtName];
       fn.apply(parent, arguments);
     });
-  }
+  });
 };
-

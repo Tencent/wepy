@@ -1854,7 +1854,9 @@ function patchMethods (output, methods, isComponent) {
 
   target._initComponent = function (e) {
     var child = e.detail;
-    var ref = e.target.dataset.ref;
+    var ref$1 = e.target.dataset;
+    var ref = ref$1.ref;
+    var wpyEvt = ref$1.wpyEvt;
     var vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
@@ -1867,6 +1869,7 @@ function patchMethods (output, methods, isComponent) {
       }
       vm.$refs[ref] = child;
     }
+    child.$wpyEvt = wpyEvt;
     child.$parent = vm;
     child.$app = vm.$app;
     child.$root = vm.$root;
@@ -1891,15 +1894,15 @@ function initEvents (vm) {
   var rel = parent.$rel;
   vm._events = {};
   var on = rel.info.on;
-  var loop = function ( event ) {
-    var index = on[event];
-    vm.$on(event, function () {
-      var fn = rel.handlers[index][event];
+  var wpyEvt = vm.$wpyEvt;
+  var evtNames = on[wpyEvt];
+
+  evtNames.forEach(function (evtName) {
+    vm.$on(evtName, function () {
+      var fn = rel.handlers[wpyEvt][evtName];
       fn.apply(parent, arguments);
     });
-  };
-
-  for (var event in on) loop( event );
+  });
 }
 
 var Dirty = function Dirty (type) {
