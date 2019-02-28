@@ -142,7 +142,14 @@ exports = module.exports = function () {
     let isComponent = !!rel.components[vOn.tag];
 
     if (isComponent) { // it is a custom defined component
-      rel.on[vOn.event] = vOn.id;
+      rel.on[vOn.id] = rel.on[vOn.id] || [];
+
+      if (rel.on[vOn.id].includes(vOn.event)) {
+        // Todo: repeat event
+        // this.logger.warn('v-on', ``);
+      } else {
+        rel.on[vOn.id].push(vOn.event);
+      }      
     }
     if (!rel.handlers[vOn.id])
       rel.handlers[vOn.id] = {};
