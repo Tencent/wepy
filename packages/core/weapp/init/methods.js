@@ -114,7 +114,7 @@ export function patchMethods (output, methods, isComponent) {
 
   target._initComponent = function (e) {
     let child = e.detail;
-    let ref = e.target.dataset.ref;
+    let { ref, wpyEvt } = e.target.dataset;
     let vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
@@ -127,6 +127,7 @@ export function patchMethods (output, methods, isComponent) {
       }
       vm.$refs[ref] = child;
     }
+    child.$wpyEvt = wpyEvt;
     child.$parent = vm;
     child.$app = vm.$app;
     child.$root = vm.$root;
