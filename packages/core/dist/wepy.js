@@ -1895,6 +1895,8 @@ function initEvents (vm) {
   vm._events = {};
   var on = rel.info.on;
   var evtId = vm.$evtId;
+  if (!evtId) { return; }
+
   var evtNames = on[evtId];
 
   evtNames.forEach(function (evtName) {
