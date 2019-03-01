@@ -1869,7 +1869,7 @@ function patchMethods (output, methods, isComponent) {
       }
       vm.$refs[ref] = child;
     }
-    child.$wpyEvt = wpyEvt;
+    child.$evtId = wpyEvt;
     child.$parent = vm;
     child.$app = vm.$app;
     child.$root = vm.$root;
@@ -1894,12 +1894,12 @@ function initEvents (vm) {
   var rel = parent.$rel;
   vm._events = {};
   var on = rel.info.on;
-  var wpyEvt = vm.$wpyEvt;
-  var evtNames = on[wpyEvt];
+  var evtId = vm.$evtId;
+  var evtNames = on[evtId];
 
   evtNames.forEach(function (evtName) {
     vm.$on(evtName, function () {
-      var fn = rel.handlers[wpyEvt][evtName];
+      var fn = rel.handlers[evtId][evtName];
       fn.apply(parent, arguments);
     });
   });
