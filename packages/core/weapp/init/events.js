@@ -10,6 +10,8 @@ export function initEvents (vm) {
   vm._events = {};
   let on = rel.info.on;
   let evtId = vm.$evtId;
+  if (!evtId) return;
+
   let evtNames = on[evtId];
 
   evtNames.forEach(evtName => {
