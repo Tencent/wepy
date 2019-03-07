@@ -37,7 +37,15 @@ exports = module.exports = function () {
         let fileContent = fs.readFileSync(file, 'utf-8');
         let fileHash = hashUtil.hash(fileContent);
         if (fileHash === this.compiled[file].hash) {  // File is not changed, do not compile again
-          return assets.data(file);
+          if (data.parser && data.parser.deps && data.parser.deps.length) { // If it has dependences, walk throguh all dependences
+            let depTasks = data.parser.deps.map(dep => this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep));
+            return Promise.all(depTasks).then(rst => {
+              data.depModules = rst;
+              return data;
+            });
+          } else {
+            return data;
+          }
         }
       }
       this.involved[file] = 1;
