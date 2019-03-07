@@ -2282,6 +2282,13 @@ function patchRelations (output, relations) {
   output.relations = relations;
 }
 
+function patchExternalClasses (output, externalClasses) {
+    if (!externalClasses) {
+        externalClasses = {};
+    }
+    output.externalClasses = externalClasses;
+  }
+
 function page (opt, rel) {
   if ( opt === void 0 ) opt = {};
 
@@ -2349,6 +2356,8 @@ function component (opt, rel) {
   patchData(compConfig, opt.data, true);
 
   patchRelations(compConfig, opt.relations);
+
+  patchExternalClasses(compConfig, opt.externalClasses);
 
   patchLifecycle(compConfig, opt, rel, true);
 
