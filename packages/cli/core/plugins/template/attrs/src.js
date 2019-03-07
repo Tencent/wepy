@@ -50,6 +50,10 @@ exports = module.exports = function () {
       parsed.file = this.resolvers.normal.resolveSync({}, context, parsed.url, {});
       parsed.url = path.relative(path.dirname(ctx.file), parsed.file);
 
+      if (path.sep === '\\') { // It's Win, change path to posix path
+        parsed.url = parsed.url.replace(/\\/g, '/');
+      }
+
       const code = fs.readFileSync(parsed.file, encoding);
       const source = new ReplaceSource(new RawSource(code));
 
