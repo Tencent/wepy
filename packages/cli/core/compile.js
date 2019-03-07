@@ -152,12 +152,12 @@ class Compile extends Hook {
       let paths = this.options.static;
       let copy = (p) => {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
-        fs.copy(path.join(this.context, p), path.join(this.context, this.options.target, relative[0] === '.' ? p : relative));
+        return fs.copy(path.join(this.context, p), path.join(this.context, this.options.target, relative[0] === '.' ? p : relative))
       }
       if (typeof paths === 'string')
-        copy(paths);
+        return copy(paths);
       else if (Array.isArray(paths))
-        paths.forEach(copy);
+        return Promise.all(paths.map(p => copy(p)))
     });
 
     initPlugin(this);
@@ -254,7 +254,7 @@ class Compile extends Hook {
       let assetsData = this.hookSeq('build-assets');
       this.hookUnique('output-assets', assetsData);
     }).then(() => {
-      this.hookUnique('output-static')
+      return this.hookUnique('output-static');
     }).then(() => {
       this.hookSeq('process-done');
       this.running = false;
