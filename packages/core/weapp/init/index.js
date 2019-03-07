@@ -7,3 +7,4 @@ export * from './props';
 export * from './mixins';
 export * from './hooks';
 export * from './relations';
+export * from './externalClasses';
