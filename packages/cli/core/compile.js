@@ -303,7 +303,11 @@ class Compile extends Hook {
     chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
       if (evt === 'change') {
         let absolutePath = path.resolve(filepath);
-        if (this.involved[absolutePath]) {
+        let involvedFile = this.involved[absolutePath];
+        if (path.isAbsolute(involvedFile)) {
+          this.compiled[involvedFile].hash = ''; // clear the file hash, to remove the file cache
+        }
+        if (involvedFile) {
           this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
           this.start();
         }

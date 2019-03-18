@@ -116,6 +116,7 @@ exports = module.exports = function () {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
           tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
             node.content = fs.readFileSync(rst.path, 'utf-8');
+            this.involved[rst.path] = context.file;
             node.dirty = true;
           }));
         }
