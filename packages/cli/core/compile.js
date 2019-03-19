@@ -304,7 +304,7 @@ class Compile extends Hook {
       if (evt === 'change') {
         let absolutePath = path.resolve(filepath);
         let involvedFile = this.involved[absolutePath];
-        if (path.isAbsolute(involvedFile)) {
+        if (typeof involvedFile === 'string' && path.isAbsolute(involvedFile)) {
           this.compiled[involvedFile].hash = ''; // clear the file hash, to remove the file cache
         }
         if (involvedFile) {
