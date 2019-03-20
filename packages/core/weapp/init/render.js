@@ -35,7 +35,7 @@ export function initRender (vm, keys) {
         if (!vm._init) {
           nextTick(function () {
             vm.$wx.setData(dirty, renderFlushCallbacks);
-          })
+          });
         } else {
           vm.$wx.setData(dirty, renderFlushCallbacks);
         }
