@@ -1619,7 +1619,7 @@ function initRender (vm, keys) {
       if (dirty) {
         // init render is in lifecycle, setData in lifecycle will not work, so setTimeout is needed.
         if (!vm._init) {
-          setTimeout(function () {
+          nextTick(function () {
             vm.$wx.setData(dirty, renderFlushCallbacks);
           });
         } else {
