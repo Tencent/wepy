@@ -1,6 +1,7 @@
 import Watcher from './../observer/watcher';
 import { callUserHook } from './hooks';
 import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
+import { nextTick } from '../util/next-tick';
 import { renderFlushCallbacks } from './../util/next-tick';
 
 
@@ -32,9 +33,9 @@ export function initRender (vm, keys) {
       if (dirty) {
         // init render is in lifecycle, setData in lifecycle will not work, so setTimeout is needed.
         if (!vm._init) {
-          setTimeout(() => {
+          nextTick(function () {
             vm.$wx.setData(dirty, renderFlushCallbacks);
-          });
+          })
         } else {
           vm.$wx.setData(dirty, renderFlushCallbacks);
         }
