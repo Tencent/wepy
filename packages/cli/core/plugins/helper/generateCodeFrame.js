@@ -50,7 +50,7 @@ exports = module.exports = function () {
         pos.start = consumer.originalPositionFor(pos.start);
       }
       if (pos.end) {
-        pos.end = consumer.oiringalPositionFor(pos.end);
+        pos.end = consumer.originalPositionFor(pos.end);
       }
     }
 
