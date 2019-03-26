@@ -560,6 +560,15 @@
             "opensource": "https://github.com/yigger/jiezhang",
             "qrcode": "https://user-images.githubusercontent.com/9440426/53391906-cb67be80-39d2-11e9-96b3-68f35166d4b5.png",
             "company": ""
+        },
+        {
+            "name": "己阅",
+            "email": "liu.shuo@tenfen.com",
+            "link": "https://club.tenfen.com/club",
+            "opensource": "",
+            "qrcode": "https://user-images.githubusercontent.com/10415021/54965586-22e65380-4fac-11e9-8423-725f52978657.jpg",
+            "company": "北京书礼行知文化传媒有限公司
+"
         }
     ]
 }
