@@ -197,8 +197,8 @@ class Compile extends Hook {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
       });
 
-      if (appConfig.subPackages) {
-        appConfig.subPackages.forEach(sub => {
+      if (appConfig.subPackages || appConfig.subpackages) {
+        (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
            sub.pages.forEach(v => {
             pages.push(path.resolve(app.file, '../'+sub.root || '', v + this.options.wpyExt));
           });
