@@ -568,6 +568,14 @@
             "opensource": "",
             "qrcode": "https://user-images.githubusercontent.com/10415021/54965586-22e65380-4fac-11e9-8423-725f52978657.jpg",
             "company": "北京书礼行知文化传媒有限公司"
+        },
+        {
+            "name": "自律帝(wxcms)",
+            "email": "121258121@qq.com",
+            "link": "",
+            "opensource": "https://github.com/yizenghui/wxcms",
+            "qrcode": "https://wx1.wechatrank.com/base64img/20190407111539.jpeg",
+            "company": ""
         }
     ]
 }
