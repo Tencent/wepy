@@ -2175,6 +2175,24 @@ function patchLifecycle (output, options, rel, isComponent) {
       var vm = this.$wepy;
       return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
     };
+
+    pageLifecycle.onReady = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onReady
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onReady', args);
+    };
+
+    pageLifecycle.onResize = function () {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // TODO: onResize
+      var vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onResize', args);
+    };
   }
 
   output.ready = function () {
