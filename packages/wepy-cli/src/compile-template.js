@@ -311,7 +311,11 @@ export default {
                             node.setAttribute(paramAttr, p);
                         });
                     }
-                    if (prefix)
+
+                    let match = attr.value.match(/^\{\{\s*(\w+)(\.|\[).*\}\}$/);
+                    let useWxs = match && match[1] && ignores[match[1]];
+                    
+                    if (prefix && !useWxs)
                         attr.value = `${PREFIX}${prefix}${JOIN}` + attr.value;
                 }
                 if (attr.name === 'a:for-items' && config.output === 'ant') {
