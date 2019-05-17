@@ -225,6 +225,18 @@ export function patchLifecycle (output, options, rel, isComponent) {
       let vm = this.$wepy;
       return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
     }
+
+    pageLifecycle.onReady = function (...args) {
+      // TODO: onReady
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onReady', args);
+    }
+
+    pageLifecycle.onResize = function (...args) {
+      // TODO: onResize
+      let vm = this.$wepy;
+      return callUserMethod(vm, vm.$options, 'onResize', args);
+    }
   }
 
   output.ready = function (...args) {

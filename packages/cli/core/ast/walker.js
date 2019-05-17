@@ -665,7 +665,7 @@ class AstWalker {
       }
     } else if (expression.left.type === 'MemberExpression' && expression.left.object.name === '_this' && expression.left.property.name === 'config' && expression.right.type === 'ObjectExpression') { // _this.config = {}
       this.config = expression.right;
-    } else if (expression.left.type === 'MemberExpression' && expression.left.object.name === 'exports' && expression.left.property.name === 'default' && expression.right.type === 'Identifier') { // _this.config = {}
+    } else if (expression.left.type === 'MemberExpression' && expression.left.object.name === 'exports' && (expression.left.property.name === 'default' || expression.left.property.value === 'default') && expression.right.type === 'Identifier') { // _this.config = {}
       this.export = expression;
     } else if (expression.left.type === 'MemberExpression' && expression.left.object.type === 'ThisExpression' && expression.left.property.name === 'components' && expression.right.type === 'ObjectExpression') { // this.components = {}
       this.components = expression;
