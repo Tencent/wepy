@@ -20,7 +20,7 @@
 
 * 已经在issue中搜索过，并且没有找到相似的issue或者解决方案。
 
-* *I searched issue already but I did't find any relevant issues or solutions.*
+* *I searched issue already but I didn't find any relevant issues or solutions.*
 
 
 * 完善下面模板中的信息
