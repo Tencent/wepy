@@ -25,7 +25,7 @@
 
 * 完善下面模板中的信息
 
-* *Please filled out the following template*
+* *Please fill out the following template*
 
 
 
