@@ -4,14 +4,6 @@
     " */": "****",
     "cases": [
         {
-            "name": "南京邮电大学",
-            "email": "qingyou@njupt.edu.cn",
-            "link": "",
-            "opensource": "https://github.com/GreenPomelo/Undergraduate",
-            "qrcode": "https://camo.githubusercontent.com/3211dca027ccd41a5b405e35ac3af0ff3ed33849/68747470733a2f2f7374617469632e616972626f622e6f72672f756e6465722d67726164756174652f756e64657267726164756174652d7172636f64652e6a7067",
-            "company": ""
-        },
-        {
             "name": "书幽阁",
             "email": "lixpam@163.com",
             "link": "",
