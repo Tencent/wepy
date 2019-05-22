@@ -59,20 +59,36 @@ exports = module.exports = function () {
       let target = request;
       let source = request;
 
-      return this.hookUnique('wepy-parser-config-component-' + prefix, name, prefix, source, target, ctx).then(({ name, prefix, resolved, target, npm }) => {
-        let relativePath = path.relative(path.dirname(ctx.file), target);
-        let parsedPath = path.parse(relativePath);
-        resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
-        parseComponents.push({
-          name,
-          prefix,
-          resolved,
-          path: resolved.path,
-          target,
-          npm,
-          request: relativePath,
-          type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
-        });
+      let hookPrefix = 'wepy-parser-config-component-';
+      let hookName = prefix;
+
+      if (!this.hasHook(hookPrefix + hookName)) {
+        hookName = 'raw';
+      }
+
+      return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, ctx).then(({ name, prefix, resolved, target, npm }) => {
+        if (hookName === 'raw') {
+          resolvedUsingComponents[name] = url;
+          parseComponents.push({
+            name,
+            prefix,
+            url,
+          });
+        } else {
+          let relativePath = path.relative(path.dirname(ctx.file), target);
+          let parsedPath = path.parse(relativePath);
+          resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+          parseComponents.push({
+            name,
+            prefix,
+            resolved,
+            path: resolved.path,
+            target,
+            npm,
+            request: relativePath,
+            type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
+          });
+        }
       });
     });
 
@@ -83,6 +99,13 @@ exports = module.exports = function () {
         components: parseComponents
       };
       return true;
+    });
+  });
+
+  this.register('wepy-parser-config-component-raw', function (name, prefix, source, target, ctx) {
+    return Promise.resolve({
+      name,
+      prefix,
     });
   });
 
