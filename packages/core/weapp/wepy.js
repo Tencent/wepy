@@ -1,4 +1,4 @@
-import Base from './class/Base';
+import WepyConstructor from './class/WepyConstructor';
 import page from './page';
 import app from './app';
 import component from './component';
@@ -7,7 +7,7 @@ import { use, mixin } from './apis/index';
 import { renderNextTick } from './util/next-tick';
 
 
-let wepy = Base;
+let wepy = WepyConstructor;
 
 Object.assign(wepy, {
   component,
@@ -19,7 +19,9 @@ Object.assign(wepy, {
   use,
   mixin,
 
-  nextTick: renderNextTick
+  nextTick: renderNextTick,
+  version: '2.0.0-alpha',
+  config: {},
 });
 
 

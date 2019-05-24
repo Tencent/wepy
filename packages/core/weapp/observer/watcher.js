@@ -185,11 +185,10 @@ export default class Watcher {
    * This only gets called for computed watchers.
    */
   evaluate () {
-    if (this.dirty) {
-      this.value = this.get();
+    this.value = this.get();
+    if (this.vm.$dirty)
       this.vm.$dirty.push(this.key, this.key, this.value);
-      this.dirty = false;
-    }
+    this.dirty = false;
     return this.value;
   }
 

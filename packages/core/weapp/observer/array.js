@@ -30,7 +30,8 @@ methodsToPatch.forEach(function (method) {
     const vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    vm.$dirty.push(ob.key, ob.path, ob.value);
+    if (vm.$dirty)
+      vm.$dirty.push(ob.key, ob.path, ob.value);
 
     let inserted;
     switch (method) {
