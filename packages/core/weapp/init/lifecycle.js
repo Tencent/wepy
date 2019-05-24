@@ -107,6 +107,8 @@ export function patchLifecycle (output, options, rel, isComponent) {
       // vm.$app = $global.$app;
     }
 
+    callUserMethod(vm, vm.$options, 'beforeCreate', args);
+
     initHooks(vm, options.hooks);
 
     initProps(vm, output.properties);

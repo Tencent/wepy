@@ -20,6 +20,7 @@ export const WEAPP_PAGE_LIFECYCLE = [
 ];
 
 export const WEAPP_COMPONENT_LIFECYCLE = [
+  'beforeCreate',
   'created',
   'attached',
   'ready',
