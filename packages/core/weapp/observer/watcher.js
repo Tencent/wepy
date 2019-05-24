@@ -140,12 +140,12 @@ export default class Watcher {
   update () {
     /* istanbul ignore else */
     if (this.computed) {
-      this.dirty = true
+      this.dirty = true;
       this.evaluate();
     } else if (this.sync) {
-      this.run()
+      this.run();
     } else {
-      queueWatcher(this)
+      queueWatcher(this);
     }
   }
 

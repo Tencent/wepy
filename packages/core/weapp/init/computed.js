@@ -8,9 +8,14 @@ function createComputedGetter (key) {
   return function computedGetter () {
     let watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
-      watcher.depend();
       watcher.key = key;
-      return watcher.evaluate();
+      if (watcher.dirty) {
+        watcher.evaluate();
+      }
+      if (Dep.target) {
+        watcher.depend();
+      }
+      return watcher.value;
     }
   }
 }
