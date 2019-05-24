@@ -230,6 +230,7 @@ var WEAPP_PAGE_LIFECYCLE = [
 ];
 
 var WEAPP_COMPONENT_LIFECYCLE = [
+  'beforeCreate',
   'created',
   'attached',
   'ready',
@@ -571,7 +572,8 @@ methodsToPatch.forEach(function (method) {
     var vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    vm.$dirty.push(ob.key, ob.path, ob.value);
+    if (vm.$dirty)
+      { vm.$dirty.push(ob.key, ob.path, ob.value); }
 
     var inserted;
     switch (method) {
@@ -791,7 +793,8 @@ function defineReactive (ref) {
       var path = ref.path;
 
       // push parent key to dirty, wait to setData
-      vm.$dirty.push(root, path, newVal);
+      if (vm.$dirty)
+        { vm.$dirty.push(root, path, newVal); }
 
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
@@ -824,7 +827,8 @@ function set (vm, target, key, val) {
   var path = ref.path;
 
   // push parent key to dirty, wait to setData
-  vm.$dirty.push(root, path, val);
+  if (vm.$dirty)
+    { vm.$dirty.push(root, path, val); }
 
 
   if (key in target && !(key in Object.prototype)) {
@@ -980,61 +984,6 @@ Base.prototype.$emit = function $emit (event) {
   });
   return this;
 };
-
-var sharedPropertyDefinition = {
-  enumerable: true,
-  configurable: true,
-  get: noop,
-  set: noop
-};
-
-
-function proxy (target, sourceKey, key) {
-  sharedPropertyDefinition.get = function proxyGetter () {
-    return this[sourceKey][key]
-  };
-  sharedPropertyDefinition.set = function proxySetter (val) {
-    this[sourceKey][key] = val;
-  };
-  Object.defineProperty(target, key, sharedPropertyDefinition);
-}
-/*
- * patch data option
- */
-function patchData (output, data) {
-  if (!data) {
-    data = {};
-  }
-  output.data = data;
-}
-
-/*
- * init data
- */
-function initData (vm, data) {
-  if (!data) {
-    data = {};
-  }
-  var _data;
-  if (typeof data === 'function') {
-    _data = data.call(vm);
-  } else {
-    _data = clone(data);
-  }
-  vm._data = _data;
-  Object.keys(_data).forEach(function (key) {
-    proxy(vm, '_data', key);
-  });
-
-  observe({
-    vm: vm,
-    key: '',
-    value: _data,
-    parent: '',
-    root: true
-  });
-  //observe(vm, _data, null, true);
-}
 
 var seenObjects = new _Set();
 
@@ -1375,11 +1324,10 @@ Watcher.prototype.run = function run () {
  * This only gets called for computed watchers.
  */
 Watcher.prototype.evaluate = function evaluate () {
-  if (this.dirty) {
-    this.value = this.get();
-    this.vm.$dirty.push(this.key, this.key, this.value);
-    this.dirty = false;
-  }
+  this.value = this.get();
+  if (this.vm.$dirty)
+    { this.vm.$dirty.push(this.key, this.key, this.value); }
+  this.dirty = false;
   return this.value;
 };
 
@@ -1418,13 +1366,144 @@ Watcher.prototype.teardown = function teardown () {
   }
 };
 
+var WepyComponent = (function (Base$$1) {
+  function WepyComponent () {
+    Base$$1.apply(this, arguments);
+  }
+
+  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
+  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyComponent.prototype.constructor = WepyComponent;
+
+  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
+    var this$1 = this;
+
+    var vm = this;
+    if (isArr(cb)) {
+      cb.forEach(function (handler) {
+        this$1.$watch(expOrFn, handler, options);
+      });
+    }
+    if (isPlainObject(cb)) {
+      var handler = cb;
+      options = handler;
+      handler = handler.handler;
+      if (typeof handler === 'string')
+        { handler = this[handler]; }
+      return this.$watch(expOrFn, handler, options);
+    }
+
+    options = options || {};
+    options.user = true;
+    var watcher = new Watcher(vm, expOrFn, cb, options);
+    if (options.immediate) {
+      cb.call(vm, watcher.value);
+    }
+    return function unwatchFn () {
+      watcher.teardown();
+    }
+  };
+
+  return WepyComponent;
+}(Base));
+
+var sharedPropertyDefinition = {
+  enumerable: true,
+  configurable: true,
+  get: noop,
+  set: noop
+};
+
+
+function proxy (target, sourceKey, key) {
+  sharedPropertyDefinition.get = function proxyGetter () {
+    return this[sourceKey][key]
+  };
+  sharedPropertyDefinition.set = function proxySetter (val) {
+    this[sourceKey][key] = val;
+  };
+  Object.defineProperty(target, key, sharedPropertyDefinition);
+}
+/*
+ * patch data option
+ */
+function patchData (output, data) {
+  if (!data) {
+    data = {};
+  }
+  output.data = data;
+}
+
+/*
+ * init data
+ */
+function initData (vm, data) {
+  if (!data) {
+    data = {};
+  }
+  var _data;
+  if (typeof data === 'function') {
+    _data = data.call(vm);
+  } else {
+    _data = clone(data);
+  }
+  vm._data = _data;
+  Object.keys(_data).forEach(function (key) {
+    proxy(vm, '_data', key);
+  });
+
+  observe({
+    vm: vm,
+    key: '',
+    value: _data,
+    parent: '',
+    root: true
+  });
+  //observe(vm, _data, null, true);
+}
+
+function initWatch (vm, watch) {
+  vm._watchers = vm._watchers || [];
+  if (watch) {
+    Object.keys(watch).forEach(function (key) {
+      vm.$watch(key, watch[key]);
+    });
+  }
+}
+
+var WepyConstructor = (function (WepyComponent$$1) {
+  function WepyConstructor (opt) {
+    if ( opt === void 0 ) opt = {};
+
+    var vm = new WepyComponent$$1();
+
+    // Only need data and watchers for a empty WepyComponent
+    if (opt.data) {
+      initData(vm, opt.data);
+    }
+    initWatch(vm);
+    return vm;
+  }
+
+  if ( WepyComponent$$1 ) WepyConstructor.__proto__ = WepyComponent$$1;
+  WepyConstructor.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
+  WepyConstructor.prototype.constructor = WepyConstructor;
+
+  return WepyConstructor;
+}(WepyComponent));
+
 function createComputedGetter (key) {
   return function computedGetter () {
     var watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
-      watcher.depend();
       watcher.key = key;
-      return watcher.evaluate();
+      if (watcher.dirty) {
+        watcher.evaluate();
+      }
+      if (Dep.target) {
+        watcher.depend();
+      }
+      return watcher.value;
     }
   }
 }
@@ -1475,47 +1554,6 @@ var WepyApp = (function (Base$$1) {
   WepyApp.prototype.constructor = WepyApp;
 
   return WepyApp;
-}(Base));
-
-var WepyComponent = (function (Base$$1) {
-  function WepyComponent () {
-    Base$$1.apply(this, arguments);
-  }
-
-  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
-  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyComponent.prototype.constructor = WepyComponent;
-
-  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
-    var this$1 = this;
-
-    var vm = this;
-    if (isArr(cb)) {
-      cb.forEach(function (handler) {
-        this$1.$watch(expOrFn, handler, options);
-      });
-    }
-    if (isPlainObject(cb)) {
-      var handler = cb;
-      options = handler;
-      handler = handler.handler;
-      if (typeof handler === 'string')
-        { handler = this[handler]; }
-      return this.$watch(expOrFn, handler, options);
-    }
-
-    options = options || {};
-    options.user = true;
-    var watcher = new Watcher(vm, expOrFn, cb, options);
-    if (options.immediate) {
-      cb.call(vm, watcher.value);
-    }
-    return function unwatchFn () {
-      watcher.teardown();
-    }
-  };
-
-  return WepyComponent;
 }(Base));
 
 var WepyPage = (function (WepyComponent$$1) {
@@ -1746,15 +1784,6 @@ function initProps (vm, properties) {
     value: vm._props,
     root: true
   });
-}
-
-function initWatch (vm, watch) {
-  vm._watchers = vm._watchers || [];
-  if (watch) {
-    Object.keys(watch).forEach(function (key) {
-      vm.$watch(key, watch[key]);
-    });
-  }
 }
 
 var Event = function Event (e) {
@@ -2023,6 +2052,8 @@ function patchLifecycle (output, options, rel, isComponent) {
     }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
+
+    callUserMethod(vm, vm.$options, 'beforeCreate', args);
 
     initHooks(vm, options.hooks);
 
@@ -2396,7 +2427,7 @@ function mixin (options) {
   $global.mixin = ($global.mixin || []).concat(options);
 }
 
-var wepy = Base;
+var wepy = WepyConstructor;
 
 Object.assign(wepy, {
   component: component,
@@ -2408,7 +2439,9 @@ Object.assign(wepy, {
   use: use,
   mixin: mixin,
 
-  nextTick: renderNextTick
+  nextTick: renderNextTick,
+  version: '2.0.0-alpha',
+  config: {},
 });
 
 module.exports = wepy;
