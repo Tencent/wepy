@@ -24,11 +24,11 @@ import Vuex from '@wepy/x';
 
 export default new Vuex.store({
   state: {
-    counter: 0
+    num: 0
   },
   mutations: {
     increment (state) {
-      state.counter.num++;
+      state.num++;
     }
   },
   actions: {
