@@ -19,6 +19,13 @@ const builds = {
     format: 'cjs',
     banner
   },
+  'x': {
+    entry: 'packages/x/index.js',
+    dest: 'packages/x/dist/index.js',
+    env: 'development',
+    format: 'cjs',
+    banner
+  },
   'use-promisify': {
     entry: 'packages/use-promisify/index.js',
     dest: 'packages/use-promisify/dist/index.js',
