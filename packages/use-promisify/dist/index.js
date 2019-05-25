@@ -168,6 +168,7 @@ var makeObj = function (arr) {
  * wepy.login().then().catch()
  */
 var index = {
+  version: "2.0.0",
   install: function install (wepy, removeFromPromisify) {
     var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
