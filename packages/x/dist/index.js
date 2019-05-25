@@ -4,6 +4,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var vuex = require('vuex');
 
+var version = "2.0.2";
+
 function wepyInstall (wepy) {
   vuex.install(wepy);
 
@@ -28,7 +30,7 @@ function wepyInstall (wepy) {
 var index = {
   Store: vuex.Store,
   install: wepyInstall,
-  version: vuex.version,
+  version: version,
   mapState: vuex.mapState,
   mapMutations: vuex.mapMutations,
   mapGetters: vuex.mapGetters,
@@ -37,7 +39,6 @@ var index = {
 };
 
 exports.Store = vuex.Store;
-exports.version = vuex.version;
 exports.mapState = vuex.mapState;
 exports.mapMutations = vuex.mapMutations;
 exports.mapGetters = vuex.mapGetters;
@@ -45,3 +46,4 @@ exports.mapActions = vuex.mapActions;
 exports.createNamespacedHelpers = vuex.createNamespacedHelpers;
 exports.default = index;
 exports.install = wepyInstall;
+exports.version = version;

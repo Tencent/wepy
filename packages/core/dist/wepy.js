@@ -2440,7 +2440,7 @@ Object.assign(wepy, {
   mixin: mixin,
 
   nextTick: renderNextTick,
-  version: '2.0.0-alpha',
+  version: "2.0.0-alpha.7",
   config: {},
 });
 
