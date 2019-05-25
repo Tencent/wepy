@@ -1,5 +1,6 @@
 const buble = require('rollup-plugin-buble');
 const replace = require('rollup-plugin-replace');
+const path = require('path');
 
 const banner = `
  * Tencent is pleased to support the open source community by making WePY available.
@@ -10,6 +11,10 @@ const banner = `
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */`
 
+const resolvePkgInfo = pkg => {
+  const pkgPath = path.resolve(__dirname, '../packages', pkg, 'package.json')
+  return require(pkgPath)
+}
 
 const builds = {
   'core': {
@@ -17,6 +22,7 @@ const builds = {
     dest: 'packages/core/dist/wepy.js',
     env: 'development',
     format: 'cjs',
+    version: resolvePkgInfo('core').version,
     banner
   },
   'x': {
@@ -24,6 +30,7 @@ const builds = {
     dest: 'packages/x/dist/index.js',
     env: 'development',
     format: 'cjs',
+    version: resolvePkgInfo('x').version,
     banner
   },
   'use-promisify': {
@@ -31,6 +38,7 @@ const builds = {
     dest: 'packages/use-promisify/dist/index.js',
     env: 'development',
     format: 'cjs',
+    version: resolvePkgInfo('use-promisify').version,    
     banner
   }
 };
@@ -54,7 +62,8 @@ function getConfig (name) {
   }
   if (opt.env) {
     config.plugins.push(replace({
-      'process.env.NODE_ENV': JSON.stringify(opt.env)
+      'process.env.NODE_ENV': JSON.stringify(opt.env),
+      '__VERSION__': JSON.stringify(opt.version)
     }));
   }
   return config;
