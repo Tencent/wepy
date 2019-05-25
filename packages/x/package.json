@@ -1,5 +1,5 @@
 {
-  "name": "x",
+  "name": "@wepy/x",
   "version": "2.0.1",
   "description": "Vuex in WePY",
   "main": "index.js",
@@ -23,7 +23,7 @@
     "url": "https://github.com/Tencent/wepy/issues"
   },
   "homepage": "https://github.com/Tencent/wepy#readme",
-  "peerDependenceies": {
+  "dependenceies": {
     "vuex": "^3.1.1"
   },
   "readme": "ERROR: No README data found!",
