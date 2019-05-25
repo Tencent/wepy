@@ -313,7 +313,7 @@ class AstWalker {
       if(/Expression$/.test(statement.declaration.type)) {
         throw new Error("Doesn't occur?");
       } else {
-        if(true || !this.applyPluginsBailResult("export declaration", statement, statement.declaration)) {
+        if(true) {
           const pos = this.scope.definitions.length;
           this.prewalkStatement(statement.declaration);
           const newDefs = this.scope.definitions.slice(pos);
@@ -365,14 +365,8 @@ class AstWalker {
   walkExportDefaultDeclaration(statement) {
     // this.applyPluginsBailResult1("export", statement);
     if(/Declaration$/.test(statement.declaration.type)) {
-      if(!this.applyPluginsBailResult("export declaration", statement, statement.declaration)) {
-        this.walkStatement(statement.declaration);
-      }
     } else {
       this.walkExpression(statement.declaration);
-      if(!this.applyPluginsBailResult("export expression", statement, statement.declaration)) {
-        // this.applyPluginsBailResult("export specifier", statement, statement.declaration, "default");
-      }
     }
   }
 
