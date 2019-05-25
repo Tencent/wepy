@@ -49,12 +49,14 @@ program
 
   .option('-g, --github', 'list all registered github projects');
 
+/*
 program
   .command('upgrade')
   .description('upgrade to the latest version')
   .action(require('./wepy-upgrade'))
   .option('--cli', 'upgrade wepy-cli')
   .option('--wepy', 'upgrade wepy');
+*/
 
 program
   .command('new')
