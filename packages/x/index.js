@@ -30,7 +30,7 @@ export default {
 
 export {
   Store,
-  install as wepyInstall,
+  wepyInstall as install,
   version,
   mapState,
   mapMutations,
