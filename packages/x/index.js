@@ -1,4 +1,3 @@
-import vuex from 'vuex';
 import { Store, install, version, mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
 
 function wepyInstall (wepy) {
@@ -21,6 +20,17 @@ function wepyInstall (wepy) {
 export default {
   Store,
   install: wepyInstall,
+  version,
+  mapState,
+  mapMutations,
+  mapGetters,
+  mapActions,
+  createNamespacedHelpers
+};
+
+export {
+  Store,
+  install as wepyInstall,
   version,
   mapState,
   mapMutations,
