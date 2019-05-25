@@ -27,4 +27,4 @@ export default {
   mapGetters,
   mapActions,
   createNamespacedHelpers
-}
+};
