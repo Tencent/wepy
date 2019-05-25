@@ -1,4 +1,6 @@
-import { Store, install, version, mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
+import { Store, install, mapState, mapMutations, mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
+
+const version = __VERSION__
 
 function wepyInstall (wepy) {
   install(wepy);

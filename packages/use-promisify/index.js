@@ -165,6 +165,7 @@ const makeObj = (arr) => {
  * wepy.login().then().catch()
  */
 export default {
+  version: __VERSION__,
   install (wepy, removeFromPromisify) {
     let _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
