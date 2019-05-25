@@ -20,7 +20,7 @@ Object.assign(wepy, {
   mixin,
 
   nextTick: renderNextTick,
-  version: '2.0.0-alpha',
+  version: __VERSION__,
   config: {},
 });
 
