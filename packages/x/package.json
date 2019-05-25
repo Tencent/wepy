@@ -1,6 +1,6 @@
 {
   "name": "x",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Vuex in WePY",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,10 @@
     "Vuex",
     "WePY"
   ],
-  "author": "Gcaufy <gcaufy@gmail.com>",
+  "author": {
+    "name": "Gcaufy",
+    "email": "gcaufy@gmail.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Tencent/wepy/issues"
@@ -22,5 +25,8 @@
   "homepage": "https://github.com/Tencent/wepy#readme",
   "peerDependenceies": {
     "vuex": "^3.1.1"
-  }
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "x@2.0.1",
+  "_commitid": "748dd5d"
 }
