@@ -37,7 +37,6 @@ var index = {
 };
 
 exports.Store = vuex.Store;
-exports.wepyInstall = vuex.install;
 exports.version = vuex.version;
 exports.mapState = vuex.mapState;
 exports.mapMutations = vuex.mapMutations;
@@ -45,3 +44,4 @@ exports.mapGetters = vuex.mapGetters;
 exports.mapActions = vuex.mapActions;
 exports.createNamespacedHelpers = vuex.createNamespacedHelpers;
 exports.default = index;
+exports.install = wepyInstall;
