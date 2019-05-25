@@ -23,7 +23,7 @@
     "url": "https://github.com/Tencent/wepy/issues"
   },
   "homepage": "https://github.com/Tencent/wepy#readme",
-  "dependenceies": {
+  "dependencies": {
     "vuex": "^3.1.1"
   },
   "readme": "ERROR: No README data found!",
