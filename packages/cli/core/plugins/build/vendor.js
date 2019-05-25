@@ -2,6 +2,9 @@ const path = require('path');
 
 
 const VENDOR_INJECTION = [`
+var windows = {};
+var process = { env: {} };
+var global = {};
 (function(modules) {
    // The module cache
    var installedModules = {};
