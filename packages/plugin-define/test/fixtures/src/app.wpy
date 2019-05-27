@@ -1,0 +1,27 @@
+<script lang="js">
+function definedVariable () {
+  let BASE_URL = 'http://www.foo.com';
+  return BASE_URL;
+}
+
+const inObjectProperty = {
+  BASE_URL: 'http://foo.com'
+};
+const inString = 'BASE_URL';
+
+
+module.exports = {
+  definedVariable: definedVariable(),
+  inObjectProperty,
+  inString,
+  inTemplateLiterals: `${BASE_URL}/api/`,
+
+  shouldReplaced: BASE_URL,
+
+  objectTest: process.env.NODE_ENV,
+
+  typeofTest: typeof window,
+  typeofTest2: typeof(window)
+}
+
+</script>
