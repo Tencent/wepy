@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-define",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "wepy define plugin",
   "main": "index.js",
   "scripts": {
@@ -14,5 +14,7 @@
     "name": "Gcaufy"
   },
   "license": "MIT",
-  "readme": "ERROR: No README data found!"
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/plugin-define@2.0.1",
+  "_commitid": "6738858"
 }
