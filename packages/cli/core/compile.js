@@ -321,8 +321,6 @@ class Compile extends Hook {
     ctx.id = this.assets.add(ctx.file);
 
     if (node.lang) {
-      let compilerOptions = this.options.compilers[node.lang] || [];
-
       let hookKey = 'wepy-compiler-' + node.lang;
 
       if (!this.hasHook(hookKey)) {
