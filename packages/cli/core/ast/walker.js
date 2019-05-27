@@ -3,6 +3,7 @@ class AstWalker {
     this.ast = ast;
     this.state = {};
     this.deps = [];
+    this.replacements = [];
     this.compilation = compilation;
     this.lang = lang;
   }
@@ -611,13 +612,10 @@ class AstWalker {
     if(expression.operator === "typeof") {
       const exprName = this.getNameForExpression(expression.argument);
       if(exprName && exprName.free) {
-
-
-        const result = undefined;
-
-        // const result = this.applyPluginsBailResult1("typeof " + exprName.name, expression);
-        if(result === true)
-          return;
+        let hookName = 'walker-unary-expression-undefined';
+        if (this.compilation.hasHook(hookName)) {
+          this.compilation.hookSeq(hookName, this, expression, exprName);
+        }
       }
     }
     this.walkExpression(expression.argument);
@@ -819,13 +817,10 @@ class AstWalker {
   walkMemberExpression(expression) {
     const exprName = this.getNameForExpression(expression);
     if(exprName && exprName.free) {
-      let result;
-      // let result = this.applyPluginsBailResult1("expression " + exprName.name, expression);
-      if(result === true)
-        return;
-      // result = this.applyPluginsBailResult1("expression " + exprName.nameGeneral, expression);
-      if(result === true)
-        return;
+      let hookName = 'walker-member-expression-undefined';
+      if (this.compilation.hasHook(hookName)) {
+        this.compilation.hookSeq(hookName, this, expression, exprName);
+      }
     }
     this.walkExpression(expression.object);
     if(expression.computed === true)
@@ -834,14 +829,10 @@ class AstWalker {
 
   walkIdentifier(expression) {
     if(this.scope.definitions.indexOf(expression.name) === -1) {
-      let fn = 'expression' + (this.scope.renames["$" + expression.name] || expression.name);
-      let result;
-      if (this[fn]) {
-        result = this[fn](expression);
+      let hookName = 'walker-identifier-undefined';
+      if (this.compilation.hasHook(hookName)) {
+        this.compilation.hookSeq(hookName, this, expression);
       }
-      // const result = this.applyPluginsBailResult1("expression " + (this.scope.renames["$" + expression.name] || expression.name), expression);
-      if(result === true)
-        return;
     }
   }
 

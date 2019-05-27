@@ -15,6 +15,11 @@ exports = module.exports = function () {
     if (!parsed.fixedDeps) {
       parsed.fixedDeps = [];
     }
+    if (parsed.parser.replacements) {
+      parsed.parser.replacements.forEach(item => {
+        parsed.source.replace(item.expr.start, item.expr.end - 1, item.value);
+      });
+    }
     parsed.parser.deps.forEach((dep, i) => {
       if (!parsed.fixedDeps[i]) {
         let depMod = parsed.depModules[i];
