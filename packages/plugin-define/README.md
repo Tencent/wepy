@@ -6,8 +6,9 @@
 npm install @wepy/plugin-define --save-dev
 ```
 
-## Config `wepy.config.js`
+## Configration
 
+**wepy.config.js**
 ```javascript
 const DefinePlugin = require('@wepy/plugin-define');
 
