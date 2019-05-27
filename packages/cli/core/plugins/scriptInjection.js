@@ -49,13 +49,13 @@ exports = module.exports = function () {
     let entry = parsed.parser.entry;
     if (!entry) {
       this.hookUnique('error-handler', {
-        type: 'error',
+        type: 'warn',
         message: `Missing wepy entry. A .wpy file should have "wepy.app", "wepy.page" or "wepy.component"`,
         ctx: {
           file: parsed.file
         }
       });
-      throw new Error('EXIT');
+      return;
     }
     let args = entry.arguments;
     let pos = 0;

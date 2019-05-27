@@ -184,14 +184,12 @@ class Compile extends Hook {
 
       let appConfig = config.parsed.output;
       if (!appConfig.pages || appConfig.pages.length === 0) {
-
+        appConfig.pages = [];
         this.hookUnique('error-handler', {
-          type: 'error',
+          type: 'warn',
           ctx: app,
           message: `Missing "pages" in App config`
         });
-
-        throw new Error('EXIT');
       }
       let pages = appConfig.pages.map(v => {
         return path.resolve(app.file, '..', v + this.options.wpyExt);
