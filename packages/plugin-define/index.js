@@ -9,16 +9,16 @@
 
 
 const stringifyObj = (obj) => {
-	return (
-		"Object({" +
-		Object.keys(obj)
-			.map(key => {
-				const code = obj[key];
-				return JSON.stringify(key) + ":" + toCode(code);
-			})
-			.join(",") +
-		"})"
-	);
+  return (
+    "Object({" +
+    Object.keys(obj)
+      .map(key => {
+        const code = obj[key];
+        return JSON.stringify(key) + ":" + toCode(code);
+      })
+      .join(",") +
+    "})"
+  );
 };
 
 /**
@@ -28,22 +28,22 @@ const stringifyObj = (obj) => {
  * @returns {string} code converted to string that evaluates
  */
 const toCode = (code) => {
-	if (code === null) {
-		return "null";
-	}
-	if (code === undefined) {
-		return "undefined";
-	}
-	if (code instanceof RegExp && code.toString) {
-		return code.toString();
-	}
-	if (typeof code === "function" && code.toString) {
-		return "(" + code.toString() + ")";
-	}
-	if (typeof code === "object") {
-		return stringifyObj(code);
-	}
-	return code + "";
+  if (code === null) {
+    return "null";
+  }
+  if (code === undefined) {
+    return "undefined";
+  }
+  if (code instanceof RegExp && code.toString) {
+    return code.toString();
+  }
+  if (typeof code === "function" && code.toString) {
+    return "(" + code.toString() + ")";
+  }
+  if (typeof code === "object") {
+    return stringifyObj(code);
+  }
+  return code + "";
 };
 
 exports = module.exports = function DefinePlugin (options = {}) {
