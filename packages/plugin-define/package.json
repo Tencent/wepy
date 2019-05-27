@@ -1,0 +1,18 @@
+{
+  "name": "@wepy/plugin-define",
+  "version": "2.0.0",
+  "description": "wepy define plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy",
+    "DefinePlugin"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!"
+}
