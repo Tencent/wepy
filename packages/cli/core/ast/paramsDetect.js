@@ -32,7 +32,9 @@ module.exports = findGlobals;
 module.exports.parse = reallyParse;
 function findGlobals(source, options) {
   options = options || {};
-  var globals = [];
+  let globals = [];
+  let expressions = [];
+  let callee;
   var ast;
   // istanbul ignore else
   if (typeof source === 'string') {
@@ -153,6 +155,14 @@ function findGlobals(source, options) {
   walk.ancestor(ast, {
     'VariablePattern': identifier,
     'Identifier': identifier,
+    'CallExpression': function (node) {
+      callee = getNameForExpression(node.callee);
+      expressions = node.arguments.map(arg => {
+        let p = getNameForExpression(arg);
+        p.node = arg;
+        return p;
+      });
+    },
     'ThisExpression': function (node, parents) {
       for (var i = 0; i < parents.length; i++) {
         if (declaresThis(parents[i])) {
@@ -160,9 +170,35 @@ function findGlobals(source, options) {
         }
       }
       node.parents = parents;
-      debugger;
       globals.push(node);
     }
   });
-  return globals;
+  return {
+    identifiers: globals,
+    callee,
+    params: expressions
+  };
+}
+
+function getNameForExpression(expression) {
+  let expr = expression;
+  const exprName = [];
+  while(expr.type === "MemberExpression" && expr.property.type === (expr.computed ? "Literal" : "Identifier")) {
+    exprName.push(expr.computed ? expr.property.value : expr.property.name);
+    expr = expr.object;
+  }
+  let free;
+  if (expr.type === "Identifier") {
+    exprName.push(expr.name);
+  } else if (expr.type === "Literal") {
+    exprName.push(expr.value);
+  }
+  let name = exprName.pop();
+  while(t = exprName.pop()) {
+    name += typeof t === 'number' ? `[${t}]` : `.${t}`;
+  }
+  return {
+    name,
+    type: expr.type,
+  };
 }

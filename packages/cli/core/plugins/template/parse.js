@@ -228,8 +228,9 @@ exports = module.exports = function () {
         str += '<' + item.name;
         if (item.events) {
           item.events.forEach(evt => {
-            item.parsedAttr['data-wpy-evt'] = evt.id;
-            item.parsedAttr[evt.type] = '_proxy';
+            if (evt.proxy)
+              item.parsedAttr['data-wpy-evt'] = evt.id;
+            item.parsedAttr[evt.type] = evt.expr;
             evt.params.forEach((p, i) => {
               if (i > 26) { // Maxium params.
                 this.logger.warn(`Too many params`);
@@ -238,7 +239,7 @@ exports = module.exports = function () {
                 if (evtAttr.length > 31) {
                   this.logger.warn(`Function name is too long, it may cause an Error. "${evt.handler}"`);
                 }
-                item.parsedAttr[evtAttr] = `{{ ${p} }}`;
+                item.parsedAttr[evtAttr] = `${p}`;
               }
             });
           });
