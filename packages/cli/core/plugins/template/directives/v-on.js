@@ -104,7 +104,7 @@ exports = module.exports = function () {
   });
 
   this.register('template-parse-ast-attr-v-on.wxs', function ({ item, name, expr, event, scope, ctx }) {
-    event.expr = event.parsed.callee.name;
+    event.expr = `{{ ${event.parsed.callee.name} }}`;
     event.proxy = false;
     event.params = event.parsed.params.map(p => {
       if (p.type === 'Literal') {
@@ -173,6 +173,10 @@ exports = module.exports = function () {
 
   this.register('template-parse-ast-attr-v-on-apply', function parseBindClass ({ parsed, rel }) {
     let vOn = parsed['v-on'];
+
+    if (!vOn.proxy) {
+      return { parsed, rel };
+    }
 
     let isComponent = !!rel.components[vOn.tag];
 
