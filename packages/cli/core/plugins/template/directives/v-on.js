@@ -14,10 +14,11 @@ const parseHandlerProxy = (expr, scope) => {
   let eventInArg = false;
 
   let parsedHandler;
-  if (/^\w+$/.test(expr)) {  //   @tap="doSomething"
+  if (/^[\w\.]+$/.test(expr)) {  //   @tap="doSomething"
     eventInArg = true;
     parsedHandler = {
-      callee: { name: handlerExpr }
+      callee: { name: handlerExpr },
+      params: [],
     }
     handlerExpr += '($event)';
   } else {
