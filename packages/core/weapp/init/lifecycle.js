@@ -15,9 +15,9 @@ import { initMethods } from './methods';
 import { initEvents } from './events';
 import { isStr, isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
-import { WEAPP_APP_LIFECYCEL, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
-import { warn } from '../util';
-
+import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
+import { warn } from '../util/index';
+WEAPP_APP_LIFECYCLE
 
 let comid = 0;
 let app;
@@ -37,6 +37,24 @@ const callUserMethod = function (vm, userOpt, method, args) {
   }
   return result;
 };
+
+const getLifecycycle = (defaultLifecycle, rel, type) => {
+  let lifecycle = defaultLifecycle.concat([]);
+  if (rel && rel.lifecycle && rel.lifecycle[type]) {
+    let userDefinedLifecycle = [];
+    if (isFunc(rel.lifecycle[type])) {
+      userDefinedLifecycle = rel.lifecycle[type].call(null, lifecycle);
+    }
+    userDefinedLifecycle.forEach(u => {
+      if (lifecycle.indexOf(u) > -1) {
+        warn(`'${u}' is already implemented in current version, please remove it from your lifecycel config`);
+      } else {
+        lifecycle.push(u);
+      }
+    });
+  }
+  return lifecycle;
+}
 
 /*
  * patch app lifecyle
@@ -59,27 +77,14 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  let lifecycle = WEAPP_APP_LIFECYCEL.concat([]);
-  if (rel && rel.lifecycle && rel.lifecycle.app) {
-    let userDefinedLifecycle = [];
-    if (isFunc(rel.lifecycle.app)) {
-      userDefinedLifecycle = rel.lifecycle.app.call(null, lifecycle);
-    }
-    userDefinedLifecycle.forEach(u => {
-      if (lifecycle.indexOf(u) > -1) {
-        warn(`'${u}'` is already implemented in current version, please remove it from your lifecycel config`);
-      } else {
-        lifecycle.push(u);
-      }
-    });
-  }
+  let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCEL, rel, 'app');
 
   lifecycle.forEach(k => {
-    // If user defined them and it's not defined aready
-    if (options[k] && isFunc(options[k]) && !appConfig[k]) {
+    // it's not defined aready && user defined it && it's an array or function
+    if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function (...args) {
-        return callUserMethod(app, app.$options, k, args);
-      }
+        return callUserMethod(vm, vm.$options, k, args);
+      };
     }
   });
 
@@ -134,6 +139,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
   output.created = initLifecycle;
   if (isComponent) {
+
     output.attached = function (...args) { // Component attached
       let outProps = output.properties || {};
       // this.propperties are includes datas
@@ -164,7 +170,6 @@ export function patchLifecycle (output, options, rel, isComponent) {
       // TODO: page attached
       return callUserMethod(vm, vm.$options, 'attached', args);
     }
-
     // Page lifecycle will be called under methods
     // e.g:
     // Component({
@@ -175,91 +180,25 @@ export function patchLifecycle (output, options, rel, isComponent) {
     //   }
     // })
 
-    let pageLifecycle = output.methods;
+    let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCEL, rel, 'page');
 
-    pageLifecycle.onLoad = function (...args) {
-      // TODO: onLoad
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onLoad', args);
-    }
-
-    pageLifecycle.onShow = function (...args) {
-      // TODO: onShow
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onShow', args);
-    }
-
-    pageLifecycle.onHide = function (...args) {
-      // TODO: onHide
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onHide', args);
-    }
-
-    pageLifecycle.onUnload = function (...args) {
-      // TODO: onUnload
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onUnload', args);
-    }
-
-    pageLifecycle.onPullDownRefresh = function (...args) {
-      // TODO: onPullDownRefresh
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onPullDownRefresh', args);
-    }
-
-    pageLifecycle.onReachBottom = function (...args) {
-      // TODO: onReachBottom
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onReachBottom', args);
-    }
-
-    pageLifecycle.onShareAppMessage = function (...args) {
-      // TODO: onShareAppMessage
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onShareAppMessage', args);
-    }
-
-    pageLifecycle.onPageScroll = function (...args) {
-      // TODO: onPageScroll
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onPageScroll', args);
-    }
-
-    pageLifecycle.onTabItemTap = function (...args) {
-      // TODO: onTabItemTap
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
-    }
-
-    pageLifecycle.onReady = function (...args) {
-      // TODO: onReady
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onReady', args);
-    }
-
-    pageLifecycle.onResize = function (...args) {
-      // TODO: onResize
-      let vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onResize', args);
-    }
+    lifecycle.forEach(k => {
+      if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        pageLifecycle[k] = function (...args) {
+          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+        }
+      }
+    });
   }
+  let lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCEL, rel, 'component');
 
-  output.ready = function (...args) {
-    // TODO: ready
-    let vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'ready', args);
-  };
-
-  output.moved = function (...args) {
-    // TODO: moved
-    let vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'moved', args);
-  };
-
-  output.detached = function (...args) {
-    // TODO: moved
-    let vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'detached', args);
-  };
+  lifecycle.forEach(k => {
+    // beforeCreate is not a real lifecycle
+    if (!output[k] && k !== 'beforeCreate' && (isFunc(options[k]) || isArr(options[k]))) {
+      output[k] = function (...args) {
+        return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+      }
+    }
+  });
 };
 

@@ -16,7 +16,8 @@ export const WEAPP_PAGE_LIFECYCLE = [
   'onReachBottom',
   'onShareAppMessage',
   'onPageScroll',
-  'onTabItemTap'
+  'onTabItemTap',
+  'onResize',
 ];
 
 export const WEAPP_COMPONENT_LIFECYCLE = [
