@@ -10,7 +10,7 @@ if (typeof Set !== 'undefined' && isNative(Set)) {
   _Set = Set;
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
-  _Set = (function () {
+  _Set = /*@__PURE__*/(function () {
     function Set () {
       this.set = Object.create(null);
     }
@@ -226,8 +226,8 @@ var WEAPP_PAGE_LIFECYCLE = [
   'onReachBottom',
   'onShareAppMessage',
   'onPageScroll',
-  'onTabItemTap'
-];
+  'onTabItemTap',
+  'onResize' ];
 
 var WEAPP_COMPONENT_LIFECYCLE = [
   'beforeCreate',
@@ -660,11 +660,9 @@ var Observer = function Observer (ref) {
  * value type is Object.
  */
 Observer.prototype.walk = function walk (key, obj) {
-    var this$1 = this;
-
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
-    defineReactive({ vm: this$1.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+    defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
     //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
   }
 };
@@ -673,10 +671,8 @@ Observer.prototype.walk = function walk (key, obj) {
  * Observe a list of Array items.
  */
 Observer.prototype.observeArray = function observeArray (key, items) {
-    var this$1 = this;
-
   for (var i = 0, l = items.length; i < l; i++) {
-    observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
+    observe({ vm: this.vm, key: i, value: items[i], parent: items });
   }
 };
 
@@ -1253,13 +1249,11 @@ Watcher.prototype.addDep = function addDep (dep) {
  * Clean up for dependency collection.
  */
 Watcher.prototype.cleanupDeps = function cleanupDeps () {
-    var this$1 = this;
-
   var i = this.deps.length;
   while (i--) {
-    var dep = this$1.deps[i];
-    if (!this$1.newDepIds.has(dep.id)) {
-      dep.removeSub(this$1);
+    var dep = this.deps[i];
+    if (!this.newDepIds.has(dep.id)) {
+      dep.removeSub(this);
     }
   }
   var tmp = this.depIds;
@@ -1335,12 +1329,10 @@ Watcher.prototype.evaluate = function evaluate () {
  * Depend on all deps collected by this watcher.
  */
 Watcher.prototype.depend = function depend () {
-    var this$1 = this;
-
   if (Dep.target) {
     var i = this.deps.length;
     while (i--) {
-      this$1.deps[i].depend();
+      this.deps[i].depend();
     }
   }
 };
@@ -1349,8 +1341,6 @@ Watcher.prototype.depend = function depend () {
  * Remove self from all dependencies' subscriber list.
  */
 Watcher.prototype.teardown = function teardown () {
-    var this$1 = this;
-
   if (this.active) {
     // remove self from vm's watcher list
     // this is a somewhat expensive operation so we skip it
@@ -1360,13 +1350,13 @@ Watcher.prototype.teardown = function teardown () {
     }
     var i = this.deps.length;
     while (i--) {
-      this$1.deps[i].removeSub(this$1);
+      this.deps[i].removeSub(this);
     }
     this.active = false;
   }
 };
 
-var WepyComponent = (function (Base$$1) {
+var WepyComponent = /*@__PURE__*/(function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
@@ -1471,7 +1461,7 @@ function initWatch (vm, watch) {
   }
 }
 
-var WepyConstructor = (function (WepyComponent$$1) {
+var WepyConstructor = /*@__PURE__*/(function (WepyComponent$$1) {
   function WepyConstructor (opt) {
     if ( opt === void 0 ) opt = {};
 
@@ -1544,7 +1534,7 @@ function initComputed (vm, computed) {
   });
 }
 
-var WepyApp = (function (Base$$1) {
+var WepyApp = /*@__PURE__*/(function (Base$$1) {
   function WepyApp () {
     Base$$1.call(this);
   }
@@ -1556,7 +1546,7 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyPage = (function (WepyComponent$$1) {
+var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
   function WepyPage () {
     WepyComponent$$1.apply(this, arguments);
   }
@@ -1995,10 +1985,30 @@ var callUserMethod = function (vm, userOpt, method, args) {
   return result;
 };
 
+var getLifecycycle = function (defaultLifecycle, rel, type) {
+  var lifecycle = defaultLifecycle.concat([]);
+  if (rel && rel.lifecycle && rel.lifecycle[type]) {
+    var userDefinedLifecycle = [];
+    if (isFunc(rel.lifecycle[type])) {
+      userDefinedLifecycle = rel.lifecycle[type].call(null, lifecycle);
+    }
+    userDefinedLifecycle.forEach(function (u) {
+      if (lifecycle.indexOf(u) > -1) {
+        warn(("'" + u + "' is already implemented in current version, please remove it from your lifecycel config"));
+      } else {
+        lifecycle.push(u);
+      }
+    });
+  }
+  return lifecycle;
+};
+
 /*
  * patch app lifecyle
  */
 function patchAppLifecycle (appConfig, options, rel) {
+  if ( rel === void 0 ) rel = {};
+
   appConfig.onLaunch = function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
@@ -2007,6 +2017,8 @@ function patchAppLifecycle (appConfig, options, rel) {
     app = vm;
     vm.$options = options;
     vm.$route = {};
+    vm.$rel = rel;
+
     vm.$wx = this;
     this.$wepy = vm;
 
@@ -2017,16 +2029,20 @@ function patchAppLifecycle (appConfig, options, rel) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  ['onShow', 'onHide', 'onError', 'onPageNotFound'].forEach(function (k) {
-    if (options[k] && isFunc(options[k])) {
+  var lifecycle = getLifecycycle(WEAPP_APP_LIFECYCEL, rel, 'app');
+
+  lifecycle.forEach(function (k) {
+    // it's not defined aready && user defined it && it's an array or function
+    if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function () {
         var args = [], len = arguments.length;
         while ( len-- ) args[ len ] = arguments[ len ];
 
-        return callUserMethod(app, app.$options, k, args);
+        return callUserMethod(vm, vm.$options, k, args);
       };
     }
   });
+
 }
 function patchLifecycle (output, options, rel, isComponent) {
 
@@ -2077,6 +2093,7 @@ function patchLifecycle (output, options, rel, isComponent) {
 
   output.created = initLifecycle;
   if (isComponent) {
+
     output.attached = function () {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
@@ -2113,7 +2130,6 @@ function patchLifecycle (output, options, rel, isComponent) {
       // TODO: page attached
       return callUserMethod(vm, vm.$options, 'attached', args);
     };
-
     // Page lifecycle will be called under methods
     // e.g:
     // Component({
@@ -2124,134 +2140,32 @@ function patchLifecycle (output, options, rel, isComponent) {
     //   }
     // })
 
-    var pageLifecycle = output.methods;
+    var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCEL, rel, 'page');
 
-    pageLifecycle.onLoad = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
+    lifecycle$1.forEach(function (k) {
+      if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        pageLifecycle[k] = function () {
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
 
-      // TODO: onLoad
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onLoad', args);
-    };
-
-    pageLifecycle.onShow = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onShow
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onShow', args);
-    };
-
-    pageLifecycle.onHide = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onHide
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onHide', args);
-    };
-
-    pageLifecycle.onUnload = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onUnload
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onUnload', args);
-    };
-
-    pageLifecycle.onPullDownRefresh = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onPullDownRefresh
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onPullDownRefresh', args);
-    };
-
-    pageLifecycle.onReachBottom = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onReachBottom
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onReachBottom', args);
-    };
-
-    pageLifecycle.onShareAppMessage = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onShareAppMessage
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onShareAppMessage', args);
-    };
-
-    pageLifecycle.onPageScroll = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onPageScroll
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onPageScroll', args);
-    };
-
-    pageLifecycle.onTabItemTap = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onTabItemTap
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onTabItemTap', args);
-    };
-
-    pageLifecycle.onReady = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onReady
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onReady', args);
-    };
-
-    pageLifecycle.onResize = function () {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // TODO: onResize
-      var vm = this.$wepy;
-      return callUserMethod(vm, vm.$options, 'onResize', args);
-    };
+          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+        };
+      }
+    });
   }
+  var lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCEL, rel, 'component');
 
-  output.ready = function () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
+  lifecycle.forEach(function (k) {
+    // beforeCreate is not a real lifecycle
+    if (!output[k] && k !== 'beforeCreate' && (isFunc(options[k]) || isArr(options[k]))) {
+      output[k] = function () {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
 
-    // TODO: ready
-    var vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'ready', args);
-  };
-
-  output.moved = function () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    // TODO: moved
-    var vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'moved', args);
-  };
-
-  output.detached = function () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    // TODO: moved
-    var vm = this.$wepy;
-    return callUserMethod(vm, vm.$options, 'detached', args);
-  };
+        return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+      };
+    }
+  });
 }
 
 var config$1 = {
@@ -2440,7 +2354,7 @@ Object.assign(wepy, {
   mixin: mixin,
 
   nextTick: renderNextTick,
-  version: "2.0.0-alpha.7",
+  version: "2.0.0-alpha.8",
   config: {},
 });
 
