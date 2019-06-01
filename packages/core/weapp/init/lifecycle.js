@@ -47,8 +47,8 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     app = vm;
     vm.$options = options;
     vm.$route = {};
+    vm.$rel = rel;
 
-    let result;
     vm.$wx = this;
     this.$wepy = vm;
 
@@ -83,22 +83,6 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     }
   });
 
-};
-
-export function patchComponentLifecycle (compConfig, options) {
-
-  compConfig.created = function () {
-    let vm = new WepyComponent();
-    this.$wepy = vm;
-    vm.$wx = this;
-    vm.$id = ++comid;
-
-    if (!vm.$app) {
-      //vm.$app = $global.$app;
-    }
-
-    initProps (vm, compConfig.properties, true);
-  }
 };
 
 export function patchLifecycle (output, options, rel, isComponent) {
