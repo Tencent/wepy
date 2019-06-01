@@ -15,6 +15,8 @@ import { initMethods } from './methods';
 import { initEvents } from './events';
 import { isStr, isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
+import { WEAPP_APP_LIFECYCEL, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
+import { warn } from '../util';
 
 
 let comid = 0;
@@ -39,7 +41,7 @@ const callUserMethod = function (vm, userOpt, method, args) {
 /*
  * patch app lifecyle
  */
-export function patchAppLifecycle (appConfig, options, rel) {
+export function patchAppLifecycle (appConfig, options, rel = {}) {
   appConfig.onLaunch = function (...args) {
     let vm = new WepyApp();
     app = vm;
@@ -57,13 +59,30 @@ export function patchAppLifecycle (appConfig, options, rel) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  ['onShow', 'onHide', 'onError', 'onPageNotFound'].forEach(k => {
-    if (options[k] && isFunc(options[k])) {
+  let lifecycle = WEAPP_APP_LIFECYCEL.concat([]);
+  if (rel && rel.lifecycle && rel.lifecycle.app) {
+    let userDefinedLifecycle = [];
+    if (isFunc(rel.lifecycle.app)) {
+      userDefinedLifecycle = rel.lifecycle.app.call(null, lifecycle);
+    }
+    userDefinedLifecycle.forEach(u => {
+      if (lifecycle.indexOf(u) > -1) {
+        warn(`'${u}'` is already implemented in current version, please remove it from your lifecycel config`);
+      } else {
+        lifecycle.push(u);
+      }
+    });
+  }
+
+  lifecycle.forEach(k => {
+    // If user defined them and it's not defined aready
+    if (options[k] && isFunc(options[k]) && !appConfig[k]) {
       appConfig[k] = function (...args) {
         return callUserMethod(app, app.$options, k, args);
       }
     }
   });
+
 };
 
 export function patchComponentLifecycle (compConfig, options) {
