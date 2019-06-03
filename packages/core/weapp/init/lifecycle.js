@@ -17,7 +17,6 @@ import { isStr, isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
 import { warn } from '../util/index';
-WEAPP_APP_LIFECYCLE
 
 let comid = 0;
 let app;
@@ -77,7 +76,7 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCEL, rel, 'app');
+  let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(k => {
     // it's not defined aready && user defined it && it's an array or function
@@ -180,7 +179,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
     //   }
     // })
 
-    let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCEL, rel, 'page');
+    let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle.forEach(k => {
       if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -190,7 +189,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
       }
     });
   }
-  let lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCEL, rel, 'component');
+  let lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(k => {
     // beforeCreate is not a real lifecycle
