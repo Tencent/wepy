@@ -10,7 +10,7 @@ if (typeof Set !== 'undefined' && isNative(Set)) {
   _Set = Set;
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
-  _Set = /*@__PURE__*/(function () {
+  _Set = (function () {
     function Set () {
       this.set = Object.create(null);
     }
@@ -660,9 +660,11 @@ var Observer = function Observer (ref) {
  * value type is Object.
  */
 Observer.prototype.walk = function walk (key, obj) {
+    var this$1 = this;
+
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
-    defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+    defineReactive({ vm: this$1.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
     //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
   }
 };
@@ -671,8 +673,10 @@ Observer.prototype.walk = function walk (key, obj) {
  * Observe a list of Array items.
  */
 Observer.prototype.observeArray = function observeArray (key, items) {
+    var this$1 = this;
+
   for (var i = 0, l = items.length; i < l; i++) {
-    observe({ vm: this.vm, key: i, value: items[i], parent: items });
+    observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
   }
 };
 
@@ -1249,11 +1253,13 @@ Watcher.prototype.addDep = function addDep (dep) {
  * Clean up for dependency collection.
  */
 Watcher.prototype.cleanupDeps = function cleanupDeps () {
+    var this$1 = this;
+
   var i = this.deps.length;
   while (i--) {
-    var dep = this.deps[i];
-    if (!this.newDepIds.has(dep.id)) {
-      dep.removeSub(this);
+    var dep = this$1.deps[i];
+    if (!this$1.newDepIds.has(dep.id)) {
+      dep.removeSub(this$1);
     }
   }
   var tmp = this.depIds;
@@ -1329,10 +1335,12 @@ Watcher.prototype.evaluate = function evaluate () {
  * Depend on all deps collected by this watcher.
  */
 Watcher.prototype.depend = function depend () {
+    var this$1 = this;
+
   if (Dep.target) {
     var i = this.deps.length;
     while (i--) {
-      this.deps[i].depend();
+      this$1.deps[i].depend();
     }
   }
 };
@@ -1341,6 +1349,8 @@ Watcher.prototype.depend = function depend () {
  * Remove self from all dependencies' subscriber list.
  */
 Watcher.prototype.teardown = function teardown () {
+    var this$1 = this;
+
   if (this.active) {
     // remove self from vm's watcher list
     // this is a somewhat expensive operation so we skip it
@@ -1350,13 +1360,13 @@ Watcher.prototype.teardown = function teardown () {
     }
     var i = this.deps.length;
     while (i--) {
-      this.deps[i].removeSub(this);
+      this$1.deps[i].removeSub(this$1);
     }
     this.active = false;
   }
 };
 
-var WepyComponent = /*@__PURE__*/(function (Base$$1) {
+var WepyComponent = (function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
@@ -1461,7 +1471,7 @@ function initWatch (vm, watch) {
   }
 }
 
-var WepyConstructor = /*@__PURE__*/(function (WepyComponent$$1) {
+var WepyConstructor = (function (WepyComponent$$1) {
   function WepyConstructor (opt) {
     if ( opt === void 0 ) opt = {};
 
@@ -1534,7 +1544,7 @@ function initComputed (vm, computed) {
   });
 }
 
-var WepyApp = /*@__PURE__*/(function (Base$$1) {
+var WepyApp = (function (Base$$1) {
   function WepyApp () {
     Base$$1.call(this);
   }
@@ -1546,7 +1556,7 @@ var WepyApp = /*@__PURE__*/(function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
+var WepyPage = (function (WepyComponent$$1) {
   function WepyPage () {
     WepyComponent$$1.apply(this, arguments);
   }
@@ -2029,7 +2039,7 @@ function patchAppLifecycle (appConfig, options, rel) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  var lifecycle = getLifecycycle(WEAPP_APP_LIFECYCEL, rel, 'app');
+  var lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(function (k) {
     // it's not defined aready && user defined it && it's an array or function
@@ -2140,7 +2150,7 @@ function patchLifecycle (output, options, rel, isComponent) {
     //   }
     // })
 
-    var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCEL, rel, 'page');
+    var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle$1.forEach(function (k) {
       if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -2153,7 +2163,7 @@ function patchLifecycle (output, options, rel, isComponent) {
       }
     });
   }
-  var lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCEL, rel, 'component');
+  var lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(function (k) {
     // beforeCreate is not a real lifecycle
