@@ -34,7 +34,11 @@ exports = module.exports = function () {
       context.useCache = true;
       sfc = context.sfc;
 
-      flow = Promise.resolve(true);
+      if (context.done) {
+        flow = Promise.resolve(true); // For file watch, still need to go throught all the dependences
+      } else {
+        flow = context.promise;
+      }
     } else {
       this.compiled[file] = context;
       context.useCache = false;
@@ -66,7 +70,7 @@ exports = module.exports = function () {
     this.involved[file] = 1;
 
 
-    return flow.then(() => {
+    context.promise =  flow.then(() => {
       return this.applyCompiler(context.sfc.config, context);
     }).then(() => {
       if (sfc.wxs) {
@@ -93,8 +97,11 @@ exports = module.exports = function () {
         }));
       }
     }).then((all = []) => {
+      context.done = true;
       return context;
     });
+
+    return context.promise;
   });
 
 
