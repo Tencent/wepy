@@ -20,6 +20,7 @@ import { warn } from '../util/index';
 
 let comid = 0;
 let app;
+const devtools = $global.__GLOBAL_WEPY_DEVTOOL_HOOK__
 
 
 const callUserMethod = function (vm, userOpt, method, args) {
@@ -72,6 +73,10 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     initHooks(vm, options.hooks);
 
     initMethods(vm, options.methods);
+
+    if (devtools) {
+      devtools.$emit('init:app', vm);
+    }
 
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };

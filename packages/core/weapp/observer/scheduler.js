@@ -1,4 +1,5 @@
 import config from '../util/config';
+import $global from '../global';
 //import { callHook, activateChildComponent } from '../instance/lifecycle';
 
 import {
@@ -15,6 +16,7 @@ let circular = {}
 let waiting = false
 let flushing = false
 let index = 0
+const devtools = $global.__GLOBAL_WEPY_DEVTOOL_HOOK__
 
 /**
  * Reset the scheduler's state.
@@ -102,10 +104,10 @@ function flushSchedulerQueue (times = 0) {
 
     // devtool hook
     /* istanbul ignore if */
-    /*
-    if (devtools && config.devtools) {
-      devtools.emit('flush')
-    }*/
+    
+    if (devtools) {
+      devtools.$emit('flush')
+    }
   }
 }
 
