@@ -2153,8 +2153,8 @@ function patchLifecycle (output, options, rel, isComponent) {
     var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle$1.forEach(function (k) {
-      if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        pageLifecycle[k] = function () {
+      if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        output[k] = function () {
           var args = [], len = arguments.length;
           while ( len-- ) args[ len ] = arguments[ len ];
 
