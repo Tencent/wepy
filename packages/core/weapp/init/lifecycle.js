@@ -182,8 +182,8 @@ export function patchLifecycle (output, options, rel, isComponent) {
     let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle.forEach(k => {
-      if (!pageLifecycle[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        pageLifecycle[k] = function (...args) {
+      if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        output[k] = function (...args) {
           return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
         }
       }
