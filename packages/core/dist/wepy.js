@@ -1020,6 +1020,10 @@ function _traverse (val, seen) {
   }
 }
 
+var $global = {
+  __GLOBAL_WEPY_DEVTOOL_HOOK__: new Base()
+};
+
 var MAX_UPDATE_COUNT = 100;
 
 var queue = [];
@@ -1029,6 +1033,7 @@ var circular = {};
 var waiting = false;
 var flushing = false;
 var index = 0;
+var devtools = $global.__GLOBAL_WEPY_DEVTOOL_HOOK__;
 
 /**
  * Reset the scheduler's state.
@@ -1118,10 +1123,10 @@ function flushSchedulerQueue (times) {
 
     // devtool hook
     /* istanbul ignore if */
-    /*
-    if (devtools && config.devtools) {
-      devtools.emit('flush')
-    }*/
+    
+    if (devtools) {
+      devtools.$emit('flush');
+    }
   }
 }
 
@@ -1617,8 +1622,6 @@ var WepyPage = (function (WepyComponent$$1) {
   return WepyPage;
 }(WepyComponent));
 
-var $global = {};
-
 function callUserHook (vm, hookName, arg) {
   var pageHook = vm.hooks[hookName];
   var appHook = vm.$app.hooks[hookName];
@@ -1978,6 +1981,7 @@ Dirty.prototype.length = function length () {
 
 var comid = 0;
 var app;
+var devtools$1 = $global.__GLOBAL_WEPY_DEVTOOL_HOOK__;
 
 
 var callUserMethod = function (vm, userOpt, method, args) {
@@ -2035,6 +2039,10 @@ function patchAppLifecycle (appConfig, options, rel) {
     initHooks(vm, options.hooks);
 
     initMethods(vm, options.methods);
+
+    if (devtools$1) {
+      devtools$1.$emit('init:app', vm);
+    }
 
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
@@ -2135,6 +2143,10 @@ function patchLifecycle (output, options, rel, isComponent) {
         app.$route.path = path;
         app.$route.webViewId = webViewId;
         vm.routed && (vm.routed());
+      }
+
+      if (devtools$1) {
+        devtools$1.$emit('init:page', vm);
       }
 
       // TODO: page attached
