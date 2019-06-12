@@ -1,4 +1,4 @@
- const HTMLHint  = require("htmlhint").HTMLHint;
+ const HTMLHint  = require("htmlhint").default;
 
  const DEFAULT_RULES = {
   // Component can be uppercase
