@@ -30,8 +30,8 @@ exports = module.exports = function () {
       depFileCtx.hash = fileHash;
 
       let ext = path.extname(file);
-      this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: true, component: depFileCtx.component, type: depFileCtx.type });
-      if (ext === '.js' || ext === '.ts') {
+      this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: true, component: depFileCtx.component, type: depFileCtx.type, wxs: depFileCtx.wxs });
+      if (ext === '.js' || ext === '.ts' || ext === '.wxs') {
         if (depFileCtx.npm && depFileCtx.type !== 'weapp') { // weapp component npm may have import in it.
           return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
         } else {

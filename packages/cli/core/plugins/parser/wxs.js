@@ -1,4 +1,5 @@
 const path = require('path');
+const hashUtil = require('../../util/hash');
 
 exports = module.exports = function () {
   this.register('wepy-parser-wxs', function (node, ctx) {
@@ -8,10 +9,39 @@ exports = module.exports = function () {
     }
     let moduleId = node.attrs.module;
     let code = node.compiled.code.trim();
-    let output = '<wxs module="' + moduleId + '">\n' + code + '\n</wxs>';
+    let output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${!node.src ? '\n' + code + '\n' : ''}</wxs>`;
     node.parsed = {
       output
     };
-    return Promise.resolve(true);
+
+    let fileHash = hashUtil.hash(code);
+
+    let file = node.src ? path.resolve(path.dirname(ctx.file), node.src) : ctx.file;
+    let wxsCtx = null;
+
+    if (this.compiled[file] && fileHash === this.compiled[file].hash) {
+      wxsCtx = this.compiled[file];
+      wxsCtx.useCache = true;
+      return Promise.resolve(wxsCtx);
+    } else {
+      wxsCtx = {
+        file,
+        component: ctx.component,
+        npm: ctx.npm,
+        wxs: true,
+        type: 'wxs'
+      };
+      this.compiled[file] = wxsCtx;
+      wxsCtx.hash = fileHash;
+      this.assets.add(wxsCtx.file, {
+        npm: wxsCtx.npm,
+        wxs: true,
+        dep: true,
+        component: wxsCtx.component,
+        type: wxsCtx.type
+      });
+    }
+
+    return this.applyCompiler({ type: 'script', lang: node.lang, content: code }, wxsCtx);
   });
 };

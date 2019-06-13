@@ -14,12 +14,12 @@ exports = module.exports = function () {
       let t = this.assets.type(file);
       let d = this.assets.data(file);
 
-      if (t.npm && t.dep && !t.component) {
+      if (!t.wxs && t.npm && t.dep && !t.component) {
         // do nothing, they are vendors
-      } else if (t.component && !t.dep) { // If it's a component and it's not a dependences
+      } else if (!t.wxs && t.component && !t.dep) { // If it's a component and it's not a dependences
         // do nothing
       } else {
-        if (!t.url) {
+        if (!t.wxs && !t.url) {
           this.hook('script-dep-fix', d);
         }
 

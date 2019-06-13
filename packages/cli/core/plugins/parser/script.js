@@ -50,14 +50,14 @@ exports = module.exports = function () {
       }
       this.involved[file] = 1;
 
-      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep });
+      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep, wxs: !!ctx.wxs });
     });
   });
 
   this.register('wepy-parser-script', function (node, ctx) {
     let assets = this.assets;
     let npmModules = this.npm;
-    if (ctx.npm && !ctx.component) {
+    if (ctx.npm && !ctx.component && !ctx.wxs) {
       if (this.vendors.pending(ctx.file)) { // file compile is pending
         let moduleId = this.vendors.get(ctx.file);
         return Promise.resolve(moduleId);
@@ -99,11 +99,12 @@ exports = module.exports = function () {
           component: ctx.component,
           npm: ctx.npm,
           dep: ctx.dep,
-          type: ctx.type
+          type: ctx.type,
+          wxs: ctx.wxs
         };
         this.assets.update(ctx.file, obj, types);
         obj.id = assets.get(ctx.file);
-        if (ctx.npm && !(ctx.component && ctx.type === 'weapp')) {
+        if (ctx.npm && !(ctx.component && ctx.type === 'weapp') && !ctx.wxs) {
           this.vendors.update(ctx.file, obj, types);
           obj.vendorId = this.vendors.get(ctx.file);
         }
