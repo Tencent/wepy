@@ -13,7 +13,7 @@ exports = module.exports = function () {
     config.outputCode = JSON.stringify(config.parsed.output, null, 4);
 
     this.hook('script-dep-fix', script.parsed);
-    this.hook('script-injection', script.parsed, '{a: 1}');
+    this.hook('script-injection', script.parsed, this.options.appConfig);
     script.outputCode = script.parsed.source.source();
 
     let styleCode = '';
