@@ -27,12 +27,12 @@ exports = module.exports = function () {
       // TODO: added error handler code
       return Promise.reject(`invalid json: ${configString}`);
     }
-    config.component = true;
-    config.usingComponents = config.usingComponents || {};
+    if (ctx.type !== 'app') { // app.json does not need it
+      config.component = true;
+    }
+    let componentKeys = config.usingComponents ? Object.keys(config.usingComponents) : null;
 
-    let componentKeys = Object.keys(config.usingComponents);
-
-    if (componentKeys.length === 0) {
+    if (!componentKeys || componentKeys.length === 0) {
       ctx.sfc.config.parsed = {
         output: config
       };
