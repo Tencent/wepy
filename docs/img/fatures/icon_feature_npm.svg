@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 22 28">
-  <defs>
-    <linearGradient id="icon_feature_npm-a" x1="50%" x2="0%" y1="100%" y2="0%">
-      <stop offset="0%" stop-color="#2CDA9C"/>
-      <stop offset="100%" stop-color="#1F9948"/>
-    </linearGradient>
-  </defs>
-  <polygon fill="url(#icon_feature_npm-a)" fill-rule="evenodd" points="508 90 508 118 509.546 118 509.546 91.922 509.625 91.922 528.097 118 530 118 530 90 528.454 90 528.454 115.922 528.375 115.922 509.982 90" transform="translate(-508 -90)"/>
-</svg>
