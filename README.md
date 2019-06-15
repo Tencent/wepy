@@ -32,19 +32,27 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 ```html
 <style lang="less">
     @color: #4D926F;
-    .userinfo {
+    .num {
         color: @color;
     }
 </style>
-<template lang="pug">
+<template>
   <div class="container">
-    <div class="userinfo" @tap="num++">
+    <div class="num" @tap="num++">
       {{num}}
     </div>
     <div>{{text}}</div>
     <input v-model="text"></input>
   </div>
 </template>
+<config>
+{
+  usingComponents: {
+    customCompoent: '@/components/customComponent',
+    vendorComponent: 'module:vendorComponent'
+  }
+}
+</config>
 
 <script>
   import wepy from '@wepy/core';
