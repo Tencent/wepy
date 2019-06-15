@@ -1,4 +1,4 @@
-## WePY
+## WePY 2 (alpha)
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
 [![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=1.7.x)](https://travis-ci.org/Tencent/wepy)
@@ -37,33 +37,24 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
     }
 </style>
 <template lang="pug">
-    view(class='container')
-        view(class='userinfo' @tap='tap')
-            mycom(:prop.sync='myprop' @fn.user='myevent')
-            text {{now}}
+  <div class="container">
+    <div class="userinfo" @tap="num++">
+      {{num}}
+    </div>
+    <div>{{text}}</div>
+    <input v-model="text"></input>
+  </div>
 </template>
 
 <script>
-    import wepy from 'wepy';
-    import mycom from '../components/mycom';
+  import wepy from '@wepy/core';
 
-    export default class Index extends wepy.page {
-        
-        components = { mycom };
-        data = {
-            myprop: {}
-        };
-        computed = {
-            now () { return new Date().getTime(); }
-        };
-        async onLoad() {
-            await sleep(3);
-            console.log('Hello World');
-        }
-        sleep(time) {
-            return new Promise((resolve, reject) => setTimeout(resolve, time * 1000));
-        }
-    }
+  wepy.page({
+    data: {
+      num: 0,
+      text: 'Hello World',
+    },
+  });
 </script>
 ```
 
@@ -74,7 +65,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 #### 安装（更新） wepy 命令行工具。
 
 ```console
-npm install wepy-cli -g
+npm install @wepy/2.0.0-alpha.12 -g
 ```
 
 #### 生成开发示例
