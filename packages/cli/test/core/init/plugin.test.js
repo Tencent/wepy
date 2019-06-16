@@ -31,8 +31,6 @@ const createCompile= (plugins) => {
 
   compile.logger = {
     error (...args) {
-      console.log('======= ERROR OUTPUT ======');
-      console.log(...args);
     }
   };
 
