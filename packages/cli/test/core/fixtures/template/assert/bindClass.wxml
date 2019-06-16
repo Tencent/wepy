@@ -1,0 +1,2 @@
+<view class="default {{ [ express - 1 === 0 ? 'test' : '',has ? 'has' : '' ] }}"></view>
+<view class=" {{ [ test ? 'test' : '',has ? 'has' : '',something ] }}"></view>
