@@ -11,11 +11,13 @@ export default class {
 
     data = {};
 
+    watch = {};
+
+    customData = {};
+
     computed = {};
 
     components = {};
-
-    methods = {};
 
     events = {};
 
@@ -34,7 +36,7 @@ export default class {
 
 
         // 数据，计算属性，事件，组件覆盖
-        ['data', 'computed', 'events', 'components', 'methods'].forEach((item) => {
+        ['data', 'computed', 'events', 'components', 'customData', 'watch'].forEach((item) => {
             Object.getOwnPropertyNames(this[item]).forEach((k) => {
                 if (k !== 'init') {
                     if (!parent[item]) {
