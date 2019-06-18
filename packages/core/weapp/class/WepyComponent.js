@@ -31,6 +31,12 @@ export default class WepyComponent extends Base {
       watcher.teardown();
     }
   }
+
+  $forceUpdate () {
+    if (this._watcher) {
+      this._watcher.update();
+    }
+  }
 };
 
 WepyComponent.prototype.$nextTick = renderNextTick;
