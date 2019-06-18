@@ -1407,6 +1407,8 @@ var WepyComponent = (function (Base$$1) {
   return WepyComponent;
 }(Base));
 
+WepyComponent.prototype.$nextTick = renderNextTick;
+
 var sharedPropertyDefinition = {
   enumerable: true,
   configurable: true,
