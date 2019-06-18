@@ -1404,6 +1404,12 @@ var WepyComponent = (function (Base$$1) {
     }
   };
 
+  WepyComponent.prototype.$forceUpdate = function $forceUpdate () {
+    if (this._watcher) {
+      this._watcher.update();
+    }
+  };
+
   return WepyComponent;
 }(Base));
 
