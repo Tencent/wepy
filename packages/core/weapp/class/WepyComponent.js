@@ -2,6 +2,8 @@ import Base from './Base';
 import Watcher from '../observer/watcher';
 import { isArr, isPlainObject } from '../../shared/index';
 
+import { renderNextTick } from '../util/next-tick';
+
 export default class WepyComponent extends Base {
   $watch (expOrFn, cb, options) {
     let vm = this;
@@ -29,7 +31,8 @@ export default class WepyComponent extends Base {
       watcher.teardown();
     }
   }
-
 };
+
+WepyComponent.prototype.$nextTick = renderNextTick;
 
 
