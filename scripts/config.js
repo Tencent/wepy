@@ -25,6 +25,14 @@ const builds = {
     version: resolvePkgInfo('core').version,
     banner
   },
+  'redux': {
+    entry: 'packages/redux/index.js',
+    dest: 'packages/redux/dist/index.js',
+    env: 'development',
+    format: 'cjs',
+    version: resolvePkgInfo('redux').version,
+    banner
+  },
   'x': {
     entry: 'packages/x/index.js',
     dest: 'packages/x/dist/index.js',
@@ -38,7 +46,7 @@ const builds = {
     dest: 'packages/use-promisify/dist/index.js',
     env: 'development',
     format: 'cjs',
-    version: resolvePkgInfo('use-promisify').version,    
+    version: resolvePkgInfo('use-promisify').version,
     banner
   }
 };
