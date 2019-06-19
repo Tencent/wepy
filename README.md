@@ -73,7 +73,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 #### 安装（更新） wepy 命令行工具。
 
 ```console
-npm install @wepy/2.0.0-alpha.12 -g
+npm install @wepy/cli@2.0.0-alpha.12 -g
 ```
 
 #### 生成开发示例
