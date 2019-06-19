@@ -1,6 +1,6 @@
 {
   "name": "@wepy/redux",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Redux in WePY",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "url": "https://github.com/Tencent/wepy/issues"
   },
   "homepage": "https://github.com/Tencent/wepy#readme",
-  "dependencies": {
-  },
-  "readme": "README.md"
+  "readme": "README.md",
+  "_id": "@wepy/redux@2.0.1",
+  "_commitid": "42ea2ea"
 }
