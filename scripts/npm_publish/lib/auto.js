@@ -20,7 +20,9 @@ const gitpush = () => execa('git', ['push']);
 
 const gitpushtag = () => execa('git', ['push', '--tags']);
 
-const npmpublish = (tag) => execa('npm', tag ? ['publish', '.', '--tag', tag] : ['publish', '.']);
+const publishParams = ['publish', '.', '--access=public']
+
+const npmpublish = (tag) => execa('npm', tag ? publishParams.concat(['--tag', tag]) : publishParams);
 
 /*
  * auto publish a npm package
