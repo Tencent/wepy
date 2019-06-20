@@ -1828,6 +1828,8 @@ var proxyHandler = function (e) {
     return;
   }
 
+  var $event = new Event(e);
+
   var i = 0;
   var params = [];
   var modelParams = [];
@@ -1861,10 +1863,16 @@ var proxyHandler = function (e) {
       }
     }
   }
-
-  var $event = new Event(e);
-
   if (isFunc(fn)) {
+    var paramsWithEvent = params.concat($event);
+    var hookRes = callUserHook(vm, 'before-event', {
+      event: $event,
+      params: paramsWithEvent
+    });
+
+    if (hookRes === false) { // Event cancelled.
+      return;
+    }
     return fn.apply(vm, params.concat($event));
   } else if (!model) {
     throw new Error('Unrecognized event');
