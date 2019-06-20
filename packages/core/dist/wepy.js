@@ -1631,10 +1631,21 @@ function callUserHook (vm, hookName, arg) {
   var pageHook = vm.hooks[hookName];
   var appHook = vm.$app.hooks[hookName];
 
-  arg = isFunc(pageHook) ? pageHook.call(vm, arg) : arg;
-  arg = isFunc(appHook) ? appHook.call(vm, arg) : arg;
+  var result = arg;
 
-  return arg;
+  // First run page hook, and then run app hook
+  // Pass page hook result to app hook
+  // If return undefined, then return default argument
+  [ pageHook, appHook ].forEach(function (fn) {
+    if (isFunc(fn)) {
+      result = fn.call(vm, result);
+      if (isUndef(result)) {
+        result = arg;
+      }
+    }
+  });
+
+  return result;
 }
 
 function initHooks(vm, hooks) {
