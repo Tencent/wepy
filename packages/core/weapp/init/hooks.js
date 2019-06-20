@@ -1,14 +1,25 @@
-import { isFunc } from './../util/index';
+import { isFunc, isUndef } from './../util/index';
 
 
 export function callUserHook (vm, hookName, arg) {
-  let pageHook = vm.hooks[hookName];
-  let appHook = vm.$app.hooks[hookName];
+  const pageHook = vm.hooks[hookName];
+  const appHook = vm.$app.hooks[hookName];
 
-  arg = isFunc(pageHook) ? pageHook.call(vm, arg) : arg;
-  arg = isFunc(appHook) ? appHook.call(vm, arg) : arg;
+  let result = arg;
 
-  return arg;
+  // First run page hook, and then run app hook
+  // Pass page hook result to app hook
+  // If return undefined, then return default argument
+  [ pageHook, appHook ].forEach(fn => {
+    if (isFunc(fn)) {
+      result = fn.call(vm, result);
+      if (isUndef(result)) {
+        result = arg;
+      }
+    }
+  });
+
+  return result;
 }
 
 export function initHooks(vm, hooks = {}) {
