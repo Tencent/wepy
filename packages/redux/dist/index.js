@@ -95,7 +95,7 @@ function wepyInstall (wepy) {
 
 var index = {
   install: wepyInstall,
-  version: "2.0.0"
+  version: "2.0.1"
 };
 
 exports.default = index;
