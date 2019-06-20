@@ -1,4 +1,5 @@
 import Event from '../class/Event';
+import { callUserHook } from './hooks';
 import { isFunc, isUndef, parseModel, warn } from './../util/index';
 
 const eventHandler = function (method, fn) {
@@ -24,20 +25,22 @@ const eventHandler = function (method, fn) {
 };
 
 const proxyHandler = function (e) {
-  let vm = this.$wepy;
-  let type = e.type;
+  const vm = this.$wepy;
+  const type = e.type;
   // touchstart do not have currentTarget
-  let dataset = (e.currentTarget || e.target).dataset;
-  let evtid = dataset.wpyEvt;
-  let modelId = dataset.modelId;
-  let rel = vm.$rel || {};
-  let handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
-  let fn = handlers[type];
-  let model = rel.models[modelId];
+  const dataset = (e.currentTarget || e.target).dataset;
+  const evtid = dataset.wpyEvt;
+  const modelId = dataset.modelId;
+  const rel = vm.$rel || {};
+  const handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
+  const fn = handlers[type];
+  const model = rel.models[modelId];
 
   if (!fn && !model) {
     return;
   }
+
+  const $event = new Event(e);
 
   let i = 0;
   let params = [];
@@ -72,10 +75,16 @@ const proxyHandler = function (e) {
       }
     }
   }
-
-  let $event = new Event(e);
-
   if (isFunc(fn)) {
+    const paramsWithEvent = params.concat($event);
+    const hookRes = callUserHook(vm, 'before-event', {
+      event: $event,
+      params: paramsWithEvent
+    });
+
+    if (hookRes === false) { // Event cancelled.
+      return;
+    }
     return fn.apply(vm, params.concat($event));
   } else if (!model) {
     throw new Error('Unrecognized event');
