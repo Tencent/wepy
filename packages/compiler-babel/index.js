@@ -8,6 +8,7 @@
  */
 
 const babel = require('@babel/core');
+const path = require('path');
 
 exports = module.exports = function (options) {
   return function () {
@@ -17,6 +18,9 @@ exports = module.exports = function (options) {
       try {
         let compiled = babel.transform(node.content, options);
         node.compiled = compiled;
+        if (/.ts$/.test(file)) {
+          compiled.outputFileName = path.basename(file, '.ts') + '.js';
+        }
         p = Promise.resolve(node);
       } catch (e) {
         this.hookUnique('error-handler', {

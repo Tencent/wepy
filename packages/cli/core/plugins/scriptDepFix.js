@@ -33,6 +33,9 @@ exports = module.exports = function () {
         if (depMod.outputFileName && modFilePathObj.base !== depMod.outputFileName) {
           modFilePath = path.join(modFilePathObj.dir, depMod.outputFileName);
         }
+        if (/\.ts$/.test(modFilePath)) {
+          modFilePath = modFilePath.replace(/\.ts$/, '.js');
+        }
         let replaceMent = '';
         if (isNPM) {
           if (depMod.vendorId === undefined) {
