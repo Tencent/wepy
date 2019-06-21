@@ -192,20 +192,34 @@ class Compile extends Hook {
         });
       }
       let pages = appConfig.pages.map(v => {
-        return path.resolve(app.file, '..', v + this.options.wpyExt);
+        return path.resolve(app.file, '..', v);
       });
 
       if (appConfig.subPackages || appConfig.subpackages) {
         (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
            sub.pages.forEach(v => {
-            pages.push(path.resolve(app.file, '../'+sub.root || '', v + this.options.wpyExt));
+            pages.push(path.resolve(app.file, '../'+sub.root || '', v));
           });
 
         });
       }
 
       let tasks = pages.map(v => {
-        return this.hookUnique('wepy-parser-wpy', { path: v, type: 'page' });
+        let file;
+
+        file = v + this.options.wpyExt;
+        if (fs.existsSync(file)) {
+          return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
+        }
+        file = v + '.js';
+        if (fs.existsSync(file)) {
+          return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
+        }
+        this.hookUnique('error-handler', {
+          type: 'error',
+          ctx: app,
+          message: `Can not resolve page: ${v}`
+        });
       });
 
       this.hookSeq('build-app', app);

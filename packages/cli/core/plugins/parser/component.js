@@ -12,6 +12,14 @@ const path = require('path');
 
 const wxmlAst = require('../../ast/wxml');
 
+
+const readFile = (file, defaultValue = '') => {
+  if (fs.existsSync(file)) {
+    return fs.readFileSync(file, 'utf-8');
+  }
+  return defaultValue;
+}
+
 exports = module.exports = function () {
   this.register('wepy-parser-component', function (comp) {
     let parsedPath = path.parse(comp.path);
@@ -42,17 +50,18 @@ exports = module.exports = function () {
     }
 
     sfc.styles[0] = {
-      content: styleContent,
+      content: readFile(file + '.wxss'),
       type: 'style',
       lang: 'wxss'
     };
 
     sfc.template = {
-      content: fs.readFileSync(file + '.wxml', 'utf-8'),
+      content: readFile(file + '.wxml'),
       type: 'template',
       lang: 'wxml'
     };
 
+    // JS file should be there.
     sfc.script = {
       content: fs.readFileSync(file + '.js', 'utf-8'),
       type: 'script',
@@ -60,7 +69,7 @@ exports = module.exports = function () {
     };
 
     sfc.config = {
-      content: fs.readFileSync(file + '.json', 'utf-8'),
+      content: readFile(file + '.json', '{}'),
       type: 'config',
       lang: 'json'
     };
