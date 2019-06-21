@@ -32,7 +32,7 @@ exports = module.exports = function ask (prompts, data, done) {
  */
 
 function prompt (data, key, prompt, done) {
-  // skip prompts whose when condition is not met
+    // skip prompts whose when condition is not met
     if (prompt.when && !evaluate(prompt.when, data)) {
         return done();
     }
