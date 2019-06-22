@@ -785,16 +785,17 @@ function defineReactive (ref) {
       if (newVal === val || (newVal !== newVal && val !== value)) {
         return
       }
+      if (vm) {
+        parent = parent || key;
 
-      parent = parent || key;
+        var ref = getRootAndPath(key, obj);
+        var root = ref.root;
+        var path = ref.path;
 
-      var ref = getRootAndPath(key, obj);
-      var root = ref.root;
-      var path = ref.path;
-
-      // push parent key to dirty, wait to setData
-      if (vm.$dirty)
-        { vm.$dirty.push(root, path, newVal); }
+        // push parent key to dirty, wait to setData
+        if (vm.$dirty)
+          { vm.$dirty.push(root, path, newVal); }
+      }
 
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
@@ -820,16 +821,17 @@ function set (vm, target, key, val) {
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key);
     target.splice(key, 1, val);
-    return val
+    return val;
   }
-  var ref = getRootAndPath(key, target);
-  var root = ref.root;
-  var path = ref.path;
+  if (vm) {
+    var ref = getRootAndPath(key, target);
+    var root = ref.root;
+    var path = ref.path;
 
-  // push parent key to dirty, wait to setData
-  if (vm.$dirty)
-    { vm.$dirty.push(root, path, val); }
-
+    // push parent key to dirty, wait to setData
+    if (vm.$dirty)
+      { vm.$dirty.push(root, path, val); }
+  }
 
   if (key in target && !(key in Object.prototype)) {
     target[key] = val;
@@ -1500,6 +1502,31 @@ var WepyConstructor = (function (WepyComponent$$1) {
   return WepyConstructor;
 }(WepyComponent));
 
+var $global = Object.create(null);
+
+function use (plugin) {
+  var args = [], len = arguments.length - 1;
+  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+  if (plugin.installed) {
+    return this;
+  }
+
+  var install = plugin.install || plugin;
+
+  if (isFunc(install)) {
+    install.apply(plugin, [this].concat(args));
+  }
+
+  plugin.installed = 1;
+}
+
+function mixin (options) {
+  if ( options === void 0 ) options = {};
+
+  $global.mixin = ($global.mixin || []).concat(options);
+}
+
 function createComputedGetter (key) {
   return function computedGetter () {
     var watcher = this._computedWatchers && this._computedWatchers[key];
@@ -1624,8 +1651,6 @@ var WepyPage = (function (WepyComponent$$1) {
 
   return WepyPage;
 }(WepyComponent));
-
-var $global = {};
 
 function callUserHook (vm, hookName, arg) {
   var pageHook = vm.hooks[hookName];
@@ -2282,38 +2307,6 @@ function patchRelations (output, relations) {
   output.relations = relations;
 }
 
-function page (opt, rel) {
-  if ( opt === void 0 ) opt = {};
-
-
-  var pageConfig = {
-    externalClasses: opt.externalClasses || [],
-    // support component options property
-    // example: options: {addGlobalClass:true}
-    options: opt.options || {}
-  };
-
-
-  patchMixins(pageConfig, opt, opt.mixins);
-
-  if (opt.properties) {
-    pageConfig.properties = opt.properties;
-    if (opt.props) {
-      console.warn("props will be ignore, if properties is set");
-    }
-  } else if (opt.props) {
-    patchProps(pageConfig, opt.props);
-  }
-
-  patchMethods(pageConfig, opt.methods);
-
-  patchData(pageConfig, opt.data);
-
-  patchLifecycle(pageConfig, opt, rel);
-
-  return Component(pageConfig);
-}
-
 function app$1 (option, rel) {
   var appConfig = {};
 
@@ -2355,44 +2348,62 @@ function component (opt, rel) {
   return Component(compConfig);
 }
 
-function use (plugin) {
-  var args = [], len = arguments.length - 1;
-  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+function page (opt, rel) {
+  if ( opt === void 0 ) opt = {};
 
-  if (plugin.installed) {
-    return this;
+
+  var pageConfig = {
+    externalClasses: opt.externalClasses || [],
+    // support component options property
+    // example: options: {addGlobalClass:true}
+    options: opt.options || {}
+  };
+
+
+  patchMixins(pageConfig, opt, opt.mixins);
+
+  if (opt.properties) {
+    pageConfig.properties = opt.properties;
+    if (opt.props) {
+      console.warn("props will be ignore, if properties is set");
+    }
+  } else if (opt.props) {
+    patchProps(pageConfig, opt.props);
   }
 
-  var install = plugin.install || plugin;
+  patchMethods(pageConfig, opt.methods);
 
-  if (isFunc(install)) {
-    install.apply(plugin, [this].concat(args));
-  }
+  patchData(pageConfig, opt.data);
 
-  plugin.installed = 1;
+  patchLifecycle(pageConfig, opt, rel);
+
+  return Component(pageConfig);
 }
 
-function mixin (options) {
-  if ( options === void 0 ) options = {};
+function initGlobalAPI (wepy) {
 
-  $global.mixin = ($global.mixin || []).concat(options);
+  wepy.use = use;
+  wepy.mixin = mixin;
+
+  wepy.set = function (target, key, val) {
+    set.apply(wepy, [ undefined, target, key, val]);
+  };
+
+  wepy.delete = del;
+
+  wepy.nextTick = renderNextTick;
+
+  wepy.app = app$1;
+  wepy.page = page;
+  wepy.component = component;
+
+  return wepy;
 }
 
-var wepy = WepyConstructor;
+var wepy = initGlobalAPI(WepyConstructor);
 
-Object.assign(wepy, {
-  component: component,
-  page: page,
-  app: app$1,
-  global: $global,
-
-  // global apis
-  use: use,
-  mixin: mixin,
-
-  nextTick: renderNextTick,
-  version: "2.0.0-alpha.8",
-  config: {},
-});
+wepy.config = config$1;
+wepy.global = $global;
+wepy.version = "2.0.0-alpha.8";
 
 module.exports = wepy;
