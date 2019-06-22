@@ -14,11 +14,14 @@ exports = module.exports = function (options) {
   return function () {
     this.register('wepy-compiler-babel', function (node, ctx) {
       let p;
-      let file = typeof ctx === 'string' ? ctx : ctx.file
+      let file = typeof ctx === 'string' ? ctx : ctx.file;
+      if (node.src && path.extname(node.src) === '.ts') {
+        file = path.resolve(path.dirname(file), node.src);
+      }
       try {
         let compiled = babel.transform(node.content, options);
         node.compiled = compiled;
-        if (/.ts$/.test(file)) {
+        if (path.extname(file) === '.ts') {
           compiled.outputFileName = path.basename(file, '.ts') + '.js';
         }
         p = Promise.resolve(node);
