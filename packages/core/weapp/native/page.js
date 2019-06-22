@@ -1,6 +1,6 @@
-import { patchMixins, patchData, patchMethods, patchLifecycle, patchProps } from './init/index';
+import { patchMixins, patchData, patchMethods, patchLifecycle, patchProps } from '../init/index';
 
-function page (opt = {}, rel) {
+export function page (opt = {}, rel) {
 
   let pageConfig = {
     externalClasses: opt.externalClasses || [],
@@ -30,5 +30,3 @@ function page (opt = {}, rel) {
   return Component(pageConfig);
 }
 
-
-export default page;

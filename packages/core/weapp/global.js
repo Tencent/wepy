@@ -1,1 +1,1 @@
-export default {};
+export default Object.create(null);

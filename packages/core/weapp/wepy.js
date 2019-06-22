@@ -1,28 +1,13 @@
 import WepyConstructor from './class/WepyConstructor';
-import page from './page';
-import app from './app';
-import component from './component';
 import $global from './global';
-import { use, mixin } from './apis/index';
-import { renderNextTick } from './util/next-tick';
+import { initGlobalAPI } from './apis/index';
+import { config } from './config';
 
 
-let wepy = WepyConstructor;
+const wepy = initGlobalAPI(WepyConstructor);
 
-Object.assign(wepy, {
-  component,
-  page,
-  app,
-  global: $global,
-
-  // global apis
-  use,
-  mixin,
-
-  nextTick: renderNextTick,
-  version: __VERSION__,
-  config: {},
-});
-
+wepy.config = config;
+wepy.global = $global;
+wepy.version = __VERSION__;
 
 export default wepy;
