@@ -14,15 +14,13 @@ exports = module.exports = function (options) {
   return function () {
     this.register('wepy-compiler-babel', function (node, ctx) {
       let p;
-      let file = typeof ctx === 'string' ? ctx : ctx.file;
-      let outputFileName = path.basename(file, path.extname(file)) + '.js';
-      if (node.src) {
-        file = path.resolve(path.basename(file), node.src);
-      }
+      const file = typeof ctx === 'string' ? ctx : ctx.file;
+      const outputFileName = path.basename(file, path.extname(file)) + '.js';
+      const scriptFile = node.src ? path.resolve(path.basename(file), node.src) : file;
       try {
-        let compiled = babel.transform(node.content, {filename: file, ...options});
+        let compiled = babel.transform(node.content, {filename: scriptFile, ...options});
         node.compiled = compiled;
-        if (path.extname(file) === '.ts') {
+        if (path.extname(scriptFile) === '.ts') {
           compiled.outputFileName = outputFileName;
         }
         p = Promise.resolve(node);
@@ -30,7 +28,7 @@ exports = module.exports = function (options) {
         this.hookUnique('error-handler', {
           type: 'error',
           title: 'babel',
-          file: file,
+          file: scriptFile,
           message: e.message,
           snapshot: e.codeFrame
         });
