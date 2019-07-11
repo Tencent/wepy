@@ -2,7 +2,7 @@ const path = require('path');
 
 
 const VENDOR_INJECTION = [`
-var windows = { Array, Date, Error, Function, Math, Object, RegExp, String, TypeError };
+var windows = { Array: Array, Date: Date, Error: Error, Function: Function, Math: Math, Object: Object, RegExp: RegExp, String: String, TypeError: TypeError };
 var global = windows;
 var process = { env: {} };
 (function(modules) {
