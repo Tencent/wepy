@@ -2,8 +2,8 @@ const path = require('path');
 
 
 const VENDOR_INJECTION = [`
-var windows = { Array, Date, Error, Function, Math, Object, RegExp, String, TypeError };
-var global = windows;
+var window = { Number, Array, Date, Error, Function, Math, Object, Function, RegExp, String, TypeError, parseInt, parseFloat };
+var global = window;
 var process = { env: {} };
 (function(modules) {
    // The module cache
