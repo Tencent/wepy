@@ -50,7 +50,7 @@ exports = module.exports = function () {
       }
       this.involved[file] = 1;
 
-      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: false, type: ctx.type, dep, wxs: !!ctx.wxs });
+      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: ctx.component, type: ctx.type, dep, wxs: !!ctx.wxs });
     });
   });
 
