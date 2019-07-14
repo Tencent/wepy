@@ -82,7 +82,7 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
     // it's not defined aready && user defined it && it's an array or function
     if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function (...args) {
-        return callUserMethod(vm, vm.$options, k, args);
+        return callUserMethod(app, app.$options, k, args);
       };
     }
   });
