@@ -183,7 +183,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
     lifecycle.forEach(k => {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        output[k] = function (...args) {
+        output.methods[k] = function (...args) {
           return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
         }
       }
