@@ -2100,7 +2100,7 @@ function patchAppLifecycle (appConfig, options, rel) {
         var args = [], len = arguments.length;
         while ( len-- ) args[ len ] = arguments[ len ];
 
-        return callUserMethod(vm, vm.$options, k, args);
+        return callUserMethod(app, app.$options, k, args);
       };
     }
   });
@@ -2206,7 +2206,7 @@ function patchLifecycle (output, options, rel, isComponent) {
 
     lifecycle$1.forEach(function (k) {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        output[k] = function () {
+        output.methods[k] = function () {
           var args = [], len = arguments.length;
           while ( len-- ) args[ len ] = arguments[ len ];
 
