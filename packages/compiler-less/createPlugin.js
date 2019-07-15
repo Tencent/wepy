@@ -38,6 +38,7 @@ function createPlugin (compliation) {
       );
 
       return compliation.resolvers.normal.resolve({}, dir.replace(trailingSlash, ''), moduleRequest, {}).then(rst => {
+        compliation.involved[rst.path] = 1;
         return {
           contents: fs.readFileSync(rst.path, 'utf-8'),
           filename: rst.path
