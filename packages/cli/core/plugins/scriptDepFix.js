@@ -35,6 +35,9 @@ exports = module.exports = function () {
         }
         let replaceMent = '';
         if (isNPM) {
+          if (depMod.vendorId === undefined) {
+            depMod = this.vendors.data(depMod.file);
+          }
           replaceMent = `__wepy_require(${depMod.vendorId})`;
         } else {
           if (depMod === false) {
