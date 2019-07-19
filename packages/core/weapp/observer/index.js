@@ -129,6 +129,14 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
+
+    // 已经是 observer，但是字段位置发生了变化，需要重新设置路径
+    if (key !== ob.key) {
+      const {root, path} = getRootAndPath(key, parent);
+      ob.root = root;
+      ob.path = path;
+      ob.key = key;
+    }
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
