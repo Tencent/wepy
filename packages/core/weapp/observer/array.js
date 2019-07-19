@@ -33,17 +33,17 @@ methodsToPatch.forEach(function (method) {
     if (vm.$dirty)
       vm.$dirty.push(ob.key, ob.path, ob.value);
 
-    let inserted;
+    let isInserted = false;
     switch (method) {
       case 'push':
       case 'unshift':
-        inserted = ob.value;
+        isInserted = true;
         break;
       case 'splice':
-        inserted = args.slice(2);
+        isInserted = true;
         break;
     }
-    if (inserted) ob.observeArray(ob.key, inserted);
+    if (isInserted) ob.observeArray(ob.key, ob.value);
     // notify change
     ob.dep.notify();
     return result;
