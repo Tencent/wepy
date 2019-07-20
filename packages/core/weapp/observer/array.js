@@ -3,7 +3,7 @@
  * dynamically accessing methods on Array prototype
  */
 
-import { def } from '../util/index';
+import {def, isObject} from '../util/index'
 
 const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
@@ -18,6 +18,25 @@ const methodsToPatch = [
   'reverse'
 ];
 
+export const hasPath = (path, obj) => {
+  let value = obj;
+  let key = '';
+  let i = 0;
+  while (i < path.length) {
+    if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+      key += path[i];
+    } else if (key.length !== 0) {
+      value = value[key];
+      key = '';
+      if (!isObject(value)) {
+        return false
+      }
+    }
+    i++;
+  }
+  return true
+};
+
 /**
  * Intercept mutating methods and emit events
  */
@@ -30,20 +49,30 @@ methodsToPatch.forEach(function (method) {
     const vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      vm.$dirty.push(ob.key, ob.path, ob.value);
+    if (vm.$dirty) {
+      const keys = Object.keys(ob.pathMap)
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        const {root, path} = ob.pathMap[key];
+        if (hasPath(path, vm)) {
+          vm.$dirty.push(root, path, ob.value);
+        } else {
+          delete ob.pathMap[key]
+        }
+      }
+    }
 
-    let inserted;
+    let isInserted = false;
     switch (method) {
       case 'push':
       case 'unshift':
-        inserted = ob.value;
+        isInserted = true;
         break;
       case 'splice':
-        inserted = args.slice(2);
+        isInserted = true;
         break;
     }
-    if (inserted) ob.observeArray(ob.key, inserted);
+    if (isInserted) ob.observeArray(ob.key, ob.value);
     // notify change
     ob.dep.notify();
     return result;
