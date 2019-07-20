@@ -9,14 +9,16 @@ exports = module.exports = function parseClass (source) {
   walk.ancestor(ast, {
     ObjectExpression (node) {
       node.properties.forEach(p => {
-        if (p.key.type === 'Literal') {
+        let value = p.key.type === 'Identifier' ? p.key.name :
+          (p.key.type === 'Literal' ? p.key.value : undefined);
+        if (value) {
           if (p.value.type === 'Identifier') {
             result.push({
-              [p.key.value]: p.value.name
+              [value]: p.value.name
             });
           } else {
             result.push({
-              [p.key.value]: source.substring(p.value.start, p.value.end)
+              [value]: source.substring(p.value.start, p.value.end)
             });
           }
         }
