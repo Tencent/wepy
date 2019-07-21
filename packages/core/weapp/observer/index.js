@@ -1,64 +1,17 @@
 import Dep from './dep';
-import { arrayMethods, hasPath } from './array'
+import ObserverPath from './observerPath'
+import { arrayMethods } from './array'
 import {
   def,
   warn,
   hasOwn,
   hasProto,
   isObject,
-  isNum,
   isPlainObject,
   isValidArrayIndex
 } from '../util/index'
 
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
-
-const getRootAndPathMap = (key, parent) => {
-  if (parent) {
-    const parentPathMap = parent.__ob__.pathMap;
-    const setPath = isNum(key) ? path => `${path}[${key}]` : path => `${path}.${key}`
-    let pathMap = {};
-    const keys = Object.keys(parentPathMap)
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i];
-      if (parentPathMap[k].path) {
-        const path = setPath(parentPathMap[k].path);
-        let root = '';
-        let i = 0;
-        while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
-          root += path[i++];
-        }
-        pathMap[path] = {key, root, path};
-      } else {
-        pathMap[key] = {key, root: key, path: key}
-      }
-    }
-    return pathMap;
-  }
-  return {[key]: {key, root: key, path: key}};
-};
-
-const propPathEq = (path, value, obj) => {
-  let objValue = obj;
-  let key = '';
-  let i = 0;
-  while (i < path.length) {
-    if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
-      key += path[i];
-    } else if (key.length !== 0) {
-      objValue = objValue[key];
-      key = '';
-      if (!isObject(objValue)) {
-        return false;
-      }
-    }
-    i++;
-  }
-  if (key.length !== 0) {
-    objValue = objValue[key];
-  }
-  return value === objValue;
-};
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -83,7 +36,7 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
-    this.pathMap = getRootAndPathMap(key, parent)
+    this.observerPath = new ObserverPath(key, parent, this)
 
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -144,48 +97,6 @@ function copyAugment (target, src, keys) {
   }
 }
 
-// 更新 __ob__ 的 path
-function traverseUpdatePath (key, value, parent, vm) {
-  if (!isObject(value)) {
-    return
-  }
-  if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
-    const ob = value.__ob__
-    const pathMap = getRootAndPathMap(key, parent);
-
-    // 已经是 observer，但是位置发生了变化，需要重新更新路径
-    const keys = Object.keys(pathMap);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      const {root, path} = pathMap[key];
-      if (!(path in ob.pathMap)) {
-        ob.pathMap[path] = {key, root, path};
-        let keys;
-        if (Array.isArray(value)) {
-          keys = Array.from(Array(value.length), (val, index) => index);
-        } else {
-          keys = Object.keys(value);
-        }
-
-        // 深度遍历更新路径
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-          traverseUpdatePath(key, value[key], value, vm);
-        }
-
-        // 清除不存在的路径
-        keys = Object.keys(ob.pathMap);
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-          if (!propPathEq(ob.pathMap[key].path, value, vm)) {
-            delete ob.pathMap[key];
-          }
-        }
-      }
-    }
-  }
-}
-
 /**
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
@@ -198,7 +109,7 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
-    traverseUpdatePath(key, value, parent, vm)
+    ob.observerPath.traverseUpdatePath(key, value, parent)
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -259,17 +170,7 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
 
         // push parent key to dirty, wait to setData
         if (vm.$dirty) {
-          const pathMap = getRootAndPathMap(key, obj);
-          const keys = Object.keys(pathMap);
-          for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            const {root, path} = pathMap[key];
-            if (hasPath(path, vm)) {
-              vm.$dirty.push(root, path, newVal);
-            } else {
-              delete pathMap[key]
-            }
-          }
+          obj.__ob__.observerPath.setDirty(key, newVal, vm.$dirty);
         }
       }
 
@@ -301,19 +202,8 @@ export function set (vm, target, key, val) {
   }
   if (vm) {
     // push parent key to dirty, wait to setData
-    if (vm.$dirty) {
-      const pathMap = getRootAndPathMap(key, target);
-      const keys = Object.keys(pathMap)
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        const {root, path} = pathMap[key];
-        if (hasPath(path, vm)) {
-          vm.$dirty.push(root, path, val);
-        } else {
-          delete pathMap[key];
-        }
-      }
-
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      target.__ob__.observerPath.setDirty(key, val, vm.$dirty)
     }
   }
 

@@ -3,7 +3,7 @@
  * dynamically accessing methods on Array prototype
  */
 
-import {def, isObject} from '../util/index'
+import {def} from '../util/index'
 
 const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
@@ -18,25 +18,6 @@ const methodsToPatch = [
   'reverse'
 ];
 
-export const hasPath = (path, obj) => {
-  let value = obj;
-  let key = '';
-  let i = 0;
-  while (i < path.length) {
-    if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
-      key += path[i];
-    } else if (key.length !== 0) {
-      value = value[key];
-      key = '';
-      if (!isObject(value)) {
-        return false
-      }
-    }
-    i++;
-  }
-  return true
-};
-
 /**
  * Intercept mutating methods and emit events
  */
@@ -50,15 +31,11 @@ methodsToPatch.forEach(function (method) {
 
     // push parent key to dirty, wait to setData
     if (vm.$dirty) {
-      const keys = Object.keys(ob.pathMap)
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i]
-        const {root, path} = ob.pathMap[key];
-        if (hasPath(path, vm)) {
-          vm.$dirty.push(root, path, ob.value);
-        } else {
-          delete ob.pathMap[key]
-        }
+      if (method === 'push') {
+        const lastIndex = ob.value.length - 1;
+        ob.observerPath.setDirty(lastIndex, ob.value[lastIndex], vm.$dirty);
+      } else {
+        ob.observerPath.setDirty('', ob.value, vm.$dirty);
       }
     }
 
