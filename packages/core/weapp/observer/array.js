@@ -39,17 +39,8 @@ methodsToPatch.forEach(function (method) {
       }
     }
 
-    let isInserted = false;
-    switch (method) {
-      case 'push':
-      case 'unshift':
-        isInserted = true;
-        break;
-      case 'splice':
-        isInserted = true;
-        break;
-    }
-    if (isInserted) ob.observeArray(ob.key, ob.value);
+    // 这里和 vue 不一样，所有变异方法都需要更新 path
+    ob.observeArray(ob.key, ob.value)
     // notify change
     ob.dep.notify();
     return result;
