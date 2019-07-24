@@ -33,9 +33,9 @@ methodsToPatch.forEach(function (method) {
     if (vm.$dirty) {
       if (method === 'push') {
         const lastIndex = ob.value.length - 1;
-        ob.observerPath.setDirty(lastIndex, ob.value[lastIndex], vm.$dirty);
+        vm.$dirty.set(ob.op, lastIndex, ob.value[lastIndex]);
       } else {
-        ob.observerPath.setDirty('', ob.value, vm.$dirty);
+        vm.$dirty.set(ob.op, null, ob.value);
       }
     }
 

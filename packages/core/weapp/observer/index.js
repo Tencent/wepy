@@ -36,7 +36,7 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
-    this.observerPath = new ObserverPath(key, parent, this)
+    this.op = new ObserverPath(key, parent, this)
 
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -70,6 +70,55 @@ export class Observer {
     for (let i = 0, l = items.length; i < l; i++) {
       observe({ vm: this.vm, key: i, value: items[i], parent: items });
     }
+  }
+
+  /**
+   * Check if path exsit in vm
+   */
+  hasPath (path) {
+    const vm = this.vm;
+    let value = vm;
+    let key = '';
+    let i = 0;
+    while (i < path.length) {
+      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+        key += path[i];
+      } else if (key.length !== 0) {
+        value = value[key];
+        key = '';
+        if (!isObject(value)) {
+          return false;
+        }
+      }
+      i++;
+    }
+    return true;
+  }
+
+  /**
+   * Is this path value equal
+   */
+  isPathEq (path, value) {
+    const vm = this.vm;
+    let objValue = vm;
+    let key = '';
+    let i = 0;
+    while (i < path.length) {
+      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+        key += path[i];
+      } else if (key.length !== 0) {
+        objValue = objValue[key];
+        key = '';
+        if (!isObject(objValue)) {
+          return false;
+        }
+      }
+      i++;
+    }
+    if (key.length !== 0) {
+      objValue = objValue[key];
+    }
+    return value === objValue;
   }
 }
 
@@ -109,7 +158,7 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
-    ob.observerPath.traverseUpdatePath(key, value, parent)
+    ob.op.traverseUpdatePath(key, value, parent)
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -170,7 +219,7 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
 
         // push parent key to dirty, wait to setData
         if (vm.$dirty) {
-          obj.__ob__.observerPath.setDirty(key, newVal, vm.$dirty);
+          vm.$dirty.set(obj.__ob__.op, key, newVal);
         }
       }
 
@@ -203,7 +252,7 @@ export function set (vm, target, key, val) {
   if (vm) {
     // push parent key to dirty, wait to setData
     if (vm.$dirty && hasOwn(target, '__ob__')) {
-      target.__ob__.observerPath.setDirty(key, val, vm.$dirty)
+      vm.$dirty.set(target.__ob__.op, key, val);
     }
   }
 

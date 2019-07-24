@@ -28,6 +28,22 @@ export default class Dirty {
     return type === 'path' ? this._path : this._keys;
   }
 
+  /**
+   * Set dirty from a ObserverPath
+   */
+  set (op, key, value) {
+    const m = key ? op.getPathMap(key) : this.pathMap;
+    const keys = Object.keys(m);
+    for (let i = 0; i < keys.length; i++) {
+      const {root, path} = m[keys[i]];
+      if (op.observer.hasPath(path)) {
+        this.push(root, path, value);
+      } else {
+        delete m[keys[i]];
+      }
+    }
+  }
+
   reset () {
     this._keys = {};
     this._path = {};
