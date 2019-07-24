@@ -1,4 +1,5 @@
 import Dep from './dep';
+import ObserverPath from './observerPath'
 import { arrayMethods } from './array'
 import {
   def,
@@ -6,29 +7,11 @@ import {
   hasOwn,
   hasProto,
   isObject,
-  isNum,
   isPlainObject,
   isValidArrayIndex
 } from '../util/index'
 
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
-
-const getRootAndPath = (key, parent) => {
-  let path = '';
-  if (parent) {
-    path = parent.__ob__.path;
-    if (path) {
-      path = isNum(key) ? `${path}[${key}]` : `${path}.${key}`;
-      let root = '';
-      let i = 0;
-      while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
-        root += path[i++];
-      }
-      return { path: path, root: root }
-    }
-  }
-  return { root: key, path: key };
-}
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -53,10 +36,7 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
-    this.key = key;
-    let rootAndPath = getRootAndPath(key, parent);
-    this.root = rootAndPath.root;
-    this.path = rootAndPath.path;
+    this.op = new ObserverPath(key, parent, this)
 
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -90,6 +70,55 @@ export class Observer {
     for (let i = 0, l = items.length; i < l; i++) {
       observe({ vm: this.vm, key: i, value: items[i], parent: items });
     }
+  }
+
+  /**
+   * Check if path exsit in vm
+   */
+  hasPath (path) {
+    const vm = this.vm;
+    let value = vm;
+    let key = '';
+    let i = 0;
+    while (i < path.length) {
+      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+        key += path[i];
+      } else if (key.length !== 0) {
+        value = value[key];
+        key = '';
+        if (!isObject(value)) {
+          return false;
+        }
+      }
+      i++;
+    }
+    return true;
+  }
+
+  /**
+   * Is this path value equal
+   */
+  isPathEq (path, value) {
+    const vm = this.vm;
+    let objValue = vm;
+    let key = '';
+    let i = 0;
+    while (i < path.length) {
+      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+        key += path[i];
+      } else if (key.length !== 0) {
+        objValue = objValue[key];
+        key = '';
+        if (!isObject(objValue)) {
+          return false;
+        }
+      }
+      i++;
+    }
+    if (key.length !== 0) {
+      objValue = objValue[key];
+    }
+    return value === objValue;
   }
 }
 
@@ -129,6 +158,7 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
+    ob.op.traverseUpdatePath(key, value, parent)
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -187,11 +217,10 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       if (vm) {
         parent = parent || key;
 
-        const {root, path} = getRootAndPath(key, obj);
-
         // push parent key to dirty, wait to setData
-        if (vm.$dirty)
-          vm.$dirty.push(root, path, newVal);
+        if (vm.$dirty) {
+          vm.$dirty.set(obj.__ob__.op, key, newVal);
+        }
       }
 
       /* eslint-enable no-self-compare */
@@ -221,11 +250,10 @@ export function set (vm, target, key, val) {
     return val;
   }
   if (vm) {
-    const {root, path} = getRootAndPath(key, target);
-
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      vm.$dirty.push(root, path, val);
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      vm.$dirty.set(target.__ob__.op, key, val);
+    }
   }
 
   if (key in target && !(key in Object.prototype)) {
