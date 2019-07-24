@@ -3,7 +3,7 @@
  * dynamically accessing methods on Array prototype
  */
 
-import { def } from '../util/index';
+import {def} from '../util/index'
 
 const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
@@ -30,20 +30,17 @@ methodsToPatch.forEach(function (method) {
     const vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      vm.$dirty.push(ob.key, ob.path, ob.value);
-
-    let inserted;
-    switch (method) {
-      case 'push':
-      case 'unshift':
-        inserted = ob.value;
-        break;
-      case 'splice':
-        inserted = args.slice(2);
-        break;
+    if (vm.$dirty) {
+      if (method === 'push') {
+        const lastIndex = ob.value.length - 1;
+        ob.observerPath.setDirty(lastIndex, ob.value[lastIndex], vm.$dirty);
+      } else {
+        ob.observerPath.setDirty('', ob.value, vm.$dirty);
+      }
     }
-    if (inserted) ob.observeArray(ob.key, inserted);
+
+    // 这里和 vue 不一样，所有变异方法都需要更新 path
+    ob.observeArray(ob.key, ob.value)
     // notify change
     ob.dep.notify();
     return result;

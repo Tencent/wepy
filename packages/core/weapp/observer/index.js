@@ -1,4 +1,5 @@
 import Dep from './dep';
+import ObserverPath from './observerPath'
 import { arrayMethods } from './array'
 import {
   def,
@@ -6,29 +7,11 @@ import {
   hasOwn,
   hasProto,
   isObject,
-  isNum,
   isPlainObject,
   isValidArrayIndex
 } from '../util/index'
 
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
-
-const getRootAndPath = (key, parent) => {
-  let path = '';
-  if (parent) {
-    path = parent.__ob__.path;
-    if (path) {
-      path = isNum(key) ? `${path}[${key}]` : `${path}.${key}`;
-      let root = '';
-      let i = 0;
-      while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
-        root += path[i++];
-      }
-      return { path: path, root: root }
-    }
-  }
-  return { root: key, path: key };
-}
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -53,10 +36,7 @@ export class Observer {
     this.dep = new Dep()
     this.vmCount = 0;
     this.vm = vm;
-    this.key = key;
-    let rootAndPath = getRootAndPath(key, parent);
-    this.root = rootAndPath.root;
-    this.path = rootAndPath.path;
+    this.observerPath = new ObserverPath(key, parent, this)
 
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -129,6 +109,7 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
+    ob.observerPath.traverseUpdatePath(key, value, parent)
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -187,11 +168,10 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       if (vm) {
         parent = parent || key;
 
-        const {root, path} = getRootAndPath(key, obj);
-
         // push parent key to dirty, wait to setData
-        if (vm.$dirty)
-          vm.$dirty.push(root, path, newVal);
+        if (vm.$dirty) {
+          obj.__ob__.observerPath.setDirty(key, newVal, vm.$dirty);
+        }
       }
 
       /* eslint-enable no-self-compare */
@@ -221,11 +201,10 @@ export function set (vm, target, key, val) {
     return val;
   }
   if (vm) {
-    const {root, path} = getRootAndPath(key, target);
-
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      vm.$dirty.push(root, path, val);
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      target.__ob__.observerPath.setDirty(key, val, vm.$dirty)
+    }
   }
 
   if (key in target && !(key in Object.prototype)) {
