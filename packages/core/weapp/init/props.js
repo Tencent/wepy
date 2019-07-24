@@ -72,7 +72,7 @@ export function patchProps (output, props) {
       }
 
       // props.default
-      if (prop.default) {
+      if (!isUndef(prop.default)) {
         if (isFunc(prop.default)) {
           newProp.value = prop.default.call(output);
         } else {
