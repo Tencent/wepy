@@ -146,6 +146,9 @@ export function patchLifecycle (output, options, rel, isComponent) {
       let vm = this.$wepy;
       let parent = this.triggerEvent('_init', vm);
 
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate()
+
       initEvents(vm);
 
       Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
@@ -160,6 +163,10 @@ export function patchLifecycle (output, options, rel, isComponent) {
       let currentPage = pages[pages.length - 1];
       let path = currentPage.__route__;
       let webViewId = currentPage.__wxWebviewId__;
+
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate()
+
       if (app.$route.path !== path) {
         app.$route.path = path;
         app.$route.webViewId = webViewId;
