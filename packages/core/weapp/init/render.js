@@ -13,13 +13,13 @@ export function resetDirty (vm) {
 
 export function initRender (vm, keys) {
   vm._init = false;
-  let cacheData = null
+  let dirtyFromAttach = null
   return new Watcher(vm, function () {
     if (!vm._init) {
       keys.forEach(key => clone(vm[key]));
     }
 
-    if (vm.$dirty.length() || cacheData) {
+    if (vm.$dirty.length() || dirtyFromAttach) {
       let keys = vm.$dirty.get('key');
       let dirty = vm.$dirty.pop();
 
@@ -31,15 +31,15 @@ export function initRender (vm, keys) {
       }
 
       // vm._fromSelf = true;
-      if (dirty || cacheData) {
+      if (dirty || dirtyFromAttach) {
         // init render is in lifecycle, setData in lifecycle will not work, so cacheData is needed.
         if (!vm._init) {
-          if (cacheData === null) {
-            cacheData = {}
+          if (dirtyFromAttach === null) {
+            dirtyFromAttach = {};
           }
-          Object.assign(cacheData, dirty)
-        } else if (cacheData) {  // setData in attached
-          vm.$wx.setData(Object.assign(cacheData, dirty || {}), renderFlushCallbacks);
+          Object.assign(dirtyFromAttach, dirty)
+        } else if (dirtyFromAttach) {  // setData in attached
+          vm.$wx.setData(Object.assign(dirtyFromAttach, dirty || {}), renderFlushCallbacks);
           cacheData = null
         } else {
           vm.$wx.setData(dirty, renderFlushCallbacks);
