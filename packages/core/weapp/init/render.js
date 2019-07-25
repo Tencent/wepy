@@ -13,7 +13,7 @@ export function resetDirty (vm) {
 
 export function initRender (vm, keys) {
   vm._init = false;
-  let dirtyFromAttach = null
+  let dirtyFromAttach = null;
   return new Watcher(vm, function () {
     if (!vm._init) {
       keys.forEach(key => clone(vm[key]));
@@ -37,10 +37,10 @@ export function initRender (vm, keys) {
           if (dirtyFromAttach === null) {
             dirtyFromAttach = {};
           }
-          Object.assign(dirtyFromAttach, dirty)
+          Object.assign(dirtyFromAttach, dirty);
         } else if (dirtyFromAttach) {  // setData in attached
           vm.$wx.setData(Object.assign(dirtyFromAttach, dirty || {}), renderFlushCallbacks);
-          cacheData = null
+          dirtyFromAttach = null;
         } else {
           vm.$wx.setData(dirty, renderFlushCallbacks);
         }
