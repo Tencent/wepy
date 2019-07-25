@@ -22,7 +22,7 @@ wepy.use(vuex);
 // ~/store.js
 import Vuex from '@wepy/x';
 
-export default new Vuex.store({
+export default new Vuex.Store({
   state: {
     num: 0
   },
@@ -66,3 +66,6 @@ wepy.component({
 
 ## Document 
 [https://vuex.vuejs.org/](https://vuex.vuejs.org/)
+
+## Other
+[Vuex Module](https://vuex.vuejs.org/guide/modules.html) is not supportted currently. Check the [Issue](https://github.com/Tencent/wepy/issues/2191) here.
