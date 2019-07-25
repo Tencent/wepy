@@ -214,15 +214,6 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       if (newVal === val || (newVal !== newVal && val !== value)) {
         return
       }
-      if (vm) {
-        parent = parent || key;
-
-        // push parent key to dirty, wait to setData
-        if (vm.$dirty) {
-          vm.$dirty.set(obj.__ob__.op, key, newVal);
-        }
-      }
-
       /* eslint-enable no-self-compare */
       if (process.env.NODE_ENV !== 'production' && customSetter) {
         customSetter()
@@ -231,6 +222,15 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
         setter.call(obj, newVal)
       } else {
         value = newVal
+      }
+      // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
+      if (vm) {
+        parent = parent || key;
+
+        // push parent key to dirty, wait to setData
+        if (vm.$dirty) {
+          vm.$dirty.set(obj.__ob__.op, key, newVal);
+        }
       }
       childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
       dep.notify();

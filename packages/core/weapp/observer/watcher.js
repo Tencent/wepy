@@ -187,7 +187,7 @@ export default class Watcher {
   evaluate () {
     this.value = this.get();
     if (this.vm.$dirty)
-      this.vm.$dirty.push(this.key, this.key, this.value);
+      this.vm.$dirty.push(this.key, this.key, this.vm[this.key], this.value);
     this.dirty = false;
     return this.value;
   }

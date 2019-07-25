@@ -6,9 +6,9 @@ export default class Dirty {
     this.type = type || 'path';
   }
 
-  push (key, path, value) {
-    this._keys[key] = value;
-    this._path[path] = value;
+  push (key, path, keyVal, pathValue) {
+    this._keys[key] = keyVal;
+    this._path[path] = pathValue;
     this._length++;
   }
 
@@ -37,7 +37,7 @@ export default class Dirty {
     for (let i = 0; i < keys.length; i++) {
       const {root, path} = m[keys[i]];
       if (op.observer.hasPath(path)) {
-        this.push(root, path, value);
+        this.push(root, path, op.observer.vm[root], value);
       } else {
         delete m[keys[i]];
       }
