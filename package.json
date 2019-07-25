@@ -40,6 +40,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "enquirer": "^2.3.0",
     "eslint": "^3.11.1",
+    "esm": "^3.2.25",
     "event-stream": "3.3.4",
     "fs-extra": "^5.0.0",
     "gulp": "^4.0.2",
