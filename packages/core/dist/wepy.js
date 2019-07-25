@@ -1606,52 +1606,6 @@ function initWatch (vm, watch) {
   }
 }
 
-var WepyConstructor = (function (WepyComponent$$1) {
-  function WepyConstructor (opt) {
-    if ( opt === void 0 ) opt = {};
-
-    var vm = new WepyComponent$$1();
-
-    // Only need data and watchers for a empty WepyComponent
-    if (opt.data) {
-      initData(vm, opt.data);
-    }
-    initWatch(vm);
-    return vm;
-  }
-
-  if ( WepyComponent$$1 ) WepyConstructor.__proto__ = WepyComponent$$1;
-  WepyConstructor.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
-  WepyConstructor.prototype.constructor = WepyConstructor;
-
-  return WepyConstructor;
-}(WepyComponent));
-
-var $global = Object.create(null);
-
-function use (plugin) {
-  var args = [], len = arguments.length - 1;
-  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
-
-  if (plugin.installed) {
-    return this;
-  }
-
-  var install = plugin.install || plugin;
-
-  if (isFunc(install)) {
-    install.apply(plugin, [this].concat(args));
-  }
-
-  plugin.installed = 1;
-}
-
-function mixin (options) {
-  if ( options === void 0 ) options = {};
-
-  $global.mixin = ($global.mixin || []).concat(options);
-}
-
 function createComputedGetter (key) {
   return function computedGetter () {
     var watcher = this._computedWatchers && this._computedWatchers[key];
@@ -1702,6 +1656,54 @@ function initComputed (vm, computed) {
 
     Object.defineProperty(vm, key, sharedPropertyDefinition);
   });
+}
+
+var WepyConstructor = (function (WepyComponent$$1) {
+  function WepyConstructor (opt) {
+    if ( opt === void 0 ) opt = {};
+
+    var vm = new WepyComponent$$1();
+
+    // Only need data and watchers for a empty WepyComponent
+    if (opt.data) {
+      initData(vm, opt.data);
+    }
+    initWatch(vm);
+
+    initComputed(vm, opt.computed);
+    return vm;
+  }
+
+  if ( WepyComponent$$1 ) WepyConstructor.__proto__ = WepyComponent$$1;
+  WepyConstructor.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
+  WepyConstructor.prototype.constructor = WepyConstructor;
+
+  return WepyConstructor;
+}(WepyComponent));
+
+var $global = Object.create(null);
+
+function use (plugin) {
+  var args = [], len = arguments.length - 1;
+  while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+  if (plugin.installed) {
+    return this;
+  }
+
+  var install = plugin.install || plugin;
+
+  if (isFunc(install)) {
+    install.apply(plugin, [this].concat(args));
+  }
+
+  plugin.installed = 1;
+}
+
+function mixin (options) {
+  if ( options === void 0 ) options = {};
+
+  $global.mixin = ($global.mixin || []).concat(options);
 }
 
 var WepyApp = (function (Base$$1) {
