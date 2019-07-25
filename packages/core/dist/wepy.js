@@ -539,6 +539,108 @@ function popTarget () {
   Dep.target = targetStack.pop();
 }
 
+/**
+ * @desc ObserverPath 类
+ * Observer 所在位置对应在整棵 data tree 的路径集合
+ * @createDate 2019-07-21
+ */
+
+var setPath = function (key, path) {
+  return isNum(key)
+    ? (path + "[" + key + "]")
+    : (path + "." + key);
+};
+
+var ObserverPath = function ObserverPath (key, parent, observer) {
+  var obj;
+
+  this.observer = observer;
+  this.pathMap = parent && parent.__ob__ && parent.__ob__.op
+    ? parent.__ob__.op.getPathMap(key)
+    : ( key
+      ? ( obj = {}, obj[key] = {key: key, root: key, path: key}, obj)
+      : {}
+    );
+};
+
+/**
+ * 更新 __ob__ 的 path
+ */
+ObserverPath.prototype.traverseUpdatePath = function traverseUpdatePath (key, value, parent) {
+    var this$1 = this;
+    var obj;
+
+  // 得到此 value 挂载到 parent 的 pathMap
+  var pathMap = parent && parent.__ob__ && parent.__ob__.op
+    ? parent.__ob__.op.getPathMap(key)
+    : ( key
+      ? ( obj = {}, obj[key] = {key: key, root: key, path: key}, obj)
+      : {}
+    );
+  var keys = Object.keys(pathMap);
+
+  // 遍历 pathMap
+  for (var i = 0; i < keys.length; i++) {
+    var ref = pathMap[keys[i]];
+      var root = ref.root;
+      var path = ref.path;
+
+    // 判断 path 是否存在，如果不存在则新增一条 path
+    if (!(path in this$1.pathMap)) {
+      this$1.pathMap[path] = {key: key, root: root, path: path};
+
+      // 深度遍历更新路径
+      var keys$1 = (void 0);
+      if (Array.isArray(value)) {
+        keys$1 = Array.from(Array(value.length), function (val, index) { return index; });
+      } else {
+        keys$1 = Object.keys(value);
+      }
+      for (var i$1 = 0; i$1 < keys$1.length; i$1++) {
+        var key$1 = keys$1[i$1];
+        if (isObject(value[key$1]) && hasOwn(value[key$1], '__ob__')) {
+          value[key$1].__ob__.op.traverseUpdatePath(key$1, value[key$1], value.observer.vm);
+        }
+      }
+
+      // 清除不存在的路径
+      keys$1 = Object.keys(this$1.pathMap);
+      for (var i$2 = 0; i$2 < keys$1.length; i$2++) {
+        var key$2 = keys$1[i$2];
+        if (!this$1.observer.isPathEq(key$2, value)) {
+          delete this$1.pathMap[key$2];
+        }
+      }
+    }
+  }
+};
+
+/**
+ * 得到父路径集合和子节点组合后的路径集合
+ */
+ObserverPath.prototype.getPathMap = function getPathMap (key) {
+  var parentPathMap = this.pathMap;
+  var pathMap = {};
+  var keys = Object.keys(parentPathMap);
+  if (keys.length) {
+    for (var i = 0; i < keys.length; i++) {
+      if (parentPathMap[keys[i]].path) {
+        var path = setPath(key, parentPathMap[keys[i]].path);
+        var root = '';
+        for (var j = 0; (j < path.length) && (path[j] !== '.' && path[j] !== '['); j++) {
+          root += path[j];
+        }
+        pathMap[path] = {key: key, root: root, path: path};
+      } else {
+        pathMap[key] = {key: key, root: key, path: key};
+      }
+    }
+  } else {
+    pathMap[key] = {key: key, root: key, path: key};
+  }
+  return pathMap;
+};
+
 /*
  * not type checking this file because flow doesn't play well with
  * dynamically accessing methods on Array prototype
@@ -572,20 +674,17 @@ methodsToPatch.forEach(function (method) {
     var vm = ob.vm;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      { vm.$dirty.push(ob.key, ob.path, ob.value); }
-
-    var inserted;
-    switch (method) {
-      case 'push':
-      case 'unshift':
-        inserted = ob.value;
-        break;
-      case 'splice':
-        inserted = args.slice(2);
-        break;
+    if (vm.$dirty) {
+      if (method === 'push') {
+        var lastIndex = ob.value.length - 1;
+        vm.$dirty.set(ob.op, lastIndex, ob.value[lastIndex]);
+      } else {
+        vm.$dirty.set(ob.op, null, ob.value);
+      }
     }
-    if (inserted) { ob.observeArray(ob.key, inserted); }
+
+    // 这里和 vue 不一样，所有变异方法都需要更新 path
+    ob.observeArray(ob.key, ob.value);
     // notify change
     ob.dep.notify();
     return result;
@@ -593,23 +692,6 @@ methodsToPatch.forEach(function (method) {
 });
 
 var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
-
-var getRootAndPath = function (key, parent) {
-  var path = '';
-  if (parent) {
-    path = parent.__ob__.path;
-    if (path) {
-      path = isNum(key) ? (path + "[" + key + "]") : (path + "." + key);
-      var root = '';
-      var i = 0;
-      while (i < path.length && (path[i] !== '.' && path[i] !== '[')) {
-        root += path[i++];
-      }
-      return { path: path, root: root }
-    }
-  }
-  return { root: key, path: key };
-};
 
 /**
  * By default, when a reactive property is set, the new value is
@@ -637,10 +719,7 @@ var Observer = function Observer (ref) {
   this.dep = new Dep();
   this.vmCount = 0;
   this.vm = vm;
-  this.key = key;
-  var rootAndPath = getRootAndPath(key, parent);
-  this.root = rootAndPath.root;
-  this.path = rootAndPath.path;
+  this.op = new ObserverPath(key, parent, this);
 
   def(value, '__ob__', this);
   if (Array.isArray(value)) {
@@ -678,6 +757,55 @@ Observer.prototype.observeArray = function observeArray (key, items) {
   for (var i = 0, l = items.length; i < l; i++) {
     observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
   }
+};
+
+/**
+ * Check if path exsit in vm
+ */
+Observer.prototype.hasPath = function hasPath (path) {
+  var vm = this.vm;
+  var value = vm;
+  var key = '';
+  var i = 0;
+  while (i < path.length) {
+    if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+      key += path[i];
+    } else if (key.length !== 0) {
+      value = value[key];
+      key = '';
+      if (!isObject(value)) {
+        return false;
+      }
+    }
+    i++;
+  }
+  return true;
+};
+
+/**
+ * Is this path value equal
+ */
+Observer.prototype.isPathEq = function isPathEq (path, value) {
+  var vm = this.vm;
+  var objValue = vm;
+  var key = '';
+  var i = 0;
+  while (i < path.length) {
+    if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
+      key += path[i];
+    } else if (key.length !== 0) {
+      objValue = objValue[key];
+      key = '';
+      if (!isObject(objValue)) {
+        return false;
+      }
+    }
+    i++;
+  }
+  if (key.length !== 0) {
+    objValue = objValue[key];
+  }
+  return value === objValue;
 };
 
 // helpers
@@ -722,6 +850,7 @@ function observe (ref) {
   var ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
+    ob.op.traverseUpdatePath(key, value, parent);
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -785,18 +914,6 @@ function defineReactive (ref) {
       if (newVal === val || (newVal !== newVal && val !== value)) {
         return
       }
-      if (vm) {
-        parent = parent || key;
-
-        var ref = getRootAndPath(key, obj);
-        var root = ref.root;
-        var path = ref.path;
-
-        // push parent key to dirty, wait to setData
-        if (vm.$dirty)
-          { vm.$dirty.push(root, path, newVal); }
-      }
-
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
         customSetter();
@@ -805,6 +922,15 @@ function defineReactive (ref) {
         setter.call(obj, newVal);
       } else {
         value = newVal;
+      }
+      // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
+      if (vm) {
+        parent = parent || key;
+
+        // push parent key to dirty, wait to setData
+        if (vm.$dirty) {
+          vm.$dirty.set(obj.__ob__.op, key, newVal);
+        }
       }
       childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
       dep.notify();
@@ -824,13 +950,10 @@ function set (vm, target, key, val) {
     return val;
   }
   if (vm) {
-    var ref = getRootAndPath(key, target);
-    var root = ref.root;
-    var path = ref.path;
-
     // push parent key to dirty, wait to setData
-    if (vm.$dirty)
-      { vm.$dirty.push(root, path, val); }
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      vm.$dirty.set(target.__ob__.op, key, val);
+    }
   }
 
   if (key in target && !(key in Object.prototype)) {
@@ -1327,8 +1450,10 @@ Watcher.prototype.run = function run () {
  */
 Watcher.prototype.evaluate = function evaluate () {
   this.value = this.get();
-  if (this.vm.$dirty)
-    { this.vm.$dirty.push(this.key, this.key, this.value); }
+  if (this.vm.$dirty) {
+    var keyVal = this._computedWatchers && this._computedWatchers[this.key] ? this.vm._computedWatchers[this.key].value : this.value;
+    this.vm.$dirty.push(this.key, this.key, keyVal, this.value);
+  }
   this.dirty = false;
   return this.value;
 };
@@ -1681,12 +1806,13 @@ function initHooks(vm, hooks) {
 
 function initRender (vm, keys) {
   vm._init = false;
+  var dirtyFromAttach = null;
   return new Watcher(vm, function () {
     if (!vm._init) {
       keys.forEach(function (key) { return clone(vm[key]); });
     }
 
-    if (vm.$dirty.length()) {
+    if (vm.$dirty.length() || dirtyFromAttach) {
       var keys$1 = vm.$dirty.get('key');
       var dirty = vm.$dirty.pop();
 
@@ -1698,12 +1824,16 @@ function initRender (vm, keys) {
       }
 
       // vm._fromSelf = true;
-      if (dirty) {
-        // init render is in lifecycle, setData in lifecycle will not work, so setTimeout is needed.
+      if (dirty || dirtyFromAttach) {
+        // init render is in lifecycle, setData in lifecycle will not work, so cacheData is needed.
         if (!vm._init) {
-          nextTick(function () {
-            vm.$wx.setData(dirty, renderFlushCallbacks);
-          });
+          if (dirtyFromAttach === null) {
+            dirtyFromAttach = {};
+          }
+          Object.assign(dirtyFromAttach, dirty);
+        } else if (dirtyFromAttach) {  // setData in attached
+          vm.$wx.setData(Object.assign(dirtyFromAttach, dirty || {}), renderFlushCallbacks);
+          dirtyFromAttach = null;
         } else {
           vm.$wx.setData(dirty, renderFlushCallbacks);
         }
@@ -1720,34 +1850,16 @@ var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 var observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     var vm = this.$wepy;
-    if (vm._fromSelf) {
-      vm._fromSelf = false;
-      return;
+
+    // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
+    if (changedPaths.length > 1) {
+      return
     }
-    var _props;
     var _data = newVal;
-    var key = changedPaths[0];
     if (typeof _data === 'function') {
       _data = _data.call(vm);
     }
-
-    _props = vm._props || {};
-    // _props[key] = _data;
-    vm._props = _props;
-    Object.keys(_props).forEach(function (key) {
-      proxy(vm, '_props', key);
-    });
-
-    observe({
-      vm: vm,
-      key: '',
-      value: _props,
-      root: true
-    });
-
-    initRender(vm, Object.keys(_props));
-
-    vm[key] = _data;
+    vm[changedPaths[0]] = _data;
   };
 };
 /*
@@ -1784,7 +1896,7 @@ function patchProps (output, props) {
       }
 
       // props.default
-      if (prop.default) {
+      if (!isUndef(prop.default)) {
         if (isFunc(prop.default)) {
           newProp.value = prop.default.call(output);
         } else {
@@ -1995,9 +2107,9 @@ var Dirty = function Dirty (type) {
   this.type = type || 'path';
 };
 
-Dirty.prototype.push = function push (key, path, value) {
-  this._keys[key] = value;
-  this._path[path] = value;
+Dirty.prototype.push = function push (key, path, keyVal, pathValue) {
+  this._keys[key] = keyVal;
+  this._path[path] = pathValue;
   this._length++;
 };
 
@@ -2015,6 +2127,26 @@ Dirty.prototype.pop = function pop () {
 Dirty.prototype.get = function get (type) {
   type === type || this.type;
   return type === 'path' ? this._path : this._keys;
+};
+
+/**
+ * Set dirty from a ObserverPath
+ */
+Dirty.prototype.set = function set (op, key, value) {
+    var this$1 = this;
+
+  var m = key ? op.getPathMap(key) : this.pathMap;
+  var keys = Object.keys(m);
+  for (var i = 0; i < keys.length; i++) {
+    var ref = m[keys[i]];
+      var root = ref.root;
+      var path = ref.path;
+    if (op.observer.hasPath(path)) {
+      this$1.push(root, path, op.observer.vm[root], value);
+    } else {
+      delete m[keys[i]];
+    }
+  }
 };
 
 Dirty.prototype.reset = function reset () {
@@ -2166,6 +2298,9 @@ function patchLifecycle (output, options, rel, isComponent) {
       var vm = this.$wepy;
       var parent = this.triggerEvent('_init', vm);
 
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate();
+
       initEvents(vm);
 
       Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
@@ -2183,6 +2318,10 @@ function patchLifecycle (output, options, rel, isComponent) {
       var currentPage = pages[pages.length - 1];
       var path = currentPage.__route__;
       var webViewId = currentPage.__wxWebviewId__;
+
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate();
+
       if (app.$route.path !== path) {
         app.$route.path = path;
         app.$route.webViewId = webViewId;
@@ -2310,6 +2449,7 @@ function patchRelations (output, relations) {
 function app$1 (option, rel) {
   var appConfig = {};
 
+  patchMixins(appConfig, option, option.mixins);
   patchAppLifecycle(appConfig, option, rel);
 
   return App(appConfig);
