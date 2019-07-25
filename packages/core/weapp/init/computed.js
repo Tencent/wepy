@@ -1,6 +1,6 @@
 import Watcher from './../observer/watcher';
 import Dep from './../observer/dep';
-import { noop } from './../util/index';
+import { isFunc, noop } from './../util/index';
 import { sharedPropertyDefinition } from './data';
 
 

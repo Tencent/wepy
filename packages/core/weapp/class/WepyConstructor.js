@@ -2,6 +2,7 @@ import Base from './Base';
 import WepyComponent from './WepyComponent';
 import { initData } from '../init/data';
 import { initWatch } from '../init/watch';
+import { initComputed } from '../init/computed';
 
 export default class WepyConstructor extends WepyComponent {
 
@@ -13,6 +14,8 @@ export default class WepyConstructor extends WepyComponent {
       initData(vm, opt.data);
     }
     initWatch(vm);
+
+    initComputed(vm, opt.computed);
     return vm;
   }
 }
