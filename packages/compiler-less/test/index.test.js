@@ -8,6 +8,12 @@ const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSyste
 const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
 
 class Hook {
+
+  constructor () {
+    // file will be involved for watch
+    this.involved = {};
+  }
+
   register (key, fn) {
     if (!this._fns)
       this._fns = {};
