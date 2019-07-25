@@ -5,7 +5,7 @@
   "typings": "types/index.d.ts",
   "scripts": {
     "test:types": "tsc -p ./types/test/tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --require esm ./test/**/*"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +13,7 @@
   "_id": "@wepy/core@2.0.0-alpha.8",
   "_commitid": "ba509a2",
   "devDependencies": {
+    "esm": "^3.2.25",
     "typescript": "^3.3.3"
   }
 }
