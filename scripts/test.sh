@@ -1,11 +1,16 @@
 #!/bin/bash
-set -e
+cd packages/babel-plugin-import-regenerator && npm run test && cd ../../
+cd packages/cli && npm run test && cd ../../
 
-node="node"
-
-if [ "$TEST_DEBUG" ]; then
-   node="node --inspect --debug-brk"
-fi
-
-node ./node_modules/eslint/bin/eslint.js packages/*
-node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha -- -t 50000 --recursive  -R spec packages/*/test/
+# TODO: cd packages/compiler-babel && npm run test && cd ../../
+cd packages/compiler-less && npm run test && cd ../../
+cd packages/compiler-sass && npm run test && cd ../../
+# TODO: cd packages/compiler-stylus && npm run test && cd ../../
+# TODO: cd packages/compiler-typescript && npm run test && cd ../../
+# TODO: cd packages/core && npm run test && cd ../../
+cd packages/plugin-define && npm run test && cd ../../
+# TODO: cd packages/plugin-eslint && npm run test && cd ../../
+# TODO: cd packages/plugin-uglifyjs && npm run test && cd ../../
+# TODO: cd packages/redux && npm run test && cd ../../
+# TODO: cd packages/use-promisify && npm run test && cd ../../
+# TODO: cd packages/x && npm run test && cd ../../
