@@ -8,34 +8,16 @@ const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
-    if (vm._fromSelf) {
-      vm._fromSelf = false;
-      return;
+
+    // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
+    if (changedPaths.length > 1) {
+      return
     }
-    let _props;
     let _data = newVal;
-    let key = changedPaths[0];
     if (typeof _data === 'function') {
       _data = _data.call(vm);
     }
-
-    _props = vm._props || {};
-    // _props[key] = _data;
-    vm._props = _props;
-    Object.keys(_props).forEach(key => {
-      proxy(vm, '_props', key);
-    });
-
-    observe({
-      vm: vm,
-      key: '',
-      value: _props,
-      root: true
-    });
-
-    initRender(vm, Object.keys(_props));
-
-    vm[key] = _data;
+    vm[changedPaths[0]] = _data;
   };
 };
 /*
