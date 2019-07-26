@@ -2137,7 +2137,7 @@ Dirty.prototype.get = function get (type) {
 Dirty.prototype.set = function set (op, key, value) {
     var this$1 = this;
 
-  var m = key ? op.getPathMap(key) : this.pathMap;
+  var m = key ? op.getPathMap(key) : op.pathMap;
   var keys = Object.keys(m);
   for (var i = 0; i < keys.length; i++) {
     var ref = m[keys[i]];
