@@ -32,16 +32,19 @@ export default class Dirty {
    * Set dirty from a ObserverPath
    */
   set (op, key, value) {
-    const m = key ? op.getPathMap(key) : op.pathMap;
-    const keys = Object.keys(m);
-    for (let i = 0; i < keys.length; i++) {
-      const {root, path} = m[keys[i]];
-      if (op.observer.hasPath(path)) {
-        this.push(root, path, op.observer.vm[root], value);
-      } else {
-        delete m[keys[i]];
-      }
-    }
+    const pathMap = key ? op.constructor.getPathMap(key, op.pathMap) : op.pathMap;
+    const keys = Object.keys(pathMap);
+    /**
+     * 出于性能考虑，使用 usingComponents 时， setData 内容不会被直接深复制，
+     * 即 this.setData({ field: obj }) 后 this.data.field === obj 。
+     * 因此不需要所有 path 都 setData 。
+     */
+    const {root, path} = pathMap[keys[0]];
+    this.push(root, path, op.observer.vm[root], value);
+    // for (let i = 0; i < keys.length; i++) {
+    //   const {root, path} = pathMap[keys[i]];
+    //   this.push(root, path, op.observer.vm[root], value)
+    // }
   }
 
   reset () {

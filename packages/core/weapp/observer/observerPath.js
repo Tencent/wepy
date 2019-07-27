@@ -12,59 +12,74 @@ const setPath = (key, path) => {
     : `${path}.${key}`;
 }
 
+const pickPathMap = obj => obj && obj.__ob__ && obj.__ob__.op.pathMap
+
 export default class ObserverPath {
-  constructor (key, parent, observer) {
-    this.observer = observer;
-    this.pathMap = parent && parent.__ob__ && parent.__ob__.op
-      ? parent.__ob__.op.getPathMap(key)
-      : ( key
-        ? { [key] : {key, root: key, path: key} }
-        : {}
-      );
+  constructor (key, parent, ob) {
+    this.observer = ob;
+    this.pathMap = ObserverPath.getPathMap(key, pickPathMap(parent));
   }
 
   /**
-   * 更新 __ob__ 的 path
+   * 添加新的 __ob__ 的 path
    */
-  traverseUpdatePath (key, value, parent) {
+  traverseAddPath (key, value, parentPathMap) {
     // 得到此 value 挂载到 parent 的 pathMap
-    const pathMap = parent && parent.__ob__ && parent.__ob__.op
-      ? parent.__ob__.op.getPathMap(key)
-      : ( key
-        ? { [key] : {key, root: key, path: key} }
-        : {}
-      );
+    const pathMap = ObserverPath.getPathMap(key, parentPathMap);
     const keys = Object.keys(pathMap);
+    let newPathMap = {};
 
     // 遍历 pathMap
     for (let i = 0; i < keys.length; i++) {
       const {root, path} = pathMap[keys[i]];
-
-      // 判断 path 是否存在，如果不存在则新增一条 path
       if (!(path in this.pathMap)) {
-        this.pathMap[path] = {key, root, path};
+        // 新增一条 path
+        newPathMap[path] = {key, root, path};
+        this.pathMap[path] = newPathMap[path];
+      }
+    }
 
-        // 深度遍历更新路径
-        let keys;
-        if (Array.isArray(value)) {
-          keys = Array.from(Array(value.length), (val, index) => index);
-        } else {
-          keys = Object.keys(value);
+    // 深度遍历添加路径
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        if (isObject(value[i]) && hasOwn(value[i], '__ob__')) {
+          value[i].__ob__.op.traverseAddPath(i, value[i], newPathMap);
         }
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-          if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
-            value[key].__ob__.op.traverseUpdatePath(key, value[key], value.observer.vm);
-          }
+      }
+    } else {
+      const keys = Object.keys(value);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
+          value[key].__ob__.op.traverseAddPath(key, value[key], newPathMap);
         }
+      }
+    }
+  }
 
-        // 清除不存在的路径
-        keys = Object.keys(this.pathMap);
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-          if (!this.observer.isPathEq(key, value)) {
-            delete this.pathMap[key];
-          }
+  delInvalidPaths (key, value, parentPathMap) {
+    // 清除不存在的路径
+    const pathMap = ObserverPath.getPathMap(key, parentPathMap)
+    const keys = Object.keys(pathMap);
+    let invalidPathMap = {};
+    for (let i = 0; i < keys.length; i++) {
+      invalidPathMap[keys[i]] = this.pathMap[keys[i]];
+      delete this.pathMap[keys[i]];
+    }
+
+    // 深度遍历删除失效路径
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        if (isObject(value[i]) && hasOwn(value[i], '__ob__')) {
+          value[i].__ob__.op.delInvalidPaths(i, value[i], invalidPathMap);
+        }
+      }
+    } else {
+      const keys = Object.keys(value);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
+          value[key].__ob__.op.delInvalidPaths(key, value[key], invalidPathMap);
         }
       }
     }
@@ -73,26 +88,25 @@ export default class ObserverPath {
   /**
    * 得到父路径集合和子节点组合后的路径集合
    */
-  getPathMap (key) {
-    const parentPathMap = this.pathMap;
-    let pathMap = {};
-    const keys = Object.keys(parentPathMap)
-    if (keys.length) {
-      for (let i = 0; i < keys.length; i++) {
-        if (parentPathMap[keys[i]].path) {
-          const path = setPath(key, parentPathMap[keys[i]].path);
-          let root = '';
-          for (let j = 0; (j < path.length) && (path[j] !== '.' && path[j] !== '['); j++) {
-            root += path[j];
+  static getPathMap (key, parentPathMap) {
+    if (parentPathMap) {
+      const keys = Object.keys(parentPathMap)
+      if (keys.length) {
+        let pathMap = {};
+        for (let i = 0; i < keys.length; i++) {
+          if (parentPathMap[keys[i]].path) {
+            const path = setPath(key, parentPathMap[keys[i]].path);
+            pathMap[path] = {key, root: parentPathMap[keys[i]].root, path};
+          } else {
+            pathMap[key] = {key, root: key, path: key}
           }
-          pathMap[path] = {key, root, path};
-        } else {
-          pathMap[key] = {key, root: key, path: key}
         }
+        return pathMap;
+      } else {
+        return {[key]: {key, root: key, path: key}};
       }
     } else {
-      pathMap[key] = {key, root: key, path: key}
+      return {[key]: {key, root: key, path: key}};
     }
-    return pathMap;
   }
 }

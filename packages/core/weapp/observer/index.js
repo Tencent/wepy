@@ -13,6 +13,8 @@ import {
 
 const arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 
+const pickPathMap = obj => obj && obj.__ob__ && obj.__ob__.op.pathMap
+
 /**
  * By default, when a reactive property is set, the new value is
  * also converted to become reactive. However when passing down props,
@@ -76,8 +78,7 @@ export class Observer {
    * Check if path exsit in vm
    */
   hasPath (path) {
-    const vm = this.vm;
-    let value = vm;
+    let value = this.vm;
     let key = '';
     let i = 0;
     while (i < path.length) {
@@ -99,8 +100,7 @@ export class Observer {
    * Is this path value equal
    */
   isPathEq (path, value) {
-    const vm = this.vm;
-    let objValue = vm;
+    let objValue = this.vm;
     let key = '';
     let i = 0;
     while (i < path.length) {
@@ -158,7 +158,7 @@ export function observe ({vm, key, value, parent, root}) {
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
-    ob.op.traverseUpdatePath(key, value, parent)
+    ob.op.traverseAddPath(key, value, pickPathMap(parent))
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -211,9 +211,15 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
     set: function reactiveSetter (newVal) {
       const val = getter ? getter.call(obj) : value
       /* eslint-disable no-self-compare */
-      if (newVal === val || (newVal !== newVal && val !== value)) {
+      if (newVal === val || (newVal !== newVal && val !== val)) {
         return
       }
+
+      if (isObject(value) && hasOwn(value, '__ob__')) {
+        // delete invalid paths
+        value.__ob__.op.delInvalidPaths(key, value, pickPathMap(parent))
+      }
+
       /* eslint-enable no-self-compare */
       if (process.env.NODE_ENV !== 'production' && customSetter) {
         customSetter()
@@ -223,10 +229,9 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       } else {
         value = newVal
       }
+
       // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
       if (vm) {
-        parent = parent || key;
-
         // push parent key to dirty, wait to setData
         if (vm.$dirty) {
           vm.$dirty.set(obj.__ob__.op, key, newVal);
@@ -249,17 +254,12 @@ export function set (vm, target, key, val) {
     target.splice(key, 1, val)
     return val;
   }
-  if (vm) {
-    // push parent key to dirty, wait to setData
-    if (vm.$dirty && hasOwn(target, '__ob__')) {
-      vm.$dirty.set(target.__ob__.op, key, val);
-    }
-  }
 
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
   }
+
   const ob = (target).__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
@@ -268,11 +268,23 @@ export function set (vm, target, key, val) {
     )
     return val
   }
+
   if (!ob) {
     target[key] = val
     return val
   }
-  defineReactive({ vm: vm,  obj: ob.value, key: key, value: val });
+
+  if (isObject(target[key]) && hasOwn(target[key], '__ob__')) {
+    // delete invalid paths
+    target[key].__ob__.op.delInvalidPaths(key, target[key], pickPathMap(parent))
+  }
+  defineReactive({ vm: vm, obj: ob.value, key: key, value: val, parent: ob.value });
+  if (vm) {
+    // push parent key to dirty, wait to setData
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      vm.$dirty.set(target.__ob__.op, key, val);
+    }
+  }
   ob.dep.notify()
   return val
 }
@@ -285,6 +297,7 @@ export function del (target, key) {
     target.splice(key, 1)
     return
   }
+
   const ob = (target).__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
@@ -293,9 +306,11 @@ export function del (target, key) {
     )
     return
   }
+
   if (!hasOwn(target, key)) {
     return
   }
+
   // set $dirty
   target[key] = null;
   delete target[key]
