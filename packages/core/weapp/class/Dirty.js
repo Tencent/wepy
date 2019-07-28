@@ -32,7 +32,8 @@ export default class Dirty {
    * Set dirty from a ObserverPath
    */
   set (op, key, value) {
-    const pathMap = key ? op.constructor.getPathMap(key, op.pathMap) : op.pathMap;
+    // eslint-disable-next-line eqeqeq
+    const pathMap = key != null ? op.constructor.getPathMap(key, op.pathMap) : op.pathMap;
     const keys = Object.keys(pathMap);
     /**
      * 出于性能考虑，使用 usingComponents 时， setData 内容不会被直接深复制，
