@@ -1,0 +1,11 @@
+<div @tap="myclick"></div>
+<div @tap.stop="myclickStop"></div>
+<div @tap.capture="myclickCapture"></div>
+<div @tap.stop.capture="myclickCaptureStop"></div>
+<div @tap.capture.stop="myClickCaptureStopWithParams(1, {a: 1}, [1, 2])"></div>
+
+<div @tap="myclick($event)"></div>
+
+<div v-for="(item, index) in list">
+  <button @tap="myClickInFor(item)"></button>
+</div>
