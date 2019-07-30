@@ -1,6 +1,5 @@
 import { observe } from './../observer/index';
 import { proxy } from './data';
-import { initRender } from './render';
 import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
 
 const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];

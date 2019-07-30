@@ -11,7 +11,7 @@ export function resetDirty (vm) {
 };
 
 
-export function initRender (vm, keys) {
+export function initRender (vm, keys, computedKeys) {
   vm._init = false;
   let dirtyFromAttach = null;
   return new Watcher(vm, function () {
@@ -21,6 +21,7 @@ export function initRender (vm, keys) {
 
     if (vm.$dirty.length() || dirtyFromAttach) {
       let keys = vm.$dirty.get('key');
+      computedKeys.forEach(key => vm[key]);
       let dirty = vm.$dirty.pop();
 
       // TODO: reset subs

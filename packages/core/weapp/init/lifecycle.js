@@ -130,7 +130,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
     initWatch(vm, options.watch);
 
     // create render watcher
-    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})));
+    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
 
     return callUserMethod(vm, vm.$options, 'created', args);
   };
