@@ -141,7 +141,6 @@ export default class Watcher {
     /* istanbul ignore else */
     if (this.computed) {
       this.dirty = true;
-      this.evaluate();
     } else if (this.sync) {
       this.run();
     } else {
