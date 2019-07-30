@@ -6,7 +6,7 @@
     "wepy": "bin/wepy.js"
   },
   "scripts": {
-    "test": "mocha test/*"
+    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
   },
   "repository": {
     "type": "git",
