@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const Hook = require(`${alias.core}/hook`);
 const tag = require(`${alias.core}/tag`);
 const initPlugin = require(`${alias.core}/init/plugin`);
+const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
 const spec = {
@@ -28,8 +29,9 @@ function createCompiler (options = {}) {
     wxmlTags: tag.combineTag(tag.WXML_TAGS, userDefinedTags.wxmlTags),
     html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
   };
-  pt.call(instance);
   initPlugin(instance);
+
+  instance.assets = new moduleSet();
   return instance;
 }
 
@@ -43,11 +45,32 @@ function getRaw (file, lang = 'wxml') {
   };
 }
 
-function assertCodegen (originalRaw, assertRaw, options = {}, done) {
-  const compiler = createCompiler(options);
+function assetHanlder (handlers) {
+  for (let id in handlers) {
+    for (let type in handlers[id]) {
+      const func = handlers[id][type];
+      const funcfile = path.join(__dirname, '..', '..', 'fixtures/template/assert/v-on/', id + '.' + type + '.js');
+      const fixture = fs.readFileSync(funcfile, 'utf-8');
 
-  compiler.hookUnique('template-parse', originalRaw, {}, {}).then((rst) => {
+      try {
+        expect(func.replace(/\s*/ig, '').replace(/\n*/ig, '')).to.equal(fixture.replace(/\s*/ig, '').replace(/\n*/ig, ''));
+      } catch (e) {
+        console.log('Compiled Handler: ' + id + '.' + type + '.js')
+        console.log(func);
+        throw e;
+      }
+    }
+  }
+}
+
+function assertCodegen (originalRaw, assertRaw, options = {}, file, done) {
+  const compiler = createCompiler(options);
+  compiler.assets.add(file);
+  compiler.hookUnique('template-parse', originalRaw, {}, { file }).then((rst) => {
     expect(rst.code).to.equal(assertRaw);
+    if (file === 'v-on') {
+      assetHanlder(rst.rel.handlers);
+    }
     done();
   }).catch(err => {
     done(err);
@@ -61,7 +84,14 @@ describe('template-parse', function () {
 
     it('test attr: ' + file, function (done) {
       const { originalRaw, assertRaw } = getRaw(file);
-      assertCodegen(originalRaw, assertRaw, {}, done)
+      assertCodegen(originalRaw, assertRaw, {}, file, done)
+    })
+  });
+  spec.event.forEach(file => {
+
+    it('test attr: ' + file, function (done) {
+      const { originalRaw, assertRaw } = getRaw(file);
+      assertCodegen(originalRaw, assertRaw, {}, file, done)
     })
   });
 });

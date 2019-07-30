@@ -599,7 +599,7 @@ ObserverPath.prototype.traverseUpdatePath = function traverseUpdatePath (key, va
       for (var i$1 = 0; i$1 < keys$1.length; i$1++) {
         var key$1 = keys$1[i$1];
         if (isObject(value[key$1]) && hasOwn(value[key$1], '__ob__')) {
-          value[key$1].__ob__.op.traverseUpdatePath(key$1, value[key$1], value.observer.vm);
+          value[key$1].__ob__.op.traverseUpdatePath(key$1, value[key$1], value.__ob__.vm);
         }
       }
 

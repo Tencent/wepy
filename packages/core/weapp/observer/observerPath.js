@@ -54,7 +54,7 @@ export default class ObserverPath {
         for (let i = 0; i < keys.length; i++) {
           const key = keys[i];
           if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
-            value[key].__ob__.op.traverseUpdatePath(key, value[key], value.observer.vm);
+            value[key].__ob__.op.traverseUpdatePath(key, value[key], value.__ob__.vm);
           }
         }
 

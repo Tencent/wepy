@@ -100,7 +100,11 @@ exports = module.exports = function () {
   });
 
   this.register('template-parse-ast-attr-v-on.stop', function ({ item, name, expr, event, scope, ctx }) {
-    event.type = event.type.replace(/^bind/, 'catch');
+    if (event.type.startsWith('bind')) { // bindtap="xxx"
+      event.type = event.type.replace(/^bind/, 'catch');
+    } else if (event.type.indexOf('-bind') > -1) { // capture-bindtap="xxx"
+      event.type = event.type.replace(/-bind/, '-catch');
+    }
     return { item, name, expr, event, scope, ctx };
   });
 
