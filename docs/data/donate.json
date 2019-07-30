@@ -3,6 +3,12 @@
     " * 请在填写cases之前查看这里": "https://github.com/Tencent/wepy/tree/master/docs/data#%E6%8D%90%E8%B5%A0-pr-%E8%AF%B4%E6%98%8E",
     " */": "****",
     "donates": [{
+        "date": "2018/07/30",
+        "name": "巨应工作室",
+        "amount": "8.88",
+        "desc": "简单易用，业界良心，希望能顺便把支付宝小程序也兼容了。。小程序版flutter"
+    },
+        {
         "date": "2018/03/19",
         "name": "幕僚",
         "amount": "6.66",
