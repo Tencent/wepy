@@ -1598,7 +1598,6 @@ function initData (vm, data) {
 }
 
 function initWatch (vm, watch) {
-  vm._watchers = vm._watchers || [];
   if (watch) {
     Object.keys(watch).forEach(function (key) {
       vm.$watch(key, watch[key]);
@@ -2137,7 +2136,7 @@ Dirty.prototype.get = function get (type) {
 Dirty.prototype.set = function set (op, key, value) {
     var this$1 = this;
 
-  var m = key ? op.getPathMap(key) : op.pathMap;
+  var m = (key || key === 0) ? op.getPathMap(key) : op.pathMap;
   var keys = Object.keys(m);
   for (var i = 0; i < keys.length; i++) {
     var ref = m[keys[i]];
@@ -2258,6 +2257,7 @@ function patchLifecycle (output, options, rel, isComponent) {
     vm.$is = this.is;
     vm.$options = options;
     vm.$rel = rel;
+    vm._watchers = [];
     if (!isComponent) {
       vm.$root = vm;
       vm.$app = app;
@@ -2275,11 +2275,9 @@ function patchLifecycle (output, options, rel, isComponent) {
 
     initMethods(vm, options.methods);
 
-    initWatch(vm, options.watch);
-
-    // initEvents(vm);
-    // not need to patch computed to ouput
     initComputed(vm, options.computed, true);
+
+    initWatch(vm, options.watch);
 
     // create render watcher
     initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})));
@@ -2546,6 +2544,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.8";
+wepy.version = "2.0.0-alpha.9";
 
 module.exports = wepy;
