@@ -32,7 +32,7 @@ export default class Dirty {
    * Set dirty from a ObserverPath
    */
   set (op, key, value) {
-    const m = key ? op.getPathMap(key) : op.pathMap;
+    const m = (key || key === 0) ? op.getPathMap(key) : op.pathMap;
     const keys = Object.keys(m);
     for (let i = 0; i < keys.length; i++) {
       const {root, path} = m[keys[i]];
