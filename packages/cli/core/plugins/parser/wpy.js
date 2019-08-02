@@ -70,7 +70,7 @@ exports = module.exports = function () {
     this.involved[file] = 1;
 
 
-    context.promise =  flow.then(() => {
+    context.promise = flow.then(() => {
       return this.applyCompiler(context.sfc.config, context);
     }).then(() => {
       if (sfc.wxs) {
