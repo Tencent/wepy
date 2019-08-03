@@ -100,7 +100,7 @@ exports = module.exports = function () {
 
     item.parsedAttr = parsedAttr;
 
-    return [ item, scope, rel ];
+    return [ item, scope, rel, ctx ];
     /* REMOVE LATER
     for (let name in attrs) {
 
@@ -216,7 +216,7 @@ exports = module.exports = function () {
         [item.childen, currentScope, rel] = this.hookSeq('template-parse-ast', item.children, currentScope, rel, ctx);
       }
     });
-    return [ast, scope, rel];
+    return [ast, scope, rel, ctx];
   });
 
   this.register('template-parse-ast-to-str', function astToStr (ast) {

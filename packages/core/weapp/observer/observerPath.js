@@ -1,112 +1,137 @@
 /**
- * @desc ObserverPath 类
+ * @desc ObserverPath 类以及相关处理函数
  * Observer 所在位置对应在整棵 data tree 的路径集合
  * @createDate 2019-07-21
  */
+import { hasOwn, isNum, isObject, remove } from '../util/index'
 
-import { hasOwn, isNum, isObject } from '../util/index'
-
-const setPath = (key, path) => {
+/**
+ * 生成完整路径
+ * @param key  {String|Number} 当为字符串时，说明是属性名，当为数字时，说明是索引
+ * @param parentPath {String} 父路径
+ * @return {string}
+ */
+const setPath = (key, parentPath) => {
   return isNum(key)
-    ? `${path}[${key}]`
-    : `${path}.${key}`;
+    ? `${parentPath}[${key}]`
+    : `${parentPath}.${key}`;
 }
 
-const pickPathMap = obj => obj && obj.__ob__ && obj.__ob__.op.pathMap
+/**
+ * 得到 ObserverPath
+ * @param value 被观察对象
+ * @return {ObserverPath|null}
+ */
+const pickOp = value => {
+  return isObject(value) && hasOwn(value, '__ob__')
+    ? value.__ob__.op
+    : null;
+}
 
 export default class ObserverPath {
-  constructor (key, parent, ob) {
-    this.observer = ob;
-    this.pathMap = ObserverPath.getPathMap(key, pickPathMap(parent));
+  constructor (key, ob, parentOp) {
+    this.ob = ob;
+    // eslint-disable-next-line eqeqeq
+    if (parentOp) {
+      const {combinePathKeys, combinePathMap} = getPathMap(key, parentOp.pathKeys, parentOp.pathMap)
+      this.pathKeys = combinePathKeys
+      this.pathMap = combinePathMap;
+    } else {
+      this.pathKeys = null
+      this.pathMap = null
+    }
   }
 
-  /**
-   * 添加新的 __ob__ 的 path
-   */
-  traverseAddPath (key, value, parentPathMap) {
-    // 得到此 value 挂载到 parent 的 pathMap
-    const pathMap = ObserverPath.getPathMap(key, parentPathMap);
-    const keys = Object.keys(pathMap);
-    let newPathMap = {};
+  traverseOp (key, pathKeys, pathMap, handler) {
+    // 得到 newKey 和 pathMap 组合的路径集合
+    const {combinePathMap, combinePathKeys} = getPathMap(key, pathKeys, pathMap);
+    let handlePathKeys = [];
+    let handlePathMap = {};
 
-    // 遍历 pathMap
-    for (let i = 0; i < keys.length; i++) {
-      const {root, path} = pathMap[keys[i]];
-      if (!(path in this.pathMap)) {
-        // 新增一条 path
-        newPathMap[path] = {key, root, path};
-        this.pathMap[path] = newPathMap[path];
+    // 遍历 combinePathMap
+    for (let i = 0; i < combinePathKeys.length; i++) {
+      const pathObj = handler(combinePathMap[combinePathKeys[i]], this);
+      if (pathObj) {
+        handlePathKeys.push(pathObj.path);
+        handlePathMap[pathObj.path] = pathObj;
       }
     }
 
-    // 深度遍历添加路径
+    const value = this.ob.value;
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
-        if (isObject(value[i]) && hasOwn(value[i], '__ob__')) {
-          value[i].__ob__.op.traverseAddPath(i, value[i], newPathMap);
-        }
+        const op = pickOp(value[i])
+        op && op.traverseOp(i, handlePathKeys, handlePathMap, handler)
       }
     } else {
       const keys = Object.keys(value);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i];
-        if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
-          value[key].__ob__.op.traverseAddPath(key, value[key], newPathMap);
-        }
+        const op = pickOp(value[key])
+        op && op.traverseOp(key, handlePathKeys, handlePathMap, handler)
       }
     }
   }
 
-  delInvalidPaths (key, value, parentPathMap) {
-    // 清除不存在的路径
-    const pathMap = ObserverPath.getPathMap(key, parentPathMap)
-    const keys = Object.keys(pathMap);
-    let invalidPathMap = {};
-    for (let i = 0; i < keys.length; i++) {
-      invalidPathMap[keys[i]] = this.pathMap[keys[i]];
-      delete this.pathMap[keys[i]];
-    }
-
-    // 深度遍历删除失效路径
-    if (Array.isArray(value)) {
-      for (let i = 0; i < value.length; i++) {
-        if (isObject(value[i]) && hasOwn(value[i], '__ob__')) {
-          value[i].__ob__.op.delInvalidPaths(i, value[i], invalidPathMap);
-        }
-      }
-    } else {
-      const keys = Object.keys(value);
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        if (isObject(value[key]) && hasOwn(value[key], '__ob__')) {
-          value[key].__ob__.op.delInvalidPaths(key, value[key], invalidPathMap);
-        }
-      }
-    }
+  addPath (pathObj) {
+    this.pathKeys.push(pathObj.path)
+    this.pathMap[pathObj.path] = pathObj
   }
 
-  /**
-   * 得到父路径集合和子节点组合后的路径集合
-   */
-  static getPathMap (key, parentPathMap) {
-    if (parentPathMap) {
-      const keys = Object.keys(parentPathMap)
-      if (keys.length) {
-        let pathMap = {};
-        for (let i = 0; i < keys.length; i++) {
-          if (parentPathMap[keys[i]].path) {
-            const path = setPath(key, parentPathMap[keys[i]].path);
-            pathMap[path] = {key, root: parentPathMap[keys[i]].root, path};
-          } else {
-            pathMap[key] = {key, root: key, path: key}
-          }
-        }
-        return pathMap;
-      } else {
-        return {[key]: {key, root: key, path: key}};
-      }
+  delPath (path) {
+    remove(this.pathKeys, path)
+    delete this.pathMap[path]
+  }
+}
+
+/**
+ * 添加新的 __ob__ 的 path
+ */
+export function addPaths (newKey, op, parentOp) {
+  op.traverseOp(newKey, parentOp.pathKeys, parentOp.pathMap, handler);
+
+  function handler (pathObj, op) {
+    if (!(pathObj.path in op.pathMap)) {
+      // 新增一条 path
+      op.addPath(pathObj);
+      return pathObj;
     } else {
-      return {[key]: {key, root: key, path: key}};
+      return null;
     }
+  }
+}
+
+/**
+ * 删除指定的 __ob__ 的 path
+ */
+export function cleanPaths (oldKey, op, parentOp) {
+  op.traverseOp(oldKey, parentOp.pathKeys, parentOp.pathMap, handler);
+
+  function handler (pathObj, op) {
+    // 删除一条 path
+    op.delPath(pathObj.path);
+    return pathObj;
+  }
+}
+
+/**
+ * 得到 pathMap 与 key 组合后的路径集合
+ */
+export function getPathMap (key, pathKeys, pathMap) {
+  if (pathMap) {
+    // console.log('pathMap', pathMap)
+    let combinePathKeys = [];
+    let combinePathMap = {};
+    for (let i = 0; i < pathKeys.length; i++) {
+      const path = setPath(key, pathMap[pathKeys[i]].path);
+      combinePathKeys.push(path)
+      combinePathMap[path] = {key, root: pathMap[pathKeys[i]].root, path};
+    }
+    return {combinePathKeys, combinePathMap};
+  } else {
+    return {
+      combinePathKeys: [key],
+      combinePathMap: {[key]: {key, root: key, path: key}}
+    };
   }
 }

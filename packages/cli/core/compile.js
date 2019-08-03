@@ -343,7 +343,9 @@ class Compile extends Hook {
 
       let task;
 
-      if (ctx.useCache && node.compiled) { // If file is not changed, and compiled cache exsit.
+      // If file is not changed, and compiled cache exsit.
+      // Style may have dependences, maybe the dependences file changed. so ignore the cache for the style who have deps.
+      if (ctx.useCache && node.compiled && (node.compiled.dep || []).length === 0) {
         task = Promise.resolve(node);
       } else {
         task = this.hookUnique(hookKey, node, ctx);

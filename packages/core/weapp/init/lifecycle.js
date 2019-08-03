@@ -104,6 +104,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
     vm.$is = this.is;
     vm.$options = options;
     vm.$rel = rel;
+    vm._watchers = [];
     if (!isComponent) {
       vm.$root = vm;
       vm.$app = app;
@@ -124,14 +125,12 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
     initMethods(vm, options.methods);
 
-    initWatch(vm, options.watch);
-
-    // initEvents(vm);
-    // not need to patch computed to ouput
     initComputed(vm, options.computed, true);
 
+    initWatch(vm, options.watch);
+
     // create render watcher
-    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})));
+    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
 
     return callUserMethod(vm, vm.$options, 'created', args);
   };

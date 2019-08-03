@@ -10,7 +10,7 @@ describe('weapp class Dirty', function () {
     const vm = {};
     vm.$dirty = new Dirty('path');
 
-    initData(vm, { num: 1, arr: [1, 2], emptyArr: [], complex: { a: 1, arr: [100, { x: [ 0, 1, { b: 1 } ] }] } });
+    initData(vm, { list: [], num: 1, arr: [1, 2], complex: { a: 1, arr: [100, { x: [ 0, 1, { b: 1 } ] }] } });
 
     vm.num = 2;
     expect(vm.$dirty.length()).to.be.equal(1);
@@ -29,6 +29,14 @@ describe('weapp class Dirty', function () {
     expect(vm.$dirty.length()).to.be.equal(0);
     expect(dirty).to.be.deep.equal({'num': 100, 'complex.arr[1].x[2].b': 2})
 
+    vm.list.push({ a: 1 });
+    dirty = vm.$dirty.pop();
+    expect(JSON.stringify(dirty)).to.be.equal('{"list[0]":{"a":1}}');
+
+    vm.list.push({ b: 1 });
+    dirty = vm.$dirty.pop();
+    expect(JSON.stringify(dirty)).to.be.equal('{"list[1]":{"b":1}}');
+
     vm.complex.arr.push(200);
     expect(vm.$dirty.length()).to.be.equal(1);
     dirty = vm.$dirty.pop();
@@ -40,12 +48,6 @@ describe('weapp class Dirty', function () {
     dirty = vm.$dirty.pop();
     expect(vm.$dirty.length()).to.be.equal(0);
     expect(dirty).to.be.deep.equal({'complex.arr': [100, 233, 200]})
-
-    vm.emptyArr.push(999);
-    expect(vm.$dirty.length()).to.be.equal(1);
-    dirty = vm.$dirty.pop();
-    expect(vm.$dirty.length()).to.be.equal(0);
-    expect(dirty).to.be.deep.equal({'emptyArr[0]': 999})
   });
 
 

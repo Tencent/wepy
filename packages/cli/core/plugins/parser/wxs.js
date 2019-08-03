@@ -13,13 +13,12 @@ exports = module.exports = function () {
     node.parsed = {
       output
     };
-
-    let fileHash = hashUtil.hash(code);
-
+    const fileHash = hashUtil.hash(code);
     let file = node.src ? path.resolve(path.dirname(ctx.file), node.src) : ctx.file;
     let wxsCtx = null;
 
-    if (this.compiled[file] && fileHash === this.compiled[file].hash) {
+    // If node has src, then use src file cache
+    if (node.src && this.compiled[file] && fileHash === this.compiled[file].hash) {
       wxsCtx = this.compiled[file];
       wxsCtx.useCache = true;
       return Promise.resolve(wxsCtx);
@@ -32,14 +31,16 @@ exports = module.exports = function () {
         type: 'wxs'
       };
       this.compiled[file] = wxsCtx;
-      wxsCtx.hash = fileHash;
-      this.assets.add(wxsCtx.file, {
-        npm: wxsCtx.npm,
-        wxs: true,
-        dep: true,
-        component: wxsCtx.component,
-        type: wxsCtx.type
-      });
+      if (node.src) {
+        wxsCtx.hash = fileHash;
+        this.assets.add(wxsCtx.file, {
+          npm: wxsCtx.npm,
+          wxs: true,
+          dep: true,
+          component: wxsCtx.component,
+          type: wxsCtx.type
+        });
+      }
     }
 
     return this.applyCompiler({ type: 'script', lang: node.lang, content: code }, wxsCtx);

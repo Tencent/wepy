@@ -30,8 +30,9 @@ exports = module.exports = function (options) {
 
       return less.render(node.content || '', config).then(rst => {
         node.compiled = {
-          code: rst.css
-        }
+          code: rst.css,
+          dep: rst.imports
+        };
         return node;
       });
     });

@@ -4,6 +4,7 @@
  */
 
 import {def, hasOwn, isObject} from '../util/index'
+import { cleanPaths } from './observerPath'
 
 const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
@@ -67,11 +68,9 @@ methodsToPatch.forEach(function (method) {
   });
 });
 
-const pickPathMap = obj => obj && obj.__ob__ && obj.__ob__.op.pathMap
-
 function delInvalidPaths (key, value, parent) {
   if (isObject(value) && hasOwn(value, '__ob__')) {
     // delete invalid paths
-    value.__ob__.op.delInvalidPaths(key, value, pickPathMap(parent))
+    cleanPaths(key, value.__ob__.op, parent.__ob__.op)
   }
 }
