@@ -22,6 +22,7 @@ export const mapState = function (states) {
         : state[val];
 
       // 利用 redux state 每次改变都会返回一个新 state 的特性，只需做引用比较
+      const resValueMap = res[key][this.$id]
       if (resValueMap[key].value !== value) {
         resValueMap[key] = Object.preventExtensions({ value });
       }

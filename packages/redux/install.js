@@ -16,18 +16,22 @@ export default function wepyInstall (wepy) {
         }
         const { computed } = this.$options;
         const keys = Object.keys(computed);
+        let resValueMap
         for (let i = 0; i < keys.length; i++) {
           if ('resValueMap' in computed[keys[i]]) {
-            wepy.observe({
-              vm: this,
-              key: '',
-              value: computed[keys[i]].resValueMap,
-              parent: '',
-              root: true
-            });
-            break;
+            if (!resValueMap) {
+              resValueMap = {...computed[keys[i]].resValueMap}
+            }
+            computed[keys[i]][this.$id] = resValueMap
           }
         }
+        wepy.observe({
+          vm: this,
+          key: '',
+          value: resValueMap,
+          parent: '',
+          root: true
+        });
       }
     },
 
