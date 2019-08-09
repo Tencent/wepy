@@ -6,7 +6,6 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs-extra');
 const path = require('path');
 const chokidar = require('chokidar');
@@ -169,7 +168,6 @@ class Compile extends Hook {
   }
 
   start () {
-
     if (this.running) {
       return;
     }
@@ -328,8 +326,6 @@ class Compile extends Hook {
   }
 
   applyCompiler (node, ctx) {
-    let compiler;
-
     ctx.id = this.assets.add(ctx.file);
 
     if (node.lang) {
@@ -339,7 +335,10 @@ class Compile extends Hook {
         throw `Missing plugins ${hookKey}`;
       }
 
-      this.involved[ctx.file] = 1;
+      // If node has src, then do not change involved
+      if (!node.src) {
+        this.involved[ctx.file] = 1;
+      }
 
       let task;
 
@@ -427,9 +426,6 @@ class Compile extends Hook {
     }
   }
 }
-
-
-
 
 exports = module.exports = (program) => {
   let opt = parseOptions.convert(program);
