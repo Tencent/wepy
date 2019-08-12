@@ -5706,10 +5706,10 @@ declare namespace wx {
   })
   ``` */
     reportAnalytics(
-      /** 上报的自定义数据。 */
-      data: Data,
       /** 事件名 */
       eventName: string,
+      /** 上报的自定义数据。 */
+      data: Data,  
     ): void;
     /** [wx.reportMonitor(string name, number value)](wx.reportMonitor.md)
   *
@@ -5727,10 +5727,10 @@ declare namespace wx {
   *
   * 最低基础库： `2.0.1` */
     reportMonitor(
-      /** 上报数值，经处理后会在「小程序管理后台」上展示每分钟的上报总量 */
-      value: number,
       /** 监控ID，在「小程序管理后台」新建数据指标后获得 */
       name: string,
+      /** 上报数值，经处理后会在「小程序管理后台」上展示每分钟的上报总量 */
+      value: number,
     ): void;
     /** [wx.getStorage(Object object)](wx.getStorage.md)
   *
