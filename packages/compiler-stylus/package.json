@@ -4,14 +4,24 @@
   "description": "wepy compile stylus",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test/helpers/stylus.js && mocha ./test/*.test.js"
   },
   "keywords": [
     "stylus"
   ],
   "dependencies": {
-    "stylus": "^0.54.5"
+    "loader-utils": "^1.1.0"
   },
-  "author": "Gcaufy",
-  "license": "MIT"
+  "peerDependencies": {
+    "stylus": "^0.54.0"
+  },
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0",
+    "fs-extra": "^6.0.1"
+  },
+  "readme": "ERROR: No README data found!"
 }
