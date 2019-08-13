@@ -71,19 +71,16 @@ const HTML2WXML_MAP = {
 /**
  * combine two tags array/object
  * @param  {Array} original original tag list
- * @param  {Undefined/String/Array/Object} addtional addtional list
- * @return {Array}          new tag list Array
+ * @param  {Undefined/String/Array/Object} additional additional list
+ * @return {Array} new tag list Array
  */
 const combineTag = function (original, additional) {
-  if (typeof additional === 'undefined') {
-    return [].concat(original);
-  } else if (typeof additional === 'string') {
-    original.concat([additional]);
-  } else if (Array.isArray(additional)) {
+  if (typeof additional === 'string' || Array.isArray(additional)) {
     return original.concat(additional);
   } else if (typeof additional !== 'object') {
     return [].concat(original);
   }
+
   let addTags = [];
   let removeTags = [];
   for (let k in additional) {
@@ -105,15 +102,8 @@ const combineTag = function (original, additional) {
 };
 
 const combineTagMap = function (original, additional = {}) {
-  let rst = {};
-  [original, additional].forEach(obj => {
-    for (let k in obj) {
-      rst[k] = obj[k];
-    }
-  })
-  return rst;
+  return Object.assign({}, original, additional);
 };
-
 
 exports = module.exports =  {
   HTML_TAGS,
