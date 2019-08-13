@@ -21,6 +21,7 @@ const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
 const walk = require('acorn/dist/walk');
+const { isArr } = require('./util/tools');
 
 const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
@@ -117,37 +118,37 @@ class Compile extends Hook {
       options.supportObject = true;
     };
 
-    this.register('process-clear', function (type) {
+    this.register('before-compiler-less', styleHooker);
+    this.register('before-compiler-sass', styleHooker);
+    this.register('before-compiler-stylus', styleHooker);
+
+    this.register('process-clear', type => {
       this.compiled = {};
       this.involved = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
     });
 
-    this.register('before-compiler-less', styleHooker);
-    this.register('before-compiler-sass', styleHooker);
-    this.register('before-compiler-stylus', styleHooker);
-
     ['output-app', 'output-pages', 'output-components'].forEach(k => {
-      this.register(k, function (data) {
-        if (!Array.isArray(data))
+      this.register(k, data => {
+        if (!isArr(data))
           data = [data];
 
         data.forEach(v => this.output('wpy', v));
       });
     });
 
-    this.register('output-vendor', function (data) {
+    this.register('output-vendor', data => {
       this.output('vendor', data);
     });
 
-    this.register('output-assets', function (list) {
+    this.register('output-assets', list => {
       list.forEach(file => {
         this.output('assets', file);
       });
     });
 
-    this.register('output-static', function () {
+    this.register('output-static', () => {
       let paths = this.options.static;
       let copy = (p) => {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
@@ -155,7 +156,7 @@ class Compile extends Hook {
       }
       if (typeof paths === 'string')
         return copy(paths);
-      else if (Array.isArray(paths))
+      else if (isArr(paths))
         return Promise.all(paths.map(p => copy(p)))
     });
 
