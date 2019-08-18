@@ -1,3 +1,5 @@
+const { isArr } = require('./util/tools');
+
 // https://developer.mozilla.org/en-US/docs/Web/HTML/Element
 const HTML_TAGS = [
 // Main root
@@ -75,8 +77,10 @@ const HTML2WXML_MAP = {
  * @return {Array} new tag list Array
  */
 const combineTag = function (original, additional) {
-  if (typeof additional === 'string' || Array.isArray(additional)) {
+  if (isArr(additional)) {
     return original.concat(additional);
+  } else if (typeof additional === 'string') {
+    return original.concat(additional.split(','));
   } else if (typeof additional !== 'object') {
     return [].concat(original);
   }
