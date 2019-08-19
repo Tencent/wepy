@@ -7,19 +7,29 @@ function normalizeMap (map) {
 }
 
 export const mapState = function (states) {
-  const res = {};
+  const res = Object.create(null);
+  const resValueMap = Object.create(null);
   normalizeMap(states).forEach(({ key, val }) => {
+    /**
+     * resValueMap 记录由 mapState 产生的值
+     * 在初始化时将其变成 observer 的
+     */
+    resValueMap[key] = Object.preventExtensions({ value: undefined });
     res[key] = function mappedState() {
-      if (!this.$store) {
-        console.warn(`[@wepy/redux] state "${key}" do not work, if store is not defined.`);
-        return;
-      }
       const state = this.$store.getState();
-      return typeof val === 'function'
+      const value = typeof val === 'function'
         ?  val.call(this, state)
         : state[val];
+
+      // 利用 redux state 每次改变都会返回一个新 state 的特性，只需做引用比较
+      const resValueMap = res[key][this.$id]
+      if (resValueMap[key].value !== value) {
+        resValueMap[key] = Object.preventExtensions({ value });
+      }
+      return resValueMap[key].value;
     };
     res[key].redux = true;
+    res[key].resValueMap = resValueMap;
   });
   return res;
 };

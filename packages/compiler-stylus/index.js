@@ -9,32 +9,33 @@
 
 
 const stylus = require('stylus');
+const createPlugin = require('./createPlugin');
 
 exports = module.exports = function (options) {
   return function () {
+
     this.register('wepy-compiler-stylus', function (node, ctx) {
 
       let file = typeof ctx === 'string' ? ctx : ctx.file;
+      const plugins = createPlugin(this)
+      let config = Object.assign({
+        use: plugins,
+        filename: file
+      }, options);
+      const styl = stylus(node.content || '', config)
 
-      return new Promise ((resolve, reject) => {
-        let config = Object.assign({
-          relativeUrls: true,
-          plugins: []
-        }, options);
-
-        config.filename = file;
-
-        stylus.render(node.content || '', config, function (err, css) {
-          if (err) reject(err);
+      return new Promise((resolve, reject) => {
+        styl.render(function(err, css) {
+          if (err) reject(err)
           else {
             node.compiled = {
-              code: css
-            }
+              code: css,
+              dep: styl.deps()
+            };
             resolve(node);
           }
-        });
-      });
-
+        })
+      })
     });
   }
 }

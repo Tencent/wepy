@@ -1,0 +1,25 @@
+.button-ok {
+  foo: 1;
+}
+.button-cancel {
+  foo: 1;
+}
+.button-custom {
+  foo: 1;
+}
+.grand .parent > .grand .parent {
+  foo: 1;
+}
+.grand .parent + .grand .parent {
+  foo: 1;
+}
+.grand .parent .grand .parent {
+  foo: 1;
+}
+.grand .parent.grand .parent {
+  foo: 1;
+}
+.grand .parent,
+.grand .parentish {
+  foo: 1;
+}

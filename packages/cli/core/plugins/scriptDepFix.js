@@ -27,6 +27,10 @@ exports = module.exports = function () {
         if (typeof depMod === 'number') {
           depMod = this.vendors.data(depMod);
         }
+        // TODO: optimize
+        // compiled info is not equal asserts, vendorId is missing sometime
+        // always use assets data instead of compiled info.
+        depMod = this.assets.data(depMod.file) || depMod;
 
         let modFilePath = depMod.file;
         let modFilePathObj = path.parse(modFilePath);

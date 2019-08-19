@@ -1,6 +1,6 @@
 import { use } from './use';
 import { mixin } from './mixin';
-import { set, del } from '../observer/index';
+import { set, del, observe } from '../observer/index';
 import { renderNextTick } from '../util/next-tick';
 import { app, page, component } from '../native/index';
 
@@ -14,6 +14,8 @@ export function initGlobalAPI (wepy) {
   };
 
   wepy.delete = del;
+
+  wepy.observe = observe;
 
   wepy.nextTick = renderNextTick;
 
