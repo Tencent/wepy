@@ -226,41 +226,43 @@ class Compile extends Hook {
       this.hookSeq('build-app', app);
       this.hookUnique('output-app', app);
       return Promise.all(tasks);
-    }).then(comps => {
+    }).then(this.buildComps.bind(this));
+  }
 
-      function buildComponents (comps) {
-        if (!comps) {
-          return null;
-        }
-        this.hookSeq('build-components', comps);
-        this.hookUnique('output-components', comps);
-
-        let components = [];
-        let originalComponents = [];
-        let tasks = [];
-
-        comps.forEach(comp => {
-          let config = comp.sfc.config || {};
-          let parsed = config.parsed || {};
-          let parsedComponents = parsed.components || [];
-
-          parsedComponents.forEach(com => {
-            if (com.type === 'wepy') { // wepy 组件
-              tasks.push(this.hookUnique('wepy-parser-wpy', com));
-            } else if (com.type === 'weapp') { // 原生组件
-              tasks.push(this.hookUnique('wepy-parser-component', com));
-            }
-          });
-        });
-
-        if (tasks.length) {
-          return Promise.all(tasks).then(buildComponents.bind(this));
-        } else {
-          return null;
-        }
+  buildComps (comps) {
+    function buildComponents (comps) {
+      if (!comps) {
+        return null;
       }
-      return buildComponents.bind(this)(comps);
-    }).then(() => {
+      this.hookSeq('build-components', comps);
+      this.hookUnique('output-components', comps);
+
+      let components = [];
+      let originalComponents = [];
+      let tasks = [];
+
+      comps.forEach(comp => {
+        let config = comp.sfc.config || {};
+        let parsed = config.parsed || {};
+        let parsedComponents = parsed.components || [];
+
+        parsedComponents.forEach(com => {
+          if (com.type === 'wepy') { // wepy 组件
+            tasks.push(this.hookUnique('wepy-parser-wpy', com));
+          } else if (com.type === 'weapp') { // 原生组件
+            tasks.push(this.hookUnique('wepy-parser-component', com));
+          }
+        });
+      });
+
+      if (tasks.length) {
+        return Promise.all(tasks).then(buildComponents.bind(this));
+      } else {
+        return Promise.resolve();
+      }
+    }
+
+    return buildComponents.bind(this)(comps).then(() => {
       let vendorData = this.hookSeq('build-vendor', {});
       this.hookUnique('output-vendor', vendorData);
     }).then(() => {
@@ -271,7 +273,7 @@ class Compile extends Hook {
     }).then(() => {
       this.hookSeq('process-done');
       this.running = false;
-      this.logger.info('build app', 'finished');
+      this.logger.info('build', 'finished');
       if (this.options.watch) {
         this.logger.info('watching...');
         this.watch();
@@ -293,7 +295,7 @@ class Compile extends Hook {
     });
   }
 
-  buildWPYExtFiles(files) {
+  buildWPYExtFiles (files) {
     if (this.running) {
       return;
     }
@@ -315,65 +317,8 @@ class Compile extends Hook {
         message: `Can not resolve page: ${file}`
       });
     });
-    const parseComps = Promise.all(tasks);
 
-    parseComps.then(comps => {
-      function buildComponents (comps) {
-        if (!comps) {
-          return null;
-        }
-        this.hookSeq('build-components', comps);
-        this.hookUnique('output-components', comps);
-
-        let components = [];
-        let originalComponents = [];
-        let tasks = [];
-
-        comps.forEach(comp => {
-          let config = comp.sfc.config || {};
-          let parsed = config.parsed || {};
-          let parsedComponents = parsed.components || [];
-
-          parsedComponents.forEach(com => {
-            if (com.type === 'wepy') { // wepy 组件
-              tasks.push(this.hookUnique('wepy-parser-wpy', com));
-            } else if (com.type === 'weapp') { // 原生组件
-              tasks.push(this.hookUnique('wepy-parser-component', com));
-            }
-          });
-        });
-
-        if (tasks.length) {
-          return Promise.all(tasks).then(buildComponents.bind(this));
-        } else {
-          return null;
-        }
-      }
-
-      return buildComponents.bind(this)(comps);
-    }).then(() => {
-      let vendorData = this.hookSeq('build-vendor', {});
-      this.hookUnique('output-vendor', vendorData);
-    }).then(() => {
-      let assetsData = this.hookSeq('build-assets');
-      this.hookUnique('output-assets', assetsData);
-    }).then(() => {
-      return this.hookUnique('output-static');
-    }).then(() => {
-      this.hookSeq('process-done');
-      this.running = false;
-      this.logger.info('build wpy files', 'finished');
-    }).catch(e => {
-      this.running = false;
-      if (e.message !== 'EXIT') {
-        this.logger.error(e);
-      }
-      if (this.logger.level() !== 'trace') {
-        this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
-      } else {
-        this.logger.error('compile', 'Compile failed.');
-      }
-    });
+    Promise.all(tasks).then(this.buildComps.bind(this));
   }
 
   watch () {
