@@ -1,20 +1,21 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
 
+let appUsingComponents = null;
+
 exports = module.exports = function () {
   this.register('wepy-parser-config', function (rst, ctx) {
-
     // If file is not changed, then use cache.
     if (ctx.useCache && ctx.sfc.config.parsed) {
       return Promise.resolve(true);
     }
 
     if (!rst) {
-      ctx.sfc.config.parsed = {
-        output: {},
-        components: []
-      };
-      return Promise.resolve(true);
+      if (!appUsingComponents) {
+        return Promise.resolve(true);
+      } else {
+        rst.content = JSON.stringify({});
+      }
     }
 
     let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
@@ -30,9 +31,9 @@ exports = module.exports = function () {
     if (ctx.type !== 'app') { // app.json does not need it
       config.component = true;
     }
-    let componentKeys = config.usingComponents ? Object.keys(config.usingComponents) : null;
+    let componentKeys = config.usingComponents ? Object.keys(config.usingComponents) : [];
 
-    if (!componentKeys || componentKeys.length === 0) {
+    if (!appUsingComponents && componentKeys.length === 0) {
       ctx.sfc.config.parsed = {
         output: config
       };
@@ -41,7 +42,7 @@ exports = module.exports = function () {
 
     let resolvedUsingComponents = {};
     let parseComponents = [];
-    let plist = Object.keys(config.usingComponents).map(name => {
+    let plist = componentKeys.map(name => {
       const url = config.usingComponents[name];
 
       let prefix = 'path';
@@ -93,7 +94,21 @@ exports = module.exports = function () {
     });
 
     return Promise.all(plist).then(() => {
-      config.usingComponents = resolvedUsingComponents;
+      if (ctx.type === 'app') {
+        appUsingComponents = parseComponents;
+        delete config.usingComponents;
+      } else if (ctx.type === 'page') {
+        config.usingComponents = resolvedUsingComponents;
+        if (appUsingComponents) {
+          appUsingComponents.forEach(comp => {
+            // Existing in page components, then ignore
+            // Resolve path for page components
+            if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
+              config.usingComponents[comp.name] = path.relative(path.dirname(ctx.file), comp.resolved.path);
+            }
+          });
+        }
+      }
       ctx.sfc.config.parsed = {
         output: config,
         components: parseComponents
