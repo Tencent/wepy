@@ -70,7 +70,7 @@ class Compile extends Hook {
 
     this.resolvers.normal.resolveSync = node.create.sync(Object.assign({
       fileSystem: this.inputFileSystem
-    }, this.options.resolve))
+    }, this.options.resolve));
 
     this.resolvers.context.resolveSync = node.create.sync(Object.assign({
       fileSystem: this.inputFileSystem,
@@ -153,7 +153,7 @@ class Compile extends Hook {
       let copy = (p) => {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
         return fs.copy(path.join(this.context, p), path.join(this.context, this.options.target, relative[0] === '.' ? p : relative))
-      }
+      };
       if (typeof paths === 'string')
         return copy(paths);
       else if (isArr(paths))
@@ -168,83 +168,154 @@ class Compile extends Hook {
     return initCompiler(this, this.options.compilers);
   }
 
-  start (files) {
+  start () {
     if (this.running) {
       return;
     }
 
     this.running = true;
-    this.logger.info('build', 'start...');
-    let parseComps;
+    this.logger.info('build app', 'start...');
 
-    if (files === undefined || files.length === 0) {
-      // if files is empty, compile from entry
-      parseComps = this.hookUnique('wepy-parser-wpy',
-        { path: this.options.entry, type: 'app' }).then(app => {
-        let sfc = app.sfc;
-        let script = sfc.script;
-        let styles = sfc.styles;
-        let config = sfc.config;
+    this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' }).then(app => {
 
-        let appConfig = config.parsed.output;
-        if (!appConfig.pages || appConfig.pages.length === 0) {
-          appConfig.pages = [];
-          this.hookUnique('error-handler', {
-            type: 'warn',
-            ctx: app,
-            message: `Missing "pages" in App config`
-          });
-        }
-        let pages = appConfig.pages.map(v => {
-          return path.resolve(app.file, '..', v);
+      let sfc = app.sfc;
+      let script = sfc.script;
+      let styles = sfc.styles;
+      let config = sfc.config;
+
+      let appConfig = config.parsed.output;
+      if (!appConfig.pages || appConfig.pages.length === 0) {
+        appConfig.pages = [];
+        this.hookUnique('error-handler', {
+          type: 'warn',
+          ctx: app,
+          message: `Missing "pages" in App config`
         });
+      }
+      let pages = appConfig.pages.map(v => {
+        return path.resolve(app.file, '..', v);
+      });
 
-        if (appConfig.subPackages || appConfig.subpackages) {
-          (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
-            sub.pages.forEach(v => {
-              pages.push(path.resolve(app.file, '../'+sub.root || '', v));
-            });
-
+      if (appConfig.subPackages || appConfig.subpackages) {
+        (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
+          sub.pages.forEach(v => {
+            pages.push(path.resolve(app.file, '../'+sub.root || '', v));
           });
-        }
 
-        let tasks = pages.map(v => {
-          let file;
-
-          file = v + this.options.wpyExt;
-          if (fs.existsSync(file)) {
-            return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
-          }
-          file = v + '.js';
-          if (fs.existsSync(file)) {
-            return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
-          }
-          this.hookUnique('error-handler', {
-            type: 'error',
-            ctx: app,
-            message: `Can not resolve page: ${v}`
-          });
         });
+      }
 
-        this.hookSeq('build-app', app);
-        this.hookUnique('output-app', app);
-        return Promise.all(tasks);
-      })
-    } else {
-      // else just compile these
-      const tasks = files.map(file => {
+      let tasks = pages.map(v => {
+        let file;
+
+        file = v + this.options.wpyExt;
         if (fs.existsSync(file)) {
           return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
         }
+        file = v + '.js';
+        if (fs.existsSync(file)) {
+          return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
+        }
         this.hookUnique('error-handler', {
           type: 'error',
-          ctx: {},
-          message: `Can not resolve page: ${file}`
+          ctx: app,
+          message: `Can not resolve page: ${v}`
         });
       });
 
-      parseComps = Promise.all(tasks);
+      this.hookSeq('build-app', app);
+      this.hookUnique('output-app', app);
+      return Promise.all(tasks);
+    }).then(comps => {
+
+      function buildComponents (comps) {
+        if (!comps) {
+          return null;
+        }
+        this.hookSeq('build-components', comps);
+        this.hookUnique('output-components', comps);
+
+        let components = [];
+        let originalComponents = [];
+        let tasks = [];
+
+        comps.forEach(comp => {
+          let config = comp.sfc.config || {};
+          let parsed = config.parsed || {};
+          let parsedComponents = parsed.components || [];
+
+          parsedComponents.forEach(com => {
+            if (com.type === 'wepy') { // wepy 组件
+              tasks.push(this.hookUnique('wepy-parser-wpy', com));
+            } else if (com.type === 'weapp') { // 原生组件
+              tasks.push(this.hookUnique('wepy-parser-component', com));
+            }
+          });
+        });
+
+        if (tasks.length) {
+          return Promise.all(tasks).then(buildComponents.bind(this));
+        } else {
+          return null;
+        }
+      }
+      return buildComponents.bind(this)(comps);
+    }).then(() => {
+      let vendorData = this.hookSeq('build-vendor', {});
+      this.hookUnique('output-vendor', vendorData);
+    }).then(() => {
+      let assetsData = this.hookSeq('build-assets');
+      this.hookUnique('output-assets', assetsData);
+    }).then(() => {
+      return this.hookUnique('output-static');
+    }).then(() => {
+      this.hookSeq('process-done');
+      this.running = false;
+      this.logger.info('build app', 'finished');
+      if (this.options.watch) {
+        this.logger.info('watching...');
+        this.watch();
+      }
+    }).catch(e => {
+      this.running = false;
+      if (e.message !== 'EXIT') {
+        this.logger.error(e);
+      }
+      if (this.logger.level() !== 'trace') {
+        this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
+      } else {
+        this.logger.error('compile', 'Compile failed.');
+      }
+      if (this.options.watch) {
+        this.logger.info('watching...');
+        this.watch();
+      }
+    });
+  }
+
+  buildWPYExtFiles(files) {
+    if (this.running) {
+      return;
     }
+    if (files === undefined || files.length === 0) {
+      return;
+    }
+
+    this.running = true;
+    this.logger.info('build wpy files', 'start...');
+
+    // just compile these files of wpyExt
+    const tasks = files.map(file => {
+      if (fs.existsSync(file)) {
+        return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
+      }
+      this.hookUnique('error-handler', {
+        type: 'error',
+        ctx: {},
+        message: `Can not resolve page: ${file}`
+      });
+    });
+    const parseComps = Promise.all(tasks);
 
     parseComps.then(comps => {
       function buildComponents (comps) {
@@ -291,11 +362,7 @@ class Compile extends Hook {
     }).then(() => {
       this.hookSeq('process-done');
       this.running = false;
-      this.logger.info('build', 'finished');
-      if (this.options.watch) {
-        this.logger.info('watching...');
-        this.watch();
-      }
+      this.logger.info('build wpy files', 'finished');
     }).catch(e => {
       this.running = false;
       if (e.message !== 'EXIT') {
@@ -305,10 +372,6 @@ class Compile extends Hook {
         this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
       } else {
         this.logger.error('compile', 'Compile failed.');
-      }
-      if (this.options.watch) {
-        this.logger.info('watching...');
-        this.watch();
       }
     });
   }
@@ -345,7 +408,7 @@ class Compile extends Hook {
           if (absolutePath !== this.options.entry &&
             path.extname(absolutePath) === this.options.wpyExt) {
             // if changed file is wpyExt and is not entry, just compile it
-            this.start([absolutePath]);
+            this.buildWPYExtFiles([absolutePath]);
           } else {
             this.start();
           }
