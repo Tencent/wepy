@@ -15,6 +15,7 @@ const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSyste
 const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
+const fileDep = require('./fileDep');
 const loader = require('./loader');
 const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
@@ -127,6 +128,7 @@ class Compile extends Hook {
       this.involved = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
+      this.fileDep = new fileDep();
     });
 
     ['output-app', 'output-pages', 'output-components'].forEach(k => {
@@ -350,11 +352,21 @@ class Compile extends Hook {
         }
         if (involvedFile) {
           this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
-          if (absolutePath !== this.options.entry &&
-            path.extname(absolutePath) === this.options.wpyExt) {
-            // if changed file is wpyExt and is not entry, just compile it
-            this.buildWPYExtFiles([absolutePath]);
+          let wpyExtFiles = [];
+          const ext = path.extname(absolutePath);
+
+          if (absolutePath !== this.options.entry && ext === this.options.wpyExt) {
+            wpyExtFiles.push(absolutePath);
+          }
+          if (ext.toLowerCase() === '.less') {
+            wpyExtFiles = wpyExtFiles.concat(this.fileDep.getSources(absolutePath));
+          }
+
+          if (wpyExtFiles.length > 0) {
+            // if changed files are wpyExt, just compile these
+            this.buildWPYExtFiles(wpyExtFiles);
           } else {
+            // compile whole app
             this.start();
           }
         }

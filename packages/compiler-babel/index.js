@@ -18,7 +18,7 @@ exports = module.exports = function (options) {
       const outputFileName = path.basename(file, path.extname(file)) + '.js';
       const scriptFile = node.src ? path.resolve(path.basename(file), node.src) : file;
       try {
-        let compiled = babel.transform(node.content, {filename: scriptFile, ...options});
+        let compiled = babel.transformSync(node.content, {filename: scriptFile, ...options});
         node.compiled = compiled;
         if (path.extname(scriptFile) === '.ts') {
           compiled.outputFileName = outputFileName;
