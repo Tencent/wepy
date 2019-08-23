@@ -34,6 +34,9 @@ exports = module.exports = function (options) {
 
     this.register('wepy-watch-file-changed-less', function (buildTask) {
       buildTask.files = this.fileDep.getSources(buildTask.changed);
+      if (buildTask.files.includes(this.options.entry)) {
+        buildTask.partial = false;
+      }
       return buildTask;
     });
   }
