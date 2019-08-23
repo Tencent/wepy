@@ -343,35 +343,23 @@ class Compile extends Hook {
       watchOption.ignored = [this.options.target];
     }
 
+    this.register('before-wepy-watch-file-changed', this.beforeWatchFileChanged.bind(this));
     chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
       if (evt === 'change') {
-        let absolutePath = path.resolve(filepath);
-        let involvedFile = this.involved[absolutePath];
-        if (typeof involvedFile === 'string' && path.isAbsolute(involvedFile)) {
-          this.compiled[involvedFile].hash = ''; // clear the file hash, to remove the file cache
-        }
-        if (involvedFile) {
-          this.logger.silly('watch', `Watcher triggered by file changes: ${absolutePath}`);
-          let wpyExtFiles = [];
-          const ext = path.extname(absolutePath);
-
-          if (absolutePath !== this.options.entry && ext === this.options.wpyExt) {
-            wpyExtFiles.push(absolutePath);
-          }
-          if (ext.toLowerCase() === '.less') {
-            wpyExtFiles = wpyExtFiles.concat(this.fileDep.getSources(absolutePath));
-          }
-
-          if (wpyExtFiles.length > 0) {
-            // if changed files are wpyExt, just compile these
-            this.buildWPYExtFiles(wpyExtFiles);
+        let buildTask = {
+          changed: path.resolve(filepath),
+          partial: true,
+          files: []
+        };
+        this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
+          if (task.partial) {
+            this.buildWPYExtFiles(task.files);
           } else {
-            // compile whole app
             this.start();
           }
-        }
+        });
       }
-    })
+    });
   }
 
   applyCompiler (node, ctx) {
@@ -473,6 +461,33 @@ class Compile extends Hook {
 
       this.outputFile(filename, code, encoding);
     }
+  }
+
+  beforeWatchFileChanged(buildTask) {
+    const changedFile = buildTask.changed;
+    let involvedFile = this.involved[changedFile];
+    if (typeof involvedFile === 'string' && path.isAbsolute(involvedFile)) {
+      // clear the file hash, to remove the file cache
+      this.compiled[involvedFile].hash = '';
+    }
+
+    if (involvedFile) {
+      this.logger.silly('watch', `Watcher triggered by file changes: ${changedFile}`);
+      const isEntry = (changedFile === this.options.entry);
+      let ext = path.extname(changedFile);
+      const isWPY = (ext === this.options.wpyExt);
+      ext = ext.substring(1);
+
+      if (isEntry) {
+        buildTask.partial = false;
+      } else if (isWPY) {
+        buildTask.files.push(changedFile);
+      } else {
+        buildTask = this.hookSeq('wepy-watch-file-changed-' + ext, buildTask);
+      }
+    }
+
+    return Promise.resolve(buildTask);
   }
 }
 
