@@ -19,7 +19,7 @@ const ReplaceSource = require('webpack-sources').ReplaceSource;
 const RawSource = require('webpack-sources').RawSource;
 
 // 记录 npm 文件是否已经遍历过
-const npmTraverseFileMap = {}
+const npmTraverseFileMap = {};
 
 exports = module.exports = function () {
 
@@ -41,7 +41,7 @@ exports = module.exports = function () {
         let fileHash = hashUtil.hash(fileContent);
         if (fileHash === this.compiled[file].hash) {  // File is not changed, do not compile again
           if (data.parser && data.parser.deps && data.parser.deps.length && !npmTraverseFileMap[file]) { // If it has dependences, walk throguh all dependences
-            npmTraverseFileMap[file] = npm
+            npmTraverseFileMap[file] = npm;
             let depTasks = data.parser.deps.map(dep => this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep));
             return Promise.all(depTasks).then(rst => {
               data.depModules = rst;
@@ -51,7 +51,7 @@ exports = module.exports = function () {
             return data;
           }
         } else {
-          npmTraverseFileMap[file] = false
+          npmTraverseFileMap[file] = false;
         }
       }
       this.involved[file] = 1;

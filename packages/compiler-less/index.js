@@ -8,24 +8,18 @@
  */
 
 
-const path = require('path');
 const less = require('less');
 const createPlugin = require('./createPlugin');
 
 exports = module.exports = function (options) {
   return function () {
-
     this.register('wepy-compiler-less', function (node, ctx) {
-
       let config = Object.assign({
         relativeUrls: true,
         plugins: []
       }, options);
-
       let file = typeof ctx === 'string' ? ctx : ctx.file;
-
       config.filename = file;
-
       config.plugins.push(createPlugin(this));
 
       return less.render(node.content || '', config).then(rst => {
@@ -33,8 +27,9 @@ exports = module.exports = function (options) {
           code: rst.css,
           dep: rst.imports
         };
+        this.fileDep.update(file, node.compiled.dep);
         return node;
       });
     });
   }
-}
+};
