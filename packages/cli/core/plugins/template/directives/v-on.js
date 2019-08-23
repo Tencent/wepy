@@ -1,5 +1,6 @@
 const vueWithTransform = require('vue-template-es2015-compiler');
 const paramsDetect = require('./../../../ast/paramsDetect');
+const parseHandler = require('../../../ast/parseHandler');
 const CONST = require('./../../../util/const');
 
 /**
@@ -125,6 +126,20 @@ exports = module.exports = function () {
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
+    let handlerIdentifier = '';
+    try {
+      handlerIdentifier = parseHandler(handler);
+    } catch (err) {
+      this.logger.error(err);      
+    }
+    
+    if (
+      ctx.sfc.wxs &&
+      Array.isArray(ctx.sfc.wxs) &&
+      ctx.sfc.wxs.find(item => item.attrs.module === handlerIdentifier)
+    ) {
+      modifiers.wxs = true
+    }
 
     for (let k in modifiers) {
       let hookName = 'template-parse-ast-attr-v-on.' + k;
