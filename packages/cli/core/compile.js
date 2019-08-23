@@ -115,14 +115,6 @@ class Compile extends Hook {
   }
 
   init () {
-    const styleHooker = (content, options, ctx) => {
-      options.supportObject = true;
-    };
-
-    this.register('before-compiler-less', styleHooker);
-    this.register('before-compiler-sass', styleHooker);
-    this.register('before-compiler-stylus', styleHooker);
-
     this.register('process-clear', type => {
       this.compiled = {};
       this.involved = {};
@@ -297,14 +289,10 @@ class Compile extends Hook {
     });
   }
 
-  buildWPYExtFiles (files) {
+  partialBuild (files) {
     if (this.running) {
       return;
     }
-    if (files === undefined || files.length === 0) {
-      return;
-    }
-
     this.running = true;
     this.logger.info('build wpy files', 'start...');
 
@@ -343,7 +331,6 @@ class Compile extends Hook {
       watchOption.ignored = [this.options.target];
     }
 
-    this.register('before-wepy-watch-file-changed', this.beforeWatchFileChanged.bind(this));
     chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
       if (evt === 'change') {
         let buildTask = {
@@ -353,7 +340,9 @@ class Compile extends Hook {
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
           if (task.partial) {
-            this.buildWPYExtFiles(task.files);
+            if (task.files.length) {
+              this.partialBuild(task.files);
+            }
           } else {
             this.start();
           }
@@ -461,33 +450,6 @@ class Compile extends Hook {
 
       this.outputFile(filename, code, encoding);
     }
-  }
-
-  beforeWatchFileChanged(buildTask) {
-    const changedFile = buildTask.changed;
-    let involvedFile = this.involved[changedFile];
-    if (typeof involvedFile === 'string' && path.isAbsolute(involvedFile)) {
-      // clear the file hash, to remove the file cache
-      this.compiled[involvedFile].hash = '';
-    }
-
-    if (involvedFile) {
-      this.logger.silly('watch', `Watcher triggered by file changes: ${changedFile}`);
-      const isEntry = (changedFile === this.options.entry);
-      let ext = path.extname(changedFile);
-      const isWPY = (ext === this.options.wpyExt);
-      ext = ext.substring(1);
-
-      if (isEntry) {
-        buildTask.partial = false;
-      } else if (isWPY) {
-        buildTask.files.push(changedFile);
-      } else {
-        buildTask = this.hookSeq('wepy-watch-file-changed-' + ext, buildTask);
-      }
-    }
-
-    return Promise.resolve(buildTask);
   }
 }
 
