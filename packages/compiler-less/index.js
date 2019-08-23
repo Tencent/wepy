@@ -31,5 +31,10 @@ exports = module.exports = function (options) {
         return node;
       });
     });
+
+    this.register('wepy-watch-file-changed-less', function (buildTask) {
+      buildTask.files = this.fileDep.getSources(buildTask.changed);
+      return buildTask;
+    });
   }
 };
