@@ -540,106 +540,152 @@ function popTarget () {
 }
 
 /**
- * @desc ObserverPath 类
+ * @desc ObserverPath 类以及相关处理函数
  * Observer 所在位置对应在整棵 data tree 的路径集合
  * @createDate 2019-07-21
  */
 
-var setPath = function (key, path) {
+/**
+ * 生成完整路径
+ * @param key  {String|Number} 当为字符串时，说明是属性名，当为数字时，说明是索引
+ * @param parentPath {String} 父路径
+ * @return {string}
+ */
+var setPath = function (key, parentPath) {
   return isNum(key)
-    ? (path + "[" + key + "]")
-    : (path + "." + key);
+    ? (parentPath + "[" + key + "]")
+    : (parentPath + "." + key);
 };
 
-var ObserverPath = function ObserverPath (key, parent, observer) {
+/**
+ * 得到 ObserverPath
+ * @param value 被观察对象
+ * @return {ObserverPath|null}
+ */
+var pickOp = function (value) {
+  return isObject(value) && hasOwn(value, '__ob__')
+    ? value.__ob__.op
+    : null;
+};
+
+var ObserverPath = function ObserverPath (key, ob, parentOp) {
+  this.ob = ob;
+  // eslint-disable-next-line eqeqeq
+  if (parentOp) {
+    var ref = getPathMap(key, parentOp.pathKeys, parentOp.pathMap);
+    var combinePathKeys = ref.combinePathKeys;
+    var combinePathMap = ref.combinePathMap;
+    this.pathKeys = combinePathKeys;
+    this.pathMap = combinePathMap;
+  } else {
+    this.pathKeys = null;
+    this.pathMap = null;
+  }
+};
+
+ObserverPath.prototype.traverseOp = function traverseOp (key, pathKeys, pathMap, handler) {
+    var this$1 = this;
+
+  // 得到 newKey 和 pathMap 组合的路径集合
+  var ref = getPathMap(key, pathKeys, pathMap);
+    var combinePathMap = ref.combinePathMap;
+    var combinePathKeys = ref.combinePathKeys;
+  var handlePathKeys = [];
+  var handlePathMap = {};
+  var hasChange = false;
+
+  // 遍历 combinePathMap
+  for (var i = 0; i < combinePathKeys.length; i++) {
+    var pathObj = handler(combinePathMap[combinePathKeys[i]], this$1);
+    if (pathObj) {
+      hasChange = true;
+      handlePathKeys.push(pathObj.path);
+      handlePathMap[pathObj.path] = pathObj;
+    }
+  }
+
+  if (hasChange) {
+    var value = this.ob.value;
+    if (Array.isArray(value)) {
+      for (var i$1 = 0; i$1 < value.length; i$1++) {
+        var op = pickOp(value[i$1]);
+        op && op.traverseOp(i$1, handlePathKeys, handlePathMap, handler);
+      }
+    } else {
+      var keys = Object.keys(value);
+      for (var i$2 = 0; i$2 < keys.length; i$2++) {
+        var key$1 = keys[i$2];
+        var op$1 = pickOp(value[key$1]);
+        op$1 && op$1.traverseOp(key$1, handlePathKeys, handlePathMap, handler);
+      }
+    }
+  }
+
+};
+
+ObserverPath.prototype.addPath = function addPath (pathObj) {
+  this.pathKeys.push(pathObj.path);
+  this.pathMap[pathObj.path] = pathObj;
+};
+
+ObserverPath.prototype.delPath = function delPath (path) {
+  remove(this.pathKeys, path);
+  delete this.pathMap[path];
+};
+
+/**
+ * 添加新的 __ob__ 的 path
+ */
+function addPaths (newKey, op, parentOp) {
+  op.traverseOp(newKey, parentOp.pathKeys, parentOp.pathMap, handler);
+
+  function handler (pathObj, op) {
+    if (!(pathObj.path in op.pathMap)) {
+      // 新增一条 path
+      op.addPath(pathObj);
+      return pathObj;
+    } else {
+      return null;
+    }
+  }
+}
+
+/**
+ * 删除指定的 __ob__ 的 path
+ */
+function cleanPaths (oldKey, op, parentOp) {
+  op.traverseOp(oldKey, parentOp.pathKeys, parentOp.pathMap, handler);
+
+  function handler (pathObj, op) {
+    // 删除一条 path
+    op.delPath(pathObj.path);
+    return pathObj;
+  }
+}
+
+/**
+ * 得到 pathMap 与 key 组合后的路径集合
+ */
+function getPathMap (key, pathKeys, pathMap) {
   var obj;
 
-  this.observer = observer;
-  this.pathMap = parent && parent.__ob__ && parent.__ob__.op
-    ? parent.__ob__.op.getPathMap(key)
-    : ( key
-      ? ( obj = {}, obj[key] = {key: key, root: key, path: key}, obj)
-      : {}
-    );
-};
-
-/**
- * 更新 __ob__ 的 path
- */
-ObserverPath.prototype.traverseUpdatePath = function traverseUpdatePath (key, value, parent) {
-    var this$1 = this;
-    var obj;
-
-  // 得到此 value 挂载到 parent 的 pathMap
-  var pathMap = parent && parent.__ob__ && parent.__ob__.op
-    ? parent.__ob__.op.getPathMap(key)
-    : ( key
-      ? ( obj = {}, obj[key] = {key: key, root: key, path: key}, obj)
-      : {}
-    );
-  var keys = Object.keys(pathMap);
-
-  // 遍历 pathMap
-  for (var i = 0; i < keys.length; i++) {
-    var ref = pathMap[keys[i]];
-      var root = ref.root;
-      var path = ref.path;
-
-    // 判断 path 是否存在，如果不存在则新增一条 path
-    if (!(path in this$1.pathMap)) {
-      this$1.pathMap[path] = {key: key, root: root, path: path};
-
-      // 深度遍历更新路径
-      var keys$1 = (void 0);
-      if (Array.isArray(value)) {
-        keys$1 = Array.from(Array(value.length), function (val, index) { return index; });
-      } else {
-        keys$1 = Object.keys(value);
-      }
-      for (var i$1 = 0; i$1 < keys$1.length; i$1++) {
-        var key$1 = keys$1[i$1];
-        if (isObject(value[key$1]) && hasOwn(value[key$1], '__ob__')) {
-          value[key$1].__ob__.op.traverseUpdatePath(key$1, value[key$1], value.__ob__.vm);
-        }
-      }
-
-      // 清除不存在的路径
-      keys$1 = Object.keys(this$1.pathMap);
-      for (var i$2 = 0; i$2 < keys$1.length; i$2++) {
-        var key$2 = keys$1[i$2];
-        if (!this$1.observer.isPathEq(key$2, value)) {
-          delete this$1.pathMap[key$2];
-        }
-      }
+  if (pathMap) {
+    // console.log('pathMap', pathMap)
+    var combinePathKeys = [];
+    var combinePathMap = {};
+    for (var i = 0; i < pathKeys.length; i++) {
+      var path = setPath(key, pathMap[pathKeys[i]].path);
+      combinePathKeys.push(path);
+      combinePathMap[path] = {key: key, root: pathMap[pathKeys[i]].root, path: path};
     }
-  }
-};
-
-/**
- * 得到父路径集合和子节点组合后的路径集合
- */
-ObserverPath.prototype.getPathMap = function getPathMap (key) {
-  var parentPathMap = this.pathMap;
-  var pathMap = {};
-  var keys = Object.keys(parentPathMap);
-  if (keys.length) {
-    for (var i = 0; i < keys.length; i++) {
-      if (parentPathMap[keys[i]].path) {
-        var path = setPath(key, parentPathMap[keys[i]].path);
-        var root = '';
-        for (var j = 0; (j < path.length) && (path[j] !== '.' && path[j] !== '['); j++) {
-          root += path[j];
-        }
-        pathMap[path] = {key: key, root: root, path: path};
-      } else {
-        pathMap[key] = {key: key, root: key, path: key};
-      }
-    }
+    return {combinePathKeys: combinePathKeys, combinePathMap: combinePathMap};
   } else {
-    pathMap[key] = {key: key, root: key, path: key};
+    return {
+      combinePathKeys: [key],
+      combinePathMap: ( obj = {}, obj[key] = {key: key, root: key, path: key}, obj)
+    };
   }
-  return pathMap;
-};
+}
 
 /*
  * not type checking this file because flow doesn't play well with
@@ -666,8 +712,28 @@ methodsToPatch.forEach(function (method) {
   // cache original method
   var original = arrayProto[method];
   def(arrayMethods, method, function mutator () {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
+    var this$1 = this;
+    var args = [], len$1 = arguments.length;
+    while ( len$1-- ) args[ len$1 ] = arguments[ len$1 ];
+
+    // 清除已经失效的 paths
+    if (this.length > 0) {
+      switch (method) {
+        case 'pop':
+          var len = this.length;
+          delInvalidPaths(len - 1, this[len - 1], this);
+          break
+        case 'shift':
+          delInvalidPaths(0, this[0], this);
+          break;
+        case 'splice':
+        case 'sort':
+        case 'reverse':
+          for (var i = 0; i < this.length; i++) {
+            delInvalidPaths(i, this$1[i], this$1);
+          }
+      }
+    }
 
     var result = original.apply(this, args);
     var ob = this.__ob__;
@@ -685,11 +751,19 @@ methodsToPatch.forEach(function (method) {
 
     // 这里和 vue 不一样，所有变异方法都需要更新 path
     ob.observeArray(ob.key, ob.value);
+
     // notify change
     ob.dep.notify();
     return result;
   });
 });
+
+function delInvalidPaths (key, value, parent) {
+  if (isObject(value) && hasOwn(value, '__ob__')) {
+    // delete invalid paths
+    cleanPaths(key, value.__ob__.op, parent.__ob__.op);
+  }
+}
 
 var arrayKeys = Object.getOwnPropertyNames(arrayMethods);
 
@@ -719,7 +793,7 @@ var Observer = function Observer (ref) {
   this.dep = new Dep();
   this.vmCount = 0;
   this.vm = vm;
-  this.op = new ObserverPath(key, parent, this);
+  this.op = new ObserverPath(key, this, parent && parent.__ob__ && parent.__ob__.op);
 
   def(value, '__ob__', this);
   if (Array.isArray(value)) {
@@ -763,8 +837,7 @@ Observer.prototype.observeArray = function observeArray (key, items) {
  * Check if path exsit in vm
  */
 Observer.prototype.hasPath = function hasPath (path) {
-  var vm = this.vm;
-  var value = vm;
+  var value = this.vm;
   var key = '';
   var i = 0;
   while (i < path.length) {
@@ -786,8 +859,7 @@ Observer.prototype.hasPath = function hasPath (path) {
  * Is this path value equal
  */
 Observer.prototype.isPathEq = function isPathEq (path, value) {
-  var vm = this.vm;
-  var objValue = vm;
+  var objValue = this.vm;
   var key = '';
   var i = 0;
   while (i < path.length) {
@@ -850,7 +922,8 @@ function observe (ref) {
   var ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
-    ob.op.traverseUpdatePath(key, value, parent);
+    var op = ob.op;
+    addPaths(key, op, parent.__ob__.op);
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
@@ -911,9 +984,18 @@ function defineReactive (ref) {
     set: function reactiveSetter (newVal) {
       var val = getter ? getter.call(obj) : value;
       /* eslint-disable no-self-compare */
-      if (newVal === val || (newVal !== newVal && val !== value)) {
+      if (newVal === val || (newVal !== newVal && val !== val)) {
         return
       }
+
+      if (isObject(value) && hasOwn(value, '__ob__')) {
+        /**
+         * 删掉无效的 paths
+         * 注意：即使 path 只有一个也要删掉，因为其子节点可能有多个 path
+         */
+        cleanPaths(key, value.__ob__.op, parent.__ob__.op);
+      }
+
       /* eslint-enable no-self-compare */
       if ("development" !== 'production' && customSetter) {
         customSetter();
@@ -923,10 +1005,9 @@ function defineReactive (ref) {
       } else {
         value = newVal;
       }
+
       // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
       if (vm) {
-        parent = parent || key;
-
         // push parent key to dirty, wait to setData
         if (vm.$dirty) {
           vm.$dirty.set(obj.__ob__.op, key, newVal);
@@ -949,17 +1030,12 @@ function set (vm, target, key, val) {
     target.splice(key, 1, val);
     return val;
   }
-  if (vm) {
-    // push parent key to dirty, wait to setData
-    if (vm.$dirty && hasOwn(target, '__ob__')) {
-      vm.$dirty.set(target.__ob__.op, key, val);
-    }
-  }
 
   if (key in target && !(key in Object.prototype)) {
     target[key] = val;
     return val
   }
+
   var ob = (target).__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
     "development" !== 'production' && warn(
@@ -968,11 +1044,23 @@ function set (vm, target, key, val) {
     );
     return val
   }
+
   if (!ob) {
     target[key] = val;
     return val
   }
-  defineReactive({ vm: vm,  obj: ob.value, key: key, value: val });
+
+  if (isObject(target[key]) && hasOwn(target[key], '__ob__')) {
+    // delete invalid paths
+    cleanPaths(key, target[key].__ob__.op, ob.op);
+  }
+  defineReactive({ vm: vm, obj: ob.value, key: key, value: val, parent: ob.value });
+  if (vm) {
+    // push parent key to dirty, wait to setData
+    if (vm.$dirty && hasOwn(target, '__ob__')) {
+      vm.$dirty.set(target.__ob__.op, key, val);
+    }
+  }
   ob.dep.notify();
   return val
 }
@@ -985,6 +1073,7 @@ function del (target, key) {
     target.splice(key, 1);
     return
   }
+
   var ob = (target).__ob__;
   if (target._isVue || (ob && ob.vmCount)) {
     "development" !== 'production' && warn(
@@ -993,9 +1082,11 @@ function del (target, key) {
     );
     return
   }
+
   if (!hasOwn(target, key)) {
     return
   }
+
   // set $dirty
   target[key] = null;
   delete target[key];
@@ -1405,7 +1496,6 @@ Watcher.prototype.update = function update () {
   /* istanbul ignore else */
   if (this.computed) {
     this.dirty = true;
-    this.evaluate();
   } else if (this.sync) {
     this.run();
   } else {
@@ -1805,47 +1895,6 @@ function initHooks(vm, hooks) {
   vm.hooks = hooks;
 }
 
-function initRender (vm, keys) {
-  vm._init = false;
-  var dirtyFromAttach = null;
-  return new Watcher(vm, function () {
-    if (!vm._init) {
-      keys.forEach(function (key) { return clone(vm[key]); });
-    }
-
-    if (vm.$dirty.length() || dirtyFromAttach) {
-      var keys$1 = vm.$dirty.get('key');
-      var dirty = vm.$dirty.pop();
-
-      // TODO: reset subs
-      Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
-
-      if (vm._init) {
-        dirty = callUserHook(vm, 'before-setData', dirty);
-      }
-
-      // vm._fromSelf = true;
-      if (dirty || dirtyFromAttach) {
-        // init render is in lifecycle, setData in lifecycle will not work, so cacheData is needed.
-        if (!vm._init) {
-          if (dirtyFromAttach === null) {
-            dirtyFromAttach = {};
-          }
-          Object.assign(dirtyFromAttach, dirty);
-        } else if (dirtyFromAttach) {  // setData in attached
-          vm.$wx.setData(Object.assign(dirtyFromAttach, dirty || {}), renderFlushCallbacks);
-          dirtyFromAttach = null;
-        } else {
-          vm.$wx.setData(dirty, renderFlushCallbacks);
-        }
-      }
-    }
-    vm._init = true;
-  }, function () {
-
-  }, null, true);
-}
-
 var AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
 
 var observerFn = function (output, props, prop) {
@@ -1941,6 +1990,48 @@ function initProps (vm, properties) {
     value: vm._props,
     root: true
   });
+}
+
+function initRender (vm, keys, computedKeys) {
+  vm._init = false;
+  var dirtyFromAttach = null;
+  return new Watcher(vm, function () {
+    if (!vm._init) {
+      keys.forEach(function (key) { return clone(vm[key]); });
+    }
+
+    if (vm.$dirty.length() || dirtyFromAttach) {
+      var keys$1 = vm.$dirty.get('key');
+      computedKeys.forEach(function (key) { return vm[key]; });
+      var dirty = vm.$dirty.pop();
+
+      // TODO: reset subs
+      Object.keys(keys$1).forEach(function (key) { return clone(vm[key]); });
+
+      if (vm._init) {
+        dirty = callUserHook(vm, 'before-setData', dirty);
+      }
+
+      // vm._fromSelf = true;
+      if (dirty || dirtyFromAttach) {
+        // init render is in lifecycle, setData in lifecycle will not work, so cacheData is needed.
+        if (!vm._init) {
+          if (dirtyFromAttach === null) {
+            dirtyFromAttach = {};
+          }
+          Object.assign(dirtyFromAttach, dirty);
+        } else if (dirtyFromAttach) {  // setData in attached
+          vm.$wx.setData(Object.assign(dirtyFromAttach, dirty || {}), renderFlushCallbacks);
+          dirtyFromAttach = null;
+        } else {
+          vm.$wx.setData(dirty, renderFlushCallbacks);
+        }
+      }
+    }
+    vm._init = true;
+  }, function () {
+
+  }, null, true);
 }
 
 var Event = function Event (e) {
@@ -2126,7 +2217,6 @@ Dirty.prototype.pop = function pop () {
 };
 
 Dirty.prototype.get = function get (type) {
-  type === type || this.type;
   return type === 'path' ? this._path : this._keys;
 };
 
@@ -2134,20 +2224,28 @@ Dirty.prototype.get = function get (type) {
  * Set dirty from a ObserverPath
  */
 Dirty.prototype.set = function set (op, key, value) {
-    var this$1 = this;
-
-  var m = (key || key === 0) ? op.getPathMap(key) : op.pathMap;
-  var keys = Object.keys(m);
-  for (var i = 0; i < keys.length; i++) {
-    var ref = m[keys[i]];
-      var root = ref.root;
-      var path = ref.path;
-    if (op.observer.hasPath(path)) {
-      this$1.push(root, path, op.observer.vm[root], value);
-    } else {
-      delete m[keys[i]];
-    }
+  var pathMap;
+  var pathKeys;
+  // eslint-disable-next-line eqeqeq
+  if (key != null) {
+    var ref = getPathMap(key, op.pathKeys, op.pathMap);
+      var combinePathKeys = ref.combinePathKeys;
+      var combinePathMap = ref.combinePathMap;
+    pathKeys = combinePathKeys;
+    pathMap = combinePathMap;
+  } else {
+    pathKeys = op.pathKeys;
+    pathMap = op.pathMap;
   }
+  /**
+   * 出于性能考虑，使用 usingComponents 时， setData 内容不会被直接深复制，
+   * 即 this.setData({ field: obj }) 后 this.data.field === obj 。
+   * 因此不需要所有 path 都 setData 。
+   */
+  var ref$1 = pathMap[pathKeys[0]];
+    var root = ref$1.root;
+    var path = ref$1.path;
+  this.push(root, path, root === path ? value : op.ob.vm[root], value);
 };
 
 Dirty.prototype.reset = function reset () {
@@ -2280,7 +2378,7 @@ function patchLifecycle (output, options, rel, isComponent) {
     initWatch(vm, options.watch);
 
     // create render watcher
-    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})));
+    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
 
     return callUserMethod(vm, vm.$options, 'created', args);
   };
@@ -2530,6 +2628,8 @@ function initGlobalAPI (wepy) {
   };
 
   wepy.delete = del;
+
+  wepy.observe = observe;
 
   wepy.nextTick = renderNextTick;
 
