@@ -36,6 +36,18 @@ describe('weapp class Dirty', function () {
     vm.list.push({ b: 1 });
     dirty = vm.$dirty.pop();
     expect(JSON.stringify(dirty)).to.be.equal('{"list[1]":{"b":1}}');
+
+    vm.complex.arr.push(200);
+    expect(vm.$dirty.length()).to.be.equal(1);
+    dirty = vm.$dirty.pop();
+    expect(vm.$dirty.length()).to.be.equal(0);
+    expect(dirty).to.be.deep.equal({'complex.arr[2]': 200})
+
+    vm.complex.arr.splice(1, 1, 233);
+    expect(vm.$dirty.length()).to.be.equal(1);
+    dirty = vm.$dirty.pop();
+    expect(vm.$dirty.length()).to.be.equal(0);
+    expect(dirty).to.be.deep.equal({'complex.arr': [100, 233, 200]})
   });
 
 
