@@ -7,23 +7,23 @@
 
 ### 介绍
 
-WePY资源汇总：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
+WePY 资源汇总：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
 
-WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions的引入都是为了能让开发小程序项目变得更加简单，高效。
+WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions 的引入都是为了能让开发小程序项目变得更加简单，高效。
 
-同时WePY也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果WePY有不足地方，或者你有更好的想法，欢迎提交ISSUE或者PR。
+同时 WePY 也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果 WePY 有不足地方，或者你有更好的想法，欢迎提交 ISSUE 或者 PR。
 
 
 ### 特性：
 
-* 类Vue开发风格
+* 类 Vue 开发风格
 * 支持自定义组件开发
-* 支持引入NPM包
-* 支持[Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
-* 支持ES2015+特性，如[Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
+* 支持引入 NPM 包
+* 支持 [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
+* 支持 ES2015+ 特性，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
 * 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
 * 支持多种插件处理，文件压缩，图片压缩，内容替换等
-* 支持 Sourcemap，ESLint等
+* 支持 Sourcemap，ESLint 等
 * 小程序细节优化，如请求列队，事件优化等
 
 
@@ -126,7 +126,7 @@ wepy build --watch
 [满熊阅读（开源：](https://github.com/Thunf/wepy-demo-bookmall) [微信小程序](https://github.com/Thunf/wepy-demo-bookmall)、[支付宝小程序）](https://github.com/Thunf/wepy-demo-bookmall/tree/alipay)、
 育儿柚道、
 平行进口报价内参、
-GitHub掘金版、
+GitHub 掘金版、
 班级群管、
 鲜花说小店、
 逛人备忘、
@@ -143,7 +143,7 @@ GitHub掘金版、
 七弦琴大数据、
 爽到家小程序、
 [应用全球排行](https://github.com/szpnygo/wepy_ios_top)[（开源）](https://github.com/szpnygo/wepy_ios_top)、
-[we川大](https://github.com/mohuishou/scuplus-wechat)[（开源）](https://github.com/mohuishou/scuplus-wechat)、
+[we 川大](https://github.com/mohuishou/scuplus-wechat)[（开源）](https://github.com/mohuishou/scuplus-wechat)、
 聊会儿、
 [诗词墨客](https://github.com/huangjianke/weapp-poem)[（开源）](https://github.com/huangjianke/weapp-poem)、
 [南京邮电大学](https://github.com/GreenPomelo/Undergraduate)[（开源）](https://github.com/GreenPomelo/Undergraduate)
@@ -151,8 +151,8 @@ GitHub掘金版、
 ...
 
 ### 交流群
- 
- WePY 交流群已满500人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
+
+ WePY 交流群已满 500 人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
  ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png)
              
