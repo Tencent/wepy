@@ -12,6 +12,7 @@ class Hook {
   constructor () {
     // file will be involved for watch
     this.involved = {};
+    this.fileDep = { update () {} };
   }
 
   register (key, fn) {
