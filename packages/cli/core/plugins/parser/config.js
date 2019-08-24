@@ -104,7 +104,10 @@ exports = module.exports = function () {
             // Existing in page components, then ignore
             // Resolve path for page components
             if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
-              config.usingComponents[comp.name] = path.relative(path.dirname(ctx.file), comp.resolved.path);
+              const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
+              const parsedPath = path.parse(relativePath);
+              // Remove wpy ext
+              config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
             }
           });
         }
