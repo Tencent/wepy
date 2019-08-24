@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-less",
-  "version": "2.0.4-alpha.0",
+  "version": "2.0.4",
   "description": "wepy compile less",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,6 @@
     "fs-extra": "^6.0.1"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/compiler-less@2.0.4-alpha.0",
-  "_commitid": "a6c24a9"
+  "_id": "@wepy/compiler-less@2.0.4",
+  "_commitid": "7ae2c2a"
 }
