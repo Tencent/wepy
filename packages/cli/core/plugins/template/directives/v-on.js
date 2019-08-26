@@ -7,7 +7,7 @@ const CONST = require('./../../../util/const');
  * @param {String} expr   function expression, e.g. doSomething(a,b,c); item++;
  * @return {Object}       AST result
  */
-const parseHandlerProxy = (expr, scope, modifiers, ctx) => {
+const parseHandlerProxy = (expr, scope) => {
 
   let injectParams = [];
   let handlerExpr = expr;
@@ -15,35 +15,6 @@ const parseHandlerProxy = (expr, scope, modifiers, ctx) => {
 
   let parsedHandler;
   if (/^[\w\.]+$/.test(expr)) {  //   @tap="doSomething" or @tap="m.doSomething"
-    /**
-     * we can recognition wxs dynamically
-     * e.g:
-     * 
-     *  <wxs module="m" lang="babel">
-     *  const touchmove = (event) => {
-     *    console.log('log event', JSON.stringify(event))
-     *  }
-     *  module.exports.touchmove = touchmove;
-     *  </wxs>
-     *  <template>
-     *    <div class="container">
-     *      <div class="userinfo" @touchmove="m.touchmove">
-     *    </div>
-     *    </div>
-     *  </template>
-     */
-    const calleeChunks = expr.split('.')
-    const wxsBlock = ctx.sfc.wxs
-
-    if (
-      calleeChunks.length > 1 &&
-      wxsBlock &&
-      Array.isArray(wxsBlock) &&
-      wxsBlock.find(item => item.attrs.module === calleeChunks[0])
-    ) {
-      modifiers.wxs = true
-    }
-
     eventInArg = true;
     parsedHandler = {
       callee: { name: handlerExpr },
@@ -98,11 +69,11 @@ const parseHandlerProxy = (expr, scope, modifiers, ctx) => {
  * @param  {String} value event value, e.g. doSomething(item)
  * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
  */
-const parseHandler = (name = '', value = '', scope, modifiers, ctx) => {
+const parseHandler = (name = '', value = '', scope) => {
   let handler = '';
   let type = '';
   let info;
-  info = parseHandlerProxy(value, scope, modifiers, ctx);
+  info = parseHandlerProxy(value, scope);
 
   if (name === 'click')
     name = 'tap';
@@ -153,7 +124,50 @@ exports = module.exports = function () {
   this.register('template-parse-ast-attr-v-on', function parseAstOn ({ item, name, expr, modifiers, scope, ctx }) {
     let handler = expr.trim();
 
-    let parsedEvent = parseHandler(name, handler, scope, modifiers, ctx);
+    let parsedEvent = parseHandler(name, handler, scope);
+
+    /**
+     * we can recognition wxs dynamically
+     * e.g:
+     * 
+     *  <wxs module="m" lang="babel">
+     *  const touchmove = (event) => {
+     *    console.log('log event', JSON.stringify(event))
+     *  }
+     *  module.exports.touchmove = touchmove;
+     *  </wxs>
+     *  <template>
+     *    <div class="container">
+     *      <div class="userinfo" @touchmove="m.touchmove">
+     *    </div>
+     *    </div>
+     *  </template>
+     */
+    const eventCallee = parsedEvent.parsed.callee
+    if (eventCallee && eventCallee.name) {
+      const calleeChunks = eventCallee.name.split('.')
+      const wxsBlock = ctx.sfc.wxs
+  
+      if (
+        calleeChunks.length > 1 &&
+        wxsBlock &&
+        Array.isArray(wxsBlock) &&
+        wxsBlock.find(item => item.attrs.module === calleeChunks[0])
+      ) {
+        modifiers.wxs = true
+
+        this.hookUnique('error-handler', 'template', {
+          ctx: ctx,
+          message: `seems '${calleeChunks[0]}' is a wxs module, please manully add a  .wxs modifier for the event.`,
+          type: 'warn',
+          title: 'v-on'
+        }, {
+          item: item,
+          attr: name,
+          expr: expr
+        });
+      }
+    }
 
     for (let k in modifiers) {
       let hookName = 'template-parse-ast-attr-v-on.' + k;
