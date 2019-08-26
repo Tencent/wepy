@@ -1,6 +1,5 @@
 const vueWithTransform = require('vue-template-es2015-compiler');
 const paramsDetect = require('./../../../ast/paramsDetect');
-const parseHandlerExpression = require('../../../ast/parseHandlerExpression');
 const CONST = require('./../../../util/const');
 
 /**
@@ -8,14 +7,43 @@ const CONST = require('./../../../util/const');
  * @param {String} expr   function expression, e.g. doSomething(a,b,c); item++;
  * @return {Object}       AST result
  */
-const parseHandlerProxy = (expr, scope) => {
+const parseHandlerProxy = (expr, scope, modifiers, ctx) => {
 
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
 
   let parsedHandler;
-  if (/^[\w\.]+$/.test(expr)) {  //   @tap="doSomething"
+  if (/^[\w\.]+$/.test(expr)) {  //   @tap="doSomething" or @tap="m.doSomething"
+    /**
+     * we can recognition wxs dynamically
+     * e.g:
+     * 
+     *  <wxs module="m" lang="babel">
+     *  const touchmove = (event) => {
+     *    console.log('log event', JSON.stringify(event))
+     *  }
+     *  module.exports.touchmove = touchmove;
+     *  </wxs>
+     *  <template>
+     *    <div class="container">
+     *      <div class="userinfo" @touchmove="m.touchmove">
+     *    </div>
+     *    </div>
+     *  </template>
+     */
+    const calleeChunks = expr.split('.')
+    const wxsBlock = ctx.sfc.wxs
+
+    if (
+      calleeChunks.length > 1 &&
+      wxsBlock &&
+      Array.isArray(wxsBlock) &&
+      wxsBlock.find(item => item.attrs.module === calleeChunks[0])
+    ) {
+      modifiers.wxs = true
+    }
+
     eventInArg = true;
     parsedHandler = {
       callee: { name: handlerExpr },
@@ -70,11 +98,11 @@ const parseHandlerProxy = (expr, scope) => {
  * @param  {String} value event value, e.g. doSomething(item)
  * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
  */
-const parseHandler = (name = '', value = '', scope) => {
+const parseHandler = (name = '', value = '', scope, modifiers, ctx) => {
   let handler = '';
   let type = '';
   let info;
-  info = parseHandlerProxy(value, scope);
+  info = parseHandlerProxy(value, scope, modifiers, ctx);
 
   if (name === 'click')
     name = 'tap';
@@ -125,21 +153,7 @@ exports = module.exports = function () {
   this.register('template-parse-ast-attr-v-on', function parseAstOn ({ item, name, expr, modifiers, scope, ctx }) {
     let handler = expr.trim();
 
-    let parsedEvent = parseHandler(name, handler, scope);
-    let handlerIdentifier = '';
-    try {
-      handlerIdentifier = parseHandlerExpression(handler);
-    } catch (err) {
-      this.logger.error(`v-on:${name}`, err.message);      
-    }
-    
-    if (
-      ctx.sfc.wxs &&
-      Array.isArray(ctx.sfc.wxs) &&
-      ctx.sfc.wxs.find(item => item.attrs.module === handlerIdentifier)
-    ) {
-      modifiers.wxs = true
-    }
+    let parsedEvent = parseHandler(name, handler, scope, modifiers, ctx);
 
     for (let k in modifiers) {
       let hookName = 'template-parse-ast-attr-v-on.' + k;

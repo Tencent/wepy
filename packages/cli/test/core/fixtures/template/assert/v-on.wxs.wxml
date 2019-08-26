@@ -1,0 +1,2 @@
+<view bindtap="{{ m.touchmove }}"></view>
+<view data-wpy-evt="0-0" bindtap="_proxy"></view>

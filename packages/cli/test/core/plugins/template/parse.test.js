@@ -9,8 +9,16 @@ const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
 const spec = {
-  attr: ['v-if', 'v-for', 'v-show', 'bindClass'],
-  event: ['v-on'],
+  attr: [
+    { file: 'v-if' },
+    { file: 'v-for' },
+    { file: 'v-show' },
+    { file: 'bindClass' }
+  ],
+  event: [
+    { file: 'v-on', sfc: { wxs: [] } },
+    { file: 'v-on.wxs', sfc: { wxs: [{ attrs: { module: 'm' } }] } }
+  ],
   directives: ['v-model']
 }
 
@@ -63,12 +71,12 @@ function assetHanlder (handlers) {
   }
 }
 
-function assertCodegen (originalRaw, assertRaw, options = {}, file, done) {
+function assertCodegen (originalRaw, assertRaw, options = {}, ctx, done) {
   const compiler = createCompiler(options);
-  compiler.assets.add(file);
-  compiler.hookUnique('template-parse', originalRaw, {}, { file }).then((rst) => {
+  compiler.assets.add(ctx.file);
+  compiler.hookUnique('template-parse', originalRaw, {}, ctx).then((rst) => {
     expect(rst.code).to.equal(assertRaw);
-    if (file === 'v-on') {
+    if (ctx.file === 'v-on') {
       assetHanlder(rst.rel.handlers);
     }
     done();
@@ -80,18 +88,18 @@ function assertCodegen (originalRaw, assertRaw, options = {}, file, done) {
 
 describe('template-parse', function () {
 
-  spec.attr.forEach(file => {
+  spec.attr.forEach(ctx => {
 
-    it('test attr: ' + file, function (done) {
-      const { originalRaw, assertRaw } = getRaw(file);
-      assertCodegen(originalRaw, assertRaw, {}, file, done)
+    it('test attr: ' + ctx.file, function (done) {
+      const { originalRaw, assertRaw } = getRaw(ctx.file);
+      assertCodegen(originalRaw, assertRaw, {}, ctx, done)
     })
   });
-  spec.event.forEach(file => {
+  spec.event.forEach(ctx => {
 
-    it('test attr: ' + file, function (done) {
-      const { originalRaw, assertRaw } = getRaw(file);
-      assertCodegen(originalRaw, assertRaw, {}, file, done)
+    it('test attr: ' + ctx.file, function (done) {
+      const { originalRaw, assertRaw } = getRaw(ctx.file);
+      assertCodegen(originalRaw, assertRaw, {}, ctx, done)
     })
   });
 });
