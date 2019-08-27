@@ -4,13 +4,11 @@ const po = require('../../core/parseOptions');
 describe('parseOptions', function() {
 
   it('getValue', function() {
-
     expect(po.getValue({}, 'a.b.c')).to.equal(undefined);
 
     expect(po.getValue({a: 1}, 'a')).to.equal(1);
 
     expect(po.getValue({a: {b: {c: 2}}}, 'a.b')).to.deep.equal({c: 2});
-
   });
 
 
@@ -25,7 +23,6 @@ describe('parseOptions', function() {
   });
 
   it('parse', function() {
-
     expect(po.parse().wpyExt).to.equal('.wpy');
 
     expect(po.parse({wpyExt: '.vue'}).wpyExt).to.equal('.vue');
