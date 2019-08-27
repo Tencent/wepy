@@ -1,5 +1,4 @@
-exports = module.exports = class Hook {
-
+class Hook {
   constructor () {
     this._hooks = {};
   }
@@ -26,8 +25,10 @@ exports = module.exports = class Hook {
 
   hookSeq (key, ...args) {
     let rst = args;
+    let fns = this._hooks[key] || [];
     let hasHook = false;
-    (this._hooks[key] || []).forEach((fn, i) => {
+
+    fns.forEach((fn, i) => {
       if (typeof fn === 'function') {
         hasHook = true;
         if (fn.length > 1) {
@@ -37,45 +38,34 @@ exports = module.exports = class Hook {
         }
       }
     });
+
     return hasHook ? rst : (rst.length <= 1 ? rst[0] : rst);
   }
 
   hookUnique (key, ...args) {
-    let rst;
-    let hooks = this._hooks[key] || [];
+    let fns = this._hooks[key] || [];
+    let lastFn = fns[fns.length - 1];
 
-    let lastHook = hooks[hooks.length - 1];
-
-    if (typeof lastHook === 'function') {
-      return lastHook.apply(this, args);
-    } else {
-      return rst;
+    if (typeof lastFn === 'function') {
+      return lastFn.apply(this, args);
     }
   }
 
   hookUniqueReturnArg (key, ...args) {
-    let rst = args;
-    let hooks = this._hooks[key] || [];
-
-    let lastHook = hooks[hooks.length - 1];
-
-    if (typeof lastHook === 'function') {
-      return lastHook.apply(this, args);
-    } else {
-      return (rst.length <= 1 ? rst[0] : rst);
+    let rst = Hook.prototype.hookUnique.apply(this, [key, ...args]);
+    if (typeof rst === 'undefined') {
+      rst = (args.length <= 1 ? args[0] : args);
     }
+    return rst;
   }
 
   hookAsyncSeq (key, ...args) {
     let rst = args;
-    let hooks = this._hooks[key] || [];
-
-    let count = 0;
-    let allRst = [];
+    let fns = this._hooks[key] || [];
     let lastRst = rst;
     let argLength = args.length;
 
-    if (hooks.length === 0) {
+    if (fns.length === 0) {
       return Promise.resolve(argLength === 1 ? args[0] : args);
     }
 
@@ -85,28 +75,31 @@ exports = module.exports = class Hook {
           if (!Array.isArray(v)) {
             v = [v];
           }
-          if (count++ !== 0) {
-            allRst = allRst.concat(v);
-          }
           lastRst = v;
           return cfn.apply(this, lastRst);
         }).catch(e => {
           reject(e);
         })
-      }
+      };
 
-      hooks = hooks.concat(() => Promise.resolve());
-      hooks.reduce(iterateFunc, Promise.resolve(args)).then(() => {
-        resolve(argLength === 1 ? lastRst[0] : lastRst);
-      });
+      fns = fns.concat(
+        (...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst)
+      );
+      return fns.reduce(iterateFunc, Promise.resolve(args));
     });
   }
+
   hookReturnOrigin (key, ...args) {
-    let rst = [];
     let fns = this._hooks[key] || [];
     fns.forEach(fn => {
       (typeof fn === 'function') && (fn.apply(this, args));
     });
-    return args;
+    return (args.length <= 1 ? args[0] : args);
+  }
+
+  unregister(key) {
+    return delete this._hooks[key];
   }
 }
+
+exports = module.exports = Hook;
