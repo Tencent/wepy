@@ -27,7 +27,7 @@ exports = module.exports = function (options) {
           code: rst.css,
           dep: rst.imports
         };
-        this.fileDep.update(file, node.compiled.dep);
+        this.fileDep.addDeps(file, node.compiled.dep);
         return node;
       });
     });

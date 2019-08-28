@@ -43,6 +43,7 @@ exports = module.exports = function () {
       this.compiled[file] = context;
       context.useCache = false;
       context.hash = fileHash;
+      this.fileDep.cleanDeps(file);
 
       context.sfc = sfcCompiler.parseComponent(fileContent, { pad: 'space' });
 

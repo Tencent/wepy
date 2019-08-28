@@ -4,25 +4,31 @@ class FileDep {
     this._depedMap = {};
   }
 
-  update(source, deps = []) {
-    this.cleanupDeps(source, deps);
-    this._depMap[source] = deps;
+  cleanDeps(source) {
+    const deps = this._depMap[source] || [];
     deps.forEach(dep => {
-      if (this._depedMap[dep] == null) {
-        this._depedMap[dep] = [];
-      }
-      if (!this._depedMap[dep].includes(source)) {
-        this._depedMap[dep].push(source);
+      const depeds = this._depedMap[dep] || [];
+      if (depeds.length > 0) {
+        this._depedMap[dep] = depeds.filter(deped => deped !== source);
+        if (this._depedMap[dep].length === 0) {
+          delete this._depedMap[dep];
+        }
       }
     });
+    delete this._depMap[source];
   }
 
-  cleanupDeps(source, newDeps = []) {
-    const oldDeps = this._depMap[source] || [];
-    oldDeps.forEach(oldDep => {
-      if (!newDeps.includes(oldDep)) {
-        const depeds = this._depedMap[oldDep] || [];
-        this._depedMap[oldDep] = depeds.filter(deped => deped !== source);
+  addDeps(source, deps = []) {
+    if (!this._depMap[source]) {
+      this._depMap[source] = [];
+    }
+    deps.forEach(dep => {
+      if (!this._depMap[source].includes(dep)) {
+        this._depMap[source].push(dep);
+        if (!this._depedMap[dep]) {
+          this._depedMap[dep] = [];
+        }
+        this._depedMap[dep].push(source);
       }
     });
   }
