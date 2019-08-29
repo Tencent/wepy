@@ -5,11 +5,51 @@ import { patchData } from './data';
 import { config } from '../config';
 import $global from '../global';
 
+// [Default Strategy]
+// Update if it's not exist in output. Can be replaced by option[key].
+// e.g.
+// export default {
+//   myCustomMethod () {
+//     // doSomething
+//   }
+// }
+//
+// [Merge Strategy]
+// Replaced by the latest mixins property.
+// e.g.
+// export default {
+//   data: {
+//     a: 1
+//   }
+// }
+//
+// [Lifecycle Strategy]
+// Extend lifecycle. update lifecycle to an array.
+// e.g.
+// export default {
+//   onShow: {
+//     console.log('onShow');
+//   }
+// }
 let globalMixinPatched = false;
 
-const defaultStrat = (parentVal, childVal) => childVal ? childVal : parentVal;
 let strats = null;
 
+function getStrategy (key) {
+  if (!strats) {
+    initStrats();
+  }
+  if (strats[key]) {
+    return strats[key];
+  } else {
+    return defaultStrat;
+  }
+}
+function defaultStrat (output, option, key, data) {
+  if (!output[key]) {
+    output[key] = data;
+  }
+}
 
 function simpleMerge(parentVal, childVal) {
   return (!parentVal || !childVal) ? (parentVal || childVal) : Object.assign({}, parentVal, childVal);
@@ -21,13 +61,13 @@ function initStrats () {
 
   strats = config.optionMergeStrategies;
 
-  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function (output, option, key, data) {
+  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function mergeStrategy(output, option, key, data) {
     option[key] = simpleMerge(option[key], data);
   };
 
   WEAPP_LIFECYCLE.forEach(lifecycle => {
     if (!strats[lifecycle]) {
-      strats[lifecycle] = function (output, option, key, data) {
+      strats[lifecycle] = function lifeCycleStrategy(output, option, key, data) {
         if (!option[key]) {
           option[key] = isArr(data) ? data: [data];
         } else {
@@ -59,6 +99,7 @@ export function patchMixins (output, option, mixins) {
       initStrats();
     }
     for (let k in mixins) {
+      strat = getStrategy(k);
       let strat = strats[k] || defaultStrat;
       strat(output, option, k, mixins[k]);
     }
