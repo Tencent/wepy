@@ -68,8 +68,7 @@ exports = module.exports = function () {
       flow = this.hookAsyncSeq('parse-sfc-src', context);
     }
 
-    this.involved[file] = 1;
-
+    this.fileDep.addDeps(file);
 
     context.promise = flow.then(() => {
       return this.applyCompiler(context.sfc.config, context);
@@ -124,7 +123,7 @@ exports = module.exports = function () {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
           tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
             node.content = fs.readFileSync(rst.path, 'utf-8');
-            this.involved[rst.path] = context.file;
+            this.fileDep.addDeps(context.file, [rst.path]);
             node.dirty = true;
           }));
         }
@@ -132,4 +131,4 @@ exports = module.exports = function () {
     }
     return Promise.all(tasks);
   });
-}
+};

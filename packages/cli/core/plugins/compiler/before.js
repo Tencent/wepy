@@ -29,11 +29,20 @@ exports = module.exports = function () {
         if (isEntry) {
           buildTask.partial = false;
         } else if (isWPY) {
+          buildTask.partial = true;
           buildTask.files.push(changedFile);
         } else {
           buildTask = this.hookSeq('wepy-watch-file-changed-' + ext, buildTask);
         }
       }
       return Promise.resolve(buildTask);
+    });
+
+    // when .wxs file changed
+    this.register('wepy-watch-file-changed-wxs', function (buildTask) {
+      buildTask.files = this.fileDep.getSources(buildTask.changed);
+      buildTask.partial = !buildTask.files.includes(this.options.entry);
+
+      return buildTask;
     });
 };
