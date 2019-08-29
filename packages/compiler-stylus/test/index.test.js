@@ -10,8 +10,6 @@ const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSyste
 class Hook {
 
   constructor () {
-    // file will be involved for watch
-    this.involved = {};
   }
 
   register (key, fn) {

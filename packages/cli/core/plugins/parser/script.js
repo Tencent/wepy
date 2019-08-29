@@ -54,7 +54,6 @@ exports = module.exports = function () {
           npmTraverseFileMap[file] = false;
         }
       }
-      this.involved[file] = 1;
 
       return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: ctx.component, type: ctx.type, dep, wxs: !!ctx.wxs });
     });
@@ -101,6 +100,8 @@ exports = module.exports = function () {
           component: ctx.component,
         };
 
+        this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));
+
         let types = {
           component: ctx.component,
           npm: ctx.npm,
@@ -118,4 +119,4 @@ exports = module.exports = function () {
       });
     }
   });
-}
+};
