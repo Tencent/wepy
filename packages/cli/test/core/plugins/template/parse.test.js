@@ -8,6 +8,28 @@ const initPlugin = require(`${alias.core}/init/plugin`);
 const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
+
+
+function cached (fn) {
+  var _cache = {};
+  return function (key) {
+    if (!_cache[key]) {
+      _cache[key] = fn(key);
+    }
+    return _cache[key];
+  };
+}
+
+const getRaw = cached(function (file) {
+  const original = path.join(__dirname, '..', '..', 'fixtures/template/original', file + '.html');
+  const assert = path.join(__dirname, '..', '..', 'fixtures/template/assert', file + '.wxml');
+
+  return {
+    originalRaw: fs.readFileSync(original, 'utf-8'),
+    assertRaw: fs.readFileSync(assert, 'utf-8')
+  };
+});
+
 const spec = {
   attr: [
     { file: 'v-if' },
@@ -16,10 +38,32 @@ const spec = {
     { file: 'bindClass' }
   ],
   event: [
-    { file: 'v-on', sfc: { wxs: [] } },
-    { file: 'v-on.wxs', sfc: { wxs: [{ attrs: { module: 'm' } }] } }
+    {
+      file: 'v-on',
+      sfc: {
+        wxs: [],
+        template: { content: getRaw('v-on').originalRaw, code: getRaw('v-on').assertRaw },
+      }
+    },
+    { file: 'v-on.wxs',
+      sfc: {
+        wxs: [{ attrs: { module: 'm' } }],
+        template: { content: getRaw('v-on.wxs').originalRaw, code: getRaw('v-on.wxs').assertRaw },
+      }
+    }
   ],
   directives: ['v-model']
+}
+
+function createLogger (type) {
+  return function (...args) {
+    // mute silly and info
+    if (type === 'silly' || type === 'info') {
+      return;
+    }
+    console.log('==== This is ' + type + ' log===');
+    console.log(...args);
+  };
 }
 
 function createCompiler (options = {}) {
@@ -27,10 +71,12 @@ function createCompiler (options = {}) {
   const appConfig = options.appConfig || {};
   const userDefinedTags = appConfig.tags || {};
   instance.options = { plugins: [] };
+
   instance.logger = {
-    info () {},
-    error () {},
-    silly () {},
+    info: createLogger('info'),
+    warn: createLogger('warn'),
+    error: createLogger('error'),
+    silly: createLogger('silly'),
   }
   instance.tags = {
     htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
@@ -43,15 +89,6 @@ function createCompiler (options = {}) {
   return instance;
 }
 
-function getRaw (file, lang = 'wxml') {
-  const original = path.join(__dirname, '..', '..', 'fixtures/template/original', file + '.html');
-  const assert = path.join(__dirname, '..', '..', 'fixtures/template/assert', file + '.wxml');
-
-  return {
-    originalRaw: fs.readFileSync(original, 'utf-8'),
-    assertRaw: fs.readFileSync(assert, 'utf-8')
-  };
-}
 
 function assetHanlder (handlers) {
   for (let id in handlers) {
