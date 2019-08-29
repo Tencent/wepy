@@ -62,6 +62,9 @@ class Hook {
   hookAsyncSeq (key, ...args) {
     let rst = args;
     let fns = this._hooks[key] || [];
+
+    let count = 0;
+    let allRst = [];
     let lastRst = rst;
     let argLength = args.length;
 
@@ -75,6 +78,9 @@ class Hook {
           if (!Array.isArray(v)) {
             v = [v];
           }
+          if (count++ !== 0) {
+            allRst = allRst.concat(v);
+          }
           lastRst = v;
           return cfn.apply(this, lastRst);
         }).catch(e => {
@@ -82,10 +88,10 @@ class Hook {
         })
       };
 
-      fns = fns.concat(
-        (...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst)
-      );
-      return fns.reduce(iterateFunc, Promise.resolve(args));
+      fns = fns.concat(() => Promise.resolve());
+      fns.reduce(iterateFunc, Promise.resolve(args)).then(() => {
+        resolve(argLength === 1 ? lastRst[0] : lastRst);
+      });
     });
   }
 
