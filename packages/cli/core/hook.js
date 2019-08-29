@@ -52,7 +52,7 @@ class Hook {
   }
 
   hookUniqueReturnArg (key, ...args) {
-    let rst = Hook.prototype.hookUnique.apply(this, [key, ...args]);
+    let rst = this.hookUnique(key, ...args);
     if (typeof rst === 'undefined') {
       rst = (args.length <= 1 ? args[0] : args);
     }
