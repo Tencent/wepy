@@ -18,7 +18,7 @@ const readFile = (file, defaultValue = '') => {
     return fs.readFileSync(file, 'utf-8');
   }
   return defaultValue;
-}
+};
 
 exports = module.exports = function () {
   this.register('wepy-parser-component', function (comp) {
@@ -42,7 +42,7 @@ exports = module.exports = function () {
     }
     let wpyTask = [];
 
-    ['.js', '.wxml', 'wxss', '.json'].forEach(v => this.involved[file + v] = 1);
+    ['.js', '.wxml', 'wxss', '.json'].forEach(v => this.fileDep.addDeps(file + v));
 
     let styleContent = '';
     if (fs.existsSync(file + '.wxss')) {  // If there is no wxss, then style is empty
@@ -132,4 +132,4 @@ exports = module.exports = function () {
     }).then(() => context);
 
   });
-}
+};

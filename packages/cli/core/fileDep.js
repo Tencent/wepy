@@ -40,6 +40,10 @@ class FileDep {
   getSources(dep) {
     return this._depedMap[dep] || [];
   }
+
+  isInvolved(file) {
+    return (this._depMap.hasOwnProperty(file) || this._depedMap.hasOwnProperty(file));
+  }
 }
 
 exports = module.exports = FileDep;
