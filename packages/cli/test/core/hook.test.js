@@ -13,6 +13,25 @@ describe('Hook', function () {
     expect(hook._hooks['process-test']).to.includes(handler);
   });
 
+  it('should unregister', function () {
+    const hook = new Hook();
+    const handler1 = function () {
+    };
+    const handler2 = function () {
+    };
+
+    hook.register('process-test', handler1);
+    hook.register('process-test', handler2);
+    expect(hook._hooks['process-test']).to.includes(handler1);
+    expect(hook._hooks['process-test']).to.includes(handler2);
+    hook.unregister('process-test', handler1);
+    expect(hook._hooks['process-test']).to.not.includes(handler1);
+    expect(hook._hooks['process-test']).to.includes(handler2);
+
+    hook.unregisterAll('process-test');
+    expect(hook._hooks['process-test']).to.be.an('undefined');
+  });
+
   it('should has hook', function () {
     const hook = new Hook();
     const handler = function () {
@@ -176,7 +195,7 @@ describe('Hook', function () {
       expect(err).to.eql({ text: 'hi, rejected!' });
     });
 
-    hook.unregister('process-test');
+    hook.unregisterAll('process-test');
     hook.register('process-test', function (obj) {
       return new Promise(function (resolve) {
         throw new Error('hi, this is an exception!');
