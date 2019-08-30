@@ -60,6 +60,7 @@ class Hook {
   }
 
   hookAsyncSeq (key, ...args) {
+    // if hook registered, return last rst, else return args
     let rst = args;
     let fns = this._hooks[key] || [];
     let lastRst = rst;
@@ -69,24 +70,21 @@ class Hook {
       return Promise.resolve(argLength === 1 ? args[0] : args);
     }
 
-    return new Promise((resolve, reject) => {
-      const iterateFunc = (pfn, cfn) => {
-        return pfn.then(v => {
-          if (!Array.isArray(v)) {
-            v = [v];
-          }
-          lastRst = v;
-          return cfn.apply(this, lastRst);
-        }).catch(e => {
-          reject(e);
-        })
-      };
+    const iterateFunc = (pfn, cfn) => {
+      return pfn.then(v => {
+        if (!Array.isArray(v)) {
+          v = [v];
+        }
+        lastRst = v;
+        return cfn.apply(this, lastRst);
+      });
+    };
 
-      fns = fns.concat(
-        (...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst)
-      );
-      return fns.reduce(iterateFunc, Promise.resolve(args));
-    });
+    fns = fns.concat(
+      (...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst)
+    );
+
+    return fns.reduce(iterateFunc, Promise.resolve(args));
   }
 
   hookReturnOrigin (key, ...args) {

@@ -140,70 +140,104 @@ describe('Hook', function () {
     expect(twoFnCalled).to.be.true;
   });
 
-  it('should hookAsyncSeq', function () {
+  it('should hookAsyncSeq call then correctly', function () {
     const hook = new Hook();
 
-    hook.hookAsyncSeq('unknown', 6).then(rst => {
+    return hook.hookAsyncSeq('unknown', 6).then(rst => {
+      // should return args[0]
       expect(rst).to.equal(6);
-    });
-    hook.hookAsyncSeq('unknown', 6, 66).then(rst => {
+
+      return hook.hookAsyncSeq('unknown', 6, 66);
+    }).then(rst => {
+      // should return args
       expect(rst).to.eql([6, 66]);
-    });
 
-    hook.register('process-test', function (obj) {
-      return new Promise(function (resolve) {
-        resolve({ count: obj.count + 1 });
+      hook.register('process-test', function (obj) {
+        return { count: obj.count + 1 };
       });
-    });
-    hook.hookAsyncSeq('process-test', { count: 6 }).then(rst => {
+      return hook.hookAsyncSeq('process-test', { count: 6 });
+    }).then(rst => {
+      // should return lastRst for one hook fn
       expect(rst).to.eql({ count: 7 });
-    });
 
-    hook.register('process-test', function (obj) {
-      return new Promise(function (resolve) {
-        resolve({ ...obj, text: 'hello, world!' });
+      hook.register('process-test', function (obj) {
+        return new Promise(function (resolve) {
+          resolve({ count: obj.count + 1 });
+        });
       });
-    });
-    hook.hookAsyncSeq('process-test', { count: 66 }).then(rst => {
-      expect(rst).to.eql({ count: 67, text: 'hello, world!' });
-    });
+      return hook.hookAsyncSeq('process-test', { count: 6 });
+    }).then(rst => {
+      // should return lastRst for multiple hook fns
+      expect(rst).to.eql({ count: 8 });
 
-    hook.register('process-test', function (obj) {
-      return new Promise(function (resolve) {
-        resolve([obj, { more: true }]);
+      hook.register('process-test', function (obj) {
+        return new Promise(function (resolve) {
+          resolve({ ...obj, text: 'hello, world!' });
+        });
       });
-    });
-    hook.register('process-test', function (obj, extra) {
-      return new Promise(function (resolve) {
-        expect(extra).to.eql({ more: true });
-        resolve([obj, extra]);
-      });
-    });
-    hook.hookAsyncSeq('process-test', { count: 666 }).then(rst => {
-      expect(rst).to.eql({ count: 667, text: 'hello, world!' });
-    });
-    hook.hookAsyncSeq('process-test', { count: 6666 }, { more: false }).then(rst => {
-      expect(rst).to.eql([{ count: 6667, text: 'hello, world!' }, { more: true }]);
-    });
+      return hook.hookAsyncSeq('process-test', { count: 66 });
+    }).then(rst => {
+      // should return lastRst
+      expect(rst).to.eql({ count: 68, text: 'hello, world!' });
 
-    hook.register('process-test', function (obj) {
+      hook.register('process-test', function (obj) {
+        return new Promise(function (resolve) {
+          resolve([obj, { more: true }]);
+        });
+      });
+      hook.register('process-test', function (obj, extra) {
+        return new Promise(function (resolve) {
+          expect(extra).to.eql({ more: true });
+          resolve([obj, extra]);
+        });
+      });
+      return hook.hookAsyncSeq('process-test', { count: 666 });
+    }).then(rst => {
+      // should return lastRst[0] if args.length === 1
+      expect(rst).to.eql({ count: 668, text: 'hello, world!' });
+
+      return hook.hookAsyncSeq('process-test', { count: 6666 }, { more: false });
+    }).then(rst => {
+      // should return lastRst if args.length > 1
+      expect(rst).to.eql([{ count: 6668, text: 'hello, world!' }, { more: true }]);
+    });
+  });
+
+  it('should hookAsyncSeq call catch', function (done) {
+    const hook = new Hook();
+    let count = 0;
+
+    hook.register('process-test-1', function (obj) {
       return new Promise(function (resolve, reject) {
-        reject({ text: 'hi, rejected!' });
+        reject({ text: 'hi, rejected! 1' });
       });
     });
-    hook.hookAsyncSeq('process-test', { count: 66 }).catch(err => {
-      expect(err).to.eql({ text: 'hi, rejected!' });
+    hook.hookAsyncSeq('process-test-1', { n: 6 }).catch(err => {
+      // should catch error
+      expect(err).to.eql({ text: 'hi, rejected! 1' });
+      count++;
     });
 
-    hook.unregisterAll('process-test');
-    hook.register('process-test', function (obj) {
-      return new Promise(function (resolve) {
-        throw new Error('hi, this is an exception!');
+    hook.register('process-test-2', function (obj) {
+      return { n: obj.n + 1 };
+    });
+    hook.register('process-test-2', function (obj) {
+      return new Promise(function (resolve, reject) {
+        reject({ text: 'hi, rejected! 2' });
       });
     });
-    hook.hookAsyncSeq('process-test', { count: 66 }).catch(err => {
-      expect(err).to.be.an.instanceof(Error);
-      expect(err.message).to.equal('hi, this is an exception!');
+    hook.register('process-test-2', function (obj) {
+      return { n: obj.n + 2 };
+    });
+    hook.hookAsyncSeq('process-test-2', { n: 66 }).then(rst => {
+      // it will not happen for reject but call then
+      throw new Error('it will not happen!');
+    }).catch(err => {
+      // should catch error and catch count is right
+      expect(err).to.eql({ text: 'hi, rejected! 2' });
+      count++;
+      expect(count).to.equal(2);
+      done();
     });
   });
 });
