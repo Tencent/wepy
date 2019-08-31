@@ -2477,11 +2477,51 @@ var config$1 = {
   }
 };
 
+// [Default Strategy]
+// Update if it's not exist in output. Can be replaced by option[key].
+// e.g.
+// export default {
+//   myCustomMethod () {
+//     // doSomething
+//   }
+// }
+//
+// [Merge Strategy]
+// Replaced by the latest mixins property.
+// e.g.
+// export default {
+//   data: {
+//     a: 1
+//   }
+// }
+//
+// [Lifecycle Strategy]
+// Extend lifecycle. update lifecycle to an array.
+// e.g.
+// export default {
+//   onShow: {
+//     console.log('onShow');
+//   }
+// }
 var globalMixinPatched = false;
 
-var defaultStrat = function (parentVal, childVal) { return childVal ? childVal : parentVal; };
 var strats = null;
 
+function getStrategy (key) {
+  if (!strats) {
+    initStrats();
+  }
+  if (strats[key]) {
+    return strats[key];
+  } else {
+    return defaultStrat;
+  }
+}
+function defaultStrat (output, option, key, data) {
+  if (!output[key]) {
+    output[key] = data;
+  }
+}
 
 function simpleMerge(parentVal, childVal) {
   return (!parentVal || !childVal) ? (parentVal || childVal) : Object.assign({}, parentVal, childVal);
@@ -2493,13 +2533,13 @@ function initStrats () {
 
   strats = config$1.optionMergeStrategies;
 
-  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function (output, option, key, data) {
+  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function mergeStrategy(output, option, key, data) {
     option[key] = simpleMerge(option[key], data);
   };
 
   WEAPP_LIFECYCLE.forEach(function (lifecycle) {
     if (!strats[lifecycle]) {
-      strats[lifecycle] = function (output, option, key, data) {
+      strats[lifecycle] = function lifeCycleStrategy(output, option, key, data) {
         if (!option[key]) {
           option[key] = isArr(data) ? data: [data];
         } else {
@@ -2531,6 +2571,7 @@ function patchMixins (output, option, mixins) {
       initStrats();
     }
     for (var k in mixins) {
+      strat = getStrategy(k);
       var strat = strats[k] || defaultStrat;
       strat(output, option, k, mixins[k]);
     }
@@ -2644,6 +2685,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.9";
+wepy.version = "2.0.0-alpha.11";
 
 module.exports = wepy;

@@ -117,7 +117,6 @@ class Compile extends Hook {
   init () {
     this.register('process-clear', type => {
       this.compiled = {};
-      this.involved = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
       this.fileDep = new fileDep();
@@ -335,14 +334,12 @@ class Compile extends Hook {
       if (evt === 'change') {
         let buildTask = {
           changed: path.resolve(filepath),
-          partial: true,
+          partial: false,
           files: []
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-          if (task.partial) {
-            if (task.files.length) {
-              this.partialBuild(task.files);
-            }
+          if (task.partial && task.files.length) {
+            this.partialBuild(task.files);
           } else {
             this.start();
           }
@@ -359,11 +356,6 @@ class Compile extends Hook {
 
       if (!this.hasHook(hookKey)) {
         throw `Missing plugins ${hookKey}`;
-      }
-
-      // If node has src, then do not change involved
-      if (!node.src) {
-        this.involved[ctx.file] = 1;
       }
 
       let task;

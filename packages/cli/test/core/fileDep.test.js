@@ -7,6 +7,7 @@ describe('FileDep', function () {
 
     fileDep.addDeps('a.wpy', ['b.js', 'c.js']);
     expect(fileDep.getDeps('a.wpy')).to.eql(['b.js', 'c.js']);
+    expect(fileDep.getSources('b.js')).to.eql(['a.wpy']);
     expect(fileDep.getSources('c.js')).to.eql(['a.wpy']);
 
     fileDep.addDeps('b.wpy', ['c.js', 'd.js']);
@@ -31,5 +32,36 @@ describe('FileDep', function () {
     expect(fileDep.getSources('b.js')).to.eql([]);
     expect(fileDep.getSources('c.js')).to.eql(['b.wpy']);
     expect(fileDep.getSources('d.js')).to.eql(['b.wpy']);
+  });
+
+  it('should not add duplicated deps', function () {
+    const fileDep = new FileDep();
+
+    fileDep.addDeps('a.wpy', ['a.js', 'b.js']);
+    expect(fileDep.getDeps('a.wpy')).to.eql(['a.js', 'b.js']);
+    expect(fileDep.getSources('a.js')).to.eql(['a.wpy']);
+    expect(fileDep.getSources('b.js')).to.eql(['a.wpy']);
+
+    fileDep.addDeps('a.wpy', ['b.js', 'c.js', 'd.js']);
+    expect(fileDep.getDeps('a.wpy')).to.eql(['a.js', 'b.js', 'c.js', 'd.js']);
+    expect(fileDep.getSources('a.js')).to.eql(['a.wpy']);
+    expect(fileDep.getSources('b.js')).to.eql(['a.wpy']);
+    expect(fileDep.getSources('c.js')).to.eql(['a.wpy']);
+    expect(fileDep.getSources('d.js')).to.eql(['a.wpy']);
+  });
+
+  it('should get isInvolved correctly', function () {
+    const fileDep = new FileDep();
+
+    fileDep.addDeps('a.wpy', ['b.js', 'c.js']);
+    expect(fileDep.isInvolved('a.wpy')).to.be.true;
+    expect(fileDep.isInvolved('b.js')).to.be.true;
+    expect(fileDep.isInvolved('c.js')).to.be.true;
+    expect(fileDep.isInvolved('d.js')).to.be.false;
+
+    fileDep.cleanDeps('a.wpy');
+    expect(fileDep.isInvolved('a.wpy')).to.be.false;
+    expect(fileDep.isInvolved('b.js')).to.be.false;
+    expect(fileDep.isInvolved('c.js')).to.be.false;
   });
 });

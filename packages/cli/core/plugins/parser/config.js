@@ -97,7 +97,8 @@ exports = module.exports = function () {
       if (ctx.type === 'app') {
         appUsingComponents = parseComponents;
         delete config.usingComponents;
-      } else if (ctx.type === 'page') {
+      } else if (ctx.type === 'page'
+        || (ctx.component && (ctx.type === 'wepy' || ctx.type === 'weapp'))) {
         config.usingComponents = resolvedUsingComponents;
         if (appUsingComponents) {
           appUsingComponents.forEach(comp => {

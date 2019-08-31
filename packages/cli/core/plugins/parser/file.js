@@ -28,6 +28,7 @@ exports = module.exports = function () {
     } else {
       this.compiled[file] = depFileCtx;
       depFileCtx.hash = fileHash;
+      this.fileDep.cleanDeps(file);
 
       let ext = path.extname(file);
       this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: true, component: depFileCtx.component, type: depFileCtx.type, wxs: depFileCtx.wxs });
