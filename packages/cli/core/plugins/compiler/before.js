@@ -13,13 +13,15 @@ exports = module.exports = function () {
     // When file changed in --watch model
     this.register('before-wepy-watch-file-changed', function beforeWatchFileChanged (buildTask) {
       const changedFile = buildTask.changed;
-      let involvedFile = this.involved[changedFile];
-      if (typeof involvedFile === 'string' && path.isAbsolute(involvedFile)) {
-        // clear the file hash, to remove the file cache
-        this.compiled[involvedFile].hash = '';
-      }
+      const isInvolved = this.fileDep.isInvolved(changedFile);
+      this.fileDep.getSources(changedFile).forEach(depedFile => {
+        if (path.isAbsolute(depedFile)) {
+          // clear the file hash, to remove the file cache
+          this.compiled[depedFile].hash = '';
+        }
+      });
 
-      if (involvedFile) {
+      if (isInvolved) {
         this.logger.silly('watch', `Watcher triggered by file changes: ${changedFile}`);
         const isEntry = (changedFile === this.options.entry);
         let ext = path.extname(changedFile);
@@ -41,7 +43,9 @@ exports = module.exports = function () {
     // when .wxs file changed
     this.register('wepy-watch-file-changed-wxs', function (buildTask) {
       buildTask.files = this.fileDep.getSources(buildTask.changed);
-      buildTask.partial = !buildTask.files.includes(this.options.entry);
+      if (buildTask.files.includes(this.options.entry)) {
+        buildTask.partial = false;
+      }
 
       return buildTask;
     });

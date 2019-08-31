@@ -334,7 +334,7 @@ class Compile extends Hook {
       if (evt === 'change') {
         let buildTask = {
           changed: path.resolve(filepath),
-          partial: false,
+          partial: true,
           files: []
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
