@@ -140,7 +140,7 @@ describe('Hook', function () {
     expect(twoFnCalled).to.be.true;
   });
 
-  it('should hookAsyncSeq call then correctly', function () {
+  it('hookAsyncSeq should call then correctly', function () {
     const hook = new Hook();
 
     return hook.hookAsyncSeq('unknown', 6).then(rst => {
@@ -203,40 +203,38 @@ describe('Hook', function () {
     });
   });
 
-  it('should hookAsyncSeq call catch', function (done) {
+  it('hookAsyncSeq should call catch', function (done) {
     const hook = new Hook();
-    let count = 0;
 
-    hook.register('process-test-1', function (obj) {
+    hook.register('process-test', function () {
       return new Promise(function (resolve, reject) {
-        reject({ text: 'hi, rejected! 1' });
+        reject({ text: 'hi, rejected!' });
       });
     });
-    hook.hookAsyncSeq('process-test-1', { n: 6 }).catch(err => {
-      // should catch error
-      expect(err).to.eql({ text: 'hi, rejected! 1' });
-      count++;
+    hook.hookAsyncSeq('process-test', { n: 6 }).catch(err => {
+      expect(err).to.eql({ text: 'hi, rejected!' });
+      done();
     });
+  });
 
-    hook.register('process-test-2', function (obj) {
+  it('hookAsyncSeq should not call then but catch', function (done) {
+    const hook = new Hook();
+
+    hook.register('process-test', function (obj) {
       return { n: obj.n + 1 };
     });
-    hook.register('process-test-2', function (obj) {
+    hook.register('process-test', function () {
       return new Promise(function (resolve, reject) {
-        reject({ text: 'hi, rejected! 2' });
+        reject({ text: 'hi, rejected!' });
       });
     });
-    hook.register('process-test-2', function (obj) {
+    hook.register('process-test', function (obj) {
       return { n: obj.n + 2 };
     });
-    hook.hookAsyncSeq('process-test-2', { n: 66 }).then(rst => {
-      // it will not happen for reject but call then
+    hook.hookAsyncSeq('process-test', { n: 66 }).then(() => {
       throw new Error('it will not happen!');
     }).catch(err => {
-      // should catch error and catch count is right
-      expect(err).to.eql({ text: 'hi, rejected! 2' });
-      count++;
-      expect(count).to.equal(2);
+      expect(err).to.eql({ text: 'hi, rejected!' });
       done();
     });
   });
