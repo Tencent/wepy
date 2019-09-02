@@ -225,7 +225,7 @@ class Compile extends Hook {
   buildComps (comps) {
     function buildComponents (comps) {
       if (!comps) {
-        return null;
+        return Promise.resolve();
       }
       this.hookSeq('build-components', comps);
       this.hookUnique('output-components', comps);
@@ -335,10 +335,14 @@ class Compile extends Hook {
         let buildTask = {
           changed: path.resolve(filepath),
           partial: true,
-          files: []
+          files: [],
+          outputAssets: false
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-          if (task.partial && task.files.length) {
+          if (task.outputAssets) {
+            // just compile, build and out asserts
+            this.buildComps(undefined);
+          } if (task.partial && task.files.length > 0) {
             this.partialBuild(task.files);
           } else {
             this.start();

@@ -13,14 +13,13 @@ const loaderUtils = require('loader-utils');
 const hashUtil = require('../../util/hash');
 
 exports = module.exports = function () {
-
   this.register('wepy-parser-file', function (node, depFileCtx) {
-
     let file = depFileCtx.file;
     let fileContent = fs.readFileSync(file, 'utf-8');
     let fileHash = hashUtil.hash(fileContent);
 
-    if (this.compiled[file] && fileHash === this.compiled[file].hash) { // 文件 hash 一致，说明文件无修改
+    if (this.compiled[file] && fileHash === this.compiled[file].hash) {
+      // 文件 hash 一致，说明文件无修改
       depFileCtx = this.compiled[file];
       depFileCtx.useCache = true;
 
@@ -31,44 +30,66 @@ exports = module.exports = function () {
       this.fileDep.cleanDeps(file);
 
       let ext = path.extname(file);
-      this.assets.add(depFileCtx.file, { npm: depFileCtx.npm, dep: true, component: depFileCtx.component, type: depFileCtx.type, wxs: depFileCtx.wxs });
+      this.assets.add(depFileCtx.file, {
+        npm: depFileCtx.npm,
+        dep: true,
+        component: depFileCtx.component,
+        type: depFileCtx.type,
+        wxs: depFileCtx.wxs
+      });
       if (ext === '.js' || ext === '.ts' || ext === '.wxs') {
-        if (depFileCtx.npm && depFileCtx.type !== 'weapp') { // weapp component npm may have import in it.
-          return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
+        if (depFileCtx.npm && depFileCtx.type !== 'weapp') {
+          // weapp component npm may have import in it.
+          return this.applyCompiler(
+            { type: 'script', lang: 'js', content: fileContent },
+            depFileCtx
+          );
         } else {
-          return this.applyCompiler({ type: 'script', lang: node.lang || 'babel', content: fileContent }, depFileCtx);
+          return this.applyCompiler(
+            { type: 'script', lang: node.lang || 'babel', content: fileContent },
+            depFileCtx
+          );
         }
       } else {
         if (ext === this.options.wpyExt) {
           // TODO: why they import a wpy file.
-          this.hookUnique('error-handler', 'script', {
-            code: node.compiled.code,
-            ctx: depFileCtx,
-            type: 'error',
-            message: `Can not import a wepy component, please use "usingComponents" to declear a component`,
-            title: 'dependence'
-          }, node.compiled.map ? {
-            sourcemap: node.compiled.map,
-            start: depFileCtx.dep.loc.start,
-            end: depFileCtx.dep.loc.end
-          } : depFileCtx.dep.loc);
+          this.hookUnique(
+            'error-handler',
+            'script',
+            {
+              code: node.compiled.code,
+              ctx: depFileCtx,
+              type: 'error',
+              message: 'Can not import a wepy component, please use "usingComponents" to declear a component',
+              title: 'dependence'
+            }, node.compiled.map ? {
+              sourcemap: node.compiled.map,
+              start: depFileCtx.dep.loc.start,
+              end: depFileCtx.dep.loc.end
+            } : depFileCtx.dep.loc);
           throw new Error('EXIT');
         } else {
           console.log(node);
-          this.hookUnique('error-handler', 'script', {
-            code: node.compiled.code,
-            ctx: depFileCtx,
-            type: 'error',
-            message: `Unrecognized import extension: ${depFileCtx.file}`,
-            title: 'dependence'
-          }, node.compiled.map ? {
-            sourcemap: node.compiled.map,
-            start: depFileCtx.dep.loc.start,
-            end: depFileCtx.dep.loc.end
-          } : depFileCtx.dep.loc);
+          this.hookUnique(
+            'error-handler',
+            'script',
+            {
+              code: node.compiled ? node.compiled.code : '',
+              ctx: depFileCtx,
+              type: 'error',
+              message: `Unrecognized import extension: ${depFileCtx.file}`,
+              title: 'dependence'
+            },
+            (node.compiled && node.compiled.map)
+              ? {
+                sourcemap: node.compiled.map,
+                start: depFileCtx.dep.loc.start,
+                end: depFileCtx.dep.loc.end
+              }
+              : depFileCtx.dep.loc);
           throw new Error('EXIT');
         }
       }
     }
   });
-}
+};
