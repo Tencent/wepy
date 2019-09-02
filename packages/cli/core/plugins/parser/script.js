@@ -1,4 +1,3 @@
-
 /**
  * Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
@@ -22,9 +21,13 @@ const RawSource = require('webpack-sources').RawSource;
 const npmTraverseFileMap = {};
 
 exports = module.exports = function () {
-
   this.register('wepy-parser-dep', function (node, ctx, dep) {
-    return this.resolvers.normal.resolve({issuer: ctx.file}, path.dirname(ctx.file), dep.module, {}).then(rst => {
+    return this.resolvers.normal.resolve(
+      { issuer: ctx.file },
+      path.dirname(ctx.file),
+      dep.module,
+      {}
+    ).then(rst => {
       let npm = rst.meta.descriptionFileRoot !== this.context;
 
       let assets = this.assets;
@@ -36,13 +39,26 @@ exports = module.exports = function () {
       }
 
       let data = assets.data(file);
-      if (data !== undefined && this.compiled[file] && this.compiled[file].hash) {
+      if (
+        data !== undefined
+        && this.compiled[file]
+        && this.compiled[file].hash
+      ) {
         let fileContent = fs.readFileSync(file, 'utf-8');
         let fileHash = hashUtil.hash(fileContent);
-        if (fileHash === this.compiled[file].hash) {  // File is not changed, do not compile again
-          if (data.parser && data.parser.deps && data.parser.deps.length && !npmTraverseFileMap[file]) { // If it has dependences, walk throguh all dependences
+        if (fileHash === this.compiled[file].hash) {
+          // File is not changed, do not compile again
+          if (
+            data.parser
+            && data.parser.deps
+            && data.parser.deps.length
+            && !npmTraverseFileMap[file]
+          ) {
+            // If it has dependences, walk throguh all dependences
             npmTraverseFileMap[file] = npm;
-            let depTasks = data.parser.deps.map(dep => this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep));
+            let depTasks = data.parser.deps.map(
+              dep => this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep)
+            );
             return Promise.all(depTasks).then(rst => {
               data.depModules = rst;
               return data;
@@ -55,25 +71,35 @@ exports = module.exports = function () {
         }
       }
 
-      return this.hookUnique('wepy-parser-file', node, { file: file, npm: npm, component: ctx.component, type: ctx.type, dep, wxs: !!ctx.wxs });
+      return this.hookUnique('wepy-parser-file', node, {
+        file: file,
+        npm: npm,
+        component: ctx.component,
+        type: ctx.type,
+        dep,
+        wxs: !!ctx.wxs
+      });
     });
   });
 
   this.register('wepy-parser-script', function (node, ctx) {
     let assets = this.assets;
-    let npmModules = this.npm;
     if (ctx.npm && !ctx.component && !ctx.wxs) {
-      if (this.vendors.pending(ctx.file)) { // file compile is pending
+      if (this.vendors.pending(ctx.file)) {
+        // file compile is pending
         let moduleId = this.vendors.get(ctx.file);
         return Promise.resolve(moduleId);
       }
       ctx.vendorId = this.vendors.add(ctx.file, 'npm');
     }
 
-    if (ctx.useCache && node.parsed) { // File is not changed
+    if (ctx.useCache && node.parsed) {
+      // File is not changed
       let walker = node.parsed.parser;
 
-      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
+      let depTasks = walker.deps.map(
+        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
+      );
 
       return Promise.all(depTasks).then(rst => {
         return node.parsed;
@@ -85,7 +111,9 @@ exports = module.exports = function () {
       let walker = new Walker(this, astData, node.lang);
       walker.run();
 
-      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
+      let depTasks = walker.deps.map(
+        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
+      );
       return Promise.all(depTasks).then(rst => {
         let obj = {
           file: ctx.file,
