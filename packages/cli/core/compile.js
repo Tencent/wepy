@@ -219,7 +219,8 @@ class Compile extends Hook {
       this.hookSeq('build-app', app);
       this.hookUnique('output-app', app);
       return Promise.all(tasks);
-    }).then(this.buildComps.bind(this));
+    }).then(this.buildComps.bind(this))
+      .catch(this.handleBuildErr.bind(this));
   }
 
   buildComps (comps) {
@@ -271,24 +272,10 @@ class Compile extends Hook {
         this.logger.info('watching...');
         this.watch();
       }
-    }).catch(e => {
-      this.running = false;
-      if (e.message !== 'EXIT') {
-        this.logger.error(e);
-      }
-      if (this.logger.level() !== 'trace') {
-        this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
-      } else {
-        this.logger.error('compile', 'Compile failed.');
-      }
-      if (this.options.watch) {
-        this.logger.info('watching...');
-        this.watch();
-      }
     });
   }
 
-  partialBuild (files) {
+  partialBuild (buildTask) {
     if (this.running) {
       return;
     }
@@ -296,7 +283,7 @@ class Compile extends Hook {
     this.logger.info('build wpy files', 'start...');
 
     // just compile these files of wpyExt
-    const tasks = files.map(file => {
+    const tasks = buildTask.files.map(file => {
       if (fs.existsSync(file)) {
         return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
       }
@@ -307,7 +294,43 @@ class Compile extends Hook {
       });
     });
 
-    Promise.all(tasks).then(this.buildComps.bind(this));
+    Promise.all(tasks)
+      .then(this.buildComps.bind(this))
+      .catch(this.handleBuildErr.bind(this));
+  }
+
+  assetsBuild (buildTask) {
+    if (this.running) {
+      return;
+    }
+    this.running = true;
+    this.logger.info('build ' + buildTask.assetExt + ' files', 'start...');
+
+    const tasks = buildTask.files.map(file => {
+      const ctx = this.compiled[file];
+      return this.hookUnique('wepy-parser-file', {}, ctx);
+    });
+
+    // just compile, build and out assets
+    Promise.all(tasks).then(() => {
+      return this.buildComps(undefined);
+    }).catch(this.handleBuildErr.bind(this));
+  }
+
+  handleBuildErr (err) {
+    this.running = false;
+    if (err.message !== 'EXIT') {
+      this.logger.error(err);
+    }
+    if (this.logger.level() !== 'trace') {
+      this.logger.error('compile', 'Compile failed. Add "--log trace" to see more details');
+    } else {
+      this.logger.error('compile', 'Compile failed.');
+    }
+    if (this.options.watch) {
+      this.logger.info('watching...');
+      this.watch();
+    }
   }
 
   watch () {
@@ -339,11 +362,10 @@ class Compile extends Hook {
           outputAssets: false
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-          if (task.outputAssets) {
-            // just compile, build and out asserts
-            this.buildComps(undefined);
-          } if (task.partial && task.files.length > 0) {
-            this.partialBuild(task.files);
+          if (task.outputAssets && task.files.length > 0) {
+            this.assetsBuild(buildTask);
+          } else if (task.partial && task.files.length > 0) {
+            this.partialBuild(buildTask);
           } else {
             this.start();
           }
