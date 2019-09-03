@@ -53,13 +53,11 @@ exports = module.exports = function () {
   // when .js, .ts file changed
   ['js', 'ts'].forEach(ext => {
     this.register('wepy-watch-file-changed-' + ext, function (buildTask) {
-      this.logger.info('build ' + ext + ' files', 'start...');
-      const ctx = this.compiled[buildTask.changed];
+      buildTask.outputAssets = true;
+      buildTask.files.push(buildTask.changed);
+      buildTask.assetExt = ext;
 
-      return this.hookUnique('wepy-parser-file', {}, ctx).then(() => {
-        buildTask.outputAssets = true;
-        return buildTask;
-      });
+      return buildTask;
     });
   });
 };
