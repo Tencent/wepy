@@ -8,6 +8,22 @@ class Hook {
       this._hooks[key] = [];
     }
     this._hooks[key].push(fn);
+
+    const createUnregister = function (key, fn) {
+      return function () {
+        let fns = this._hooks[key];
+        if (fns && typeof fn === 'function') {
+          fns = fns.filter(f => f !== fn);
+          if (fns.length > 0) {
+            this._hooks[key] = fns;
+          } else {
+            delete this._hooks[key];
+          }
+        }
+      };
+    };
+
+    return createUnregister(key, fn).bind(this);
   }
 
   hasHook (key) {
@@ -93,18 +109,6 @@ class Hook {
       (typeof fn === 'function') && (fn.apply(this, args));
     });
     return (args.length <= 1 ? args[0] : args);
-  }
-
-  unregister (key, fn) {
-    let fns = this._hooks[key];
-    if (fns && typeof fn === 'function') {
-      fns = fns.filter(f => f !== fn);
-      if (fns.length > 0) {
-        this._hooks[key] = fns;
-      } else {
-        delete this._hooks[key];
-      }
-    }
   }
 
   unregisterAll (key) {
