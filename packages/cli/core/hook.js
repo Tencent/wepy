@@ -99,6 +99,18 @@ class Hook {
     return (args.length <= 1 ? args[0] : args);
   }
 
+  unregister (key, fn) {
+    let fns = this._hooks[key];
+    if (fns && typeof fn === 'function') {
+      fns = fns.filter(f => f !== fn);
+      if (fns.length > 0) {
+        this._hooks[key] = fns;
+      } else {
+        delete this._hooks[key];
+      }
+    }
+  }
+
   unregisterAll (key) {
     delete this._hooks[key];
   }
