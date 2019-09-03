@@ -20,11 +20,12 @@ describe('Hook', function () {
     const handler2 = function () {
     };
 
-    hook.register('process-test', handler1);
+    const unregisterHandler1 = hook.register('process-test', handler1);
     hook.register('process-test', handler2);
     expect(hook._hooks['process-test']).to.includes(handler1);
     expect(hook._hooks['process-test']).to.includes(handler2);
-    hook.unregister('process-test', handler1);
+
+    unregisterHandler1();
     expect(hook._hooks['process-test']).to.not.includes(handler1);
     expect(hook._hooks['process-test']).to.includes(handler2);
 
