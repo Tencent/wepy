@@ -97,21 +97,21 @@ exports = module.exports = function () {
       if (ctx.type === 'app') {
         appUsingComponents = parseComponents;
         delete config.usingComponents;
-      } else if (ctx.type === 'page'
-        || (ctx.component && (ctx.type === 'wepy' || ctx.type === 'weapp'))) {
+      } else {
         config.usingComponents = resolvedUsingComponents;
-        if (appUsingComponents) {
-          appUsingComponents.forEach(comp => {
-            // Existing in page components, then ignore
-            // Resolve path for page components
-            if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
-              const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
-              const parsedPath = path.parse(relativePath);
-              // Remove wpy ext
-              config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
-            }
-          });
-        }
+      }
+      // page Components will inherit app using components
+      if (appUsingComponents && ctx.type === 'page') {
+        appUsingComponents.forEach(comp => {
+          // Existing in page components, then ignore
+          // Resolve path for page components
+          if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
+            const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
+            const parsedPath = path.parse(relativePath);
+            // Remove wpy ext
+            config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
+          }
+        });
       }
       ctx.sfc.config.parsed = {
         output: config,
