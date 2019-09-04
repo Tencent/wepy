@@ -285,7 +285,11 @@ class Compile extends Hook {
     // just compile these files of wpyExt
     const tasks = buildTask.files.map(file => {
       if (fs.existsSync(file)) {
-        return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
+        let type = 'page';
+        if (this.compiled[file]) {
+          type = this.compiled[file].type
+        }
+        return this.hookUnique('wepy-parser-wpy', { path: file, type });
       }
       this.hookUnique('error-handler', {
         type: 'error',

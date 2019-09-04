@@ -27,7 +27,6 @@ exports = module.exports = function () {
       wxsCtx = Object.assign({}, ctx, {
         file,
         wxs: true,
-        type: 'wxs',
         hash: fileHash
       });
       this.compiled[file] = wxsCtx;
