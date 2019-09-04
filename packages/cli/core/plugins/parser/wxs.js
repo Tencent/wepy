@@ -14,29 +14,34 @@ exports = module.exports = function () {
       output
     };
     const fileHash = node.src ? hashUtil.hash(code) : ctx.hash;
-    const file = node.src ? path.resolve(path.dirname(ctx.file), node.src) : ctx.file;
-    const isHashEqual = !!this.compiled[file] && fileHash === this.compiled[file].hash
+    // If have src attribute, then use src.wxs as ctx key
+    // If do not have src, then create a fake xxx.wpy_wxs as ctx key.
+    // Can not use wpy ctx, because it's generated in wpy parse.
+    const cacheKey = node.src
+      ? path.resolve(path.dirname(ctx.file), node.src)
+      : (ctx.file + '_wxs');
+    const isHashEqual = !!this.compiled[cacheKey] && fileHash === this.compiled[cacheKey].hash
     let wxsCtx = null;
 
     if (node.src && isHashEqual) {
       // If node has src, then use src file cache
-      wxsCtx = this.compiled[file];
+      wxsCtx = this.compiled[cacheKey];
       wxsCtx.useCache = true;
       return Promise.resolve(wxsCtx);
     } else {
       wxsCtx = Object.assign({}, ctx, {
-        file,
+        file: ctx.file,
         wxs: true,
         hash: fileHash
       });
-      this.compiled[file] = wxsCtx;
+      this.compiled[cacheKey] = wxsCtx;
 
       // If sfc file hash is equal
       if (isHashEqual) {
         return Promise.resolve(wxsCtx);
       }
       if (node.src) {
-        this.assets.add(wxsCtx.file, {
+        this.assets.add(cacheKey, {
           npm: wxsCtx.npm,
           wxs: true,
           dep: true,
