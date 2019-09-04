@@ -1,6 +1,6 @@
 {
   "name": "@wepy/cli",
-  "version": "2.0.0-alpha.18",
+  "version": "2.0.0-alpha.19",
   "main": "bin/wepy.js",
   "bin": {
     "wepy": "bin/wepy.js"
@@ -77,6 +77,6 @@
     "access": "public"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/cli@2.0.0-alpha.18",
-  "_commitid": "a1767a4"
+  "_id": "@wepy/cli@2.0.0-alpha.19",
+  "_commitid": "96c1595"
 }
