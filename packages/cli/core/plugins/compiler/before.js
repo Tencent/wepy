@@ -42,7 +42,21 @@ exports = module.exports = function () {
 
   // when .wxs file changed
   this.register('wepy-watch-file-changed-wxs', function (buildTask) {
-    buildTask.files = this.fileDep.getSources(buildTask.changed);
+    let queue = [];
+    const wpyExtFiles = [];
+
+    // find wpyExtFiles of deped
+    queue = queue.concat(this.fileDep.getSources(buildTask.changed));
+    while (queue.length > 0) {
+      const depedFile = queue.shift();
+      if (path.extname(depedFile) === this.options.wpyExt) {
+        wpyExtFiles.push(depedFile);
+      } else {
+        queue = queue.concat(this.fileDep.getSources(depedFile));
+      }
+    }
+
+    buildTask.files = wpyExtFiles;
     if (buildTask.files.includes(this.options.entry)) {
       buildTask.partial = false;
     }
