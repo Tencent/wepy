@@ -16,6 +16,8 @@
     "test": "./scripts/test.sh",
     "clean": "./scripts/clean.sh",
     "publish": "./scripts/npm_publish/index.js publish",
+    "pub": "./node_modules/.bin/verpub publish",
+    "pub:dry": "./node_modules/.bin/verpub publish --dry-run",
     "commit": "git cz"
   },
   "repository": {
