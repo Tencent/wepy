@@ -30,7 +30,7 @@ exports = module.exports = function () {
       return Promise.resolve(wxsCtx);
     } else {
       wxsCtx = Object.assign({}, ctx, {
-        file: ctx.file,
+        file: node.src ? cacheKey : ctx.file,
         wxs: true,
         hash: fileHash
       });
