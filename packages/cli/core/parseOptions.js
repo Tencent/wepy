@@ -1,8 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
-
-const isMacOS = os.platform === 'darwin';
 
 const DEFAULT_OPTIONS = {
   'entry': { type: String, default: 'app' },
