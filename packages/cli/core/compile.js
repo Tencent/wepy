@@ -115,7 +115,7 @@ class Compile extends Hook {
   }
 
   run () {
-    return this.init().then(() => this.start())
+    return this.init().then(() => this.start());
   }
 
   init () {
