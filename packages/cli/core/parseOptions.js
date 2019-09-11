@@ -1,5 +1,8 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+
+const isMacOS = os.platform === 'darwin';
 
 const DEFAULT_OPTIONS = {
   'entry': { type: String, default: 'app' },
@@ -12,6 +15,7 @@ const DEFAULT_OPTIONS = {
   'eslint': { type: Boolean, default: true },
   'cliLogs': { type: Boolean, default: false },
   'watch': { type: Boolean, default: false },
+  'watchOption': { type: Object },
   'noCache': { type: Boolean, default: false },
   'build.web': { type: Object },
   'build.web.htmlTemplate': { type: String },
