@@ -11,6 +11,8 @@ const DEFAULT_OPTIONS = {
   'wpyExt': { type: String, default: '.wpy' },
   'eslint': { type: Boolean, default: true },
   'cliLogs': { type: Boolean, default: false },
+  'watch': { type: Boolean, default: false },
+  'noCache': { type: Boolean, default: false },
   'build.web': { type: Object },
   'build.web.htmlTemplate': { type: String },
   'build.web.htmlOutput': { type: String },
@@ -110,9 +112,6 @@ function convert (args) {
 
   let opt = require(DEFAULT_CONFIG);
   let argOpt = parse(args, DEFAULT_OPTIONS, true);
-
-  argOpt.watch = !!args.watch;
-  argOpt.noCache = !!args.noCache;
 
   return Object.assign({}, parse(opt), argOpt);
 }
