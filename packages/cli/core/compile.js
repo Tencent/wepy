@@ -476,7 +476,11 @@ class Compile extends Hook {
 }
 
 exports = module.exports = (program) => {
-  let opt = parseOptions.convert(program);
+  const opt = parseOptions.parse(program);
 
-  return new Compile(opt);
+  const compilation = new Compile(opt);
+
+  compilation.run = () => compilation.init().then(() => compilation.start());
+
+  return compilation;
 };
