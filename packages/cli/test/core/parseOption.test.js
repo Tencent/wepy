@@ -28,6 +28,8 @@ describe('parseOptions', function() {
     expect(po.parse({wpyExt: '.vue'}).wpyExt).to.equal('.vue');
 
     expect(po.parse({build: {web: {resolve: {a: 1}}}}).build.web.resolve.a).to.equal(1);
+
+    expect(po.parse({watchOption: { awaitWriteFinish: { stabilityThreshold: 1000} }}).watchOption.awaitWriteFinish.stabilityThreshold).to.equal(1000);
   });
 
 });

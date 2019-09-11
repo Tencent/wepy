@@ -12,6 +12,7 @@ const DEFAULT_OPTIONS = {
   'eslint': { type: Boolean, default: true },
   'cliLogs': { type: Boolean, default: false },
   'watch': { type: Boolean, default: false },
+  'watchOption': { type: Object },
   'noCache': { type: Boolean, default: false },
   'build.web': { type: Object },
   'build.web.htmlTemplate': { type: String },
