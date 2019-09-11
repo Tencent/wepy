@@ -114,6 +114,10 @@ class Compile extends Hook {
     return this;
   }
 
+  run () {
+    return this.init().then(() => this.start())
+  }
+
   init () {
     this.register('process-clear', type => {
       this.compiled = {};
@@ -479,8 +483,6 @@ exports = module.exports = (program) => {
   const opt = parseOptions.parse(program);
 
   const compilation = new Compile(opt);
-
-  compilation.run = () => compilation.init().then(() => compilation.start());
 
   return compilation;
 };
