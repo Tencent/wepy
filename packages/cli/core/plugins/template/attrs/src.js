@@ -3,8 +3,6 @@ const path = require('path');
 const ReplaceSource = require('webpack-sources').ReplaceSource;
 const RawSource = require('webpack-sources').RawSource;
 
-const VALID_TAG = ['audio', 'image', 'video'];
-
 exports = module.exports = function () {
 
   this.register('url-to-module', function urlToModule (url) {
@@ -30,16 +28,7 @@ exports = module.exports = function () {
 
   this.register('template-parse-ast-attr-src', function parseAssetUrl ({item, name, expr, ctx}) {
 
-    let parsed = {};
-
-    if (!VALID_TAG.includes(item.name)) {
-      // ignore asset transform
-      // e.g: <web-view src="https://mp.weixin.qq.com/"></web-view>
-      parsed.attr = { attrs: { src: expr } };
-      return parsed.attr;
-    }
-
-    parsed = this.hookUnique('url-to-module', expr);
+    let parsed = this.hookUnique('url-to-module', expr);
 
     if (parsed.isModule) {
       const context = path.dirname(ctx.file);
