@@ -434,7 +434,8 @@ class AstWalker {
               if (this.compilation.hasHook('prewalk-' + declarator.type, this, declarator, name, decl)) {
                 this.compilation.hook('prewalk-' + declarator.type, this, declarator, name, decl);
               } else {
-                if (declarator.init && declarator.init.type === 'CallExpression') {
+                // Ignore child scope
+                if (this.scope.instances && declarator.init && declarator.init.type === 'CallExpression') {
                   if (declarator.init.callee.name === 'require') {
                     if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === 'wepy') {
                       this.scope.instances.push(name);
