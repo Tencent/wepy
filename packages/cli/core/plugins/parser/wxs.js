@@ -30,6 +30,7 @@ exports = module.exports = function () {
       return Promise.resolve(wxsCtx);
     } else {
       wxsCtx = Object.assign({}, ctx, {
+        // If node have a src, then ctx.file has to be node.src related, otherwise, there will be an error while require a wxs file in the wxs file
         file: node.src ? cacheKey : ctx.file,
         wxs: true,
         hash: fileHash
