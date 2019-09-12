@@ -98,7 +98,7 @@ exports = module.exports = function () {
       let walker = node.parsed.parser;
 
       let depTasks = walker.deps.map(
-        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
+        dep => this.hookUnique('wepy-parser-dep', node, { ...ctx, component: false }, dep)
       );
 
       return Promise.all(depTasks).then(rst => {
@@ -112,7 +112,7 @@ exports = module.exports = function () {
       walker.run();
 
       let depTasks = walker.deps.map(
-        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
+        dep => this.hookUnique('wepy-parser-dep', node, { ...ctx, component: false }, dep)
       );
       return Promise.all(depTasks).then(rst => {
         let obj = {
