@@ -31,13 +31,31 @@ exports = module.exports = function () {
     if (ctx.type !== 'app') { // app.json does not need it
       config.component = true;
     }
-    let componentKeys = config.usingComponents ? Object.keys(config.usingComponents) : [];
+    if (!config.usingComponents) {
+      config.usingComponents = {};
+    }
+
+    let componentKeys = Object.keys(config.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
       ctx.sfc.config.parsed = {
         output: config
       };
       return Promise.resolve(true);
+    }
+    // page Components will inherit app using components
+    if (appUsingComponents && ctx.type === 'page') {
+      appUsingComponents.forEach(comp => {
+        // Existing in page components, then ignore
+        // Resolve path for page components
+        if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
+          const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
+          const parsedPath = path.parse(relativePath);
+          // Remove wpy ext
+          config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
+          componentKeys.push(comp.name);
+        }
+      });
     }
 
     let resolvedUsingComponents = {};
@@ -100,19 +118,7 @@ exports = module.exports = function () {
       } else {
         config.usingComponents = resolvedUsingComponents;
       }
-      // page Components will inherit app using components
-      if (appUsingComponents && ctx.type === 'page') {
-        appUsingComponents.forEach(comp => {
-          // Existing in page components, then ignore
-          // Resolve path for page components
-          if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
-            const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
-            const parsedPath = path.parse(relativePath);
-            // Remove wpy ext
-            config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
-          }
-        });
-      }
+
       ctx.sfc.config.parsed = {
         output: config,
         components: parseComponents
