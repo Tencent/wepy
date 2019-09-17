@@ -50,6 +50,7 @@ exports = module.exports = function () {
           // File is not changed, do not compile again
           if (
             data.parser
+            && !data.depModules // Ignore if deps modules are resolved, otherwise there will be a dead loop
             && data.parser.deps
             && data.parser.deps.length
             && !npmTraverseFileMap[file]
