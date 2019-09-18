@@ -1,4 +1,5 @@
 const path = require('path');
+const CONST = require('../../util/const');
 
 exports = module.exports = function () {
   const styleHooker = (content, options, ctx) => {
@@ -13,7 +14,12 @@ exports = module.exports = function () {
   // When file changed in --watch model
   this.register('before-wepy-watch-file-changed', function beforeWatchFileChanged(buildTask) {
     const changedFile = buildTask.changed;
+    const parsedPath = path.parse(changedFile);
+    const weappCacheKey = path.join(parsedPath.dir, parsedPath.name) + CONST.WEAPP_EXT;
+
     const isInvolved = this.fileDep.isInvolved(changedFile);
+    const isWeappInvolved = this.fileDep.isInvolved(weappCacheKey);
+
     this.fileDep.getSources(changedFile).forEach(depedFile => {
       if (path.isAbsolute(depedFile)) {
         // clear the file hash, to remove the file cache
@@ -37,7 +43,21 @@ exports = module.exports = function () {
         buildTask = this.hookSeq('wepy-watch-file-changed-' + ext, buildTask);
       }
     }
+
+    if (isWeappInvolved) {
+      this.logger.silly('watch', `Watcher triggered by file changes: ${changedFile}`);
+      buildTask.changed = weappCacheKey;
+      buildTask = this.hookSeq('wepy-watch-file-changed-weapp', buildTask);
+    }
+
     return Promise.resolve(buildTask);
+  });
+
+  this.register('wepy-watch-file-changed-weapp', function (buildTask) {
+    buildTask.weapp = true;
+    buildTask.files.push(buildTask.changed);
+
+    return buildTask;
   });
 
   // when .wxs file changed

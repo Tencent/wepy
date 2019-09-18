@@ -9,6 +9,7 @@
 const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
+const CONST = require('../../util/const')
 
 const wxmlAst = require('../../ast/wxml');
 
@@ -36,18 +37,13 @@ exports = module.exports = function () {
       component: true,
       type: 'weapp', // This is a weapp original component
     };
+    let weappCacheKey = file + CONST.WEAPP_EXT;
 
-    if (!this.compiled[file]) {
-      this.compiled[file] = {};
+    if (!this.compiled[weappCacheKey]) {
+      this.compiled[weappCacheKey] = comp;
     }
-    let wpyTask = [];
 
-    ['.js', '.wxml', 'wxss', '.json'].forEach(v => this.fileDep.addDeps(file + v));
-
-    let styleContent = '';
-    if (fs.existsSync(file + '.wxss')) {  // If there is no wxss, then style is empty
-      styleContent = fs.readFileSync(file + '.wxss', 'utf-8');
-    }
+    this.fileDep.addDeps(weappCacheKey);
 
     sfc.styles[0] = {
       content: readFile(file + '.wxss'),
@@ -63,7 +59,7 @@ exports = module.exports = function () {
 
     // JS file should be there.
     sfc.script = {
-      content: fs.readFileSync(file + '.js', 'utf-8'),
+      content: readFile(file + '.js', 'Page({})'),
       type: 'script',
       lang: 'babel'
     };
