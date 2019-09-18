@@ -279,6 +279,24 @@ class Compile extends Hook {
     });
   }
 
+  weappBuild (buildTask) {
+    if (this.running) {
+      return;
+    }
+    this.running = true;
+    this.logger.info('build weapp files', 'start...');
+
+    const tasks = buildTask.files.map(file => {
+      const comp = this.compiled[file];
+
+      return this.hookUnique('wepy-parser-component', comp);
+    })
+
+    Promise.all(tasks)
+      .then(this.buildComps.bind(this))
+      .catch(this.handleBuildErr.bind(this));
+  }
+
   partialBuild (buildTask) {
     if (this.running) {
       return;
@@ -370,7 +388,9 @@ class Compile extends Hook {
           outputAssets: false
         };
         this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-          if (task.outputAssets && task.files.length > 0) {
+          if (task.weapp && task.files.length > 0) {
+            this.weappBuild(buildTask);
+          } else if (task.outputAssets && task.files.length > 0) {
             this.assetsBuild(buildTask);
           } else if (task.partial && task.files.length > 0) {
             this.partialBuild(buildTask);
