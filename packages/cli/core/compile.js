@@ -228,15 +228,16 @@ class Compile extends Hook {
   }
 
   buildComps (comps) {
+    let components = [];
+    let originalComponents = [];
+    
     function buildComponents (comps) {
       if (!comps) {
         return Promise.resolve();
       }
       this.hookSeq('build-components', comps);
       this.hookUnique('output-components', comps);
-
-      let components = [];
-      let originalComponents = [];
+      
       let tasks = [];
 
       comps.forEach(comp => {
