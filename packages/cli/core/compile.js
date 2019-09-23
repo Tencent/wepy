@@ -220,6 +220,13 @@ class Compile extends Hook {
         });
       });
 
+      if (appConfig.tabBar && appConfig.tabBar.custom) {
+        let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
+        if (fs.existsSync(file)) {
+          tasks.push(this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' }));
+        }
+      }
+
       this.hookSeq('build-app', app);
       this.hookUnique('output-app', app);
       return Promise.all(tasks);

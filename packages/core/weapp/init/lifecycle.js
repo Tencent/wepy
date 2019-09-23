@@ -109,6 +109,10 @@ export function patchLifecycle (output, options, rel, isComponent) {
       vm.$root = vm;
       vm.$app = app;
     }
+    if (this.is === 'custom-tab-bar/index') {
+      vm.$app = app;
+      vm.$parent = app;
+    }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
     if (!vm.$app) {
