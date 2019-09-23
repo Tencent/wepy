@@ -235,15 +235,16 @@ class Compile extends Hook {
   }
 
   buildComps (comps) {
+    let components = [];
+    let originalComponents = [];
+    
     function buildComponents (comps) {
       if (!comps) {
         return Promise.resolve();
       }
       this.hookSeq('build-components', comps);
       this.hookUnique('output-components', comps);
-
-      let components = [];
-      let originalComponents = [];
+      
       let tasks = [];
 
       comps.forEach(comp => {
@@ -252,9 +253,9 @@ class Compile extends Hook {
         let parsedComponents = parsed.components || [];
 
         parsedComponents.forEach(com => {
-          if (com.type === 'wepy') { // wepy 组件
+          if (com.type === 'wepy' && !this.fileDep.isInvolved(com.path)) { // wepy 组件
             tasks.push(this.hookUnique('wepy-parser-wpy', com));
-          } else if (com.type === 'weapp') { // 原生组件
+          } else if (com.type === 'weapp' && !this.fileDep.isInvolved(com.path)) { // 原生组件
             tasks.push(this.hookUnique('wepy-parser-component', com));
           }
         });
