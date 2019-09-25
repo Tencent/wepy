@@ -3,7 +3,7 @@ const genRel = (rel) => {
   if (typeof rel === 'string')
     return rel;
 
-  let handlerStr = '{'
+  let handlerStr = '{';
   for (let h in rel.handlers) {
 
     let handler = rel.handlers[h];
@@ -17,7 +17,7 @@ const genRel = (rel) => {
         }
       });
     }
-    handlerStr += '},'
+    handlerStr += '},';
   }
   if (handlerStr.length > 2) {
     handlerStr = handlerStr.substring(0, handlerStr.length - 1);
@@ -42,10 +42,10 @@ const genRel = (rel) => {
 };
 
 exports = module.exports = function () {
-  this.register('script-injection', function scriptInjection (parsed, ref) {
+  this.register('script-injection', function scriptInjection(parsed, ref) {
 
-    let relstr = genRel(ref);
-    let code = parsed.code;
+    let relStr = genRel(ref);
+    const { source } = parsed;
     let entry = parsed.parser.entry;
     if (!entry) {
       this.hookUnique('error-handler', {
@@ -62,9 +62,20 @@ exports = module.exports = function () {
     if (args === 0) {
       pos = entry.callee.end + 1;
     } else {
-      pos = args[args.length -1].end;
-      relstr = ', ' + relstr;
+      pos = args[args.length - 1].end;
+      relStr = ', ' + relStr;
     }
-    parsed.source.insert(pos, relstr);
+
+    // avoid to import duplicated
+    if (source.relIndex != null) {
+      const idx = source.replacements.findIndex(arr => {
+        return arr[arr.length - 1] === source.relIndex;
+      });
+      if (idx !== -1) {
+        source.replacements.splice(idx, 1);
+      }
+    }
+    source.insert(pos, relStr);
+    source.relIndex = source.replacements.length - 1;
   });
-}
+};
