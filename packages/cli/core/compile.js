@@ -492,6 +492,11 @@ class Compile extends Hook {
         config: 'json',
         template: 'wxml'
       };
+      
+      if(this.options.output === 'ant'){
+        outputMap.styles = 'acss';
+        outputMap.template = 'axml';
+      }
 
       Object.keys(outputMap).forEach(k => {
         if (sfc[k] && sfc[k].outputCode) {
