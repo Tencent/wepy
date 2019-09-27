@@ -51,7 +51,7 @@ export default class Base {
       return this;
 
     if (!fn) {
-      this._event[event] = null;
+      this._events[event] = null;
       return this;
     }
 
