@@ -1,0 +1,19 @@
+{
+  "name": "@wepy/core",
+  "version": "2.0.0-alpha.11",
+  "main": "./dist/wepy.js",
+  "typings": "types/index.d.ts",
+  "scripts": {
+    "test:types": "tsc -p ./types/test/tsconfig.json",
+    "test": "mocha --require esm ./test/**/*"
+  },
+  "author": "",
+  "license": "MIT",
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/core@2.0.0-alpha.11",
+  "_commitid": "b290915",
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "typescript": "^3.3.3"
+  }
+}
