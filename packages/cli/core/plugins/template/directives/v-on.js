@@ -125,6 +125,10 @@ exports = module.exports = function () {
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
+    
+    if(this.options.output ==='ant' && parsedEvent.type === 'bindtap'){
+      parsedEvent.type = 'onTap'
+    }
 
     /**
      * we can recognition wxs dynamically
