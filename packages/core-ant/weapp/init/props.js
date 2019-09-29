@@ -38,35 +38,39 @@ export function patchProps (output, props) {
     for (let k in props) {
       let prop = props[k];
       let newProp = {};
-
-      // props.type
-      if (isUndef(prop.type)){
-        newProp.type = null;
-      } else if (isArr(prop.type)) {
-        newProp.type = null;
-        console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
-      } else if (AllowedTypes.indexOf(prop.type) === -1) {
-        newProp.type = null;
-        console.warn(`Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`);
-      } else {
-        newProp.type = prop.type;
+      
+      // notsupport obj
+      if(!isObj(prop)){
+        newProps[k] = prop;
+      }else{
+        newProps[k] = prop.default ? prop.default : '';
       }
 
-      // props.default
-      if (!isUndef(prop.default)) {
-        if (isFunc(prop.default)) {
-          newProp.value = prop.default.call(output);
-        } else {
-          newProp.value = prop.default;
-        }
-      }
-      // TODO
-      // props.validator
-      // props.required
-
-      newProp.observer = observerFn(output, props, prop);
-
-      newProps[k] = newProp;
+      // // props.type
+      // if (isUndef(prop.type)){
+      //   newProp.type = null;
+      // } else if (isArr(prop.type)) {
+      //   newProp.type = null;
+      //   console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
+      // } else if (AllowedTypes.indexOf(prop.type) === -1) {
+      //   newProp.type = null;
+      //   console.warn(`Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`);
+      // } else {
+      //   newProp.type = prop.type;
+      // }
+      // // props.default
+      // if (!isUndef(prop.default)) {
+      //   if (isFunc(prop.default)) {
+      //     newProp.value = prop.default.call(output);
+      //   } else {
+      //     newProp.value = prop.default;
+      //   }
+      // }
+      // // TODO
+      // // props.validator
+      // // props.required
+      // newProp.observer = observerFn(output, props, prop);
+      // newProps[k] = newProp;
     }
   }
 
@@ -74,7 +78,7 @@ export function patchProps (output, props) {
 
   });
 
-  // TODO:支付宝
+  // TODO:支付�?
   newProps["onInit"] = ''
   output.properties = newProps;
 };
