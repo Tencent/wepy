@@ -33,6 +33,10 @@ exports = module.exports = function () {
       let assets = this.assets;
       let file = rst.path;
 
+      if(this.options.output === 'ant' && file.indexOf('\\node_modules\\@wepy\\core\\dist\\wepy.js') > 0){
+        file = file.replace('core', 'core-ant');
+      }
+      
       if (!file) {
         // TODO: resovle fail ?
         return rst.path;
@@ -84,6 +88,7 @@ exports = module.exports = function () {
   });
 
   this.register('wepy-parser-script', function (node, ctx) {
+    console.log('vendors update', ctx.file)
     let assets = this.assets;
     if (ctx.npm && !ctx.component && !ctx.wxs) {
       if (this.vendors.pending(ctx.file)) {
@@ -141,6 +146,7 @@ exports = module.exports = function () {
         this.assets.update(ctx.file, obj, types);
         obj.id = assets.get(ctx.file);
         if (ctx.npm && !(ctx.component && ctx.type === 'weapp') && !ctx.wxs) {
+
           this.vendors.update(ctx.file, obj, types);
           obj.vendorId = this.vendors.get(ctx.file);
         }
