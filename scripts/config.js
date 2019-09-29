@@ -24,6 +24,14 @@ const builds = {
     format: 'cjs',
     version: resolvePkgInfo('core').version,
     banner
+  },  
+  'core-ant': {
+    entry: 'packages/core-ant/index.js',
+    dest: 'packages/core-ant/dist/wepy.js',
+    env: 'development',
+    format: 'cjs',
+    version: resolvePkgInfo('core').version,
+    banner
   },
   'redux': {
     entry: 'packages/redux/index.js',
