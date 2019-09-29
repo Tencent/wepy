@@ -23,6 +23,7 @@ const Hook = require('./hook');
 const tag = require('./tag');
 const walk = require('acorn/dist/walk');
 const { isArr } = require('./util/tools');
+const { debounce } = require('throttle-debounce');
 
 const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
@@ -391,10 +392,17 @@ class Compile extends Hook {
       watchOption.ignored = [this.options.target];
     }
 
-    chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
-      if (evt === 'change') {
+    const pendingFiles = [];
+
+    // debounce for watch files
+    const onFileChanged = debounce(300, () => {
+      const changedFiles = pendingFiles.splice(0, pendingFiles.length);
+      if (changedFiles.length > 1) {
+        // if more then one files changed, build the whole app.
+        this.start();
+      } else {
         let buildTask = {
-          changed: path.resolve(filepath),
+          changed: changedFiles[0],
           partial: true,
           files: [],
           outputAssets: false
@@ -410,6 +418,16 @@ class Compile extends Hook {
             this.start();
           }
         });
+      }
+    });
+
+    chokidar.watch([this.options.src], watchOption).on('all', (evt, filepath) => {
+      if (evt === 'change') {
+        const file = path.resolve(filepath);
+        if (!pendingFiles.includes(file)) {
+          pendingFiles.push(file);
+        }
+        onFileChanged();
       }
     });
   }
