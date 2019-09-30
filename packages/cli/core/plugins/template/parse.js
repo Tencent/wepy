@@ -253,7 +253,10 @@ exports = module.exports = function () {
           });
         }
         if (item.parsedAttr.style || (item.bindStyle && item.bindStyle.length)) {
-          let staticStyle = item.parsedAttr.style || '';
+          let staticStyle = (item.parsedAttr.style || '').trim();
+          if (staticStyle !== '' && /;$/.test(staticStyle) === false) {
+            staticStyle += ';';
+          }
           let bindStyle = (item.bindStyle && item.bindStyle.length) ? ` {{ ${item.bindStyle.join(' + ')} }}` : '';
           str += ` style="${staticStyle + bindStyle}"`;
         }
