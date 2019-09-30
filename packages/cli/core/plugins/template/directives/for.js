@@ -61,12 +61,21 @@ exports = module.exports = function () {
       });
     }
 
-    item['v-for'] = {
-      'wx:for': `{{ ${res.for} }}`,
-      'wx:for-index': `${res.iterator1 || 'index'}`,
-      'wx:for-item': `${res.alias || 'item'}`,
-      'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
-    };
+    if(this.options.output === 'ant'){
+      item['v-for'] = {
+        'a:for': `{{ ${res.for} }}`,
+        'a:for-index': `${res.iterator1 || 'index'}`,
+        'a:for-item': `${res.alias || 'item'}`,
+        'a:key': `${res.iterator2 || res.iterator1 || 'index'}`
+      };
+    }else{
+      item['v-for'] = {
+        'wx:for': `{{ ${res.for} }}`,
+        'wx:for-index': `${res.iterator1 || 'index'}`,
+        'wx:for-item': `${res.alias || 'item'}`,
+        'wx:key': `${res.iterator2 || res.iterator1 || 'index'}`
+      };
+    }
 
     return {
       item,
