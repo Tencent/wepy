@@ -9,7 +9,19 @@ exports = module.exports = function () {
     }
     let moduleId = node.attrs.module;
     let code = node.compiled.code.trim();
-    let output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${!node.src ? '\n' + code + '\n' : ''}</wxs>`;
+    let output;
+    if(this.options.output === 'ant'){
+      let targetFile = ctx.npm ? this.getModuleTarget(ctx.file) : this.getTarget(ctx.file);
+      let target = path.parse(targetFile);
+      
+      output = `<import-sjs name="${moduleId}"${node.src ? ' from="' + node.src + '"' : ' from="./'+ target.name +'.sjs"'}/>`;
+
+      let outputFile = path.join(target.dir, target.name)
+      this.outputFile(outputFile + '.sjs', code, null);
+    }else{
+      output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${!node.src ? '\n' + code + '\n' : ''}</wxs>`;
+    }
+
     node.parsed = {
       output
     };

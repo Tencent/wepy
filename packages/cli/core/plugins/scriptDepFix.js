@@ -55,13 +55,13 @@ exports = module.exports = function () {
             if (dep.statement && dep.statement.type === 'ImportDeclaration') { // import 'xxxxx' from 'xxxxx';
               replaceMent = `'${relativePath}'`;
             } else {
-              replaceMent = `require('${relativePath}')`;
+              replaceMent = `require('./${relativePath}')`;
             }
           } else if (!depMod.npm && depMod.component) {
             let relativePath = path.relative(path.dirname(parsed.file), modFilePath);
             let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
             relativePath = relativePath.replace(reg, '.js').replace(/\\/g, '/');
-            replaceMent = `require('${relativePath}')`;
+            replaceMent = `require('./${relativePath}')`;
           } else {
             if (typeof depMod.vendorId === 'number') {
               let relativePath;
@@ -72,12 +72,13 @@ exports = module.exports = function () {
                 relativePath = path.relative(path.dirname(parsed.file), npmfile);
               }
               relativePath = relativePath.replace(/\\/g, '/')
-              replaceMent = `require('${relativePath}')(${depMod.vendorId})`;
+              replaceMent = `require('./${relativePath}')(${depMod.vendorId})`;
             } else {
-              replaceMent = `require('${dep.module}')`;
+              replaceMent = `require('./${dep.module}')`;
             }
           }
         }
+        
         parsed.source.replace(dep.expr.start, dep.expr.end - 1, replaceMent);
         parsed.fixedDeps[i] = true;
       }

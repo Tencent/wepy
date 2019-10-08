@@ -55,6 +55,8 @@ class Compile extends Hook {
       html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
     };
 
+    // TODO:支付宝 span =>lable，lable不支持tap事件
+
     this.logger = logger;
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
@@ -510,6 +512,11 @@ class Compile extends Hook {
         config: 'json',
         template: 'wxml'
       };
+      
+      if(this.options.output === 'ant'){
+        outputMap.styles = 'acss';
+        outputMap.template = 'axml';
+      }
 
       Object.keys(outputMap).forEach(k => {
         if (sfc[k] && sfc[k].outputCode) {

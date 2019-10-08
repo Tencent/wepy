@@ -100,10 +100,18 @@ exports = module.exports = function () {
   });
 
   this.register('template-parse-ast-attr-v-on.stop', function ({ item, name, expr, event, scope, ctx }) {
-    if (event.type.startsWith('bind')) { // bindtap="xxx"
-      event.type = event.type.replace(/^bind/, 'catch');
-    } else if (event.type.indexOf('-bind') > -1) { // capture-bindtap="xxx"
-      event.type = event.type.replace(/-bind/, '-catch');
+    if(this.options.output === 'ant'){
+      if (event.type.startsWith('on')) { // bindtap="xxx"
+        event.type = event.type.replace(/^on/, 'catch');
+      } else if (event.type.indexOf('-on') > -1) { // capture-bindtap="xxx"
+        event.type = event.type.replace(/-on/, '-catch');
+      }
+    }else{
+      if (event.type.startsWith('bind')) { // bindtap="xxx"
+        event.type = event.type.replace(/^bind/, 'catch');
+      } else if (event.type.indexOf('-bind') > -1) { // capture-bindtap="xxx"
+        event.type = event.type.replace(/-bind/, '-catch');
+      }
     }
     return { item, name, expr, event, scope, ctx };
   });
@@ -125,6 +133,12 @@ exports = module.exports = function () {
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
+    
+    if(this.options.output ==='ant'){
+      if(parsedEvent.type === 'bindtap'){
+        parsedEvent.type = 'onTap'
+      }
+    }
 
     /**
      * we can recognition wxs dynamically

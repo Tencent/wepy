@@ -281,8 +281,22 @@ exports = module.exports = function () {
         attrs[map.value] = `{{ ${expr} }}`;
       }
 
-      if (!attrs[`bind${map.type}`]) {
-        attrs[`bind${map.type}`] = CONST.EVENT_PROXY;
+      // 支付宝
+      if(this.options.output === 'ant'){
+        var attrType;
+        if(map.type === 'input'){
+          attrType = 'onInput'
+        }else{
+          attrType = `bind${map.type}`;
+        }
+
+        if (!attrs[attrType]) {
+          attrs[attrType] = CONST.EVENT_PROXY;
+        }
+      }else{
+        if (!attrs[`bind${map.type}`]) {
+          attrs[`bind${map.type}`] = CONST.EVENT_PROXY;
+        }
       }
 
       if (!rel.models) {
