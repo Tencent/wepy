@@ -1,0 +1,15 @@
+{
+  "name": "core-ant",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/wepy.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SpringHgui",
+  "license": "MIT",
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "typescript": "^3.3.3"
+  }
+}
