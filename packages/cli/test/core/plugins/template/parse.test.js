@@ -8,6 +8,7 @@ const initPlugin = require(`${alias.core}/init/plugin`);
 const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
+
 function cached(fn) {
   var _cache = {};
   return function (key) {
