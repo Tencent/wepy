@@ -60,6 +60,7 @@
     "postcss-selector-parser": "^2.2.3",
     "read-metadata": "^1.0.0",
     "request": "^2.67.0",
+    "throttle-debounce": "^2.1.0",
     "tildify": "^1.2.0",
     "time-ago": "^0.2.1",
     "tty-table": "^2.6.15",
