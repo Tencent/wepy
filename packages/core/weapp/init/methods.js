@@ -138,7 +138,6 @@ export function patchMethods (output, methods, isComponent) {
     }
     child.$evtId = wpyEvt;
     child.$parent = vm;
-    child.$app = vm.$app;
     child.$root = vm.$root;
     return vm;
   };

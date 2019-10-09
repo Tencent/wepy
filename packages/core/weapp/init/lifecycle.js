@@ -115,8 +115,8 @@ export function patchLifecycle (output, options, rel, isComponent) {
     }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
-    if (!vm.$app) {
-      // vm.$app = $global.$app;
+    if (isComponent && !vm.$app) {
+      vm.$app = app;
     }
 
     callUserMethod(vm, vm.$options, 'beforeCreate', args);

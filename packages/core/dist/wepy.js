@@ -2156,7 +2156,6 @@ function patchMethods (output, methods, isComponent) {
     }
     child.$evtId = wpyEvt;
     child.$parent = vm;
-    child.$app = vm.$app;
     child.$root = vm.$root;
     return vm;
   };
@@ -2366,6 +2365,9 @@ function patchLifecycle (output, options, rel, isComponent) {
     }
 
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
+    if (isComponent && !vm.$app) {
+      vm.$app = app;
+    }
 
     callUserMethod(vm, vm.$options, 'beforeCreate', args);
 
