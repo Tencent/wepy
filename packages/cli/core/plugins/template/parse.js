@@ -99,9 +99,6 @@ exports = module.exports = function () {
     });
 
     item.parsedAttr = parsedAttr;
-    if (ctx.file.endsWith('SwiperDots.wpy')) {
-      console.log('parsedAttr:', parsedAttr)
-    }
 
     return [ item, scope, rel, ctx ];
     /* REMOVE LATER
