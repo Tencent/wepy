@@ -247,7 +247,7 @@ exports = module.exports = function () {
         if (item.parsedAttr) {
           Object.keys(item.parsedAttr).forEach(attr => {
             if (item.parsedAttr[attr] !== undefined && attr !== 'class' && attr !== 'style')
-              str += tools.isTrue(item.parsedAttr[attr])
+              str += tools.isTrue(item.parsedAttr[attr]) || item.parsedAttr[attr] === ''
                 ? ` ${attr}`
                 : ` ${attr}="${item.parsedAttr[attr]}"`;
           });

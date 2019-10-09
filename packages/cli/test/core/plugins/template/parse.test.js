@@ -8,6 +8,7 @@ const initPlugin = require(`${alias.core}/init/plugin`);
 const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
+
 function cached(fn) {
   var _cache = {};
   return function (key) {
@@ -34,7 +35,8 @@ const spec = {
     { file: 'v-for' },
     { file: 'v-show' },
     { file: 'bindClass' },
-    { file: 'joinStyle' }
+    { file: 'joinStyle' },
+    { file: 'attrWithoutValue' }
   ],
   event: [
     {
@@ -129,6 +131,7 @@ describe('template-parse', function () {
       assertCodegen(originalRaw, assertRaw, {}, ctx, done);
     });
   });
+
   spec.event.forEach(ctx => {
     it('test attr: ' + ctx.file, function (done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
