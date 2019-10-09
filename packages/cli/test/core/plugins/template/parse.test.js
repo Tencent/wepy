@@ -35,6 +35,7 @@ const spec = {
     { file: 'v-for' },
     { file: 'v-show' },
     { file: 'bindClass' },
+    { file: 'joinStyle' },
     { file: 'attrWithoutValue' }
   ],
   event: [
