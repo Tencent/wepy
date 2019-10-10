@@ -3,7 +3,7 @@ const path = require('path');
 
 exports = module.exports = function () {
 
-  this.register('build-assets', function buildAssets () {
+  this.register('build-assets', function buildAssets() {
 
     this.logger.info('assets', 'building assets');
 
@@ -31,13 +31,16 @@ exports = module.exports = function () {
           filepath = path.join(fileobj.dir, d.outputFileName);
         }
 
-        let targetFile = t.npm ? this.getModuleTarget(filepath) : this.getTarget(filepath);
-        result.push({
-          src: file,
-          targetFile: targetFile,
-          outputCode: d.source.source(),
-          encoding: d.encoding
-        });
+        // do not copy npm files to $vendor.
+        if (!t.npm) {
+          let targetFile = this.getTarget(filepath);
+          result.push({
+            src: file,
+            targetFile: targetFile,
+            outputCode: d.source.source(),
+            encoding: d.encoding
+          });
+        }
       }
     });
     return result;
