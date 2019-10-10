@@ -8,5 +8,7 @@ module.exports = {
   objectTest: 'development',
 
   typeofTest: 'undefined',
-  typeofTest2: 'undefined'
+  typeofTest2: 'undefined',
+
+  builtinFuncValue: 666
 };
