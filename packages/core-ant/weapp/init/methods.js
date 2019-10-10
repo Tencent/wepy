@@ -123,20 +123,21 @@ export function patchMethods (output, methods, isComponent) {
   
   target._initComponent = function (e) {
     let child = e;
-    // let { ref, wpyEvt } = e.target.dataset;
+    let ref = e.$wx.props["data-ref"];
     var wpyEvt = e.$wx.props["data-wpy-evt"];
+    
     let vm = this.$wepy;
     vm.$children.push(child);
-    // if (ref) {
-    //   if (vm.$refs[ref]) {
-    //     warn(
-    //       'duplicate ref "' + ref +
-    //       '" will be covered by the last instance.\n',
-    //       vm
-    //     )
-    //   }
-    //   vm.$refs[ref] = child;
-    // }
+    if (ref) {
+      if (vm.$refs[ref]) {
+        warn(
+          'duplicate ref "' + ref +
+          '" will be covered by the last instance.\n',
+          vm
+        )
+      }
+      vm.$refs[ref] = child;
+    }
     child.$evtId = wpyEvt;
     child.$parent = vm;
     child.$app = vm.$app;
