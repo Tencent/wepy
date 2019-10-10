@@ -131,7 +131,17 @@ export function patchLifecycle (output, options, rel, isComponent) {
     // create render watcher
     initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
     
-    return callUserMethod(vm, vm.$options, 'created', args);
+    if(isComponent){
+      return callUserMethod(vm, vm.$options, 'created', args);
+    }else{
+      return new Promise((resolve,reject)=>{
+        // 支付宝小程序 页面 created 事件
+        callUserMethod(vm, vm.$options, 'created', undefined);
+        resolve();
+      }).then(()=>{
+        callUserMethod(vm, vm.$options, 'onLoad', args);
+      })
+    }
   };
 
   if(isComponent){
