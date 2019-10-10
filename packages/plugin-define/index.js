@@ -58,13 +58,13 @@ exports = module.exports = function DefinePlugin (options = {}) {
       return [ parser, expr, names ];
     });
     this.register('walker-member-expression-undefined', function (parser, expr, names) {
-      if (options[names.name]) {
+      if (options.hasOwnProperty(names.name)) {
         parser.replacements.push({ expr, value: toCode(options[names.name]) });
       }
       return [ parser, expr, names ];
     });
     this.register('walker-identifier-undefined', function (parser, expr) {
-      if (options[expr.name]) {
+      if (options.hasOwnProperty(expr.name)) {
         parser.replacements.push({ expr, value: toCode(options[expr.name]) });
       }
       return [ parser, expr ];
