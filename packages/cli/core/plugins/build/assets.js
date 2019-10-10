@@ -1,14 +1,10 @@
 const path = require('path');
 
-
 exports = module.exports = function () {
-
   this.register('build-assets', function buildAssets() {
-
     this.logger.info('assets', 'building assets');
 
     let result = [];
-    let assets = this.assets;
 
     this.assets.array().forEach(file => {
       let t = this.assets.type(file);
@@ -31,20 +27,17 @@ exports = module.exports = function () {
           filepath = path.join(fileobj.dir, d.outputFileName);
         }
 
-        // do not copy npm files to $vendor.
-        if (!t.npm) {
-          let targetFile = this.getTarget(filepath);
-          result.push({
-            src: file,
-            targetFile: targetFile,
-            outputCode: d.source.source(),
-            encoding: d.encoding
-          });
-        }
+        let targetFile = t.npm ? this.getModuleTarget(filepath) : this.getTarget(filepath);
+        result.push({
+          src: file,
+          targetFile: targetFile,
+          outputCode: d.source.source(),
+          encoding: d.encoding
+        });
       }
     });
+
     return result;
   });
-
 };
 
