@@ -26,6 +26,11 @@ export function patchData (output, data) {
   if (!data) {
     data = {};
   }
+  
+  if (typeof data === 'function') {
+    data = data.call();
+  }
+  
   output.data = data;
 };
 
