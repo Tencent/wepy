@@ -5,7 +5,8 @@ import {
   isObject,
   parsePath,
   _Set as Set,
-  handleError
+  handleError,
+  noop
 } from '../util/index';
 
 import { traverse } from './traverse';
@@ -34,6 +35,7 @@ export default class Watcher {
       this.deep = !!options.deep;
       this.user = !!options.user;
       this.computed = !!options.computed;
+      this.$dirty = options.dirty;
       this.sync = !!options.sync;
     } else {
       this.deep = this.user = this.computed = this.sync = false;
@@ -56,7 +58,7 @@ export default class Watcher {
     } else {
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
-        this.getter = function () {}
+        this.getter = noop
         process.env.NODE_ENV !== 'production' && warn(
           `Failed watching path: "${expOrFn}" ` +
           'Watcher only accepts simple dot-delimited paths. ' +
@@ -185,9 +187,9 @@ export default class Watcher {
    */
   evaluate () {
     this.value = this.get();
-    if (this.vm.$dirty) {
+    if (this.$dirty) {
       let keyVal = this._computedWatchers && this._computedWatchers[this.key] ? this.vm._computedWatchers[this.key].value : this.value;
-      this.vm.$dirty.push(this.key, this.key, keyVal, this.value);
+      this.$dirty.push(this.key, this.key, keyVal, this.value);
     }
     this.dirty = false;
     return this.value;

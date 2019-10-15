@@ -28,7 +28,7 @@ export function initComputed (vm, computed) {
     return;
   }
   let watchers = vm._computedWatchers = Object.create(null);
-  let computedWatcherOptions = { computed: true };
+  let computedWatcherOptions = { computed: true, dirty: vm.$dirty };
 
   Object.keys(computed).forEach(key => {
     let def = computed[key];

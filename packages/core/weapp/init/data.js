@@ -49,11 +49,9 @@ export function initData (vm, data) {
   });
 
   observe({
-    vm: vm,
-    key: '',
-    value: _data,
-    parent: '',
-    root: true
+    root: vm,
+    value: vm._data,
+    dirty: vm.$dirty,
+    asRoot: true
   });
-  //observe(vm, _data, null, true);
 }

@@ -1,5 +1,5 @@
 import Dep from './dep';
-import ObserverPath, { addPaths, cleanPaths } from './observerPath'
+import ObserverPath, { addPaths, cleanPaths, pickOp } from './observerPath'
 import { arrayMethods } from './array'
 import {
   def,
@@ -31,12 +31,22 @@ export const observerState = {
  */
 export class Observer {
 
-  constructor ({vm, key, value, parent}) {
+  /**
+   * @param root 根节点
+   * @param parent 父节点
+   * @param key 当前节点的 key
+   * @param value
+   * @param dirty Dirty 对象
+   */
+  constructor ({root, parent, key, value, dirty}) {
+    this.root = root;
     this.value = value
+    this.dirty = dirty
     this.dep = new Dep()
+    if (dirty) {
+      this.op = new ObserverPath(key, this, pickOp(parent))
+    }
     this.vmCount = 0;
-    this.vm = vm;
-    this.op = new ObserverPath(key, this, parent && parent.__ob__ && parent.__ob__.op)
 
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
@@ -44,9 +54,9 @@ export class Observer {
         ? protoAugment
         : copyAugment
       augment(value, arrayMethods, arrayKeys)
-      this.observeArray(key, value);
+      this.observeArray(value, dirty);
     } else {
-      this.walk(key, value);
+      this.walk(value, dirty);
     }
   }
 
@@ -55,20 +65,19 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
-  walk (key, obj) {
+  walk (obj) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
-      defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
-      //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
+      defineReactive({ root: this.root, parent: obj, key: keys[i], dirty: this.dirty });
     }
   }
 
   /**
    * Observe a list of Array items.
    */
-  observeArray (key, items) {
+  observeArray (items) {
     for (let i = 0, l = items.length; i < l; i++) {
-      observe({ vm: this.vm, key: i, value: items[i], parent: items });
+      observe({ root: this.root, parent: items, key: i, value: items[i], dirty: this.dirty });
     }
   }
 
@@ -76,7 +85,7 @@ export class Observer {
    * Check if path exsit in vm
    */
   hasPath (path) {
-    let value = this.vm;
+    let value = this.root;
     let key = '';
     let i = 0;
     while (i < path.length) {
@@ -97,26 +106,26 @@ export class Observer {
   /**
    * Is this path value equal
    */
-  isPathEq (path, value) {
-    let objValue = this.vm;
+  isPathEq (path, destValue) {
+    let value = this.root;
     let key = '';
     let i = 0;
     while (i < path.length) {
       if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
         key += path[i];
       } else if (key.length !== 0) {
-        objValue = objValue[key];
+        value = value[key];
         key = '';
-        if (!isObject(objValue)) {
+        if (!isObject(value)) {
           return false;
         }
       }
       i++;
     }
     if (key.length !== 0) {
-      objValue = objValue[key];
+      value = value[key];
     }
-    return value === objValue;
+    return value === destValue;
   }
 }
 
@@ -148,25 +157,31 @@ function copyAugment (target, src, keys) {
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
+ * @param root 根节点
+ * @param parent 父节点
+ * @param key 当前节点的 key
+ * @param value
+ * @param dirty Dirty 对象
+ * @param asRoot 是否为根节点
+ * @return {*}
  */
-export function observe ({vm, key, value, parent, root}) {
+export function observe ({root, parent, key, value, dirty = null, asRoot = false}) {
   if (!isObject(value)) {
     return
   }
   let ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
-    const op = ob.op;
-    addPaths(key, op, parent.__ob__.op);
+    dirty && addPaths(key, ob.op, parent.__ob__.op);
   } else if (
     observerState.shouldConvert &&
     (Array.isArray(value) || isPlainObject(value)) &&
     Object.isExtensible(value) &&
     !value._isVue
   ) {
-    ob = new Observer({vm: vm, key: key, value: value, parent: parent});
+    ob = new Observer({root, parent, key, value, dirty});
   }
-  if (root && ob) {
+  if (asRoot && ob) {
     ob.vmCount++;
   }
   return ob
@@ -175,27 +190,27 @@ export function observe ({vm, key, value, parent, root}) {
 /**
  * Define a reactive property on an Object.
  */
-export function defineReactive ({vm, obj, key, value, parent, customSetter, shallow}) {
+export function defineReactive ({root, parent, key, value, dirty, customSetter, shallow}) {
   const dep = new Dep()
 
-  const property = Object.getOwnPropertyDescriptor(obj, key)
+  const property = Object.getOwnPropertyDescriptor(parent, key)
   if (property && property.configurable === false) {
     return
   }
 
   // cater for pre-defined getter/setters
   const getter = property && property.get
-  if (!getter && arguments.length === 2) {
-    value = obj[key]
-  }
   const setter = property && property.set
+  if ((!getter || setter) && value === undefined) {
+    value = parent[key]
+  }
 
-  let childOb = !shallow && observe({vm: vm, key: key, value: value, parent: obj});
-  Object.defineProperty(obj, key, {
+  let childOb = !shallow && observe({root, parent, key, value, dirty});
+  Object.defineProperty(parent, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
-      const val = getter ? getter.call(obj) : value
+      const val = getter ? getter.call(parent) : value
       if (Dep.target) {
         dep.depend()
         if (childOb) {
@@ -207,14 +222,22 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
       }
       return val
     },
-    set: function reactiveSetter (newVal) {
-      const val = getter ? getter.call(obj) : value
+    set: function reactiveSetter (newValue) {
+      const val = getter ? getter.call(parent) : value
       /* eslint-disable no-self-compare */
-      if (newVal === val || (newVal !== newVal && val !== val)) {
+      if (newValue === val || (newValue !== newValue && val !== val)) {
         return
       }
 
-      if (isObject(value) && hasOwn(value, '__ob__')) {
+      /* eslint-enable no-self-compare */
+      if (process.env.NODE_ENV !== 'production' && customSetter) {
+        customSetter()
+      }
+
+      if (getter && !setter) return
+
+      const op = pickOp(value)
+      if (op) {
         /**
          * 删掉无效的 paths
          * 注意：即使 path 只有一个也要删掉，因为其子节点可能有多个 path
@@ -222,24 +245,18 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
         cleanPaths(key, value.__ob__.op, parent.__ob__.op);
       }
 
-      /* eslint-enable no-self-compare */
-      if (process.env.NODE_ENV !== 'production' && customSetter) {
-        customSetter()
-      }
       if (setter) {
-        setter.call(obj, newVal)
+        setter.call(parent, newValue)
       } else {
-        value = newVal
+        value = newValue
       }
 
       // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
-      if (vm) {
+      if (dirty) {
         // push parent key to dirty, wait to setData
-        if (vm.$dirty) {
-          vm.$dirty.set(obj.__ob__.op, key, newVal);
-        }
+        dirty.set(parent.__ob__.op, key, newValue);
       }
-      childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
+      childOb = !shallow && observe({root, parent, key, value: newValue, dirty});
       dep.notify();
     }
   })
@@ -250,16 +267,16 @@ export function defineReactive ({vm, obj, key, value, parent, customSetter, shal
  * triggers change notification if the property doesn't
  * already exist.
  */
-export function set (vm, target, key, val) {
+export function set (root, target, key, value) {
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
-    target.splice(key, 1, val)
-    return val;
+    target.splice(key, 1, value)
+    return value;
   }
 
   if (key in target && !(key in Object.prototype)) {
-    target[key] = val
-    return val
+    target[key] = value
+    return value
   }
 
   const ob = (target).__ob__
@@ -268,27 +285,25 @@ export function set (vm, target, key, val) {
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
       'at runtime - declare it upfront in the data option.'
     )
-    return val
+    return value
   }
 
   if (!ob) {
-    target[key] = val
-    return val
+    target[key] = value
+    return value
   }
 
-  if (isObject(target[key]) && hasOwn(target[key], '__ob__')) {
+  if (isObject(target[key]) && hasOwn(target[key], '__ob__') && ob.dirty) {
     // delete invalid paths
     cleanPaths(key, target[key].__ob__.op, ob.op);
   }
-  defineReactive({ vm: vm, obj: ob.value, key: key, value: val, parent: ob.value });
-  if (vm) {
+  defineReactive({root, parent: ob.value, key, value, dirty: ob.dirty});
+  if (ob.dirty) {
     // push parent key to dirty, wait to setData
-    if (vm.$dirty && hasOwn(target, '__ob__')) {
-      vm.$dirty.set(target.__ob__.op, key, val);
-    }
+    ob.dirty.set(ob.op, key, value);
   }
   ob.dep.notify()
-  return val
+  return value
 }
 
 /**

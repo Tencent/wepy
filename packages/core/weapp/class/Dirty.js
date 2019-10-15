@@ -50,7 +50,7 @@ export default class Dirty {
      * 因此不需要所有 path 都 setData 。
      */
     const {root, path} = pathMap[pathKeys[0]];
-    this.push(root, path, root === path ? value : op.ob.vm[root], value);
+    this.push(root, path, root === path ? value : op.ob.root[root], value);
   }
 
   reset () {

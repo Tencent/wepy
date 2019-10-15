@@ -22,7 +22,7 @@ const setPath = (key, parentPath) => {
  * @param value 被观察对象
  * @return {ObserverPath|null}
  */
-const pickOp = value => {
+export const pickOp = value => {
   return isObject(value) && hasOwn(value, '__ob__')
     ? value.__ob__.op
     : null;

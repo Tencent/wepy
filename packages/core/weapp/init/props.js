@@ -93,9 +93,9 @@ export function initProps (vm, properties) {
   });
 
   observe({
-    vm: vm,
-    key: '',
+    root: vm,
     value: vm._props,
-    root: true
+    dirty: vm.$dirty,
+    asRoot: true
   });
 };

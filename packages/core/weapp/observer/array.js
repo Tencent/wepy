@@ -47,20 +47,20 @@ methodsToPatch.forEach(function (method) {
 
     const result = original.apply(this, args);
     const ob = this.__ob__;
-    const vm = ob.vm;
+    const dirty = ob.dirty;
 
     // push parent key to dirty, wait to setData
-    if (vm.$dirty) {
+    if (dirty) {
       if (method === 'push') {
         const lastIndex = ob.value.length - 1;
-        vm.$dirty.set(ob.op, lastIndex, ob.value[lastIndex]);
+        dirty.set(ob.op, lastIndex, ob.value[lastIndex]);
       } else {
-        vm.$dirty.set(ob.op, null, ob.value);
+        dirty.set(ob.op, null, ob.value);
       }
     }
 
     // 这里和 vue 不一样，所有变异方法都需要更新 path
-    ob.observeArray(ob.key, ob.value);
+    ob.observeArray(ob.value);
 
     // notify change
     ob.dep.notify();

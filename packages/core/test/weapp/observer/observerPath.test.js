@@ -1,6 +1,7 @@
 import {initData} from '../../../weapp/init/data'
 import {set} from '../../../weapp/observer'
 import {getPathMap} from '../../../weapp/observer/observerPath'
+import Dirty from '../../../weapp/class/Dirty'
 
 const expect = require('chai').expect
 const _getPathMap = (obj, key) => key !== undefined
@@ -11,6 +12,7 @@ describe('weapp observer observerPath', function () {
 
   it('only path', function () {
     const vm = {}
+    vm.$dirty = new Dirty('key');
 
     initData(vm, {num: 1, str: 'string', arr: [1, 2], obj: {a: 1}, deepObj: {node: {a: 1}}})
 
@@ -30,6 +32,7 @@ describe('weapp observer observerPath', function () {
 
   it('only deep path', function () {
     const vm = {}
+    vm.$dirty = new Dirty('key');
 
     initData(vm, {arr: [1, 2], obj: {a: 1}, deepObj: {node: {a: 1}}})
 
@@ -52,10 +55,10 @@ describe('weapp observer observerPath', function () {
 
   it('complex path: Object', function () {
     const vm = {}
+    vm.$dirty = new Dirty('key');
 
     initData(vm, {a: {b: {c: {d: 123}}}, x: {}, y: {}})
 
-    console.log('complex path: Object')
     const data = vm._data
     data.x = data.a.b.c
     data.y = data.x
@@ -93,6 +96,7 @@ describe('weapp observer observerPath', function () {
 
   it('complex path: Array', function () {
     const vm = {}
+    vm.$dirty = new Dirty('key');
 
     initData(vm, {arr1: [], arr2: [], arr3: []})
 
