@@ -30,13 +30,27 @@ exports = module.exports = function () {
       this.fileDep.cleanDeps(file);
 
       let ext = path.extname(file);
+
+      let componentValue = (ext === this.options.wpyExt);
+      if (ext === '.js') {
+        // if it is a weapp component, it must has a .wxml file
+        const dirName = path.dirname(file);
+        const baseName = path.basename(file, '.js');
+        const wxmlFile = path.format({
+          dir: dirName,
+          base: baseName + '.wxml'
+        });
+        componentValue = fs.existsSync(wxmlFile);
+      }
+
       this.assets.add(depFileCtx.file, {
         npm: depFileCtx.npm,
         dep: true,
-        component: depFileCtx.component,
+        component: componentValue,
         type: depFileCtx.type,
         wxs: depFileCtx.wxs
       });
+
       if (ext === '.js' || ext === '.ts' || ext === '.wxs') {
         if (depFileCtx.npm && depFileCtx.type !== 'weapp') {
           // weapp component npm may have import in it.

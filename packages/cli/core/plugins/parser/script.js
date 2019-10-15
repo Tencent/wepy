@@ -131,13 +131,20 @@ exports = module.exports = function () {
 
         this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));
 
+        let componentValue = ctx.component;
+        const t = this.assets.type(ctx.file);
+        if (t !== undefined) {
+          // if it has type in this.assets
+          componentValue = t.component;
+        }
         let types = {
-          component: ctx.component,
+          component: componentValue,
           npm: ctx.npm,
           dep: ctx.dep,
           type: ctx.type,
           wxs: ctx.wxs
         };
+
         this.assets.update(ctx.file, obj, types);
         obj.id = assets.get(ctx.file);
         if (ctx.npm && !(ctx.component && ctx.type === 'weapp') && !ctx.wxs) {

@@ -1,14 +1,10 @@
 const path = require('path');
 
-
 exports = module.exports = function () {
-
-  this.register('build-assets', function buildAssets () {
-
+  this.register('build-assets', function buildAssets() {
     this.logger.info('assets', 'building assets');
 
     let result = [];
-    let assets = this.assets;
 
     this.assets.array().forEach(file => {
       let t = this.assets.type(file);
@@ -40,8 +36,8 @@ exports = module.exports = function () {
         });
       }
     });
+
     return result;
   });
-
 };
 
