@@ -23,8 +23,6 @@ function ensureAllTaskDone(taskList, done) {
 }
 
 describe('wepy-use-promisify', function() {
-  let wepy = {};
-
   let __storage = {
     mydata: { a: 1 }
   };
@@ -123,7 +121,7 @@ describe('wepy-use-promisify', function() {
     let wepy = {};
     usePromisify.install(wepy);
 
-    wepy.wx.setStorage('mydata', { b: 1 }).then(res => {
+    wepy.wx.setStorage('mydata', { b: 1 }).then(() => {
       wepy.wx.getStorage('mydata').then(res => {
         expect(res).to.deep.equal({ b: 1 });
         expect(__storage.mydata).to.deep.equal(res);
@@ -156,7 +154,7 @@ describe('wepy-use-promisify', function() {
     });
 
     promisifyFn(9)
-      .then(res => {
+      .then(() => {
         throw new Error('should not run here');
       })
       .catch(e => {
@@ -188,7 +186,7 @@ describe('wepy-use-promisify', function() {
     });
 
     promisifyFn({ num: 9 })
-      .then(res => {
+      .then(() => {
         throw new Error('should not run here');
       })
       .catch(e => {
@@ -233,6 +231,7 @@ describe('wepy-use-promisify', function() {
           task.done(originParamsArr.indexOf(item));
         })
         .catch(e => {
+          // eslint-disable-next-line no-console
           console.log(e);
         });
     }
