@@ -26,11 +26,10 @@ export default function wepyInstall (wepy) {
           }
         }
         wepy.observe({
-          vm: this,
-          key: '',
+          root: this,
           value: resValueMap,
-          parent: '',
-          root: true
+          dirty: this.$dirty,
+          asRoot: true
         });
       }
     },
