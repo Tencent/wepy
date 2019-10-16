@@ -17,6 +17,7 @@ import { isStr, isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
 import { warn } from '../util/index';
+import { patchData } from '../init/index';
 
 let comid = 0;
 let app;
@@ -90,35 +91,37 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
 };
 
 export function patchLifecycle (output, options, rel, isComponent) {
-
   const initClass = isComponent ? WepyComponent : WepyPage;
+  let vm = new initClass();
+  vm.$dirty = new Dirty('path');
+  vm.$children = [];
+  vm.$refs = {};
+
+  vm.$options = options;
+  vm.$rel = rel;
+  vm._watchers = [];
+  if (!isComponent) {
+    vm.$root = vm;
+    vm.$app = app;
+  }
+ 
+  vm.$id = ++comid + (isComponent ? '.1' : '.0');
+  if (!vm.$app) {
+    // vm.$app = $global.$app;
+  }
+  
+  patchData(output, options.data, vm);
+
   const initLifecycle = function (...args) {
-    let vm = new initClass();
-
-    vm.$dirty = new Dirty('path');
-    vm.$children = [];
-    vm.$refs = {};
-
-    this.$wepy = vm;
     vm.$wx = this;
     vm.$is = this.is;
-    vm.$options = options;
-    vm.$rel = rel;
-    vm._watchers = [];
-    if (!isComponent) {
-      vm.$root = vm;
-      vm.$app = app;
-    }
+    this.$wepy = vm;
+
     if (this.is === 'custom-tab-bar/index') {
       vm.$app = app;
       vm.$parent = app;
     }
-
-    vm.$id = ++comid + (isComponent ? '.1' : '.0');
-    if (!vm.$app) {
-      // vm.$app = $global.$app;
-    }
-
+    
     callUserMethod(vm, vm.$options, 'beforeCreate', args);
 
     initHooks(vm, options.hooks);

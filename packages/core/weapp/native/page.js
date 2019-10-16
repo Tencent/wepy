@@ -23,7 +23,7 @@ export function page (opt = {}, rel) {
 
   patchMethods(pageConfig, opt.methods);
 
-  patchData(pageConfig, opt.data);
+  // patchData(pageConfig, opt.data);
 
   patchLifecycle(pageConfig, opt, rel);
 

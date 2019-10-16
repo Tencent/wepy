@@ -1,5 +1,6 @@
 import { observe } from './../observer/index';
 import { noop, clone } from './../../shared/index';
+import { isStr, isArr, isFunc } from '../../shared/index';
 
 export const sharedPropertyDefinition = {
   enumerable: true,
@@ -22,11 +23,16 @@ export function proxy (target, sourceKey, key) {
 /*
  * patch data option
  */
-export function patchData (output, data) {
+export function patchData (output, data, vm) {
   if (!data) {
     data = {};
   }
-  output.data = data;
+
+  if(isFunc(data)){
+    output.data = data.call(vm);
+  }else{
+    output.data = data;
+  }
 };
 
 

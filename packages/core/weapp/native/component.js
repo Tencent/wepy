@@ -22,7 +22,7 @@ export function component (opt = {}, rel) {
 
   patchMethods(compConfig, opt.methods, true);
 
-  patchData(compConfig, opt.data, true);
+  // patchData(compConfig, opt.data, true);
 
   patchRelations(compConfig, opt.relations);
 
