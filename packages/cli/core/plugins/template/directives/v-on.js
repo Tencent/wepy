@@ -48,7 +48,7 @@ const parseHandlerProxy = (expr, scope) => {
     ${eventInArg ? 'let $event = arguments[arguments.length - 1];' : ''}
     with (this) {
       return (function () {
-        ${handlerExpr}
+        ${handlerExpr};
       })();
     }
   }`;

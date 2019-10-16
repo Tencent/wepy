@@ -1,2 +1,2 @@
-<view style="width: 100rpx; {{ 'background:' + bgColor + ';' }}"></view>
-<view style="height: 200rpx; {{ 'font-size:' + titleFontSize + ';' }}"></view>
+<view style="width: 100rpx; {{ 'background:' + (bgColor) + ';' }}"></view>
+<view style="height: 200rpx; {{ 'font-size:' + (titleFontSize) + ';' }}"></view>
