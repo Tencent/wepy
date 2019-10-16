@@ -15,10 +15,12 @@ exports = module.exports = program => {
     },
     (err, res, body) => {
       if (!body) {
+        // eslint-disable-next-line no-console
         console.error('Something wrong with your network');
         return;
       }
       if (body.message) {
+        // eslint-disable-next-line no-console
         console.error(body.messge);
         return;
       }
@@ -28,9 +30,11 @@ exports = module.exports = program => {
         official = body.official;
         github = body.github;
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Something wrong with your network');
       }
       if (!program.github && Array.isArray(official)) {
+        // eslint-disable-next-line no-console
         console.log('\n  Available official templates:\n');
         /*
             official.forEach(repo => {
@@ -63,10 +67,13 @@ exports = module.exports = program => {
         let offical = Table(tableHead, rows, {
           borderStyle: 2
         });
+        // eslint-disable-next-line no-console
         console.log(`     e.g., wepy init ${rows[0][0]} myproject`);
+        // eslint-disable-next-line no-console
         console.log(offical.render());
       }
       if (Array.isArray(github)) {
+        // eslint-disable-next-line no-console
         console.log('\n  Available github projects:\n');
 
         let tableHead = [
@@ -118,7 +125,7 @@ exports = module.exports = program => {
         }
         showItems.forEach(repo => {
           let row = [];
-          map.forEach((title, i) => {
+          map.forEach(title => {
             row.push(repo[title] || '');
           });
           rows.push(row);
@@ -130,15 +137,20 @@ exports = module.exports = program => {
         let githubTable = Table(tableHead, rows, {
           borderStyle: 2
         });
+        // eslint-disable-next-line no-console
         console.log(`     e.g., wepy init ${rows[0][0]} myproject`);
+        // eslint-disable-next-line no-console
         console.log(githubTable.render());
 
         if (MAX_COUNT && github.length > MAX_COUNT) {
+          // eslint-disable-next-line no-console
           console.log(chalk.gray(`  use 'wepy list --github' to see all github projects`));
         }
         if (program.github) {
+          // eslint-disable-next-line no-console
           console.log(chalk.gray(`  You can registe your project from here: https://github.com/wepyjs/wepy_templates`));
         }
+        // eslint-disable-next-line no-console
         console.log('\n');
       }
     }

@@ -31,7 +31,7 @@ exports = module.exports = function() {
 
       let ext = path.extname(file);
 
-      let componentValue = (ext === this.options.wpyExt);
+      let componentValue = ext === this.options.wpyExt;
       if (ext === '.js') {
         // if it is a weapp component, it must has a .wxml file
         const dirName = path.dirname(file);

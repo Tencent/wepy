@@ -17,6 +17,7 @@ program
   .option('-c --clone', 'use git clone')
   .option('--offline', 'use cached template')
   .on('--help', () => {
+    /* eslint-disable no-console */
     console.log();
     console.log('  Example:');
     console.log();
@@ -26,6 +27,7 @@ program
     console.log(chalk.gray('   # create a new project straight from a github template'));
     console.log('  $ wepy init username/repo my-project');
     console.log();
+    /* eslint-enable no-console */
   });
 
 program

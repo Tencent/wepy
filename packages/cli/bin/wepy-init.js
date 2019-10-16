@@ -16,6 +16,7 @@ exports = module.exports = (template, rawName, program) => {
   function gen(templatePath) {
     generate(name, templatePath, to, err => {
       if (err) logger.fatal(err);
+      // eslint-disable-next-line no-console
       console.log();
       logger.success('Generated "%s".', name);
     });
@@ -85,6 +86,7 @@ exports = module.exports = (template, rawName, program) => {
    * use offline cache
    */
   if (offline) {
+    // eslint-disable-next-line no-console
     console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`);
     template = tmp;
   }

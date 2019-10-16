@@ -161,8 +161,10 @@ function logMessage(message, data) {
   if (!message) return;
   handlebars.render(message, data, (err, res) => {
     if (err) {
+      // eslint-disable-next-line no-console
       console.error('\n   Error when rendering template complete message: ' + err.message.trim());
     } else {
+      // eslint-disable-next-line no-console
       console.log(
         '\n' +
           res

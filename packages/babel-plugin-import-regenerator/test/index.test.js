@@ -1,5 +1,5 @@
-const { transformFileSync, transform } = require('@babel/core');
-const { readdirSync, readFileSync, writeFileSync } = require('fs');
+const { transform } = require('@babel/core');
+const { readdirSync, readFileSync } = require('fs');
 const { join } = require('path');
 const plugin = require('../index');
 const expect = require('chai').expect;
@@ -13,7 +13,7 @@ describe('babel-plugin-import-regenerator', () => {
     const expectedFile = join(fixturesDir, caseName, 'expected.js');
 
     it(`should work with ${caseName.split('-').join(' ')}`, () => {
-      actual = transform(readFileSync(actualFile), {
+      const actual = transform(readFileSync(actualFile), {
         presets: ['env'],
         plugins: [plugin]
       }).code;

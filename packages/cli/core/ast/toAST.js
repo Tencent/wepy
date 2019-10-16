@@ -52,7 +52,7 @@ exports = module.exports = function ast(source) {
   }
 
   if (!ast || typeof ast !== 'object') {
-    throw new Error(`Source could\'t be parsed`);
+    throw new Error(`Source could't be parsed`);
   }
   return ast;
 };

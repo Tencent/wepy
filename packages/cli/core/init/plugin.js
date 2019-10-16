@@ -4,7 +4,7 @@ function checkPlugins(ins, plugins) {
   if (!isArr(plugins)) {
     plugins = [plugins];
   }
-  plugins.forEach((plg, index) => {
+  plugins.forEach(plg => {
     // ensure plugin is a function
     // or process would be exit
     if (!isFunc(plg)) {
@@ -21,7 +21,7 @@ function checkPlugins(ins, plugins) {
 
 exports = module.exports = function(ins) {
   // system plugins
-  let systemPluginFns = [
+  [
     './../plugins/scriptDepFix',
     './../plugins/scriptInjection',
     './../plugins/build/app',

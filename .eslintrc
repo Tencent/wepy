@@ -1,6 +1,7 @@
 {
   "parser": "babel-eslint",
   "env": {
+    "es6": true,
     "node": true,
     "mocha": true
   },
@@ -23,6 +24,8 @@
     "no-new-func": 0
   },
   "globals": {
+    __VERSION,
+    Component
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   plugins: ['prettier']

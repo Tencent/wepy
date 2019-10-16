@@ -1,7 +1,5 @@
 const onRE = /^@|^v-on:/;
 const bindRE = /^:|^v-bind:/;
-const modifierRE = /\.[^.]+/g;
-
 const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
 exports = module.exports = function() {

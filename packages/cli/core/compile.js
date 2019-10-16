@@ -16,12 +16,10 @@ const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSyste
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const fileDep = require('./fileDep');
-const loader = require('./loader');
 const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
-const walk = require('acorn/dist/walk');
 const { isArr } = require('./util/tools');
 const { debounce } = require('throttle-debounce');
 
@@ -137,7 +135,7 @@ class Compile extends Hook {
   }
 
   init() {
-    this.register('process-clear', type => {
+    this.register('process-clear', () => {
       this.compiled = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
@@ -194,8 +192,6 @@ class Compile extends Hook {
     this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' })
       .then(app => {
         let sfc = app.sfc;
-        let script = sfc.script;
-        let styles = sfc.styles;
         let config = sfc.config;
 
         let appConfig = config.parsed.output;
@@ -402,7 +398,7 @@ class Compile extends Hook {
     }
     this.watchInitialized = true;
     let watchOption = Object.assign({ ignoreInitial: true, depth: 99 }, this.options.watchOption || {});
-    let target = path.resolve(this.context, this.options.target);
+    // let target = path.resolve(this.context, this.options.target);
 
     if (watchOption.ignore) {
       let type = Object.prototype.toString.call(watchOption.ignore);
@@ -510,6 +506,7 @@ class Compile extends Hook {
 
           fs.outputFile(filename, code, encoding || 'utf-8', err => {
             if (err) {
+              // eslint-disable-next-line no-console
               console.log(err);
             }
           });

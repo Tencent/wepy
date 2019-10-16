@@ -1,7 +1,7 @@
 const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
-const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+const forIteratorRE = /,([^,}\]]*)(?:,([^,}\]]*))?$/;
 const stripParensRE = /^\(|\)$/g;
-const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
+const variableRE = /^\s*[a-zA-Z$_][a-zA-Z\d_]*\s*$/;
 const Check = require('../util/check');
 
 exports = module.exports = function() {
@@ -90,12 +90,14 @@ exports = module.exports = function() {
   });
 
   this.register('template-parse-ast-attr-v-for', function parseDirectivesFor({
+    /* eslint-disable no-unused-vars */
     item,
     name,
     expr,
     modifiers,
     scope,
     ctx
+    /* eslint-enable no-unused-vars */
   }) {
     let attrs = item['v-for'];
     delete item['v-for'];

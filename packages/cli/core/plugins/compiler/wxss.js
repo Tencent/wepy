@@ -12,6 +12,7 @@ exports = module.exports = function() {
     ast.stylesheet.rules.forEach(rule => {
       if (rule.type === 'import') {
         let importfile = rule.import;
+        // eslint-disable-next-line
         if (importfile.startsWith('"') || importfile.startsWith("'")) {
           importfile = importfile.substring(1, importfile.length - 1);
         }

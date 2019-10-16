@@ -96,6 +96,7 @@ exports = module.exports = {
     try {
       m = require(modulePath);
     } catch (e) {
+      // eslint-disable-next-line no-console
       if (e.message !== 'missing path') console.log(e);
     }
     if (m) {
@@ -105,8 +106,8 @@ exports = module.exports = {
     return m;
   },
 
-  loadPlugin(plugins, op) {
-    let plg, plgkey, setting, config;
+  loadPlugin(plugins) {
+    let plg, plgkey, setting;
     for (plgkey in plugins) {
       let name = 'wepy-plugin-' + plgkey;
       setting = plugins[plgkey];

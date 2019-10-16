@@ -72,6 +72,7 @@ exports = module.exports = function() {
 
     while (i < l) {
       let c = node[i++];
+      // eslint-disable-next-line
       if (c === '"' || c === "'") {
         if (quotes[quotes.length - 1] === c) {
           quotes.pop();

@@ -2,7 +2,7 @@ const path = require('path');
 const CONST = require('../../util/const');
 
 exports = module.exports = function() {
-  const styleHooker = (content, options, ctx) => {
+  const styleHooker = (content, options) => {
     options.supportObject = true;
   };
 

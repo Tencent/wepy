@@ -9,17 +9,12 @@ class AstWalker {
   }
 
   run() {
-    const oldScope = this.scope;
-    const oldState = this.state;
-    const oldComments = this.comments;
-
     this.scope = {
       inTry: false,
       definitions: [],
       instances: [],
       renames: {}
     };
-    const state = {};
     this.prewalkStatements(this.ast.body);
     this.walkStatements(this.ast.body);
   }
@@ -58,22 +53,8 @@ class AstWalker {
     }
   }
 
-  // Walking iterates the statements and expressions and processes them
-  walkStatements(statements) {
-    for (let index = 0, len = statements.length; index < len; index++) {
-      const statement = statements[index];
-      this.walkStatement(statement);
-    }
-  }
-
   prewalkStatement(statement) {
     const handler = this['prewalk' + statement.type];
-    if (handler) handler.call(this, statement);
-  }
-
-  walkStatement(statement) {
-    // if(this.applyPluginsBailResult1("statement", statement) !== undefined) return;
-    const handler = this['walk' + statement.type];
     if (handler) handler.call(this, statement);
   }
 
@@ -255,6 +236,7 @@ class AstWalker {
     };
     this.deps.push(dep);
     return;
+    /*
     // this.applyPluginsBailResult("import", statement, source);
     statement.specifiers.forEach(function(specifier) {
       const name = specifier.local.name;
@@ -272,29 +254,30 @@ class AstWalker {
           break;
       }
     }, this);
+    */
   }
 
   prewalkExportNamedDeclaration(statement) {
+    /*
     let source;
     if (statement.source) {
       source = statement.source.value;
       // this.applyPluginsBailResult("export import", statement, source);
     } else {
       // this.applyPluginsBailResult1("export", statement);
-    }
+    }*/
     if (statement.declaration) {
       if (/Expression$/.test(statement.declaration.type)) {
-        throw new Error("Doesn't occur?");
+        throw new Error(`Doesn't occur?`);
       } else {
-        if (true) {
-          const pos = this.scope.definitions.length;
-          this.prewalkStatement(statement.declaration);
-          const newDefs = this.scope.definitions.slice(pos);
-          for (let index = newDefs.length - 1; index >= 0; index--) {
-            const def = newDefs[index];
-            // this.applyPluginsBailResult("export specifier", statement, def, def, index);
-          }
-        }
+        this.prewalkStatement(statement.declaration);
+        /*
+        const pos = this.scope.definitions.length;
+        const newDefs = this.scope.definitions.slice(pos);
+        for (let index = newDefs.length - 1; index >= 0; index--) {
+          const def = newDefs[index];
+          // this.applyPluginsBailResult("export specifier", statement, def, def, index);
+        }*/
       }
     }
     if (statement.specifiers) {
@@ -302,7 +285,7 @@ class AstWalker {
         const specifier = statement.specifiers[specifierIndex];
         switch (specifier.type) {
           case 'ExportSpecifier': {
-            const name = specifier.exported.name;
+            //const name = specifier.exported.name;
             /*
               if(source)
                 // this.applyPluginsBailResult("export import specifier", statement, source, specifier.local.name, name, specifierIndex);
@@ -324,13 +307,14 @@ class AstWalker {
 
   prewalkExportDefaultDeclaration(statement) {
     if (/Declaration$/.test(statement.declaration.type)) {
-      const pos = this.scope.definitions.length;
       this.prewalkStatement(statement.declaration);
+      /*
+      const pos = this.scope.definitions.length;
       const newDefs = this.scope.definitions.slice(pos);
       for (let index = 0, len = newDefs.length; index < len; index++) {
         const def = newDefs[index];
         // this.applyPluginsBailResult("export specifier", statement, def, "default");
-      }
+      }*/
     }
   }
 
@@ -342,11 +326,12 @@ class AstWalker {
     }
   }
 
+  /*
   prewalkExportAllDeclaration(statement) {
-    const source = statement.source.value;
+    // const source = statement.source.value;
     // this.applyPluginsBailResult("export import", statement, source);
     // this.applyPluginsBailResult("export import specifier", statement, source, null, null, 0);
-  }
+  }*/
 
   prewalkVariableDeclaration(statement) {
     if (statement.declarations) this.prewalkVariableDeclarators(statement.declarations);
@@ -646,7 +631,7 @@ class AstWalker {
     } else {
       this.walkExpression(expression.right);
       this.walkPattern(expression.left);
-      this.enterPattern(expression.left, (name, decl) => {
+      this.enterPattern(expression.left, name => {
         this.scope.renames['$' + name] = undefined;
       });
     }
@@ -873,11 +858,12 @@ class AstWalker {
       // const result = this.applyPluginsBailResult1("evaluate " + expression.type, expression);
       if (result !== undefined) return result;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn(e);
       // ignore error
     }
     return expression.range;
-    return new BasicEvaluatedExpression().setRange(expression.range);
+    // return new BasicEvaluatedExpression().setRange(expression.range);
   }
 
   getRenameIdentifier(expr) {
@@ -978,6 +964,7 @@ class AstWalker {
     return arr;
   }
 
+  /*
   parse(source, initialState) {
     let ast;
     const comments = [];
@@ -1024,8 +1011,9 @@ class AstWalker {
     this.state = oldState;
     this.comments = oldComments;
     return state;
-  }
+  } */
 
+  /*
   evaluate(source) {
     const ast = acorn.parse('(' + source + ')', {
       ranges: true,
@@ -1059,6 +1047,7 @@ class AstWalker {
     });
     return options.reduce((o, i) => Object.assign(o, i), {});
   }
+  */
 
   getNameForExpression(expression) {
     let expr = expression;
@@ -1151,7 +1140,7 @@ class AstWalker {
       // return this.applyPluginsBailResult1("evaluate defined Identifier " + exprName.name, expression);
     }
   }
-  applyMethods(method) {
+  applyMethods(method, expr) {
     let rst;
     if (this[method]) {
       rst = this[method](expr);
@@ -1229,6 +1218,7 @@ class AstWalker {
           result = this[fn] ? this[fn](expr, param) : undefined;
           // result = this.applyPluginsBailResult("call require:amd:array", expr, param);
         });
+        /*
         if (!result) {
           dep = new UnsupportedDependency('unsupported', expr.range);
           old.addDependency(dep);
@@ -1245,7 +1235,7 @@ class AstWalker {
         dep.functionBindThis = this.processFunctionArgument(parser, expr.arguments[1]);
         if (expr.arguments.length === 3) {
           dep.errorCallbackBindThis = this.processFunctionArgument(parser, expr.arguments[2]);
-        }
+        }*/
       } finally {
         this.state.current = old;
         if (dep) this.state.current.addBlock(dep);
@@ -1277,12 +1267,12 @@ class AstWalker {
     } else if (param.array && param.array.length) {
       const deps = [];
       param.array.forEach(request => {
-        let dep, localModule;
+        let dep /*, localModule*/;
         if (request === 'require') {
           dep = '__webpack_require__';
         } else if (['exports', 'module'].indexOf(request) >= 0) {
           dep = request;
-        } else if ((localModule = LocalModulesHelpers.getLocalModule(this.state, request))) {
+        } /*else if ((localModule = LocalModulesHelpers.getLocalModule(this.state, request))) {
           // eslint-disable-line no-cond-assign
           dep = new LocalModuleDependency(localModule);
           dep.loc = expr.loc;
@@ -1292,12 +1282,12 @@ class AstWalker {
           dep.loc = expr.loc;
           dep.optional = !!this.scope.inTry;
           this.state.current.addDependency(dep);
-        }
+        }*/
         deps.push(dep);
       });
       // const dep = new AMDRequireArrayDependency(deps, param.range);
       const dep = {
-        depsArray: depsArray,
+        // depsArray: depsArray,
         range: param.range
       };
       dep.loc = expr.loc;
@@ -1323,6 +1313,7 @@ class AstWalker {
       });
       return true;
     } else if (param.isString()) {
+      /*
       let dep, localModule;
       if (param.string === 'require') {
         dep = new ConstDependency('__webpack_require__', param.string);
@@ -1339,16 +1330,19 @@ class AstWalker {
       dep.loc = expr.loc;
       dep.optional = !!this.scope.inTry;
       this.state.current.addDependency(dep);
+      */
       return true;
     }
   }
 
-  callrequireAmdContext(expr, param) {
+  callrequireAmdContext(/*expr, param*/) {
+    /*
     const dep = ContextDependencyHelpers.create(AMDRequireContextDependency, param.range, param, expr, options);
     if (!dep) return;
     dep.loc = expr.loc;
     dep.optional = !!this.scope.inTry;
     this.state.current.addDependency(dep);
+    */
     return true;
   }
 }

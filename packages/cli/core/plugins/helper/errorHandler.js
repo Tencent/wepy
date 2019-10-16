@@ -1,7 +1,3 @@
-const path = require('path');
-const fs = require('fs');
-const loaderUtils = require('loader-utils');
-
 exports = module.exports = function() {
   this.register('error-handler', function(handler, errInfo, extra) {
     if (arguments.length === 1) {

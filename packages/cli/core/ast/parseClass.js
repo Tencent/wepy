@@ -3,7 +3,7 @@ const toAST = require('./toAST');
 
 exports = module.exports = function parseClass(source) {
   source = '(' + source + ');';
-  ast = toAST(source);
+  const ast = toAST(source);
 
   let result = [];
   walk.ancestor(ast, {

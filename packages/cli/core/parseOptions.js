@@ -32,7 +32,7 @@ function setValue(obj, key, val) {
   let arr = key.split('.');
   let left = obj;
   for (let i = 0, l = arr.length; i < l; i++) {
-    if (i == l - 1) {
+    if (i === l - 1) {
       left[arr[i]] = val;
     } else {
       if (typeof left[arr[i]] !== 'object') {
@@ -49,7 +49,7 @@ function getValue(obj, key) {
   let left = obj;
   let rst;
   for (let i = 0, l = arr.length; i < l; i++) {
-    if (i == l - 1) {
+    if (i === l - 1) {
       rst = left[arr[i]];
     } else {
       if (typeof left[arr[i]] === 'undefined') {

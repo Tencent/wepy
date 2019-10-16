@@ -17,6 +17,7 @@ const sep = chalk.gray('·');
 exports = module.exports = {
   log(...args) {
     const msg = format.apply(format, args);
+    // eslint-disable-next-line no-console
     console.log(chalk.white(prefix), sep, msg);
   },
 
@@ -29,6 +30,7 @@ exports = module.exports = {
   fatal(...args) {
     if (args[0] instanceof Error) args[0] = args[0].message.trim();
     const msg = format.apply(format, args);
+    // eslint-disable-next-line no-console
     console.error(chalk.red(prefix), sep, msg);
     process.exit(1);
   },
@@ -41,6 +43,7 @@ exports = module.exports = {
 
   success(...args) {
     const msg = format.apply(format, args);
+    // eslint-disable-next-line no-console
     console.log(chalk.white(prefix), sep, msg);
   }
 };

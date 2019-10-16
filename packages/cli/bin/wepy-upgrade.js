@@ -1,5 +1,5 @@
 const exec = require('child_process').exec;
-//const util = require('../util');
+const util = require('../util');
 
 function upgradeCLI(cb) {
   let cmd = 'npm install wepy-cli -g';
@@ -10,6 +10,7 @@ function upgradeCLI(cb) {
     cb && cb();
   });
   fcmd.stdout.on('data', d => {
+    // eslint-disable-next-line no-console
     console.log(d.substring(d, d.length - 1));
   });
 }
@@ -29,10 +30,12 @@ function upgradeWepy(cb) {
       cb && cb();
     });
     fcmd3.stdout.on('data', d => {
+      // eslint-disable-next-line no-console
       console.log(d.substring(d, d.length - 1));
     });
   });
   fcmd.stdout.on('data', d => {
+    // eslint-disable-next-line no-console
     console.log(d.substring(d, d.length - 1));
   });
 }

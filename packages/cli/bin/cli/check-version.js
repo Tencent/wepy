@@ -8,6 +8,7 @@ exports = module.exports = function checkVersion(done) {
    * 检测当前node版本是否符合要求
    */
   if (!semver.satisfies(process.version, pkgConfig.engines.node)) {
+    // eslint-disable-next-line no-console
     return console.log(chalk.red('  You must upgrade node to >=' + pkgConfig.engines.node + '.x to use wepy-cli'));
   }
   request(
@@ -20,11 +21,13 @@ exports = module.exports = function checkVersion(done) {
         const latestVersion = JSON.parse(body)['dist-tags'].latest;
         const localVersion = pkgConfig.version;
         if (semver.lt(localVersion, latestVersion)) {
+          /* eslint-disable no-console */
           console.log(chalk.yellow('  A newer version of wepy-cli is available.'));
           console.log();
           console.log('  latest:    ' + chalk.green(latestVersion));
           console.log('  installed: ' + chalk.red(localVersion));
           console.log();
+          /* eslint-enable no-console */
         }
       }
       done();

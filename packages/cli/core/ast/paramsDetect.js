@@ -1,8 +1,6 @@
 const acorn = require('acorn');
 const walk = require('acorn/dist/walk');
 
-const toAST = require('./toAST');
-
 function isScope(node) {
   return (
     node.type === 'FunctionExpression' ||
@@ -85,7 +83,7 @@ function findGlobals(source, options) {
         throw new Error('Unrecognized pattern type: ' + node.type);
     }
   };
-  var declareModuleSpecifier = function(node, parents) {
+  var declareModuleSpecifier = function(node) {
     ast.locals = ast.locals || {};
     ast.locals[node.local.name] = true;
   };
@@ -190,13 +188,13 @@ function getNameForExpression(expression) {
     exprName.push(expr.computed ? expr.property.value : expr.property.name);
     expr = expr.object;
   }
-  let free;
   if (expr.type === 'Identifier') {
     exprName.push(expr.name);
   } else if (expr.type === 'Literal') {
     exprName.push(expr.value);
   }
   let name = exprName.pop();
+  let t;
   while ((t = exprName.pop())) {
     name += typeof t === 'number' ? `[${t}]` : `.${t}`;
   }

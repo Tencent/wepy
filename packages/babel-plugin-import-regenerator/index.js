@@ -5,7 +5,7 @@ let wm = new WeakMap();
 exports = module.exports = ({ types: t }) => {
   return {
     visitor: {
-      CallExpression(path, file) {
+      CallExpression(path) {
         let callee = path.get('callee');
 
         if (callee.node && callee.node.object && callee.node.property) {
