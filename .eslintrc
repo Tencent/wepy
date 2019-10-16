@@ -23,5 +23,7 @@
     "no-new-func": 0
   },
   "globals": {
-  }
+  },
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
+  plugins: ['prettier']
 }
