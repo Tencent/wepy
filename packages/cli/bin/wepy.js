@@ -4,7 +4,6 @@ const chalk = require('chalk');
 const program = require('commander');
 const logger = require('../core/util/logger');
 
-
 program
   .version(require('../package.json').version, '-v, --version')
   .option('-l, --log <level>', 'change the log level')

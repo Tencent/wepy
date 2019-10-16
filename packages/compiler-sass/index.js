@@ -12,14 +12,17 @@ const path = require('path');
 const sass = require('node-sass');
 const resolveImporter = require('./resolveImporter');
 
-function createSassPlugin (compilation, type, options) {
-  return function (node, ctx) {
+function createSassPlugin(compilation, type, options) {
+  return function(node, ctx) {
     let file = typeof ctx === 'string' ? ctx : ctx.file;
-    let config = Object.assign({
-      file: file
-    }, options);
+    let config = Object.assign(
+      {
+        file: file
+      },
+      options
+    );
 
-    config.data = config.data ? (config.data + os.EOL + node.content) : node.content;
+    config.data = config.data ? config.data + os.EOL + node.content : node.content;
 
     config.importer = config.importer || [];
     config.importer.push(resolveImporter(compilation, file));
@@ -33,25 +36,25 @@ function createSassPlugin (compilation, type, options) {
       config.indentedSyntax = Boolean(config.indentedSyntax);
     }
 
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       sass.render(config, (err, res) => {
         if (err) {
           reject(err);
         } else {
           node.compiled = {
             code: res.css.toString()
-          }
+          };
           resolve(node);
         }
       });
     });
-  }
+  };
 }
 
-exports = module.exports = function (options) {
-  return function () {
+exports = module.exports = function(options) {
+  return function() {
     ['sass', 'scss'].forEach(type => {
       this.register(`wepy-compiler-${type}`, createSassPlugin(this, type, options));
     });
-  }
-}
+  };
+};

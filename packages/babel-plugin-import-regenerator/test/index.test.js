@@ -13,11 +13,8 @@ describe('babel-plugin-import-regenerator', () => {
     const expectedFile = join(fixturesDir, caseName, 'expected.js');
 
     it(`should work with ${caseName.split('-').join(' ')}`, () => {
-
       actual = transform(readFileSync(actualFile), {
-        presets: [
-          'env'
-        ],
+        presets: ['env'],
         plugins: [plugin]
       }).code;
 

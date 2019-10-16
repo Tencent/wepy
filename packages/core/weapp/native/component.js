@@ -1,7 +1,6 @@
 import { patchMixins, patchMethods, patchData, patchLifecycle, patchProps, patchRelations } from '../init/index';
 
-export function component (opt = {}, rel) {
-
+export function component(opt = {}, rel) {
   let compConfig = {
     externalClasses: opt.externalClasses || [],
     // support component options property
@@ -29,4 +28,4 @@ export function component (opt = {}, rel) {
   patchLifecycle(compConfig, opt, rel, true);
 
   return Component(compConfig);
-};
+}

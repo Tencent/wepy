@@ -10,7 +10,6 @@ const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
 const stylusPath = path.resolve(fixturesPath, 'stylus');
 const cssPath = path.resolve(fixturesPath, 'css');
 
-
 // Ignore the fail test cases;
 let ids = specs.getIds().filter(v => !/^fail-/.test(v));
 
@@ -35,12 +34,11 @@ ids.forEach(id => {
 
   console.log(`Generate spec: ${id}`);
 
-  exec(cmd, {cwd: projectPath}, (err, stdout, stderr) => {
+  exec(cmd, { cwd: projectPath }, (err, stdout, stderr) => {
     if (err || stderr) {
       err = err || new Error(stderr);
       throw err;
     }
     if (stdout) fs.removeSync(tmpstylus);
   });
-
 });

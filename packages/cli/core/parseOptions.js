@@ -2,34 +2,33 @@ const path = require('path');
 const fs = require('fs');
 
 const DEFAULT_OPTIONS = {
-  'entry': { type: String, default: 'app' },
-  'src': { type: String, default: 'src' },
-  'target': { type: String, default: 'weapp' },
-  'static': { type: [String, Array], default: 'static' },
-  'output': { type: String, default: 'weapp' },
-  'platform': { type: String },
-  'wpyExt': { type: String, default: '.wpy' },
-  'eslint': { type: Boolean, default: true },
-  'cliLogs': { type: Boolean, default: false },
-  'watch': { type: Boolean, default: false },
-  'watchOption': { type: Object },
-  'noCache': { type: Boolean, default: false },
+  entry: { type: String, default: 'app' },
+  src: { type: String, default: 'src' },
+  target: { type: String, default: 'weapp' },
+  static: { type: [String, Array], default: 'static' },
+  output: { type: String, default: 'weapp' },
+  platform: { type: String },
+  wpyExt: { type: String, default: '.wpy' },
+  eslint: { type: Boolean, default: true },
+  cliLogs: { type: Boolean, default: false },
+  watch: { type: Boolean, default: false },
+  watchOption: { type: Object },
+  noCache: { type: Boolean, default: false },
   'build.web': { type: Object },
   'build.web.htmlTemplate': { type: String },
   'build.web.htmlOutput': { type: String },
   'build.web.jsOutput': { type: String },
   'build.web.resolve': { type: Object, link: 'resolve' },
-  'resolve': { type: Object, default: {} },
-  'compilers': { type: Object },
-  'plugins': { type: Array, default: []},
-  'appConfig': { type: Object },
-  'appConfig.noPromiseAPI': { type: Array, default: []}
+  resolve: { type: Object, default: {} },
+  compilers: { type: Object },
+  plugins: { type: Array, default: [] },
+  appConfig: { type: Object },
+  'appConfig.noPromiseAPI': { type: Array, default: [] }
 };
-
 
 const DEFAULT_CONFIG = path.resolve('wepy.config.js');
 
-function setValue (obj, key, val) {
+function setValue(obj, key, val) {
   let arr = key.split('.');
   let left = obj;
   for (let i = 0, l = arr.length; i < l; i++) {
@@ -45,7 +44,7 @@ function setValue (obj, key, val) {
   return obj;
 }
 
-function getValue (obj, key) {
+function getValue(obj, key) {
   let arr = key.split('.');
   let left = obj;
   let rst;
@@ -62,21 +61,21 @@ function getValue (obj, key) {
   return rst;
 }
 
-function check (t, val) {
+function check(t, val) {
   if (Array.isArray(t)) {
-    return t.some((type) => check(type, val));
+    return t.some(type => check(type, val));
   }
   switch (t) {
     case String:
-      return typeof(val) === 'string';
+      return typeof val === 'string';
     case Number:
-      return typeof(val) === 'number';
+      return typeof val === 'number';
     case Boolean:
-      return typeof(val) === 'boolean';
+      return typeof val === 'boolean';
     case Function:
-      return typeof(val) === 'function';
+      return typeof val === 'function';
     case Object:
-      return typeof(val) === 'object';
+      return typeof val === 'object';
     case Array:
       return toString.call(val) === '[object Array]';
     default:
@@ -84,8 +83,7 @@ function check (t, val) {
   }
 }
 
-function parse (opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
-
+function parse(opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
   let ret = {};
 
   for (let k in baseOpt) {
@@ -106,9 +104,9 @@ function parse (opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
   return ret;
 }
 
-function convert (args) {
+function convert(args) {
   if (!fs.existsSync(DEFAULT_CONFIG)) {
-    throw `No configuration file found in the current directory.`
+    throw `No configuration file found in the current directory.`;
   }
 
   let opt = require(DEFAULT_CONFIG);
@@ -122,4 +120,4 @@ exports = module.exports = {
   getValue: getValue,
   parse: parse,
   convert: convert
-}
+};

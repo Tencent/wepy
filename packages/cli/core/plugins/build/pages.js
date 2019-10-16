@@ -1,10 +1,7 @@
 const path = require('path');
 
-
-exports = module.exports = function () {
-
-  this.register('build-pages', function buildPages (pages) {
-
+exports = module.exports = function() {
+  this.register('build-pages', function buildPages(pages) {
     this.logger.info('page', 'building pages');
 
     pages.forEach(page => {
@@ -28,10 +25,8 @@ exports = module.exports = function () {
       let targetFile = this.getTarget(page.file);
       let target = path.parse(targetFile);
       page.outputFile = path.join(target.dir, target.name);
-
     });
 
     return pages;
   });
 };
-

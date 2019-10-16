@@ -10,13 +10,13 @@
 const objectHash = require('object-hash');
 const engines = {};
 
-let cached = {};  // ESLint line cache
+let cached = {}; // ESLint line cache
 
 function lint(engine, file) {
   return engine.executeOnFiles(file);
 }
 
-function printLinterOutput (res, options) {
+function printLinterOutput(res, options) {
   if (res.warningCount && options.quiet) {
     res.warningCount = 0;
     res.results.forEach(item => {
@@ -44,25 +44,18 @@ function printLinterOutput (res, options) {
   }
 }
 
-exports = module.exports = function (options = {}) {
+exports = module.exports = function(options = {}) {
   const cwd = process.cwd();
 
-  return function () {
-
+  return function() {
     // Clear the eslint cache when watch process done
-    this.register('process-clear', function () {
+    this.register('process-clear', function() {
       cached = {};
     });
 
     // Registe before parse hook to every process
-    [
-      'wxs',
-      'config',
-      'script',
-      'template'
-    ].forEach(type => {
-      this.register('before-wepy-parser-' + type, function ({ node, ctx } = {}) {
-
+    ['wxs', 'config', 'script', 'template'].forEach(type => {
+      this.register('before-wepy-parser-' + type, function({ node, ctx } = {}) {
         // wpy files goes here four times.
         if (cached[ctx.file]) {
           return Promise.resolve({ node, ctx });
@@ -74,13 +67,17 @@ exports = module.exports = function (options = {}) {
 
         cached[ctx.file] = 1;
 
-        options = Object.assign({}, {
-          useEslintrc: true,
-          eslintPath: 'eslint',
-          quiet: false,
-          output: true,
-          extensions: ['.js', this.options.wpyExt || '.wpy']
-        }, options);
+        options = Object.assign(
+          {},
+          {
+            useEslintrc: true,
+            eslintPath: 'eslint',
+            quiet: false,
+            output: true,
+            extensions: ['.js', this.options.wpyExt || '.wpy']
+          },
+          options
+        );
 
         // Create singleton engine per config
         const optionsHash = objectHash(options);
@@ -106,10 +103,7 @@ exports = module.exports = function (options = {}) {
           }
         }
 
-        if (
-          !options.formatter ||
-          typeof options.formatter !== 'function'
-        ) {
+        if (!options.formatter || typeof options.formatter !== 'function') {
           const userEslintPath = options.eslintPath;
           if (userEslintPath) {
             try {
@@ -128,6 +122,6 @@ exports = module.exports = function (options = {}) {
 
         return Promise.resolve({ node, ctx });
       });
-    })
-  }
+    });
+  };
 };

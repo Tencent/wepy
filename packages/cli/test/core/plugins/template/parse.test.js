@@ -8,10 +8,9 @@ const initPlugin = require(`${alias.core}/init/plugin`);
 const moduleSet = require(`${alias.core}/moduleSet`);
 const pt = require(`${alias.plugins}/template/parse`);
 
-
 function cached(fn) {
   var _cache = {};
-  return function (key) {
+  return function(key) {
     if (!_cache[key]) {
       _cache[key] = fn(key);
     }
@@ -19,7 +18,7 @@ function cached(fn) {
   };
 }
 
-const getRaw = cached(function (file) {
+const getRaw = cached(function(file) {
   const original = path.join(__dirname, '..', '..', 'fixtures/template/original', file + '.html');
   const assert = path.join(__dirname, '..', '..', 'fixtures/template/assert', file + '.wxml');
 
@@ -43,14 +42,14 @@ const spec = {
       file: 'v-on',
       sfc: {
         wxs: [],
-        template: { content: getRaw('v-on').originalRaw, code: getRaw('v-on').assertRaw },
+        template: { content: getRaw('v-on').originalRaw, code: getRaw('v-on').assertRaw }
       }
     },
     {
       file: 'v-on.wxs',
       sfc: {
         wxs: [{ attrs: { module: 'm' } }],
-        template: { content: getRaw('v-on.wxs').originalRaw, code: getRaw('v-on.wxs').assertRaw },
+        template: { content: getRaw('v-on.wxs').originalRaw, code: getRaw('v-on.wxs').assertRaw }
       }
     }
   ],
@@ -58,7 +57,7 @@ const spec = {
 };
 
 function createLogger(type) {
-  return function (...args) {
+  return function(...args) {
     // mute silly and info
     if (type === 'silly' || type === 'info') {
       return;
@@ -78,7 +77,7 @@ function createCompiler(options = {}) {
     info: createLogger('info'),
     warn: createLogger('warn'),
     error: createLogger('error'),
-    silly: createLogger('silly'),
+    silly: createLogger('silly')
   };
   instance.tags = {
     htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
@@ -99,7 +98,9 @@ function assetHanlder(handlers) {
       const fixture = fs.readFileSync(funcfile, 'utf-8');
 
       try {
-        expect(func.replace(/\s*/ig, '').replace(/\n*/ig, '')).to.equal(fixture.replace(/\s*/ig, '').replace(/\n*/ig, ''));
+        expect(func.replace(/\s*/gi, '').replace(/\n*/gi, '')).to.equal(
+          fixture.replace(/\s*/gi, '').replace(/\n*/gi, '')
+        );
       } catch (e) {
         console.log('Compiled Handler: ' + id + '.' + type + '.js');
         console.log(func);
@@ -112,28 +113,31 @@ function assetHanlder(handlers) {
 function assertCodegen(originalRaw, assertRaw, options = {}, ctx, done) {
   const compiler = createCompiler(options);
   compiler.assets.add(ctx.file);
-  compiler.hookUnique('template-parse', originalRaw, {}, ctx).then((rst) => {
-    expect(rst.code).to.equal(assertRaw);
-    if (ctx.file === 'v-on') {
-      assetHanlder(rst.rel.handlers);
-    }
-    done();
-  }).catch(err => {
-    done(err);
-    // throw err;
-  });
+  compiler
+    .hookUnique('template-parse', originalRaw, {}, ctx)
+    .then(rst => {
+      expect(rst.code).to.equal(assertRaw);
+      if (ctx.file === 'v-on') {
+        assetHanlder(rst.rel.handlers);
+      }
+      done();
+    })
+    .catch(err => {
+      done(err);
+      // throw err;
+    });
 }
 
-describe('template-parse', function () {
+describe('template-parse', function() {
   spec.attr.forEach(ctx => {
-    it('test attr: ' + ctx.file, function (done) {
+    it('test attr: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
       assertCodegen(originalRaw, assertRaw, {}, ctx, done);
     });
   });
 
   spec.event.forEach(ctx => {
-    it('test attr: ' + ctx.file, function (done) {
+    it('test attr: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
       assertCodegen(originalRaw, assertRaw, {}, ctx, done);
     });

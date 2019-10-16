@@ -13,13 +13,20 @@ const path = require('path');
 /*
  * To human readable size
  */
-function formatSizeUnits (bytes){
-  if (bytes >= 1073741824) { bytes = (bytes / 1073741824).toFixed(2) + " GB"; }
-  else if (bytes >= 1048576) { bytes = (bytes / 1048576).toFixed(2) + " MB"; }
-  else if (bytes >= 1024) { bytes = (bytes / 1024).toFixed(2) + " KB"; }
-  else if (bytes > 1) { bytes = bytes + " bytes"; }
-  else if (bytes == 1) { bytes = bytes + " byte"; }
-  else { bytes = "0 bytes"; }
+function formatSizeUnits(bytes) {
+  if (bytes >= 1073741824) {
+    bytes = (bytes / 1073741824).toFixed(2) + ' GB';
+  } else if (bytes >= 1048576) {
+    bytes = (bytes / 1048576).toFixed(2) + ' MB';
+  } else if (bytes >= 1024) {
+    bytes = (bytes / 1024).toFixed(2) + ' KB';
+  } else if (bytes > 1) {
+    bytes = bytes + ' bytes';
+  } else if (bytes == 1) {
+    bytes = bytes + ' byte';
+  } else {
+    bytes = '0 bytes';
+  }
   return bytes;
 }
 
@@ -27,11 +34,15 @@ let totalSize = 0;
 let totalFile = 0;
 let totalMinSize = 0;
 
-exports = module.exports = function (options = {}) {
-  return function () {
-
-    this.register('process-done', function () {
-      this.logger.info('uglifyjs', `Compressed File: ${totalFile}, Original Size: ${formatSizeUnits(totalSize)}, Compressed Size: ${formatSizeUnits(totalMinSize)}, Ratio: ${(totalMinSize/totalSize).toFixed(2)}%`);
+exports = module.exports = function(options = {}) {
+  return function() {
+    this.register('process-done', function() {
+      this.logger.info(
+        'uglifyjs',
+        `Compressed File: ${totalFile}, Original Size: ${formatSizeUnits(
+          totalSize
+        )}, Compressed Size: ${formatSizeUnits(totalMinSize)}, Ratio: ${(totalMinSize / totalSize).toFixed(2)}%`
+      );
 
       // Clear data
       totalFile = 0;
@@ -39,8 +50,7 @@ exports = module.exports = function (options = {}) {
       totalMinSize = 0;
     });
 
-    this.register('output-file', function ({ filename, code, encoding }) {
-
+    this.register('output-file', function({ filename, code, encoding }) {
       this.logger.silly('uglifyjs', 'File: ' + filename);
 
       let ext = path.extname(filename);
@@ -81,5 +91,5 @@ exports = module.exports = function (options = {}) {
         });
       }
     });
-  }
+  };
 };

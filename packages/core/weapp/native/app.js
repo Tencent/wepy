@@ -1,6 +1,6 @@
 import { patchMixins, patchAppLifecycle } from '../init/index';
 
-export function app (option, rel) {
+export function app(option, rel) {
   let appConfig = {};
 
   patchMixins(appConfig, option, option.mixins);

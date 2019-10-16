@@ -1,7 +1,7 @@
-function proxy () {
+function proxy() {
   var $event = arguments[arguments.length - 1];
-  var _vm=this;
-    return (function () {
-      _vm.myclickCapture($event)
-    })();
+  var _vm = this;
+  return (function() {
+    _vm.myclickCapture($event);
+  })();
 }

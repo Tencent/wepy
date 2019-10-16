@@ -1,16 +1,16 @@
 import { observe } from './../observer/index';
 import { proxy } from './data';
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from './../util/index';
+import { isFunc, isArr, isStr, isObj, isUndef, noop, clone } from './../util/index';
 
-const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
+const AllowedTypes = [String, Number, Boolean, Object, Array, null];
 
-const observerFn = function (output, props, prop) {
-  return function (newVal, oldVal, changedPaths) {
+const observerFn = function(output, props, prop) {
+  return function(newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
 
     // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
     if (changedPaths.length > 1) {
-      return
+      return;
     }
     let _data = newVal;
     if (typeof _data === 'function') {
@@ -22,7 +22,7 @@ const observerFn = function (output, props, prop) {
 /*
  * patch props option
  */
-export function patchProps (output, props) {
+export function patchProps(output, props) {
   let newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -40,14 +40,16 @@ export function patchProps (output, props) {
       let newProp = {};
 
       // props.type
-      if (isUndef(prop.type)){
+      if (isUndef(prop.type)) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
         newProp.type = null;
         console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
-        console.warn(`Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`);
+        console.warn(
+          `Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`
+        );
       } else {
         newProp.type = prop.type;
       }
@@ -70,17 +72,15 @@ export function patchProps (output, props) {
     }
   }
 
-  Object.keys(newProps).forEach(prop => {
-
-  });
+  Object.keys(newProps).forEach(prop => {});
 
   output.properties = newProps;
-};
+}
 
 /*
  * init props
  */
-export function initProps (vm, properties) {
+export function initProps(vm, properties) {
   vm._props = {};
 
   if (!properties) {
@@ -98,4 +98,4 @@ export function initProps (vm, properties) {
     value: vm._props,
     root: true
   });
-};
+}

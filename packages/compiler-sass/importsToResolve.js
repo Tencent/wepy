@@ -40,17 +40,18 @@ function importsToResolve(url) {
   const basename = path.basename(request);
 
   if (basename.charAt(0) === '_') {
-    return [
-      `${ request }.scss`, `${ request }.sass`, `${ request }.css`,
-      url
-    ];
+    return [`${request}.scss`, `${request}.sass`, `${request}.css`, url];
   }
 
   const dirname = path.dirname(request);
 
   return [
-    `${ dirname }/_${ basename }.scss`, `${ dirname }/_${ basename }.sass`, `${ dirname }/_${ basename }.css`,
-    `${ request }.scss`, `${ request }.sass`, `${ request }.css`,
+    `${dirname}/_${basename}.scss`,
+    `${dirname}/_${basename}.sass`,
+    `${dirname}/_${basename}.css`,
+    `${request}.scss`,
+    `${request}.sass`,
+    `${request}.css`,
     url
   ];
 }

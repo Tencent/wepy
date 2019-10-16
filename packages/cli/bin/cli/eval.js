@@ -5,12 +5,12 @@ const chalk = require('chalk');
  * prompt answers data.
  */
 
-exports = module.exports = function evaluate (exp, data) {
-    const fn = new Function('data', 'with (data) { return ' + exp + '}');
-    try {
-        return fn(data);
-    } catch (e) {
-        return null;
-        //console.error(chalk.red('Error when evaluating filter condition: ' + exp));
-    }
-}
+exports = module.exports = function evaluate(exp, data) {
+  const fn = new Function('data', 'with (data) { return ' + exp + '}');
+  try {
+    return fn(data);
+  } catch (e) {
+    return null;
+    //console.error(chalk.red('Error when evaluating filter condition: ' + exp));
+  }
+};

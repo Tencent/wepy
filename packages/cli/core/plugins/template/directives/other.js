@@ -4,15 +4,20 @@ const modifierRE = /\.[^.]+/g;
 
 const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
-
-exports = module.exports = function () {
-
+exports = module.exports = function() {
   /*
   this.register('template-parse-ast-pre-attr-[other]', function preParseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
   });
   */
 
-  this.register('template-parse-ast-attr-[other]', function parseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
+  this.register('template-parse-ast-attr-[other]', function parseDirectivesFor({
+    item,
+    name,
+    expr,
+    modifiers,
+    scope,
+    ctx
+  }) {
     if (nativeBindRE.test(name)) {
       let bindType = name.match(nativeBindRE)[0];
       name = name.replace(bindType, '');
@@ -37,11 +42,12 @@ exports = module.exports = function () {
       return this.hookUnique('template-parse-ast-attr-v-on', { item, name, expr, modifiers, scope, ctx });
     }
 
-    if (bindRE.test(name)) { // :prop or v-bind:prop;
+    if (bindRE.test(name)) {
+      // :prop or v-bind:prop;
 
       return this.hookUnique('template-parse-ast-attr-v-bind', { item, name, expr, modifiers, scope, ctx });
-
-    } else if (onRE.test(name)) {  // @ or v-on:
+    } else if (onRE.test(name)) {
+      // @ or v-on:
       name = name.replace(onRE, '');
       return this.hookUnique('template-parse-ast-attr-v-on', { item, name, expr, modifiers, scope, ctx });
     }
@@ -53,14 +59,10 @@ exports = module.exports = function () {
     };
   });
 
-  this.register('template-parse-ast-attr-[other]-apply', function applyDirective ({ parsed, rel }) {
+  this.register('template-parse-ast-attr-[other]-apply', function applyDirective({ parsed, rel }) {
     return {
       parsed,
       rel
     };
   });
-
 };
-
-
-

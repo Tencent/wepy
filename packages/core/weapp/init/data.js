@@ -8,32 +8,30 @@ export const sharedPropertyDefinition = {
   set: noop
 };
 
-
-export function proxy (target, sourceKey, key) {
-  sharedPropertyDefinition.get = function proxyGetter () {
-    return this[sourceKey][key]
-  }
-  sharedPropertyDefinition.set = function proxySetter (val) {
-    this[sourceKey][key] = val
-  }
-  Object.defineProperty(target, key, sharedPropertyDefinition)
-};
+export function proxy(target, sourceKey, key) {
+  sharedPropertyDefinition.get = function proxyGetter() {
+    return this[sourceKey][key];
+  };
+  sharedPropertyDefinition.set = function proxySetter(val) {
+    this[sourceKey][key] = val;
+  };
+  Object.defineProperty(target, key, sharedPropertyDefinition);
+}
 
 /*
  * patch data option
  */
-export function patchData (output, data) {
+export function patchData(output, data) {
   if (!data) {
     data = {};
   }
   output.data = data;
-};
-
+}
 
 /*
  * init data
  */
-export function initData (vm, data) {
+export function initData(vm, data) {
   if (!data) {
     data = {};
   }

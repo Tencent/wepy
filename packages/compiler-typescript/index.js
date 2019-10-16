@@ -9,19 +9,23 @@
 const path = require('path');
 const ts = require('typescript');
 
-exports = module.exports = function (options) {
-  return function () {
-    this.register('wepy-compiler-typescript', function (node, ctx) {
+exports = module.exports = function(options) {
+  return function() {
+    this.register('wepy-compiler-typescript', function(node, ctx) {
       let p;
-      let file = typeof ctx === 'string' ? ctx : ctx.file
+      let file = typeof ctx === 'string' ? ctx : ctx.file;
       let source = node.content;
-      let params = Object.assign({}, {
-        fileName: file,
-        compilerOptions: {
-          esModuleInterop: true,
-          module: ts.ModuleKind.CommonJS
-        }
-      }, options);
+      let params = Object.assign(
+        {},
+        {
+          fileName: file,
+          compilerOptions: {
+            esModuleInterop: true,
+            module: ts.ModuleKind.CommonJS
+          }
+        },
+        options
+      );
       try {
         let compiled = ts.transpileModule(source, params);
         compiled.code = compiled.outputText;
@@ -44,14 +48,18 @@ exports = module.exports = function (options) {
       return p;
     });
 
-    this.register('prewalk-VariableDeclarator', function (walker, declarator, name, decl) {
-      if (walker.lang !== 'typescript')
-        return;
+    this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
+      if (walker.lang !== 'typescript') return;
       // var core_1 = __importDefault(require('@wepy/core'))
       if (declarator.init && declarator.init.type === 'CallExpression') {
         if (declarator.init.callee.name === '__importDefault') {
           let arg = declarator.init.arguments[0];
-          if (arg && arg.type === 'CallExpression' && arg.callee.name === 'require' && arg.arguments[0].value === '@wepy/core') {
+          if (
+            arg &&
+            arg.type === 'CallExpression' &&
+            arg.callee.name === 'require' &&
+            arg.arguments[0].value === '@wepy/core'
+          ) {
             walker.scope.instances.push(name + '.default');
           }
         }
@@ -65,9 +73,8 @@ exports = module.exports = function (options) {
       }
     });
 
-    this.register('walker-detect-entry', function (walker, expression, exprName) {
-      if (walker.lang !== 'typescript')
-        return;
+    this.register('walker-detect-entry', function(walker, expression, exprName) {
+      if (walker.lang !== 'typescript') return;
       if (walker.scope.instances && walker.scope.instances.length && exprName) {
         if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
           if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
@@ -76,5 +83,5 @@ exports = module.exports = function (options) {
         }
       }
     });
-  }
-}
+  };
+};

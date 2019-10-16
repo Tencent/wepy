@@ -18,11 +18,12 @@ const MODEL_MAP = {
     type: 'change',
     value: 'checked'
   },
-  "checkbox-group": { // TODO: Can not set data for checkbox-group
+  'checkbox-group': {
+    // TODO: Can not set data for checkbox-group
     type: 'change',
     value: null
   },
-  "radio-group": {
+  'radio-group': {
     type: 'change',
     value: null
   },
@@ -46,7 +47,7 @@ const MODEL_MAP = {
  * - test.xxx.a["asa"][test1[key]]
  *
  */
-function parseModel (str) {
+function parseModel(str) {
   str = str.trim();
   let len = str.length;
 
@@ -77,15 +78,15 @@ function parseModel (str) {
   let exprStart = 0;
   let exprEnd = 0;
 
-  let isQuoteStart = function (chr) {
+  let isQuoteStart = function(chr) {
     return chr === 0x22 || chr === 0x27;
   };
 
-  let parseString = function (chr) {
+  let parseString = function(chr) {
     while (index < len && str.charCodeAt(++index) !== chr) {}
   };
 
-  let parseBracket = function (chr) {
+  let parseBracket = function(chr) {
     let inBracket = 1;
     exprStart = index;
     while (index < len) {
@@ -94,16 +95,13 @@ function parseModel (str) {
         parseString(chr);
         continue;
       }
-      if (chr === 0x5B)
-        inBracket++;
-      if (chr === 0x5D)
-        inBracket--;
+      if (chr === 0x5b) inBracket++;
+      if (chr === 0x5d) inBracket--;
 
       if (inBracket === 0) {
-        exprEnd = index
+        exprEnd = index;
         break;
       }
-
     }
   };
 
@@ -111,7 +109,7 @@ function parseModel (str) {
     let chr = str.charCodeAt(++index);
     if (isQuoteStart(chr)) {
       parseString(chr);
-    } else if (chr === 0x5B) {
+    } else if (chr === 0x5b) {
       parseBracket(chr);
     }
   }
@@ -122,7 +120,7 @@ function parseModel (str) {
   };
 }
 
-function generateModelFunction (expr) {
+function generateModelFunction(expr) {
   let func = '';
   let parsed = parseModel(expr);
   if (parsed.key === null) {
@@ -145,7 +143,7 @@ function generateModelFunction (expr) {
   return func;
 }
 
-function generateModelFunctionInScope (scope, iterators, expr) {
+function generateModelFunctionInScope(scope, iterators, expr) {
   let l = iterators.length;
   let i = 0;
   let func = [];
@@ -190,12 +188,10 @@ function generateModelFunctionInScope (scope, iterators, expr) {
   return func;
 }
 
-exports = module.exports = function () {
-
+exports = module.exports = function() {
   let modelid = 0;
 
-  this.register('template-parse-ast-attr-v-model', function parseVModel ({item, name, expr, modifiers, scope, ctx}) {
-
+  this.register('template-parse-ast-attr-v-model', function parseVModel({ item, name, expr, modifiers, scope, ctx }) {
     let attrs = item.attribs;
 
     let conflicts = ['value', 'v-bind', ':value'].filter(v => !!attrs[v]);
@@ -207,8 +203,10 @@ exports = module.exports = function () {
 
     expr = expr.trim();
 
-    let param = '', i = 0;
-    while (i < expr.length && expr[i] !== '.' && expr[i] !== '[') {  // get v-model param, like item.checked or item[0]
+    let param = '',
+      i = 0;
+    while (i < expr.length && expr[i] !== '.' && expr[i] !== '[') {
+      // get v-model param, like item.checked or item[0]
       param += expr[i++];
     }
 
@@ -225,7 +223,7 @@ exports = module.exports = function () {
       let fetchScope = scope;
       let level = 0;
       let referScope = null;
-      while(fetchScope) {
+      while (fetchScope) {
         level++;
 
         // Get all iterators from parent scopes
@@ -235,9 +233,13 @@ exports = module.exports = function () {
         }
         if (referScope) {
           if (!fetchScope.iterator1) {
-            this.logger.error('v-for', `Missing iterator index in "${fetchScope.expr}". If you want to use v-model inside a v-for. then you have to declare a iterator index, like "(item, index) in list".`);
+            this.logger.error(
+              'v-for',
+              `Missing iterator index in "${fetchScope.expr}". If you want to use v-model inside a v-for. then you have to declare a iterator index, like "(item, index) in list".`
+            );
           } else {
-            if (iterators.indexOf(fetchScope.iterator1) > -1) { // index exists
+            if (iterators.indexOf(fetchScope.iterator1) > -1) {
+              // index exists
               this.logger.warn('v-for', `Duplicated iterator in "${fetchScope.expr}"`);
             }
             iterators.push(fetchScope.iterator1);
@@ -257,11 +259,9 @@ exports = module.exports = function () {
       }
     }
     return rst;
-
   });
 
-  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply ({ parsed, rel }) {
-
+  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply({ parsed, rel }) {
     let model = parsed.model;
     let expr = model.expr.trim();
     let attrs = parsed.attrs;
@@ -270,13 +270,16 @@ exports = module.exports = function () {
       return;
     }
 
-    if (model.tag === 'radio' || model.tag === 'checkbox') { // checkbox and radio do not have bindchange event.
-      this.logger.warn('v-model', `<${model.tag} /> do not support v-model, please use <${model.tag}-group /> instead.`);
+    if (model.tag === 'radio' || model.tag === 'checkbox') {
+      // checkbox and radio do not have bindchange event.
+      this.logger.warn(
+        'v-model',
+        `<${model.tag} /> do not support v-model, please use <${model.tag}-group /> instead.`
+      );
     }
 
     let map = MODEL_MAP[model.tag];
     if (map) {
-
       if (map.value) {
         attrs[map.value] = `{{ ${expr} }}`;
       }
@@ -297,7 +300,8 @@ exports = module.exports = function () {
         attrs['data-model-id'] = model.id;
       }
 
-      if (model.scopeInfo) { // v-model in v-for
+      if (model.scopeInfo) {
+        // v-model in v-for
         let iterators = model.scopeInfo.iterators;
         let i = iterators.length;
         let p = 0;
@@ -305,7 +309,7 @@ exports = module.exports = function () {
           this.logger.error('v-model', 'Too deep in v-for');
         }
         while (--i >= 0) {
-          let attr = `data-model-` + String.fromCharCode(97 + (p++));
+          let attr = `data-model-` + String.fromCharCode(97 + p++);
           attrs[attr] = `{{ ${iterators[i]} }}`;
         }
 

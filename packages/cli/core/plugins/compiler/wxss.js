@@ -3,9 +3,8 @@ const path = require('path');
 const fs = require('fs');
 const RawSource = require('webpack-sources').RawSource;
 
-exports = module.exports = function () {
-
-  this.register('wepy-compiler-wxss', function (node, ctx) {
+exports = module.exports = function() {
+  this.register('wepy-compiler-wxss', function(node, ctx) {
     let code = node.content;
 
     let ast = css.parse(code);
@@ -25,20 +24,28 @@ exports = module.exports = function () {
 
           try {
             importCode = fs.readFileSync(importfile, encoding);
-          } catch(e) {
+          } catch (e) {
             this.logger.warn('compiler', `Can not open file ${importfile} in ${ctx.file}`);
           }
 
           if (importCode) {
             // add assets dependencies
-            this.assets.update(importfile, {
-              encoding: encoding,
-              source: new RawSource(importCode),
-            }, { url: true, npm: ctx.npm });
+            this.assets.update(
+              importfile,
+              {
+                encoding: encoding,
+                source: new RawSource(importCode)
+              },
+              { url: true, npm: ctx.npm }
+            );
 
-            this.hookUnique('wepy-compiler-wxss', {
-              content: importCode
-            }, Object.assign({}, ctx, { dep: true }));
+            this.hookUnique(
+              'wepy-compiler-wxss',
+              {
+                content: importCode
+              },
+              Object.assign({}, ctx, { dep: true })
+            );
           }
         }
       }
@@ -48,4 +55,4 @@ exports = module.exports = function () {
     };
     return Promise.resolve(node);
   });
-}
+};

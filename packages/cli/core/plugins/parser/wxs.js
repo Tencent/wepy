@@ -1,15 +1,16 @@
 const path = require('path');
 const hashUtil = require('../../util/hash');
 
-exports = module.exports = function () {
-  this.register('wepy-parser-wxs', function (node, ctx) {
-
+exports = module.exports = function() {
+  this.register('wepy-parser-wxs', function(node, ctx) {
     if (ctx.useCache && !node.src && ctx.sfc.template.parsed) {
       return Promise.resolve(true);
     }
     let moduleId = node.attrs.module;
     let code = node.compiled.code.trim();
-    let output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${!node.src ? '\n' + code + '\n' : ''}</wxs>`;
+    let output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${
+      !node.src ? '\n' + code + '\n' : ''
+    }</wxs>`;
     node.parsed = {
       output
     };
@@ -17,10 +18,8 @@ exports = module.exports = function () {
     // If have src attribute, then use src.wxs as ctx key
     // If do not have src, then create a fake xxx.wpy_wxs as ctx key.
     // Can not use wpy ctx, because it's generated in wpy parse.
-    const cacheKey = node.src
-      ? path.resolve(path.dirname(ctx.file), node.src)
-      : (ctx.file + '_wxs');
-    const isHashEqual = !!this.compiled[cacheKey] && fileHash === this.compiled[cacheKey].hash
+    const cacheKey = node.src ? path.resolve(path.dirname(ctx.file), node.src) : ctx.file + '_wxs';
+    const isHashEqual = !!this.compiled[cacheKey] && fileHash === this.compiled[cacheKey].hash;
     let wxsCtx = null;
 
     if (node.src && isHashEqual) {

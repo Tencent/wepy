@@ -1,7 +1,6 @@
 const htmlparser = require('htmlparser2');
 
-
-const walk = function (ast, opt) {
+const walk = function(ast, opt) {
   let { type, name, attr } = opt;
   ast.forEach(item => {
     if (type && typeof type[item.type] === 'function') {
@@ -20,7 +19,7 @@ const walk = function (ast, opt) {
   });
 };
 
-const generate = function (ast) {
+const generate = function(ast) {
   let str = '';
   if (!Array.isArray(ast)) {
     ast = [ast];
@@ -34,9 +33,7 @@ const generate = function (ast) {
       if (item.attribs) {
         Object.keys(item.attribs).forEach(attr => {
           if (item.attribs[attr] !== undefined)
-            str += (item.attribs[attr] === true)
-              ? ` ${attr}`
-              : ` ${attr}="${item.attribs[attr]}"`;
+            str += item.attribs[attr] === true ? ` ${attr}` : ` ${attr}="${item.attribs[attr]}"`;
         });
       }
       str += '>';
@@ -49,15 +46,18 @@ const generate = function (ast) {
   return str;
 };
 
-module.exports = function ast (html) {
+module.exports = function ast(html) {
   return new Promise((resolve, reject) => {
-    const handler = new htmlparser.DomHandler(function (error, dom) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(dom);
-      }
-    }, { withStartIndices: true, withEndIndices: true });
+    const handler = new htmlparser.DomHandler(
+      function(error, dom) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(dom);
+        }
+      },
+      { withStartIndices: true, withEndIndices: true }
+    );
     const parser = new htmlparser.Parser(handler, { xmlMode: true });
     parser.write(html);
     parser.end();

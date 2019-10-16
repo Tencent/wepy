@@ -2,9 +2,9 @@ import Event from '../class/Event';
 import { callUserHook } from './hooks';
 import { isFunc, isUndef, parseModel, warn } from './../util/index';
 
-const eventHandler = function (method, fn) {
+const eventHandler = function(method, fn) {
   let methodKey = method.toLowerCase();
-  return function (e, ...args) {
+  return function(e, ...args) {
     if (!isFunc(fn)) {
       throw 'undefined method: ' + method;
     }
@@ -14,7 +14,7 @@ const eventHandler = function (method, fn) {
     let p;
     if (e.currentTarget && e.currentTarget.dataset) {
       let tmp = e.currentTarget.dataset;
-      while(!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
+      while (!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
         wepyParams.push(tmp['wpy' + methodKey + p]);
       }
     }
@@ -24,7 +24,7 @@ const eventHandler = function (method, fn) {
   };
 };
 
-const proxyHandler = function (e) {
+const proxyHandler = function(e) {
   const vm = this.$wepy;
   const type = e.type;
   // touchstart do not have currentTarget
@@ -32,7 +32,7 @@ const proxyHandler = function (e) {
   const evtid = dataset.wpyEvt;
   const modelId = dataset.modelId;
   const rel = vm.$rel || {};
-  const handlers = rel.handlers ? (rel.handlers[evtid] || {}) : {};
+  const handlers = rel.handlers ? rel.handlers[evtid] || {} : {};
   const fn = handlers[type];
   const model = rel.models[modelId];
 
@@ -52,7 +52,8 @@ const proxyHandler = function (e) {
     let alpha = String.fromCharCode(64 + i);
     if (!noParams) {
       let key = 'wpy' + type + alpha;
-      if (!(key in dataset)) { // it can be undefined;
+      if (!(key in dataset)) {
+        // it can be undefined;
         noParams = true;
       } else {
         params.push(dataset[key]);
@@ -82,57 +83,52 @@ const proxyHandler = function (e) {
       params: paramsWithEvent
     });
 
-    if (hookRes === false) { // Event cancelled.
+    if (hookRes === false) {
+      // Event cancelled.
       return;
     }
     return fn.apply(vm, params.concat($event));
   } else if (!model) {
     throw new Error('Unrecognized event');
   }
-}
+};
 
 /*
  * initialize page methods, also the app
  */
-export function initMethods (vm, methods) {
+export function initMethods(vm, methods) {
   if (methods) {
     Object.keys(methods).forEach(method => {
       vm[method] = methods[method];
     });
   }
-};
+}
 
 /*
  * initialize component methods
  */
-export function initComponentMethods (comConfig, methods) {
-
+export function initComponentMethods(comConfig, methods) {
   comConfig.methods = {};
   Object.keys(methods).forEach(method => {
     comConfig[method] = eventHandler(method, methods[method]);
   });
-};
+}
 
 /*
  * patch method option
  */
-export function patchMethods (output, methods, isComponent) {
-
+export function patchMethods(output, methods, isComponent) {
   output.methods = {};
   let target = output.methods;
 
-  target._initComponent = function (e) {
+  target._initComponent = function(e) {
     let child = e.detail;
     let { ref, wpyEvt } = e.target.dataset;
     let vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
       if (vm.$refs[ref]) {
-        warn(
-          'duplicate ref "' + ref +
-          '" will be covered by the last instance.\n',
-          vm
-        )
+        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm);
       }
       vm.$refs[ref] = child;
     }
@@ -151,4 +147,4 @@ export function patchMethods (output, methods, isComponent) {
       target[method] = methods[method];
     });
   }
-};
+}

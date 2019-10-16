@@ -9,10 +9,9 @@
 const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
-const CONST = require('../../util/const')
+const CONST = require('../../util/const');
 
 const wxmlAst = require('../../ast/wxml');
-
 
 const readFile = (file, defaultValue = '') => {
   if (fs.existsSync(file)) {
@@ -21,8 +20,8 @@ const readFile = (file, defaultValue = '') => {
   return defaultValue;
 };
 
-exports = module.exports = function () {
-  this.register('wepy-parser-component', function (comp) {
+exports = module.exports = function() {
+  this.register('wepy-parser-component', function(comp) {
     let parsedPath = path.parse(comp.path);
     let file = path.join(parsedPath.dir, parsedPath.name);
     let sfc = {
@@ -35,7 +34,7 @@ exports = module.exports = function () {
       file: file,
       npm: comp.npm,
       component: true,
-      type: 'weapp', // This is a weapp original component
+      type: 'weapp' // This is a weapp original component
     };
     let weappCacheKey = file + CONST.WEAPP_EXT;
 
@@ -73,7 +72,8 @@ exports = module.exports = function () {
     let flow = Promise.resolve(true);
     let templateContent = sfc.template.content;
 
-    if (templateContent.indexOf('<wxs ') > -1) { // wxs tag inside
+    if (templateContent.indexOf('<wxs ') > -1) {
+      // wxs tag inside
       let templateAst = wxmlAst(sfc.template.content);
 
       sfc.wxs = [];
@@ -82,7 +82,7 @@ exports = module.exports = function () {
         let checkSrc = false;
         wxmlAst.walk(ast, {
           name: {
-            wxs (item) {
+            wxs(item) {
               if (item.type === 'tag' && item.name === 'wxs') {
                 if (item.attribs.src) {
                   checkSrc = true;
@@ -102,30 +102,37 @@ exports = module.exports = function () {
             }
           }
         });
-        if (checkSrc) {  // has wxs with src, reset wxml
+        if (checkSrc) {
+          // has wxs with src, reset wxml
           sfc.template.content = wxmlAst.generate(ast);
         }
         return checkSrc ? this.hookAsyncSeq('parse-sfc-src', context) : true;
       });
     }
 
-
-    return flow.then(() => {
-      if (sfc.wxs) {
-        return Promise.all(sfc.wxs.map(wxs => {
-          return this.applyCompiler(wxs, context);
-        }));
-      }
-    }).then(() => {
-      return this.applyCompiler(sfc.config, context);
-    }).then(() => {
-      return this.applyCompiler(sfc.template, context);
-    }).then(() => {
-      return this.applyCompiler(sfc.script, context);
-    }).then((parsed) => {
-      sfc.script.parsed = parsed;
-      return this.applyCompiler(sfc.styles[0], context);
-    }).then(() => context);
-
+    return flow
+      .then(() => {
+        if (sfc.wxs) {
+          return Promise.all(
+            sfc.wxs.map(wxs => {
+              return this.applyCompiler(wxs, context);
+            })
+          );
+        }
+      })
+      .then(() => {
+        return this.applyCompiler(sfc.config, context);
+      })
+      .then(() => {
+        return this.applyCompiler(sfc.template, context);
+      })
+      .then(() => {
+        return this.applyCompiler(sfc.script, context);
+      })
+      .then(parsed => {
+        sfc.script.parsed = parsed;
+        return this.applyCompiler(sfc.styles[0], context);
+      })
+      .then(() => context);
   });
 };

@@ -7,17 +7,16 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-
-const stringifyObj = (obj) => {
+const stringifyObj = obj => {
   return (
-    "Object({" +
+    'Object({' +
     Object.keys(obj)
       .map(key => {
         const code = obj[key];
-        return JSON.stringify(key) + ":" + toCode(code);
+        return JSON.stringify(key) + ':' + toCode(code);
       })
-      .join(",") +
-    "})"
+      .join(',') +
+    '})'
   );
 };
 
@@ -27,47 +26,47 @@ const stringifyObj = (obj) => {
  * @param {Parser} parser Parser
  * @returns {string} code converted to string that evaluates
  */
-const toCode = (code) => {
+const toCode = code => {
   if (code === null) {
-    return "null";
+    return 'null';
   }
   if (code === undefined) {
-    return "undefined";
+    return 'undefined';
   }
   if (code instanceof RegExp && code.toString) {
     return code.toString();
   }
-  if (typeof code === "function" && code.toString) {
-    return "(" + code.toString() + ")";
+  if (typeof code === 'function' && code.toString) {
+    return '(' + code.toString() + ')';
   }
-  if (typeof code === "object") {
+  if (typeof code === 'object') {
     return stringifyObj(code);
   }
-  return code + "";
+  return code + '';
 };
 
-exports = module.exports = function DefinePlugin (options = {}) {
-  return function () {
-    this.register('walker-unary-expression-undefined', function (parser, expr, names) {
+exports = module.exports = function DefinePlugin(options = {}) {
+  return function() {
+    this.register('walker-unary-expression-undefined', function(parser, expr, names) {
       if (expr.operator === 'typeof') {
         let v = options[`typeof ${names.name}`] || options[`typeof(${names.name})`];
         if (v) {
           parser.replacements.push({ expr, value: toCode(v) });
         }
       }
-      return [ parser, expr, names ];
+      return [parser, expr, names];
     });
-    this.register('walker-member-expression-undefined', function (parser, expr, names) {
+    this.register('walker-member-expression-undefined', function(parser, expr, names) {
       if (options.hasOwnProperty(names.name)) {
         parser.replacements.push({ expr, value: toCode(options[names.name]) });
       }
-      return [ parser, expr, names ];
+      return [parser, expr, names];
     });
-    this.register('walker-identifier-undefined', function (parser, expr) {
+    this.register('walker-identifier-undefined', function(parser, expr) {
       if (options.hasOwnProperty(expr.name)) {
         parser.replacements.push({ expr, value: toCode(options[expr.name]) });
       }
-      return [ parser, expr ];
+      return [parser, expr];
     });
-  }
+  };
 };

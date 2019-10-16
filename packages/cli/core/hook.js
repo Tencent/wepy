@@ -1,33 +1,33 @@
 class Hook {
-  constructor () {
+  constructor() {
     this._hooks = {};
   }
 
-  register (key, fn) {
+  register(key, fn) {
     if (!this._hooks[key]) {
       this._hooks[key] = [];
     }
     this._hooks[key].push(fn);
 
-    return (() => {
+    return () => {
       this.unregister(key, fn);
-    });
+    };
   }
 
-  hasHook (key) {
+  hasHook(key) {
     return (this._hooks[key] || []).length > 0;
   }
 
-  hook (key, ...args) {
+  hook(key, ...args) {
     let rst = [];
     let fns = this._hooks[key] || [];
     fns.forEach(fn => {
-      (typeof fn === 'function') && (rst.push(fn.apply(this, args)));
+      typeof fn === 'function' && rst.push(fn.apply(this, args));
     });
     return rst;
   }
 
-  hookSeq (key, ...args) {
+  hookSeq(key, ...args) {
     let rst = args;
     let fns = this._hooks[key] || [];
     let hasHook = false;
@@ -43,10 +43,10 @@ class Hook {
       }
     });
 
-    return hasHook ? rst : (rst.length <= 1 ? rst[0] : rst);
+    return hasHook ? rst : rst.length <= 1 ? rst[0] : rst;
   }
 
-  hookUnique (key, ...args) {
+  hookUnique(key, ...args) {
     let fns = this._hooks[key] || [];
     let lastFn = fns[fns.length - 1];
 
@@ -55,15 +55,15 @@ class Hook {
     }
   }
 
-  hookUniqueReturnArg (key, ...args) {
+  hookUniqueReturnArg(key, ...args) {
     let rst = this.hookUnique(key, ...args);
     if (typeof rst === 'undefined') {
-      rst = (args.length <= 1 ? args[0] : args);
+      rst = args.length <= 1 ? args[0] : args;
     }
     return rst;
   }
 
-  hookAsyncSeq (key, ...args) {
+  hookAsyncSeq(key, ...args) {
     // if hook registered, return last rst, else return args
     let rst = args;
     let fns = this._hooks[key] || [];
@@ -84,22 +84,20 @@ class Hook {
       });
     };
 
-    fns = fns.concat(
-      (...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst)
-    );
+    fns = fns.concat((...lastRst) => Promise.resolve(argLength === 1 ? lastRst[0] : lastRst));
 
     return fns.reduce(iterateFunc, Promise.resolve(args));
   }
 
-  hookReturnOrigin (key, ...args) {
+  hookReturnOrigin(key, ...args) {
     let fns = this._hooks[key] || [];
     fns.forEach(fn => {
-      (typeof fn === 'function') && (fn.apply(this, args));
+      typeof fn === 'function' && fn.apply(this, args);
     });
-    return (args.length <= 1 ? args[0] : args);
+    return args.length <= 1 ? args[0] : args;
   }
 
-  unregister (key, fn) {
+  unregister(key, fn) {
     let fns = this._hooks[key];
     if (fns && typeof fn === 'function') {
       fns = fns.filter(f => f !== fn);
@@ -111,7 +109,7 @@ class Hook {
     }
   }
 
-  unregisterAll (key) {
+  unregisterAll(key) {
     delete this._hooks[key];
   }
 }

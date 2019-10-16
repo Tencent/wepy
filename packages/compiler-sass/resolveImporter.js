@@ -15,11 +15,13 @@ function resolveImporter(compilation, file) {
       return { file: resolved.path };
     });
   }
-  return function (url, prev, done) {
+  return function(url, prev, done) {
     let dir = path.dirname(prev === 'stdin' ? file : prev);
 
-    doResolve(dir, importsToResolve(url)).then(done).catch(() => ({file: url}));
-  }
+    doResolve(dir, importsToResolve(url))
+      .then(done)
+      .catch(() => ({ file: url }));
+  };
 }
 
 exports = module.exports = resolveImporter;

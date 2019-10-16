@@ -20,14 +20,9 @@ const RawSource = require('webpack-sources').RawSource;
 // 记录 npm 文件是否已经遍历过
 const npmTraverseFileMap = {};
 
-exports = module.exports = function () {
-  this.register('wepy-parser-dep', function (node, ctx, dep) {
-    return this.resolvers.normal.resolve(
-      { issuer: ctx.file },
-      path.dirname(ctx.file),
-      dep.module,
-      {}
-    ).then(rst => {
+exports = module.exports = function() {
+  this.register('wepy-parser-dep', function(node, ctx, dep) {
+    return this.resolvers.normal.resolve({ issuer: ctx.file }, path.dirname(ctx.file), dep.module, {}).then(rst => {
       let npm = rst.meta.descriptionFileRoot !== this.context;
 
       let assets = this.assets;
@@ -39,26 +34,22 @@ exports = module.exports = function () {
       }
 
       let data = assets.data(file);
-      if (
-        data !== undefined
-        && this.compiled[file]
-        && this.compiled[file].hash
-      ) {
+      if (data !== undefined && this.compiled[file] && this.compiled[file].hash) {
         let fileContent = fs.readFileSync(file, 'utf-8');
         let fileHash = hashUtil.hash(fileContent);
         if (fileHash === this.compiled[file].hash) {
           // File is not changed, do not compile again
           if (
-            data.parser
-            && !data.depModules // Ignore if deps modules are resolved, otherwise there will be a dead loop
-            && data.parser.deps
-            && data.parser.deps.length
-            && !npmTraverseFileMap[file]
+            data.parser &&
+            !data.depModules && // Ignore if deps modules are resolved, otherwise there will be a dead loop
+            data.parser.deps &&
+            data.parser.deps.length &&
+            !npmTraverseFileMap[file]
           ) {
             // If it has dependences, walk throguh all dependences
             npmTraverseFileMap[file] = npm;
-            let depTasks = data.parser.deps.map(
-              dep => this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep)
+            let depTasks = data.parser.deps.map(dep =>
+              this.hookUnique('wepy-parser-dep', data, this.compiled[file], dep)
             );
             return Promise.all(depTasks).then(rst => {
               data.depModules = rst;
@@ -83,7 +74,7 @@ exports = module.exports = function () {
     });
   });
 
-  this.register('wepy-parser-script', function (node, ctx) {
+  this.register('wepy-parser-script', function(node, ctx) {
     let assets = this.assets;
     if (ctx.npm && !ctx.component && !ctx.wxs) {
       if (this.vendors.pending(ctx.file)) {
@@ -98,9 +89,7 @@ exports = module.exports = function () {
       // File is not changed
       let walker = node.parsed.parser;
 
-      let depTasks = walker.deps.map(
-        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
-      );
+      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
 
       return Promise.all(depTasks).then(rst => {
         return node.parsed;
@@ -112,9 +101,7 @@ exports = module.exports = function () {
       let walker = new Walker(this, astData, node.lang);
       walker.run();
 
-      let depTasks = walker.deps.map(
-        dep => this.hookUnique('wepy-parser-dep', node, ctx, dep)
-      );
+      let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
       return Promise.all(depTasks).then(rst => {
         let obj = {
           file: ctx.file,
@@ -126,7 +113,7 @@ exports = module.exports = function () {
           depModules: rst,
           npm: !!ctx.npm,
           type: ctx.type,
-          component: ctx.component,
+          component: ctx.component
         };
 
         this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));

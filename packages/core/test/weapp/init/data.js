@@ -3,8 +3,7 @@ import Dirty from '../../../weapp/class/Dirty';
 
 const expect = require('chai').expect;
 
-describe('weapp init data', function () {
-
+describe('weapp init data', function() {
   it('patch data', () => {
     const output = {};
 
@@ -20,7 +19,7 @@ describe('weapp init data', function () {
   it('init data', () => {
     const vm = {};
 
-    initData(vm, { num: 1, str: 'string', arr: [1, 2], obj: {a : 1}, deepobj: { node: { a: 1 } } });
+    initData(vm, { num: 1, str: 'string', arr: [1, 2], obj: { a: 1 }, deepobj: { node: { a: 1 } } });
 
     expect(vm.num).to.be.equal(vm._data.num);
     expect(vm.str).to.be.equal(vm._data.str);
@@ -31,19 +30,15 @@ describe('weapp init data', function () {
     expect(vm.deepobj.node.__ob__).to.be.an('object');
   });
 
-
   it('init data from function', () => {
     const vm = {};
 
-    initData(vm, function () {
+    initData(vm, function() {
       return {
         a: 1
-      }
+      };
     });
 
     expect(vm.a).to.be.equal(1);
-
   });
-
 });
-

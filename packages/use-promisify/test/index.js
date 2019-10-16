@@ -1,12 +1,11 @@
 const expect = require('chai').expect;
 const usePromisify = require('../dist/index');
 
-
 function ensureAllTaskDone(taskList, done) {
   let tasks = {};
-  taskList.forEach(v => tasks[v] = false);
+  taskList.forEach(v => (tasks[v] = false));
 
-  let _interval = setInterval(function () {
+  let _interval = setInterval(function() {
     let alldone = true;
     for (let k in tasks) {
       alldone = alldone && tasks[k];
@@ -17,53 +16,52 @@ function ensureAllTaskDone(taskList, done) {
     }
   });
   return {
-    done: function (key) {
+    done: function(key) {
       tasks[key] = true;
     }
   };
 }
 
 describe('wepy-use-promisify', function() {
-
   let wepy = {};
 
   let __storage = {
-    mydata: {a: 1}
+    mydata: { a: 1 }
   };
 
   let wx = {
-    request: function (option) {
+    request: function(option) {
       setTimeout(() => {
-        (option.fail && option.fail(new Error('timeout')));
-        (option.complete && option.complete({a: 1}));
+        option.fail && option.fail(new Error('timeout'));
+        option.complete && option.complete({ a: 1 });
       }, 1000);
     },
-    getStorage: function (option) {
+    getStorage: function(option) {
       setTimeout(() => {
         let res = __storage[option.key];
-        (option.success && option.success(res));
-        (option.complete && option.complete(res));
-      })
-    },
-    setStorage: function (option) {
-      setTimeout(() => {
-        __storage[option.key] = option.data;
-        (option.success && option.success());
-        (option.complete && option.complete());
+        option.success && option.success(res);
+        option.complete && option.complete(res);
       });
     },
-    getStorageSync: function (key) {
+    setStorage: function(option) {
+      setTimeout(() => {
+        __storage[option.key] = option.data;
+        option.success && option.success();
+        option.complete && option.complete();
+      });
+    },
+    getStorageSync: function(key) {
       let res = __storage[key];
       return res;
     },
-    someNewAPI: function (option) {
+    someNewAPI: function(option) {
       setTimeout(() => {
         option.success(option.num);
       });
     },
-    showActionSheet: function (option) {
+    showActionSheet: function(option) {
       setTimeout(() => {
-        (option.success && option.success(option));
+        option.success && option.success(option);
       });
     }
   };
@@ -72,12 +70,8 @@ describe('wepy-use-promisify', function() {
     global.wx = wx;
   });
 
-  it('install', function (done) {
-
-    let task = ensureAllTaskDone([
-      'test-request-catch',
-      'test-storage'
-    ], done);
+  it('install', function(done) {
+    let task = ensureAllTaskDone(['test-request-catch', 'test-storage'], done);
 
     let wepy = {};
     usePromisify.install(wepy);
@@ -94,70 +88,62 @@ describe('wepy-use-promisify', function() {
       task.done('test-request-catch');
     });
 
-    wepy.wx.getStorage({key: 'mydata'}).then((res) => {
+    wepy.wx.getStorage({ key: 'mydata' }).then(res => {
       expect(res).to.deep.equal(__storage.mydata);
       task.done('test-storage');
     });
 
     expect(wepy.wx.getStorageSync('mydata')).to.deep.equal(__storage.mydata);
-
   });
 
-  it('install appends array list', function (done) {
+  it('install appends array list', function(done) {
     let wepy = {};
 
-    usePromisify.install(wepy, {someNewAPI: false, getStorage: true});
+    usePromisify.install(wepy, { someNewAPI: false, getStorage: true });
 
-    wepy.wx.someNewAPI({num: 1}).then(res => {
+    wepy.wx.someNewAPI({ num: 1 }).then(res => {
       expect(res).to.equal(1);
       done();
     });
-
   });
 
-  it('install get rid apis', function (done) {
+  it('install get rid apis', function(done) {
     let wepy = {};
     usePromisify.install(wepy, ['getStorage']);
     wepy.wx.getStorage({
       key: 'mydata',
-      success: function (res) {
+      success: function(res) {
         expect(res).is.deep.equal(__storage.mydata);
         done();
       }
     });
   });
 
-  it('params fix testing', function (done) {
-
+  it('params fix testing', function(done) {
     let wepy = {};
     usePromisify.install(wepy);
 
-    wepy.wx.setStorage('mydata', {b : 1}).then(res => {
+    wepy.wx.setStorage('mydata', { b: 1 }).then(res => {
       wepy.wx.getStorage('mydata').then(res => {
-        expect(res).to.deep.equal({b: 1});
+        expect(res).to.deep.equal({ b: 1 });
         expect(__storage.mydata).to.deep.equal(res);
         done();
-      })
-    })
+      });
+    });
   });
 
-  it('test err-first promisify', function (done) {
+  it('test err-first promisify', function(done) {
+    let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
 
-    let task = ensureAllTaskDone([
-      'test-greater',
-      'test-less'
-    ], done);
-
-
-    let isGreaterThan10 = function (num, callback) {
-      setTimeout(function () {
+    let isGreaterThan10 = function(num, callback) {
+      setTimeout(function() {
         if (num > 10) {
           callback(null, true);
         } else {
           callback(new Error('wrong'), false);
         }
       }, 300);
-    }
+    };
 
     let wepy = {};
     usePromisify.install(wepy);
@@ -169,24 +155,21 @@ describe('wepy-use-promisify', function() {
       task.done('test-greater');
     });
 
-    promisifyFn(9).then(res => {
-      throw new Error('should not run here');
-    }).catch(e => {
-      expect(e).is.an('error');
-      expect(e.message).to.equal('wrong');
-      task.done('test-less');
-    });
-
+    promisifyFn(9)
+      .then(res => {
+        throw new Error('should not run here');
+      })
+      .catch(e => {
+        expect(e).is.an('error');
+        expect(e.message).to.equal('wrong');
+        task.done('test-less');
+      });
   });
 
-  it('test weapp-style promisify', function (done) {
+  it('test weapp-style promisify', function(done) {
+    let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
 
-    let task = ensureAllTaskDone([
-      'test-greater',
-      'test-less'
-    ], done);
-
-    let isGreaterThan10 = function (option) {
+    let isGreaterThan10 = function(option) {
       if (option.num > 10) {
         option.success(true);
       } else {
@@ -199,22 +182,23 @@ describe('wepy-use-promisify', function() {
 
     let promisifyFn = wepy.promisify(isGreaterThan10);
 
-    promisifyFn({num: 11}).then(res => {
+    promisifyFn({ num: 11 }).then(res => {
       expect(res).to.equal(true);
       task.done('test-greater');
     });
 
-    promisifyFn({num: 9}).then(res => {
-      throw new Error('should not run here');
-    }).catch(e => {
-      expect(e).is.an('error');
-      expect(e.message).to.equal('wrong');
-      task.done('test-less');
-    });
-
+    promisifyFn({ num: 9 })
+      .then(res => {
+        throw new Error('should not run here');
+      })
+      .catch(e => {
+        expect(e).is.an('error');
+        expect(e.message).to.equal('wrong');
+        task.done('test-less');
+      });
   });
 
-  it('test simplify', function (done) {
+  it('test simplify', function(done) {
     let wepy = {},
       originParamsArr = [
         {
@@ -229,27 +213,32 @@ describe('wepy-use-promisify', function() {
           itemList: 'test?id=1'
         }
       ],
-      task = ensureAllTaskDone((function () {
-        return originParamsArr.map((item, index) => index)
-      })(), done);
+      task = ensureAllTaskDone(
+        (function() {
+          return originParamsArr.map((item, index) => index);
+        })(),
+        done
+      );
 
     usePromisify.install(wepy);
 
     for (let item of originParamsArr) {
-      let filterParams = Object.values(item)
-      wepy.wx.showActionSheet(...filterParams).then(res => {
-        delete(res.success)
-        delete(res.fail)
-        expect(res).to.deep.equal(item);
-        task.done(originParamsArr.indexOf(item));
-      }).catch(e => {
-        console.log(e)
-      }); 
+      let filterParams = Object.values(item);
+      wepy.wx
+        .showActionSheet(...filterParams)
+        .then(res => {
+          delete res.success;
+          delete res.fail;
+          expect(res).to.deep.equal(item);
+          task.done(originParamsArr.indexOf(item));
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   });
 
-  after(function () {
+  after(function() {
     delete global.wx;
   });
-
 });
