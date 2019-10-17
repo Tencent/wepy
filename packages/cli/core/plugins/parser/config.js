@@ -3,8 +3,8 @@ const loaderUtils = require('loader-utils');
 
 let appUsingComponents = null;
 
-exports = module.exports = function () {
-  this.register('wepy-parser-config', function (rst, ctx) {
+exports = module.exports = function() {
+  this.register('wepy-parser-config', function(rst, ctx) {
     // If file is not changed, then use cache.
     if (ctx.useCache && ctx.sfc.config.parsed) {
       return Promise.resolve(true);
@@ -28,7 +28,8 @@ exports = module.exports = function () {
       // TODO: added error handler code
       return Promise.reject(`invalid json: ${configString}`);
     }
-    if (ctx.type !== 'app') { // app.json does not need it
+    if (ctx.type !== 'app') {
+      // app.json does not need it
       config.component = true;
     }
     if (!config.usingComponents) {
@@ -85,30 +86,32 @@ exports = module.exports = function () {
         hookName = 'raw';
       }
 
-      return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, ctx).then(({ name, prefix, resolved, target, npm }) => {
-        if (hookName === 'raw') {
-          resolvedUsingComponents[name] = url;
-          parseComponents.push({
-            name,
-            prefix,
-            url,
-          });
-        } else {
-          let relativePath = path.relative(path.dirname(ctx.file), target);
-          let parsedPath = path.parse(relativePath);
-          resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
-          parseComponents.push({
-            name,
-            prefix,
-            resolved,
-            path: resolved.path,
-            target,
-            npm,
-            request: relativePath,
-            type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
-          });
+      return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, ctx).then(
+        ({ name, prefix, resolved, target, npm }) => {
+          if (hookName === 'raw') {
+            resolvedUsingComponents[name] = url;
+            parseComponents.push({
+              name,
+              prefix,
+              url
+            });
+          } else {
+            let relativePath = path.relative(path.dirname(ctx.file), target);
+            let parsedPath = path.parse(relativePath);
+            resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+            parseComponents.push({
+              name,
+              prefix,
+              resolved,
+              path: resolved.path,
+              target,
+              npm,
+              request: relativePath,
+              type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
+            });
+          }
         }
-      });
+      );
     });
 
     return Promise.all(plist).then(() => {
@@ -127,14 +130,14 @@ exports = module.exports = function () {
     });
   });
 
-  this.register('wepy-parser-config-component-raw', function (name, prefix, source, target, ctx) {
+  this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, ctx) {
     return Promise.resolve({
       name,
-      prefix,
+      prefix
     });
   });
 
-  this.register('wepy-parser-config-component-module', function (name, prefix, source, target, ctx) {
+  this.register('wepy-parser-config-component-module', function(name, prefix, source, target, ctx) {
     let contextDir = path.dirname(ctx.file);
     let modulePath = this.resolvers.normal.resolveSync({}, contextDir, source);
 
@@ -149,7 +152,7 @@ exports = module.exports = function () {
     });
   });
 
-  this.register('wepy-parser-config-component-path', function (name, prefix, source, target, ctx) {
+  this.register('wepy-parser-config-component-path', function(name, prefix, source, target, ctx) {
     const moduleRequest = loaderUtils.urlToRequest(source, source.charAt(0) === '/' ? '' : null);
 
     let contextDir = path.dirname(ctx.file);
@@ -166,5 +169,4 @@ exports = module.exports = function () {
       };
     });
   });
-
-}
+};

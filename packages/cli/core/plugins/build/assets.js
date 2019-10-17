@@ -1,14 +1,10 @@
 const path = require('path');
 
-
-exports = module.exports = function () {
-
-  this.register('build-assets', function buildAssets () {
-
+exports = module.exports = function() {
+  this.register('build-assets', function buildAssets() {
     this.logger.info('assets', 'building assets');
 
     let result = [];
-    let assets = this.assets;
 
     this.assets.array().forEach(file => {
       let t = this.assets.type(file);
@@ -16,7 +12,8 @@ exports = module.exports = function () {
 
       if (!t.wxs && t.npm && t.dep && !t.component) {
         // do nothing, they are vendors
-      } else if (!t.wxs && t.component && !t.dep) { // If it's a component and it's not a dependences
+      } else if (!t.wxs && t.component && !t.dep) {
+        // If it's a component and it's not a dependences
         // do nothing
       } else {
         if (!t.wxs && !t.url) {
@@ -40,8 +37,7 @@ exports = module.exports = function () {
         });
       }
     });
+
     return result;
   });
-
 };
-

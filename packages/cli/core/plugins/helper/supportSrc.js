@@ -4,8 +4,8 @@ const loaderUtils = require('loader-utils');
 
 const trailingSlash = /[/\\]$/;
 
-exports = module.exports = function () {
-  this.register('pre-check-sfc', function (ctx) {
+exports = module.exports = function() {
+  this.register('pre-check-sfc', function(ctx) {
     let node = ctx.node;
     let file = ctx.file;
     let dir = path.parse(file).dir;
@@ -29,4 +29,4 @@ exports = module.exports = function () {
       });
     }
   });
-}
+};

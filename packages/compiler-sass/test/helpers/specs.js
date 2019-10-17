@@ -7,28 +7,22 @@ let tests = null;
 
 const options = {
   'basic.scss': {
-    json: {
-    },
-    string: [
-    ],
-    resolve: {
-    }
+    json: {},
+    string: [],
+    resolve: {}
   },
   'alias.scss': {
-    replace: [
-      [/~@/g, '../sass/vars']
-    ],
+    replace: [[/~@/g, '../sass/vars']],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '../fixtures/sass/vars')
       }
     }
   }
-}
-
+};
 
 exports = module.exports = {
-  getIds () {
+  getIds() {
     if (tests) {
       return tests;
     }
@@ -38,16 +32,16 @@ exports = module.exports = {
     });
     return tests;
   },
-  getId (id) {
+  getId(id) {
     return options[id] || {};
   },
-  getOpt (id) {
+  getOpt(id) {
     return this.getId(id).json || {};
   },
-  getResolveOpt (id) {
+  getResolveOpt(id) {
     return this.getId(id).resolve || {};
   },
-  getReplacements (id) {
-    return (this.getId(id).replace || []);
+  getReplacements(id) {
+    return this.getId(id).replace || [];
   }
-}
+};

@@ -22,8 +22,7 @@ import { patchData } from '../init/index';
 let comid = 0;
 let app;
 
-
-const callUserMethod = function (vm, userOpt, method, args) {
+const callUserMethod = function(vm, userOpt, method, args) {
   let result;
   let methods = userOpt[method];
   if (isFunc(methods)) {
@@ -54,13 +53,13 @@ const getLifecycycle = (defaultLifecycle, rel, type) => {
     });
   }
   return lifecycle;
-}
+};
 
 /*
  * patch app lifecyle
  */
-export function patchAppLifecycle (appConfig, options, rel = {}) {
-  appConfig.onLaunch = function (...args) {
+export function patchAppLifecycle(appConfig, options, rel = {}) {
+  appConfig.onLaunch = function(...args) {
     let vm = new WepyApp();
     app = vm;
     vm.$options = options;
@@ -82,12 +81,11 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
   lifecycle.forEach(k => {
     // it's not defined aready && user defined it && it's an array or function
     if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-      appConfig[k] = function (...args) {
+      appConfig[k] = function(...args) {
         return callUserMethod(app, app.$options, k, args);
       };
     }
   });
-
 };
 
 export function patchLifecycle (output, options, rel, isComponent) {
@@ -137,15 +135,21 @@ export function patchLifecycle (output, options, rel, isComponent) {
     initWatch(vm, options.watch);
 
     // create render watcher
-    initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
+    initRender(
+      vm,
+      Object.keys(vm._data)
+        .concat(Object.keys(vm._props))
+        .concat(Object.keys(vm._computedWatchers || {})),
+      Object.keys(vm._computedWatchers || {})
+    );
 
     return callUserMethod(vm, vm.$options, 'created', args);
   };
 
   output.created = initLifecycle;
   if (isComponent) {
-
-    output.attached = function (...args) { // Component attached
+    output.attached = function(...args) {
+      // Component attached
       let outProps = output.properties || {};
       // this.propperties are includes datas
       let acceptProps = this.properties;
@@ -153,16 +157,17 @@ export function patchLifecycle (output, options, rel, isComponent) {
       let parent = this.triggerEvent('_init', vm);
 
       // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate()
+      vm.$forceUpdate();
 
       initEvents(vm);
 
-      Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
+      Object.keys(outProps).forEach(k => (vm[k] = acceptProps[k]));
 
       return callUserMethod(vm, vm.$options, 'attached', args);
     };
   } else {
-    output.attached = function (...args) { // Page attached
+    output.attached = function(...args) {
+      // Page attached
       let vm = this.$wepy;
       let app = vm.$app;
       let pages = getCurrentPages();
@@ -171,17 +176,17 @@ export function patchLifecycle (output, options, rel, isComponent) {
       let webViewId = currentPage.__wxWebviewId__;
 
       // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate()
+      vm.$forceUpdate();
 
       if (app.$route.path !== path) {
         app.$route.path = path;
         app.$route.webViewId = webViewId;
-        vm.routed && (vm.routed());
+        vm.routed && vm.routed();
       }
 
       // TODO: page attached
       return callUserMethod(vm, vm.$options, 'attached', args);
-    }
+    };
     // Page lifecycle will be called under methods
     // e.g:
     // Component({
@@ -196,9 +201,9 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
     lifecycle.forEach(k => {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        output.methods[k] = function (...args) {
+        output.methods[k] = function(...args) {
           return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
-        }
+        };
       }
     });
   }
@@ -207,10 +212,9 @@ export function patchLifecycle (output, options, rel, isComponent) {
   lifecycle.forEach(k => {
     // beforeCreate is not a real lifecycle
     if (!output[k] && k !== 'beforeCreate' && (isFunc(options[k]) || isArr(options[k]))) {
-      output[k] = function (...args) {
+      output[k] = function(...args) {
         return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
-      }
+      };
     }
   });
-};
-
+}

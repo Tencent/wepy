@@ -1,10 +1,13 @@
 const acorn = require('acorn');
 const walk = require('acorn/dist/walk');
 
-const toAST = require('./toAST');
-
 function isScope(node) {
-  return node.type === 'FunctionExpression' || node.type === 'FunctionDeclaration' || node.type === 'ArrowFunctionExpression' || node.type === 'Program';
+  return (
+    node.type === 'FunctionExpression' ||
+    node.type === 'FunctionDeclaration' ||
+    node.type === 'ArrowFunctionExpression' ||
+    node.type === 'Program'
+  );
 }
 function isBlockScope(node) {
   return node.type === 'BlockStatement' || isScope(node);
@@ -19,13 +22,11 @@ function declaresThis(node) {
 }
 
 function reallyParse(source, options) {
-  var parseOptions = Object.assign({}, options,
-    {
-      allowReturnOutsideFunction: true,
-      allowImportExportEverywhere: true,
-      allowHashBang: true
-    }
-  );
+  var parseOptions = Object.assign({}, options, {
+    allowReturnOutsideFunction: true,
+    allowImportExportEverywhere: true,
+    allowHashBang: true
+  });
   return acorn.parse(source, parseOptions);
 }
 module.exports = findGlobals;
@@ -46,28 +47,28 @@ function findGlobals(source, options) {
   if (!(ast && typeof ast === 'object' && ast.type === 'Program')) {
     throw new TypeError('Source must be either a string of JavaScript or an acorn AST');
   }
-  var declareFunction = function (node) {
+  var declareFunction = function(node) {
     var fn = node;
     fn.locals = fn.locals || {};
-    node.params.forEach(function (node) {
+    node.params.forEach(function(node) {
       declarePattern(node, fn);
     });
     if (node.id) {
       fn.locals[node.id.name] = true;
     }
-  }
-  var declarePattern = function (node, parent) {
+  };
+  var declarePattern = function(node, parent) {
     switch (node.type) {
       case 'Identifier':
         parent.locals[node.name] = true;
         break;
       case 'ObjectPattern':
-        node.properties.forEach(function (node) {
+        node.properties.forEach(function(node) {
           declarePattern(node.value, parent);
         });
         break;
       case 'ArrayPattern':
-        node.elements.forEach(function (node) {
+        node.elements.forEach(function(node) {
           if (node) declarePattern(node, parent);
         });
         break;
@@ -81,13 +82,13 @@ function findGlobals(source, options) {
       default:
         throw new Error('Unrecognized pattern type: ' + node.type);
     }
-  }
-  var declareModuleSpecifier = function (node, parents) {
+  };
+  var declareModuleSpecifier = function(node) {
     ast.locals = ast.locals || {};
     ast.locals[node.local.name] = true;
-  }
+  };
   walk.ancestor(ast, {
-    'VariableDeclaration': function (node, parents) {
+    VariableDeclaration: function(node, parents) {
       var parent = null;
       for (var i = parents.length - 1; i >= 0 && parent === null; i--) {
         if (node.kind === 'var' ? isScope(parents[i]) : isBlockScope(parents[i])) {
@@ -95,11 +96,11 @@ function findGlobals(source, options) {
         }
       }
       parent.locals = parent.locals || {};
-      node.declarations.forEach(function (declaration) {
+      node.declarations.forEach(function(declaration) {
         declarePattern(declaration.id, parent);
       });
     },
-    'FunctionDeclaration': function (node, parents) {
+    FunctionDeclaration: function(node, parents) {
       var parent = null;
       for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
         if (isScope(parents[i])) {
@@ -110,8 +111,8 @@ function findGlobals(source, options) {
       parent.locals[node.id.name] = true;
       declareFunction(node);
     },
-    'Function': declareFunction,
-    'ClassDeclaration': function (node, parents) {
+    Function: declareFunction,
+    ClassDeclaration: function(node, parents) {
       var parent = null;
       for (var i = parents.length - 2; i >= 0 && parent === null; i--) {
         if (isScope(parents[i])) {
@@ -121,14 +122,14 @@ function findGlobals(source, options) {
       parent.locals = parent.locals || {};
       parent.locals[node.id.name] = true;
     },
-    'TryStatement': function (node) {
+    TryStatement: function(node) {
       if (node.handler === null) return;
       node.handler.locals = node.handler.locals || {};
       node.handler.locals[node.handler.param.name] = true;
     },
-    'ImportDefaultSpecifier': declareModuleSpecifier,
-    'ImportSpecifier': declareModuleSpecifier,
-    'ImportNamespaceSpecifier': declareModuleSpecifier
+    ImportDefaultSpecifier: declareModuleSpecifier,
+    ImportSpecifier: declareModuleSpecifier,
+    ImportNamespaceSpecifier: declareModuleSpecifier
   });
   function identifier(node, parents) {
     var name = node.name;
@@ -153,9 +154,9 @@ function findGlobals(source, options) {
     globals[name].nodes.push(node);
   }
   walk.ancestor(ast, {
-    'VariablePattern': identifier,
-    'Identifier': identifier,
-    'CallExpression': function (node) {
+    VariablePattern: identifier,
+    Identifier: identifier,
+    CallExpression: function(node) {
       callee = getNameForExpression(node.callee);
       expressions = node.arguments.map(arg => {
         let p = getNameForExpression(arg);
@@ -163,7 +164,7 @@ function findGlobals(source, options) {
         return p;
       });
     },
-    'ThisExpression': function (node, parents) {
+    ThisExpression: function(node, parents) {
       for (var i = 0; i < parents.length; i++) {
         if (declaresThis(parents[i])) {
           return;
@@ -183,22 +184,22 @@ function findGlobals(source, options) {
 function getNameForExpression(expression) {
   let expr = expression;
   const exprName = [];
-  while(expr.type === "MemberExpression" && expr.property.type === (expr.computed ? "Literal" : "Identifier")) {
+  while (expr.type === 'MemberExpression' && expr.property.type === (expr.computed ? 'Literal' : 'Identifier')) {
     exprName.push(expr.computed ? expr.property.value : expr.property.name);
     expr = expr.object;
   }
-  let free;
-  if (expr.type === "Identifier") {
+  if (expr.type === 'Identifier') {
     exprName.push(expr.name);
-  } else if (expr.type === "Literal") {
+  } else if (expr.type === 'Literal') {
     exprName.push(expr.value);
   }
   let name = exprName.pop();
-  while(t = exprName.pop()) {
+  let t;
+  while ((t = exprName.pop())) {
     name += typeof t === 'number' ? `[${t}]` : `.${t}`;
   }
   return {
     name,
-    type: expr.type,
+    type: expr.type
   };
 }

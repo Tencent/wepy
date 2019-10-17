@@ -1,7 +1,7 @@
 const path = require('path');
 
-
-const VENDOR_INJECTION = [`
+const VENDOR_INJECTION = [
+  `
 var window = { Number: Number, Array: Array, Date: Date, Error: Error, Math: Math, Object: Object, Function: Function, RegExp: RegExp, String: String, TypeError: TypeError, parseInt: parseInt, parseFloat: parseFloat, isNaN: isNaN };
 var global = window;
 var process = { env: {} };
@@ -41,11 +41,8 @@ var process = { env: {} };
   ']);'
 ];
 
-
-exports = module.exports = function () {
-
-  this.register('build-vendor', function buildPages (vendor) {
-
+exports = module.exports = function() {
+  this.register('build-vendor', function buildPages(vendor) {
     this.logger.info('vendor', 'building vendor');
 
     let vendorList = this.vendors.array();
@@ -62,7 +59,7 @@ exports = module.exports = function () {
       code += data.source.source() + '\n';
       code += '}';
       if (i !== vendorList.length - 1) {
-          code += ',';
+        code += ',';
       }
       code += '/***** module ' + i + ' end *****/\n\n\n';
     });
@@ -76,4 +73,3 @@ exports = module.exports = function () {
     return vendor;
   });
 };
-

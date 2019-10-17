@@ -2,34 +2,37 @@ const acorn = require('acorn-dynamic-import').default;
 
 const ECMA_VERSION = 2017;
 
-const POSSIBLE_AST_OPTIONS = [{
-  ranges: true,
-  locations: true,
-  ecmaVersion: ECMA_VERSION,
-  sourceType: "module",
-  plugins: {
-    dynamicImport: true
+const POSSIBLE_AST_OPTIONS = [
+  {
+    ranges: true,
+    locations: true,
+    ecmaVersion: ECMA_VERSION,
+    sourceType: 'module',
+    plugins: {
+      dynamicImport: true
+    }
+  },
+  {
+    ranges: true,
+    locations: true,
+    ecmaVersion: ECMA_VERSION,
+    sourceType: 'script',
+    plugins: {
+      dynamicImport: true
+    }
   }
-}, {
-  ranges: true,
-  locations: true,
-  ecmaVersion: ECMA_VERSION,
-  sourceType: "script",
-  plugins: {
-    dynamicImport: true
-  }
-}];
+];
 
-exports = module.exports = function ast (source) {
+exports = module.exports = function ast(source) {
   let ast;
   const comments = [];
-  for(let i = 0, len = POSSIBLE_AST_OPTIONS.length; i < len; i++) {
-    if(!ast) {
+  for (let i = 0, len = POSSIBLE_AST_OPTIONS.length; i < len; i++) {
+    if (!ast) {
       try {
         comments.length = 0;
         POSSIBLE_AST_OPTIONS[i].onComment = comments;
         ast = acorn.parse(source, POSSIBLE_AST_OPTIONS[i]);
-      } catch(e) {
+      } catch (e) {
         // ignore the error
       }
     }
@@ -40,7 +43,7 @@ exports = module.exports = function ast (source) {
       ranges: true,
       locations: true,
       ecmaVersion: ECMA_VERSION,
-      sourceType: "module",
+      sourceType: 'module',
       plugins: {
         dynamicImport: true
       },
@@ -52,4 +55,4 @@ exports = module.exports = function ast (source) {
     throw new Error(`Source could\'t be parsed`);
   }
   return ast;
-}
+};

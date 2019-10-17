@@ -2,29 +2,26 @@ import WepyComponent from './WepyComponent';
 import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
 export default class WepyPage extends WepyComponent {
-
-  $launch (url, params) {
+  $launch(url, params) {
     this.$route('reLaunch', url, params);
   }
-  $navigate (url, params) {
+  $navigate(url, params) {
     this.$route('navigate', url, params);
   }
 
-  $redirect (url, params) {
+  $redirect(url, params) {
     this.$route('redirect', url, params);
   }
 
-  $back (p = {}) {
-    if (isNum(p))
-      p = { delta: p };
+  $back(p = {}) {
+    if (isNum(p)) p = { delta: p };
 
-    if (!p.delta)
-      p.delta = 1;
+    if (!p.delta) p.delta = 1;
 
     return wx.navigateBack(p);
   }
 
-  $route (type, url, params = {}) {
+  $route(type, url, params = {}) {
     let wxparams;
     if (isStr(url)) {
       let paramsList = [];
@@ -35,8 +32,7 @@ export default class WepyPage extends WepyComponent {
           }
         }
       }
-      if (paramsList.length)
-        url = url + '?' + paramsList.join('&');
+      if (paramsList.length) url = url + '?' + paramsList.join('&');
 
       wxparams = { url: url };
     } else {

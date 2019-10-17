@@ -3,7 +3,6 @@ import $global from './global';
 import { initGlobalAPI } from './apis/index';
 import { config } from './config';
 
-
 const wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config;

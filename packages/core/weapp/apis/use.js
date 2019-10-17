@@ -1,6 +1,6 @@
 import { isFunc } from '../../shared/index';
 
-export function use (plugin, ...args) {
+export function use(plugin, ...args) {
   if (plugin.installed) {
     return this;
   }

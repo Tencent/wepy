@@ -13,8 +13,8 @@ const loaderUtils = require('loader-utils');
 
 const hashUtil = require('../../util/hash');
 
-exports = module.exports = function () {
-  this.register('wepy-parser-wpy', function (comp) {
+exports = module.exports = function() {
+  this.register('wepy-parser-wpy', function(comp) {
     let sfc, flow;
     let file = comp.path;
     let type = comp.type;
@@ -29,7 +29,8 @@ exports = module.exports = function () {
     let fileContent = fs.readFileSync(file, 'utf-8');
     let fileHash = hashUtil.hash(fileContent);
 
-    if (this.compiled[file] && fileHash === this.compiled[file].hash) { // 文件 hash 一致，说明文件无修改
+    if (this.compiled[file] && fileHash === this.compiled[file].hash) {
+      // 文件 hash 一致，说明文件无修改
       context = this.compiled[file];
       context.useCache = true;
       sfc = context.sfc;
@@ -70,44 +71,53 @@ exports = module.exports = function () {
 
     this.fileDep.addDeps(file);
 
-    context.promise = flow.then(() => {
-      return this.applyCompiler(context.sfc.config, context);
-    }).then(() => {
-      if (sfc.wxs) {
-        return Promise.all(sfc.wxs.map(wxs => {
-          return this.applyCompiler(wxs, context);
-        }));
-      }
-    }).then(() => {
-      if (sfc.template && type !== 'app') {
-        sfc.template.lang = sfc.template.lang || 'wxml';
-        return this.applyCompiler(context.sfc.template, context);
-      }
-    }).then(parsed => {
-      if (sfc.script) {
-        sfc.script.lang = sfc.script.lang || 'babel';
-        return this.applyCompiler(context.sfc.script, context);
-      }
-    }).then(parsed => {
-      (sfc.script && parsed) && (sfc.script.parsed = parsed);
-      if (sfc.styles) {
-        return Promise.all(sfc.styles.map(style => {
-          style.lang = style.lang || 'css';
-          return this.applyCompiler(style, context);
-        }));
-      }
-    }).then((all = []) => {
-      context.done = true;
-      return context;
-    });
+    context.promise = flow
+      .then(() => {
+        return this.applyCompiler(context.sfc.config, context);
+      })
+      .then(() => {
+        if (sfc.wxs) {
+          return Promise.all(
+            sfc.wxs.map(wxs => {
+              return this.applyCompiler(wxs, context);
+            })
+          );
+        }
+      })
+      .then(() => {
+        if (sfc.template && type !== 'app') {
+          sfc.template.lang = sfc.template.lang || 'wxml';
+          return this.applyCompiler(context.sfc.template, context);
+        }
+      })
+      .then(parsed => {
+        if (sfc.script) {
+          sfc.script.lang = sfc.script.lang || 'babel';
+          return this.applyCompiler(context.sfc.script, context);
+        }
+      })
+      .then(parsed => {
+        sfc.script && parsed && (sfc.script.parsed = parsed);
+        if (sfc.styles) {
+          return Promise.all(
+            sfc.styles.map(style => {
+              style.lang = style.lang || 'css';
+              return this.applyCompiler(style, context);
+            })
+          );
+        }
+      })
+      .then((all = []) => {
+        context.done = true;
+        return context;
+      });
 
     return context.promise;
   });
 
-
   const trailingSlash = /[/\\]$/;
 
-  this.register('parse-sfc-src', function (context) {
+  this.register('parse-sfc-src', function(context) {
     let sfc = context.sfc;
 
     let tasks = [];
@@ -121,13 +131,15 @@ exports = module.exports = function () {
         src = node ? node.src : '';
         if (src) {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
-          tasks.push(this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
-            node.content = fs.readFileSync(rst.path, 'utf-8');
-            this.fileDep.addDeps(context.file, [rst.path]);
-            node.dirty = true;
-          }));
+          tasks.push(
+            this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
+              node.content = fs.readFileSync(rst.path, 'utf-8');
+              this.fileDep.addDeps(context.file, [rst.path]);
+              node.dirty = true;
+            })
+          );
         }
-      })
+      });
     }
     return Promise.all(tasks);
   });

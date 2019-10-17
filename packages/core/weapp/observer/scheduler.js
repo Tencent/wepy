@@ -1,39 +1,36 @@
 import config from '../util/config';
 //import { callHook, activateChildComponent } from '../instance/lifecycle';
 
-import {
-  warn,
-  nextTick
-} from '../util/index'
+import { warn, nextTick } from '../util/index';
 
-export const MAX_UPDATE_COUNT = 100
+export const MAX_UPDATE_COUNT = 100;
 
-const queue = []
-const activatedChildren = []
-let has = {}
-let circular = {}
-let waiting = false
-let flushing = false
-let index = 0
+const queue = [];
+const activatedChildren = [];
+let has = {};
+let circular = {};
+let waiting = false;
+let flushing = false;
+let index = 0;
 
 /**
  * Reset the scheduler's state.
  */
-function resetSchedulerState () {
-  index = queue.length = activatedChildren.length = 0
-  has = {}
+function resetSchedulerState() {
+  index = queue.length = activatedChildren.length = 0;
+  has = {};
   if (process.env.NODE_ENV !== 'production') {
-    circular = {}
+    circular = {};
   }
-  waiting = flushing = false
+  waiting = flushing = false;
 }
 
 /**
  * Flush both queues and run the watchers.
  */
-function flushSchedulerQueue (times = 0) {
-  flushing = true
-  let watcher, id
+function flushSchedulerQueue(times = 0) {
+  flushing = true;
+  let watcher, id;
 
   // Sort queue before flush.
   // This ensures that:
@@ -61,16 +58,13 @@ function flushSchedulerQueue (times = 0) {
     watcher.run();
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
-      circular[id] = (circular[id] || 0) + 1
+      circular[id] = (circular[id] || 0) + 1;
       if (circular[id] > MAX_UPDATE_COUNT) {
         warn(
-          'You may have an infinite update loop ' + (
-            watcher.user
-              ? `in watcher with expression "${watcher.expression}"`
-              : `in a component render function.`
-          ),
+          'You may have an infinite update loop ' +
+            (watcher.user ? `in watcher with expression "${watcher.expression}"` : `in a component render function.`),
           watcher.vm
-        )
+        );
         resetSchedulerState();
         return;
       }
@@ -109,13 +103,13 @@ function flushSchedulerQueue (times = 0) {
   }
 }
 
-function callUpdatedHooks (queue) {
-  let i = queue.length
+function callUpdatedHooks(queue) {
+  let i = queue.length;
   while (i--) {
-    const watcher = queue[i]
-    const vm = watcher.vm
+    const watcher = queue[i];
+    const vm = watcher.vm;
     if (vm._watcher === watcher && vm._isMounted) {
-      callHook(vm, 'updated')
+      callHook(vm, 'updated');
     }
   }
 }
@@ -124,17 +118,17 @@ function callUpdatedHooks (queue) {
  * Queue a kept-alive component that was activated during patch.
  * The queue will be processed after the entire tree has been patched.
  */
-export function queueActivatedComponent (vm) {
+export function queueActivatedComponent(vm) {
   // setting _inactive to false here so that a render function can
   // rely on checking whether it's in an inactive tree (e.g. router-view)
-  vm._inactive = false
-  activatedChildren.push(vm)
+  vm._inactive = false;
+  activatedChildren.push(vm);
 }
 
-function callActivatedHooks (queue) {
+function callActivatedHooks(queue) {
   for (let i = 0; i < queue.length; i++) {
-    queue[i]._inactive = true
-    activateChildComponent(queue[i], true /* true */)
+    queue[i]._inactive = true;
+    activateChildComponent(queue[i], true /* true */);
   }
 }
 
@@ -143,25 +137,25 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
-export function queueWatcher (watcher) {
-  const id = watcher.id
+export function queueWatcher(watcher) {
+  const id = watcher.id;
   if (has[id] == null) {
-    has[id] = true
+    has[id] = true;
     if (!flushing) {
-      queue.push(watcher)
+      queue.push(watcher);
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
-      let i = queue.length - 1
+      let i = queue.length - 1;
       while (i > index && queue[i].id > watcher.id) {
-        i--
+        i--;
       }
-      queue.splice(i + 1, 0, watcher)
+      queue.splice(i + 1, 0, watcher);
     }
     // queue the flush
     if (!waiting) {
-      waiting = true
-      nextTick(flushSchedulerQueue)
+      waiting = true;
+      nextTick(flushSchedulerQueue);
     }
   }
 }

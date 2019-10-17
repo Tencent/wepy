@@ -42,7 +42,7 @@ class FileDep {
   }
 
   isInvolved(file) {
-    return (this._depMap.hasOwnProperty(file) || this._depedMap.hasOwnProperty(file));
+    return this._depMap.hasOwnProperty(file) || this._depedMap.hasOwnProperty(file);
   }
 }
 

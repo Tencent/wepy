@@ -1,54 +1,50 @@
 const fs = require('fs');
 const path = require('path');
-const cssNext = require('postcss-cssnext')
+const cssNext = require('postcss-cssnext');
 
 const postcssDir = path.resolve(__dirname, '../fixtures/postcss/');
 
 let tests = null;
 
 const options = {
-  'basic': {
+  basic: {
     json: {
-      plugins: [
-        cssNext()
-      ]
+      plugins: [cssNext()]
     },
-    string: [
-    ],
-    resolve: {
-    }
+    string: [],
+    resolve: {}
   },
-  'map': {
+  map: {
     json: {
-      plugins: [
-        cssNext()
-      ],
+      plugins: [cssNext()],
       map: {
         inline: true
       }
     }
   }
-}
-
+};
 
 exports = module.exports = {
-  getIds () {
+  getIds() {
     if (tests) {
       return tests;
     }
-    tests = fs.readdirSync(postcssDir).filter(name => path.extname(name) === '.postcss' && name.indexOf('.tmp') === -1).map(name => path.basename(name, '.postcss'));
+    tests = fs
+      .readdirSync(postcssDir)
+      .filter(name => path.extname(name) === '.postcss' && name.indexOf('.tmp') === -1)
+      .map(name => path.basename(name, '.postcss'));
     return tests;
   },
-  getId (id) {
+  getId(id) {
     return options[id] || {};
   },
-  getOpt (id) {
+  getOpt(id) {
     return this.getId(id).json || {};
   },
-  getResolveOpt (id) {
+  getResolveOpt(id) {
     return this.getId(id).resolve || {};
   },
-  getReplacements (id) {
-    return (this.getId(id).replace || []);
+  getReplacements(id) {
+    return this.getId(id).replace || [];
   }
-}
+};

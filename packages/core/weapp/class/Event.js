@@ -1,5 +1,5 @@
 export default class Event {
-  constructor (e) {
+  constructor(e) {
     let { detail, target, currentTarget } = e;
     this.$wx = e;
     this.type = e.type;

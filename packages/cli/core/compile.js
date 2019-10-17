@@ -16,12 +16,10 @@ const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSyste
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const fileDep = require('./fileDep');
-const loader = require('./loader');
 const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
-const walk = require('acorn/dist/walk');
 const { isArr } = require('./util/tools');
 const { debounce } = require('throttle-debounce');
 
@@ -30,7 +28,7 @@ const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
 
 class Compile extends Hook {
-  constructor (opt) {
+  constructor(opt) {
     super();
     let self = this;
 
@@ -63,66 +61,83 @@ class Compile extends Hook {
 
     this.options.resolve.extensions = ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt];
 
-    this.resolvers.normal = ResolverFactory.createResolver(Object.assign({
-      fileSystem: this.inputFileSystem
-    }, this.options.resolve));
+    this.resolvers.normal = ResolverFactory.createResolver(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem
+        },
+        this.options.resolve
+      )
+    );
 
-    this.resolvers.context = ResolverFactory.createResolver(Object.assign({
-      fileSystem: this.inputFileSystem,
-      resolveToContext: true
-    }, this.options.resolve));
+    this.resolvers.context = ResolverFactory.createResolver(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem,
+          resolveToContext: true
+        },
+        this.options.resolve
+      )
+    );
 
-    this.resolvers.normal.resolveSync = node.create.sync(Object.assign({
-      fileSystem: this.inputFileSystem
-    }, this.options.resolve));
+    this.resolvers.normal.resolveSync = node.create.sync(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem
+        },
+        this.options.resolve
+      )
+    );
 
-    this.resolvers.context.resolveSync = node.create.sync(Object.assign({
-      fileSystem: this.inputFileSystem,
-      resolveToContext: true
-    }, this.options.resolve));
-
+    this.resolvers.context.resolveSync = node.create.sync(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem,
+          resolveToContext: true
+        },
+        this.options.resolve
+      )
+    );
 
     let fnNormalBak = this.resolvers.normal.resolve;
-    this.resolvers.normal.resolve = function (...args) {
+    this.resolvers.normal.resolve = function(...args) {
       return new Promise((resolve, reject) => {
-        args.push(function (err, filepath, meta) {
+        args.push(function(err, filepath, meta) {
           if (err) {
             reject(err);
           } else {
-            resolve({path: filepath, meta: meta});
+            resolve({ path: filepath, meta: meta });
           }
         });
         fnNormalBak.apply(self.resolvers.normal, args);
       });
     };
     let fnContextBak = this.resolvers.context.resolve;
-    this.resolvers.context.resolve = function (...args) {
+    this.resolvers.context.resolve = function(...args) {
       return new Promise((resolve, reject) => {
-        args.push(function (err, filepath, meta) {
+        args.push(function(err, filepath, meta) {
           if (err) {
             reject(err);
           } else {
-            resolve({path: filepath, meta: meta});
+            resolve({ path: filepath, meta: meta });
           }
         });
         fnContextBak.apply(self.resolvers.context, args);
       });
     };
-
-
   }
 
-  clear (type) {
+  clear(type) {
     this.hook('process-clear', type);
     return this;
   }
 
-  run () {
+  run() {
     return this.init().then(() => this.start());
   }
 
-  init () {
-    this.register('process-clear', type => {
+  init() {
+    this.register('process-clear', () => {
       this.compiled = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
@@ -131,8 +146,7 @@ class Compile extends Hook {
 
     ['output-app', 'output-pages', 'output-components'].forEach(k => {
       this.register(k, data => {
-        if (!isArr(data))
-          data = [data];
+        if (!isArr(data)) data = [data];
 
         data.forEach(v => this.output('wpy', v));
       });
@@ -150,14 +164,15 @@ class Compile extends Hook {
 
     this.register('output-static', () => {
       let paths = this.options.static;
-      let copy = (p) => {
+      let copy = p => {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
-        return fs.copy(path.join(this.context, p), path.join(this.context, this.options.target, relative[0] === '.' ? p : relative))
+        return fs.copy(
+          path.join(this.context, p),
+          path.join(this.context, this.options.target, relative[0] === '.' ? p : relative)
+        );
       };
-      if (typeof paths === 'string')
-        return copy(paths);
-      else if (isArr(paths))
-        return Promise.all(paths.map(p => copy(p)))
+      if (typeof paths === 'string') return copy(paths);
+      else if (isArr(paths)) return Promise.all(paths.map(p => copy(p)));
     });
 
     initPlugin(this);
@@ -168,7 +183,7 @@ class Compile extends Hook {
     return initCompiler(this, this.options.compilers);
   }
 
-  start () {
+  start() {
     if (this.running) {
       return;
     }
@@ -176,72 +191,70 @@ class Compile extends Hook {
     this.running = true;
     this.logger.info('build app', 'start...');
 
-    this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' }).then(app => {
+    this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' })
+      .then(app => {
+        let sfc = app.sfc;
+        let config = sfc.config;
 
-      let sfc = app.sfc;
-      let script = sfc.script;
-      let styles = sfc.styles;
-      let config = sfc.config;
-
-      let appConfig = config.parsed.output;
-      if (!appConfig.pages || appConfig.pages.length === 0) {
-        appConfig.pages = [];
-        this.hookUnique('error-handler', {
-          type: 'warn',
-          ctx: app,
-          message: `Missing "pages" in App config`
-        });
-      }
-      let pages = appConfig.pages.map(v => {
-        return path.resolve(app.file, '..', v);
-      });
-
-      if (appConfig.subPackages || appConfig.subpackages) {
-        (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
-          sub.pages.forEach(v => {
-            pages.push(path.resolve(app.file, '../'+sub.root || '', v));
+        let appConfig = config.parsed.output;
+        if (!appConfig.pages || appConfig.pages.length === 0) {
+          appConfig.pages = [];
+          this.hookUnique('error-handler', {
+            type: 'warn',
+            ctx: app,
+            message: `Missing "pages" in App config`
           });
-
+        }
+        let pages = appConfig.pages.map(v => {
+          return path.resolve(app.file, '..', v);
         });
-      }
 
-      let tasks = pages.map(v => {
-        let file;
+        if (appConfig.subPackages || appConfig.subpackages) {
+          (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
+            sub.pages.forEach(v => {
+              pages.push(path.resolve(app.file, '../' + sub.root || '', v));
+            });
+          });
+        }
 
-        file = v + this.options.wpyExt;
-        if (fs.existsSync(file)) {
-          return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
-        }
-        file = v + '.js';
-        if (fs.existsSync(file)) {
-          return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
-        }
-        this.hookUnique('error-handler', {
-          type: 'error',
-          ctx: app,
-          message: `Can not resolve page: ${v}`
+        let tasks = pages.map(v => {
+          let file;
+
+          file = v + this.options.wpyExt;
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
+          }
+          file = v + '.js';
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
+          }
+          this.hookUnique('error-handler', {
+            type: 'error',
+            ctx: app,
+            message: `Can not resolve page: ${v}`
+          });
         });
-      });
 
-      if (appConfig.tabBar && appConfig.tabBar.custom) {
-        let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
-        if (fs.existsSync(file)) {
-          tasks.push(this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' }));
+        if (appConfig.tabBar && appConfig.tabBar.custom) {
+          let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
+          if (fs.existsSync(file)) {
+            tasks.push(this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' }));
+          }
         }
-      }
 
-      this.hookSeq('build-app', app);
-      this.hookUnique('output-app', app);
-      return Promise.all(tasks);
-    }).then(this.buildComps.bind(this))
+        this.hookSeq('build-app', app);
+        this.hookUnique('output-app', app);
+        return Promise.all(tasks);
+      })
+      .then(this.buildComps.bind(this))
       .catch(this.handleBuildErr.bind(this));
   }
 
-  buildComps (comps) {
+  buildComps(comps) {
     let components = [];
     let originalComponents = [];
 
-    function buildComponents (comps) {
+    function buildComponents(comps) {
       if (!comps) {
         return Promise.resolve();
       }
@@ -275,26 +288,31 @@ class Compile extends Hook {
       }
     }
 
-    return buildComponents.bind(this)(comps).then(() => {
-      let vendorData = this.hookSeq('build-vendor', {});
-      this.hookUnique('output-vendor', vendorData);
-    }).then(() => {
-      let assetsData = this.hookSeq('build-assets');
-      this.hookUnique('output-assets', assetsData);
-    }).then(() => {
-      return this.hookUnique('output-static');
-    }).then(() => {
-      this.hookSeq('process-done');
-      this.running = false;
-      this.logger.info('build', 'finished');
-      if (this.options.watch) {
-        this.logger.info('watching...');
-        this.watch();
-      }
-    });
+    return buildComponents
+      .bind(this)(comps)
+      .then(() => {
+        let vendorData = this.hookSeq('build-vendor', {});
+        this.hookUnique('output-vendor', vendorData);
+      })
+      .then(() => {
+        let assetsData = this.hookSeq('build-assets');
+        this.hookUnique('output-assets', assetsData);
+      })
+      .then(() => {
+        return this.hookUnique('output-static');
+      })
+      .then(() => {
+        this.hookSeq('process-done');
+        this.running = false;
+        this.logger.info('build', 'finished');
+        if (this.options.watch) {
+          this.logger.info('watching...');
+          this.watch();
+        }
+      });
   }
 
-  weappBuild (buildTask) {
+  weappBuild(buildTask) {
     if (this.running) {
       return;
     }
@@ -305,14 +323,14 @@ class Compile extends Hook {
       const comp = this.compiled[file];
 
       return this.hookUnique('wepy-parser-component', comp);
-    })
+    });
 
     Promise.all(tasks)
       .then(this.buildComps.bind(this))
       .catch(this.handleBuildErr.bind(this));
   }
 
-  partialBuild (buildTask) {
+  partialBuild(buildTask) {
     if (this.running) {
       return;
     }
@@ -324,7 +342,7 @@ class Compile extends Hook {
       if (fs.existsSync(file)) {
         let type = 'page';
         if (this.compiled[file]) {
-          type = this.compiled[file].type
+          type = this.compiled[file].type;
         }
         return this.hookUnique('wepy-parser-wpy', { path: file, type });
       }
@@ -340,7 +358,7 @@ class Compile extends Hook {
       .catch(this.handleBuildErr.bind(this));
   }
 
-  assetsBuild (buildTask) {
+  assetsBuild(buildTask) {
     if (this.running) {
       return;
     }
@@ -353,12 +371,14 @@ class Compile extends Hook {
     });
 
     // just compile, build and out assets
-    Promise.all(tasks).then(() => {
-      return this.buildComps(undefined);
-    }).catch(this.handleBuildErr.bind(this));
+    Promise.all(tasks)
+      .then(() => {
+        return this.buildComps(undefined);
+      })
+      .catch(this.handleBuildErr.bind(this));
   }
 
-  handleBuildErr (err) {
+  handleBuildErr(err) {
     this.running = false;
     if (err.message !== 'EXIT') {
       this.logger.error(err);
@@ -374,13 +394,13 @@ class Compile extends Hook {
     }
   }
 
-  watch () {
+  watch() {
     if (this.watchInitialized) {
       return;
     }
     this.watchInitialized = true;
     let watchOption = Object.assign({ ignoreInitial: true, depth: 99 }, this.options.watchOption || {});
-    let target = path.resolve(this.context, this.options.target);
+    // let target = path.resolve(this.context, this.options.target);
 
     if (watchOption.ignore) {
       let type = Object.prototype.toString.call(watchOption.ignore);
@@ -434,7 +454,7 @@ class Compile extends Hook {
     });
   }
 
-  applyCompiler (node, ctx) {
+  applyCompiler(node, ctx) {
     ctx.id = this.assets.add(ctx.file);
 
     if (node.lang) {
@@ -453,7 +473,8 @@ class Compile extends Hook {
       } else {
         task = this.hookUnique(hookKey, node, ctx);
       }
-      return task.then(node => {
+      return task
+        .then(node => {
           return this.hookAsyncSeq('before-wepy-parser-' + node.type, { node, ctx });
         })
         .then(({ node, ctx }) => {
@@ -462,22 +483,22 @@ class Compile extends Hook {
     }
   }
 
-  getTarget (file, targetDir) {
+  getTarget(file, targetDir) {
     let relative = path.relative(path.join(this.context, this.options.src), file);
     let targetFile = path.join(this.context, targetDir || this.options.target, relative);
     return targetFile;
   }
 
-  getModuleTarget (file, targetDir) {
+  getModuleTarget(file, targetDir) {
     let relative = path.relative(this.context, file);
     let dirs = relative.split(path.sep);
-    dirs.shift();  // shift node_modules
+    dirs.shift(); // shift node_modules
     relative = dirs.join(path.sep);
     let targetFile = path.join(this.context, targetDir || this.options.target, VENDOR_DIR, relative);
     return targetFile;
   }
 
-  outputFile (filename, code, encoding) {
+  outputFile(filename, code, encoding) {
     this.hookAsyncSeq('output-file', { filename, code, encoding })
       .then(({ filename, code, encoding }) => {
         if (!code) {
@@ -485,23 +506,25 @@ class Compile extends Hook {
         } else {
           logger.silly('output', 'write file: ' + filename);
 
-          fs.outputFile(filename, code, encoding || 'utf-8', (err) => {
+          fs.outputFile(filename, code, encoding || 'utf-8', err => {
             if (err) {
+              // eslint-disable-next-line no-console
               console.log(err);
             }
           });
         }
-      }).catch(e => {
+      })
+      .catch(e => {
         if (e.handler) {
           this.hookUnique('error-handler', e.handler, e.error, e.pos);
         } else {
           // TODO
-          throw e
+          throw e;
         }
       });
   }
 
-  output (type, item) {
+  output(type, item) {
     let filename, code, encoding;
 
     if (type === 'wpy') {
@@ -525,7 +548,7 @@ class Compile extends Hook {
 
           this.outputFile(filename, code, encoding);
         }
-      })
+      });
     } else {
       filename = item.targetFile;
       code = item.outputCode;
@@ -536,7 +559,7 @@ class Compile extends Hook {
   }
 }
 
-exports = module.exports = (program) => {
+exports = module.exports = program => {
   const opt = parseOptions.parse(program);
 
   const compilation = new Compile(opt);

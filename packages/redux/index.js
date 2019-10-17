@@ -5,7 +5,4 @@ export default {
   install,
   version: __VERSION__
 };
-export {
-  mapState,
-  mapActions
-};
+export { mapState, mapActions };

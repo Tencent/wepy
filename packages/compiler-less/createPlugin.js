@@ -6,9 +6,9 @@ const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
 const isModuleName = /^~[^/\\]+$/;
 const trailingSlash = /[/\\]$/;
 
-function createPlugin (compliation) {
+function createPlugin(compliation) {
   class aliasManager extends less.FileManager {
-    supportsSync () {
+    supportsSync() {
       if (less.version[0] >= 3) {
         return true;
       }
@@ -18,10 +18,10 @@ function createPlugin (compliation) {
       options.syncImport = true;
       return super.loadFile(filename, currentDirectory, options, environment);
     }
-    supports () {
+    supports() {
       return true;
     }
-    loadFile (filename, dir, options) {
+    loadFile(filename, dir, options) {
       let url;
       if (less.version[0] >= 3) {
         if (options.ext && !isModuleName.test(filename)) {
@@ -32,10 +32,7 @@ function createPlugin (compliation) {
       } else {
         url = filename.replace(matchMalformedModuleFilename, '$1');
       }
-      const moduleRequest = loaderUtils.urlToRequest(
-        url,
-        url.charAt(0) === '/' ? '' : null
-      );
+      const moduleRequest = loaderUtils.urlToRequest(url, url.charAt(0) === '/' ? '' : null);
 
       return compliation.resolvers.normal.resolve({}, dir.replace(trailingSlash, ''), moduleRequest, {}).then(rst => {
         return {
@@ -47,7 +44,7 @@ function createPlugin (compliation) {
   }
 
   return {
-    install (instance, pluginManager) {
+    install(instance, pluginManager) {
       pluginManager.addFileManager(new aliasManager());
     },
     minVersion: [2, 1, 1]

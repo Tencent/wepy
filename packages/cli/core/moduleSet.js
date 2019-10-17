@@ -8,8 +8,7 @@
  */
 
 class ModuleSet {
-
-  constructor () {
+  constructor() {
     this._index = -1;
     this._map = {};
     this._set = {};
@@ -17,7 +16,7 @@ class ModuleSet {
     this._type = {};
   }
 
-  add (file, type) {
+  add(file, type) {
     let id = this.get(file);
 
     if (id === undefined) {
@@ -32,15 +31,15 @@ class ModuleSet {
     return id;
   }
 
-  get (file) {
+  get(file) {
     return this._map[file];
   }
 
-  pending (file) {
+  pending(file) {
     return this.get(file) !== undefined && this._set[file] === undefined;
   }
 
-  update (file, data, type) {
+  update(file, data, type) {
     if (!this.get(file)) {
       this.add(file, type);
     }
@@ -48,7 +47,7 @@ class ModuleSet {
     this._type[file] = type;
   }
 
-  data (v) {
+  data(v) {
     if (typeof v === 'number') {
       return this._set[this._array[v]];
     } else {
@@ -56,7 +55,7 @@ class ModuleSet {
     }
   }
 
-  array (type) {
+  array(type) {
     if (!type) {
       this._array.length = this.length;
       return Array.prototype.slice.apply(this._array);
@@ -65,15 +64,13 @@ class ModuleSet {
     }
   }
 
-  type (v) {
+  type(v) {
     if (typeof v === 'number') {
       return this._type[this._array[v]];
     } else {
       return this._type[v];
     }
   }
-
 }
-
 
 exports = module.exports = ModuleSet;

@@ -7,26 +7,26 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-
 const stylus = require('stylus');
 const createPlugin = require('./createPlugin');
 
-exports = module.exports = function (options) {
-  return function () {
-
-    this.register('wepy-compiler-stylus', function (node, ctx) {
-
+exports = module.exports = function(options) {
+  return function() {
+    this.register('wepy-compiler-stylus', function(node, ctx) {
       let file = typeof ctx === 'string' ? ctx : ctx.file;
-      const plugins = createPlugin(this)
-      let config = Object.assign({
-        use: plugins,
-        filename: file
-      }, options);
-      const styl = stylus(node.content || '', config)
+      const plugins = createPlugin(this);
+      let config = Object.assign(
+        {
+          use: plugins,
+          filename: file
+        },
+        options
+      );
+      const styl = stylus(node.content || '', config);
 
       return new Promise((resolve, reject) => {
         styl.render(function(err, css) {
-          if (err) reject(err)
+          if (err) reject(err);
           else {
             node.compiled = {
               code: css,
@@ -34,8 +34,8 @@ exports = module.exports = function (options) {
             };
             resolve(node);
           }
-        })
-      })
+        });
+      });
     });
-  }
-}
+  };
+};

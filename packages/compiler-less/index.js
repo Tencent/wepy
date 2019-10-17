@@ -7,17 +7,19 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-
 const less = require('less');
 const createPlugin = require('./createPlugin');
 
-exports = module.exports = function (options) {
-  return function () {
-    this.register('wepy-compiler-less', function (node, ctx) {
-      let config = Object.assign({
-        relativeUrls: true,
-        plugins: []
-      }, options);
+exports = module.exports = function(options) {
+  return function() {
+    this.register('wepy-compiler-less', function(node, ctx) {
+      let config = Object.assign(
+        {
+          relativeUrls: true,
+          plugins: []
+        },
+        options
+      );
       let file = typeof ctx === 'string' ? ctx : ctx.file;
       config.filename = file;
       config.plugins.push(createPlugin(this));
@@ -32,12 +34,12 @@ exports = module.exports = function (options) {
       });
     });
 
-    this.register('wepy-watch-file-changed-less', function (buildTask) {
+    this.register('wepy-watch-file-changed-less', function(buildTask) {
       buildTask.files = this.fileDep.getSources(buildTask.changed);
       if (buildTask.files.includes(this.options.entry)) {
         buildTask.partial = false;
       }
       return buildTask;
     });
-  }
+  };
 };

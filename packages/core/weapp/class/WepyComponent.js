@@ -5,7 +5,7 @@ import { isArr, isPlainObject } from '../../shared/index';
 import { renderNextTick } from '../util/next-tick';
 
 export default class WepyComponent extends Base {
-  $watch (expOrFn, cb, options) {
+  $watch(expOrFn, cb, options) {
     let vm = this;
     if (isArr(cb)) {
       cb.forEach(handler => {
@@ -16,8 +16,7 @@ export default class WepyComponent extends Base {
       let handler = cb;
       options = handler;
       handler = handler.handler;
-      if (typeof handler === 'string')
-        handler = this[handler];
+      if (typeof handler === 'string') handler = this[handler];
       return this.$watch(expOrFn, handler, options);
     }
 
@@ -27,18 +26,16 @@ export default class WepyComponent extends Base {
     if (options.immediate) {
       cb.call(vm, watcher.value);
     }
-    return function unwatchFn () {
+    return function unwatchFn() {
       watcher.teardown();
-    }
+    };
   }
 
-  $forceUpdate () {
+  $forceUpdate() {
     if (this._watcher) {
       this._watcher.update();
     }
   }
-};
+}
 
 WepyComponent.prototype.$nextTick = renderNextTick;
-
-

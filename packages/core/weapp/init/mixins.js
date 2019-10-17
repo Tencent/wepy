@@ -35,7 +35,7 @@ let globalMixinPatched = false;
 
 let strats = null;
 
-function getStrategy (key) {
+function getStrategy(key) {
   if (!strats) {
     initStrats();
   }
@@ -45,23 +45,27 @@ function getStrategy (key) {
     return defaultStrat;
   }
 }
-function defaultStrat (output, option, key, data) {
+function defaultStrat(output, option, key, data) {
   if (!output[key]) {
     output[key] = data;
   }
 }
 
 function simpleMerge(parentVal, childVal) {
-  return (!parentVal || !childVal) ? (parentVal || childVal) : Object.assign({}, parentVal, childVal);
+  return !parentVal || !childVal ? parentVal || childVal : Object.assign({}, parentVal, childVal);
 }
 
-function initStrats () {
-  if (strats)
-    return strats;
+function initStrats() {
+  if (strats) return strats;
 
   strats = config.optionMergeStrategies;
 
-  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function mergeStrategy(output, option, key, data) {
+  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function mergeStrategy(
+    output,
+    option,
+    key,
+    data
+  ) {
     option[key] = simpleMerge(option[key], data);
   };
 
@@ -69,16 +73,16 @@ function initStrats () {
     if (!strats[lifecycle]) {
       strats[lifecycle] = function lifeCycleStrategy(output, option, key, data) {
         if (!option[key]) {
-          option[key] = isArr(data) ? data: [data];
+          option[key] = isArr(data) ? data : [data];
         } else {
-          option[key] = [ data ].concat(option[key]);
+          option[key] = [data].concat(option[key]);
         }
-      }
+      };
     }
   });
 }
 
-export function patchMixins (output, option, mixins) {
+export function patchMixins(output, option, mixins) {
   if (!mixins && !$global.mixin) {
     return;
   }
@@ -94,7 +98,6 @@ export function patchMixins (output, option, mixins) {
     mixins.forEach(mixin => patchMixins(output, option, mixin));
     globalMixinPatched = false;
   } else {
-
     if (!strats) {
       initStrats();
     }
@@ -105,4 +108,3 @@ export function patchMixins (output, option, mixins) {
     }
   }
 }
-

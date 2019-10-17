@@ -1,9 +1,7 @@
 const path = require('path');
 
-exports = module.exports = function () {
-
-  this.register('build-app', function buildApp (app) {
-
+exports = module.exports = function() {
+  this.register('build-app', function buildApp(app) {
     this.logger.info('app', 'building App');
 
     let { script, styles, config } = app.sfc;
@@ -27,7 +25,5 @@ exports = module.exports = function () {
     app.outputFile = targetFile;
 
     return app;
-
   });
 };
-

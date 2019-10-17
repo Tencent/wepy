@@ -3,17 +3,22 @@ const stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|
 
 // these keywords should not appear inside expressions, but operators like
 // typeof, instanceof and in are allowed
-const prohibitedKeywordRE = new RegExp('\\b' + (
-  'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
-  'super,throw,while,yield,delete,export,import,return,switch,default,' +
-  'extends,finally,continue,debugger,function,arguments'
-).split(',').join('\\b|\\b') + '\\b');
-
+const prohibitedKeywordRE = new RegExp(
+  '\\b' +
+    (
+      'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
+      'super,throw,while,yield,delete,export,import,return,switch,default,' +
+      'extends,finally,continue,debugger,function,arguments'
+    )
+      .split(',')
+      .join('\\b|\\b') +
+    '\\b'
+);
 
 exports = module.exports = {
-  checkExpression: function (expr, text) {
+  checkExpression: function(expr, text) {
     try {
-      new Function(('return ' + expr));
+      new Function('return ' + expr);
     } catch (e) {
       let keywordMatch = expr.replace(stripStringRE, '').match(prohibitedKeywordRE);
       if (keywordMatch) {

@@ -6,16 +6,18 @@ const modifierRE = /\.[^.]+/g;
 
 const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
-
-const toAST = (html) => {
+const toAST = html => {
   return new Promise((resolve, reject) => {
-    const handler = new htmlparser.DomHandler(function (error, dom) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(dom);
-      }
-    }, { withStartIndices: true, withEndIndices: true });
+    const handler = new htmlparser.DomHandler(
+      function(error, dom) {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(dom);
+        }
+      },
+      { withStartIndices: true, withEndIndices: true }
+    );
     const parser = new htmlparser.Parser(handler, { xmlMode: true });
     parser.write(html);
     parser.end();
@@ -30,22 +32,21 @@ const parseModifiers = (name = '') => {
   let ret = {};
   let match = name.match(modifierRE);
   if (match) {
-    match.forEach(function (m) { ret[m.slice(1)] = true; });
+    match.forEach(function(m) {
+      ret[m.slice(1)] = true;
+    });
   }
   return ret;
 };
 
-
-exports = module.exports = function () {
-
-  this.register('template-parse-ast-attr', function parseAstAttr (item, scope, rel, ctx) {
+exports = module.exports = function() {
+  this.register('template-parse-ast-attr', function parseAstAttr(item, scope, rel, ctx) {
     let attrs = item.attribs;
     let parsedAttr = item.parsedAttr || {};
     let isComponent = !!rel.components[item.name];
     let parsed = null;
 
     let cleanAttrs = [];
-
 
     // Pre walk attributes
     for (let name in attrs) {
@@ -65,7 +66,14 @@ exports = module.exports = function () {
         hook = 'template-parse-ast-pre-attr-[other]';
       }
 
-      ({ item, name, expr, modifiers, scope, ctx } = this.hookUniqueReturnArg(hook, { item, name, expr, modifiers, scope, ctx }))
+      ({ item, name, expr, modifiers, scope, ctx } = this.hookUniqueReturnArg(hook, {
+        item,
+        name,
+        expr,
+        modifiers,
+        scope,
+        ctx
+      }));
 
       cleanAttrs.push({
         item: item,
@@ -77,7 +85,6 @@ exports = module.exports = function () {
 
     // Apply walk attributes
     cleanAttrs.forEach(({ item, name, expr, modifiers }) => {
-
       let hook = 'template-parse-ast-attr-' + name;
       if (!this.hasHook(hook)) {
         hook = 'template-parse-ast-attr-[other]';
@@ -95,12 +102,11 @@ exports = module.exports = function () {
       if (parsed && parsed.attrs) {
         parsedAttr = Object.assign(parsedAttr, parsed.attrs);
       }
-
     });
 
     item.parsedAttr = parsedAttr;
 
-    return [ item, scope, rel, ctx ];
+    return [item, scope, rel, ctx];
     /* REMOVE LATER
     for (let name in attrs) {
 
@@ -177,37 +183,37 @@ exports = module.exports = function () {
     */
   });
 
-  this.register('template-parse-ast-tag', function parseAstTag (item, rel) {
+  this.register('template-parse-ast-tag', function parseAstTag(item, rel) {
     let htmlTags = this.tags.htmlTags;
     let wxmlTags = this.tags.wxmlTags;
     let html2wxmlMap = this.tags.html2wxmlMap;
     let logger = this.logger;
 
     let components = rel.components;
-    if (components[item.name]) { // It's a user defined component
+    if (components[item.name]) {
+      // It's a user defined component
       logger.silly('tag', `Found user defined component "${item.name}"`);
       item.parsedAttr = item.parsedAttr || {};
-      if(this.options.output === 'ant'){
-        item.parsedAttr['onInit'] = "_initComponent";
-      }else{
-        item.parsedAttr['bind_init'] = "_initComponent";
-      }
-    } else if (html2wxmlMap[item.name]) {  // Tag is in the map list
+      item.parsedAttr['bind_init'] = '_initComponent';
+    } else if (html2wxmlMap[item.name]) {
+      // Tag is in the map list
       logger.silly('html2wxml', `Change "${item.name}" to "${html2wxmlMap[item.name]}"`);
       item.name = html2wxmlMap[item.name];
-    } else if (wxmlTags.indexOf(item.name) > -1) { // Tag is a wxml tag
-
-    } else if (htmlTags.indexOf(item.name) > -1) { // Tag is a html tag
+    } else if (wxmlTags.indexOf(item.name) > -1) {
+      // Tag is a wxml tag
+    } else if (htmlTags.indexOf(item.name) > -1) {
+      // Tag is a html tag
       logger.silly('html2wxml', `Change "${item.name}" is a html tag, changed to "view"`);
       item.name = 'view';
-    } else { // Tag is a unknow tag
+    } else {
+      // Tag is a unknow tag
       logger.silly('tag', `Assume "${item.name}" is a user defined component`);
     }
 
     return [item, rel];
   });
 
-  this.register('template-parse-ast', function parseAST (ast, scope, rel, ctx) {
+  this.register('template-parse-ast', function parseAST(ast, scope, rel, ctx) {
     let currentScope;
     ast.forEach(item => {
       if (item.type === 'tag') {
@@ -223,7 +229,7 @@ exports = module.exports = function () {
     return [ast, scope, rel, ctx];
   });
 
-  this.register('template-parse-ast-to-str', function astToStr (ast) {
+  this.register('template-parse-ast-to-str', function astToStr(ast) {
     let str = '';
     ast.forEach(item => {
       if (item.type === 'text') {
@@ -232,11 +238,11 @@ exports = module.exports = function () {
         str += '<' + item.name;
         if (item.events) {
           item.events.forEach(evt => {
-            if (evt.proxy)
-              item.parsedAttr['data-wpy-evt'] = evt.id;
+            if (evt.proxy) item.parsedAttr['data-wpy-evt'] = evt.id;
             item.parsedAttr[evt.type] = evt.expr;
             evt.params.forEach((p, i) => {
-              if (i > 26) { // Maxium params.
+              if (i > 26) {
+                // Maxium params.
                 this.logger.warn(`Too many params`);
               } else {
                 let evtAttr = 'data-wpy' + evt.event.toLowerCase() + '-' + String.fromCharCode(97 + i);
@@ -251,19 +257,23 @@ exports = module.exports = function () {
         if (item.parsedAttr) {
           Object.keys(item.parsedAttr).forEach(attr => {
             if (item.parsedAttr[attr] !== undefined && attr !== 'class' && attr !== 'style')
-              str += tools.isTrue(item.parsedAttr[attr])
-                ? ` ${attr}`
-                : ` ${attr}="${item.parsedAttr[attr]}"`;
+              str +=
+                tools.isTrue(item.parsedAttr[attr]) || item.parsedAttr[attr] === ''
+                  ? ` ${attr}`
+                  : ` ${attr}="${item.parsedAttr[attr]}"`;
           });
         }
         if (item.parsedAttr.style || (item.bindStyle && item.bindStyle.length)) {
-          let staticStyle = item.parsedAttr.style || '';
-          let bindStyle = (item.bindStyle && item.bindStyle.length) ? ` {{ ${item.bindStyle.join(' + ')} }}` : '';
+          let staticStyle = (item.parsedAttr.style || '').trim();
+          if (staticStyle !== '' && /;$/.test(staticStyle) === false) {
+            staticStyle += ';';
+          }
+          let bindStyle = item.bindStyle && item.bindStyle.length ? ` {{ ${item.bindStyle.join(' + ')} }}` : '';
           str += ` style="${staticStyle + bindStyle}"`;
         }
         if (item.parsedAttr.class || (item.bindClass && item.bindClass.length)) {
           let staticClass = item.parsedAttr.class || '';
-          let bindClass = (item.bindClass && item.bindClass.length) ? ` {{ [ ${item.bindClass.join(',')} ] }}` : '';
+          let bindClass = item.bindClass && item.bindClass.length ? ` {{ [ ${item.bindClass.join(',')} ] }}` : '';
           str += ` class="${staticClass + bindClass}"`;
         }
         str += '>';
@@ -276,11 +286,9 @@ exports = module.exports = function () {
     return str;
   });
 
-  this.register('template-parse', function parse (html, components, ctx) {
-
-    return toAST(html).then((ast) => {
-
-      let rel = { handlers: {}, components: components, on: {}};
+  this.register('template-parse', function parse(html, components, ctx) {
+    return toAST(html).then(ast => {
+      let rel = { handlers: {}, components: components, on: {} };
       let scope = null;
 
       [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel, ctx);
@@ -295,4 +303,3 @@ exports = module.exports = function () {
     });
   });
 };
-
