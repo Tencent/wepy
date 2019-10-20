@@ -63,6 +63,7 @@ exports = module.exports = function() {
     }
 
     // avoid to import duplicated
+    // eslint-disable-next-line
     if (source.relIndex != null) {
       const idx = source.replacements.findIndex(arr => {
         return arr[arr.length - 1] === source.relIndex;

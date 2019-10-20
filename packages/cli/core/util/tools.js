@@ -53,6 +53,7 @@ exports.hasOwn = (obj, key) => {
  * Stubbing args to make Flow happy without leaving useless transpiled code
  * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/)
  */
+// eslint-disable-next-line
 exports.noop = (a, b, c) => {};
 
 /**

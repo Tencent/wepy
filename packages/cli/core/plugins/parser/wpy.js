@@ -90,7 +90,7 @@ exports = module.exports = function() {
           return this.applyCompiler(context.sfc.template, context);
         }
       })
-      .then(parsed => {
+      .then(() => {
         if (sfc.script) {
           sfc.script.lang = sfc.script.lang || 'babel';
           return this.applyCompiler(context.sfc.script, context);
@@ -107,7 +107,7 @@ exports = module.exports = function() {
           );
         }
       })
-      .then((all = []) => {
+      .then(() => {
         context.done = true;
         return context;
       });
@@ -128,7 +128,7 @@ exports = module.exports = function() {
       // wxs is an array.
       let nodes = [].concat(sfc[type]);
       nodes.forEach(node => {
-        src = node ? node.src : '';
+        const src = node ? node.src : '';
         if (src) {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
           tasks.push(

@@ -13,6 +13,7 @@ export function page(opt = {}, rel) {
   if (opt.properties) {
     pageConfig.properties = opt.properties;
     if (opt.props) {
+      // eslint-disable-next-line
       console.warn(`props will be ignore, if properties is set`);
     }
   } else if (opt.props) {

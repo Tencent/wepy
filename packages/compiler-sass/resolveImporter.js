@@ -1,10 +1,7 @@
-const fs = require('fs');
 const path = require('path');
 const importsToResolve = require('./importsToResolve');
 
-const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
-const isModuleName = /^~[^/\\]+$/;
-const trailingSlash = /[/\\]$/;
+//const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
 
 function resolveImporter(compilation, file) {
   function doResolve(dir, imports) {

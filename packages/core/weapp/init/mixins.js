@@ -1,7 +1,5 @@
 import { isArr } from '../../shared/index';
 import { WEAPP_LIFECYCLE } from '../../shared/index';
-import { patchProps } from './props';
-import { patchData } from './data';
 import { config } from '../config';
 import $global from '../global';
 

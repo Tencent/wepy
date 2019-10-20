@@ -1,4 +1,4 @@
-import { patchData, initData } from '../../../weapp/init/data';
+import { initData } from '../../../weapp/init/data';
 import Dirty from '../../../weapp/class/Dirty';
 
 const expect = require('chai').expect;

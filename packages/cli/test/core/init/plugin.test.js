@@ -36,7 +36,7 @@ const createCompile = plugins => {
   compile.options = { plugins };
 
   compile.logger = {
-    error(...args) {}
+    error() {}
   };
 
   initPlugin(compile);

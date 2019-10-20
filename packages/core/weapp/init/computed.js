@@ -1,6 +1,5 @@
 import Watcher from './../observer/watcher';
 import Dep from './../observer/dep';
-import { isFunc, noop } from './../util/index';
 import { sharedPropertyDefinition } from './data';
 
 function createComputedGetter(key) {
@@ -34,6 +33,7 @@ export function initComputed(vm, computed) {
     let getter = typeof def === 'object' ? def.get : def;
 
     if (!getter || typeof getter !== 'function') {
+      // eslint-disable-next-line
       console.error(`Getter is missing for computed property "${key}"`);
     }
 
@@ -41,7 +41,7 @@ export function initComputed(vm, computed) {
     watchers[key] = new Watcher(
       vm,
       getter || function() {},
-      function(newv, oldv) {
+      function() {
         // evaluate will set dirty
         // vm.$dirty.push(key, key, newv);
       },

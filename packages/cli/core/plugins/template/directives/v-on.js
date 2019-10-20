@@ -13,6 +13,7 @@ const parseHandlerProxy = (expr, scope) => {
   let eventInArg = false;
 
   let parsedHandler;
+  // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
     eventInArg = true;
@@ -69,7 +70,6 @@ const parseHandlerProxy = (expr, scope) => {
  * @return {Object}       parse result, e.g. {type: "bind:tap", name: "doSomething", params: ["item"]}
  */
 const parseHandler = (name = '', value = '', scope) => {
-  let handler = '';
   let type = '';
   let info;
   info = parseHandlerProxy(value, scope);

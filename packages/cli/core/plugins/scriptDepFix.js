@@ -8,9 +8,6 @@ exports = module.exports = function() {
    * S4: import 'xxxx' from 'xxx';j
    */
   this.register('script-dep-fix', function scriptDepFix(parsed, isNPM) {
-    let code = parsed.code;
-    let fixPos = 0;
-
     if (!parsed.fixedDeps) {
       parsed.fixedDeps = [];
     }

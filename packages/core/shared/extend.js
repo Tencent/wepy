@@ -1,4 +1,4 @@
-import { isPlainObject, isArr, isStr, isNum } from './util';
+import { isPlainObject, isArr } from './util';
 
 /*
  * extend objects

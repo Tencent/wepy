@@ -1,7 +1,7 @@
 const parseClass = require('../../../ast/parseClass');
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr-:class', function parseBindClass({ item, name, expr }) {
+  this.register('template-parse-ast-attr-:class', function parseBindClass({ item, expr }) {
     let exprArray = parseClass(expr);
     let bindClass = [];
     exprArray.forEach(item => {
@@ -9,7 +9,9 @@ exports = module.exports = function() {
         bindClass.push(`${item}`);
       } else {
         Object.keys(item).forEach(name => {
+          // eslint-disable-next-line
           let exp = item[name].replace(/\'/gi, '\\\'').replace(/\"/gi, '\\"');
+          // eslint-disable-next-line
           name = name.replace(/\'/gi, '\\\'').replace(/\"/gi, '\\"');
           bindClass.push(`${exp} ? '${name}' : ''`);
         });

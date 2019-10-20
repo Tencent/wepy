@@ -1,6 +1,3 @@
-import Event from '../class/Event';
-import { isFunc, isUndef } from './../util/index';
-
 /*
  * initialize events
  */

@@ -52,8 +52,6 @@ function createCompile(sassOpt, resolveOpt) {
 }
 
 function readSpec(id) {
-  let ext = path.extname(id);
-  let name = id.replace(new RegExp(ext + '$'), '');
   let sassfile = path.join(__dirname, 'fixtures', 'sass', id);
   let expectfile = path.join(__dirname, 'fixtures', 'css', id + '.css');
 

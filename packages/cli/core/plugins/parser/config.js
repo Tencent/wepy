@@ -68,7 +68,7 @@ exports = module.exports = function() {
       // e.g.
       // plugins://appid/xxxdfdf
       // module:some-3rd-party-component
-      let matchs = url.match(/([^:]+)\:(.+)/);
+      let matchs = url.match(/([^:]+):(.+)/);
       let request = url;
 
       if (matchs) {
@@ -130,6 +130,7 @@ exports = module.exports = function() {
     });
   });
 
+  // eslint-disable-next-line
   this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, ctx) {
     return Promise.resolve({
       name,
@@ -139,8 +140,6 @@ exports = module.exports = function() {
 
   this.register('wepy-parser-config-component-module', function(name, prefix, source, target, ctx) {
     let contextDir = path.dirname(ctx.file);
-    let modulePath = this.resolvers.normal.resolveSync({}, contextDir, source);
-
     return this.resolvers.normal.resolve({}, contextDir, source, {}).then(resolved => {
       return {
         name: name,
@@ -156,8 +155,6 @@ exports = module.exports = function() {
     const moduleRequest = loaderUtils.urlToRequest(source, source.charAt(0) === '/' ? '' : null);
 
     let contextDir = path.dirname(ctx.file);
-    let resolvedPath = this.resolvers.normal.resolveSync({}, contextDir, moduleRequest);
-    let relativePath = path.relative(contextDir, resolvedPath);
 
     return this.resolvers.normal.resolve({}, contextDir, moduleRequest, {}).then(resolved => {
       return {

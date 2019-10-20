@@ -1,10 +1,10 @@
 import { observe } from './../observer/index';
 import { proxy } from './data';
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone } from './../util/index';
+import { isFunc, isArr, isStr, isObj, isUndef } from './../util/index';
 
 const AllowedTypes = [String, Number, Boolean, Object, Array, null];
 
-const observerFn = function(output, props, prop) {
+const observerFn = function() {
   return function(newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
 
@@ -44,9 +44,11 @@ export function patchProps(output, props) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
         newProp.type = null;
+        // eslint-disable-next-line
         console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
+        // eslint-disable-next-line
         console.warn(
           `Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`
         );
@@ -72,6 +74,7 @@ export function patchProps(output, props) {
     }
   }
 
+  // eslint-disable-next-line
   Object.keys(newProps).forEach(prop => {});
 
   output.properties = newProps;

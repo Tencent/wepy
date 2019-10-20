@@ -1,7 +1,6 @@
 import Watcher from './../observer/watcher';
 import { callUserHook } from './hooks';
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone } from './../util/index';
-import { nextTick } from '../util/next-tick';
+import { clone } from './../util/index';
 import { renderFlushCallbacks } from './../util/next-tick';
 
 export function resetDirty(vm) {

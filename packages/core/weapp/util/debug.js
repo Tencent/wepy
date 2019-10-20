@@ -10,17 +10,17 @@ const generateComponentTrace = function(vm) {
 
 if (process.env.NODE_ENV !== 'production') {
   const hasConsole = typeof console !== 'undefined';
-  const classifyRE = /(?:^|[-_])(\w)/g;
-  const classify = str => str.replace(classifyRE, c => c.toUpperCase()).replace(/[-_]/g, '');
   // TODO
   warn = (msg, vm) => {
     if (hasConsole && !config.silent) {
+      // eslint-disable-next-line
       console.error(`[WePY warn]: ${msg}` + (vm ? generateComponentTrace(vm) : ''));
     }
   };
 
   tip = (msg, vm) => {
     if (hasConsole && !config.silent) {
+      // eslint-disable-next-line
       console.warn(`[WePY tip]: ${msg}` + (vm ? generateComponentTrace(vm) : ''));
     }
   };

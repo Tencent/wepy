@@ -34,6 +34,7 @@ export const mapActions = function(actions) {
   normalizeMap(actions).forEach(({ key, val }) => {
     res[key] = function mappedAction(...args) {
       if (!this.$store) {
+        // eslint-disable-next-line
         console.warn(`[@wepy/redux] action "${key}" do not work, if store is not defined.`);
         return;
       }

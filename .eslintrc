@@ -24,7 +24,10 @@
     "no-new-func": 0
   },
   "globals": {
-    __VERSION,
+    App,
+    Page,
+    wx,
+    __VERSION__,
     Component
   },
   extends: ['eslint:recommended', 'plugin:prettier/recommended'],

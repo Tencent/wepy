@@ -21,7 +21,7 @@ const options = {
     }
   },
   'fail-missing-file': {
-    error: 'Can\'t resolve' // Error message.
+    error: `Can't resolve` // Error message.
   },
   'fail-uri-alias': {
     then: true, // Consider as a success test case.

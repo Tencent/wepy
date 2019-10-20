@@ -21,7 +21,7 @@ exports = module.exports = function() {
     return parsed;
   });
 
-  this.register('template-parse-ast-attr-src', function parseAssetUrl({ item, name, expr, ctx }) {
+  this.register('template-parse-ast-attr-src', function parseAssetUrl({ expr, ctx }) {
     let parsed = this.hookUnique('url-to-module', expr);
 
     if (parsed.isModule) {
@@ -46,7 +46,6 @@ exports = module.exports = function() {
         file: ctx.file,
         parser: {},
         code: code,
-        encoding,
         encoding,
         source: source,
         depModules: null,

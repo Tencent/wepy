@@ -38,6 +38,7 @@ function logError(err, vm, info) {
   }
   /* istanbul ignore else */
   if (typeof console !== 'undefined') {
+    // eslint-disable-next-line
     console.error(err);
   } else {
     throw err;

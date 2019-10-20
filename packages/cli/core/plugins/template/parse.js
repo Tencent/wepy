@@ -1,10 +1,6 @@
 const htmlparser = require('htmlparser2');
 const tools = require('../../util/tools');
-const onRE = /^@|^v-on:/;
-const bindRE = /^:|^v-bind:/;
 const modifierRE = /\.[^.]+/g;
-
-const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
 const toAST = html => {
   return new Promise((resolve, reject) => {
@@ -43,7 +39,6 @@ exports = module.exports = function() {
   this.register('template-parse-ast-attr', function parseAstAttr(item, scope, rel, ctx) {
     let attrs = item.attribs;
     let parsedAttr = item.parsedAttr || {};
-    let isComponent = !!rel.components[item.name];
     let parsed = null;
 
     let cleanAttrs = [];
@@ -107,80 +102,6 @@ exports = module.exports = function() {
     item.parsedAttr = parsedAttr;
 
     return [item, scope, rel, ctx];
-    /* REMOVE LATER
-    for (let name in attrs) {
-
-      let expr = attrs[name];
-
-      ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
-
-
-      let modifiers = parseModifiers(name);
-      if (modifiers) {
-        name = name.replace(modifierRE, '');
-      }
-      parsed = this.hookUnique('template-parse-ast-attr-' + name, { item, name, expr, modifiers, scope, ctx });
-
-      if (parsed && parsed.scope) {
-        scope = parsed.scope;
-      }
-
-      let applyHook = `template-parse-ast-attr-${name}-apply`;
-      if (this.hasHook(applyHook)) {
-        this.hookUnique('template-parse-ast-attr-' + name + '-apply', { parsed, attrs: parsedAttr, rel });
-        continue;
-      }
-
-      if (nativeBindRE.test(name)) {
-        let bindType = name.match(nativeBindRE)[0];
-        name = name.replace(bindType, '');
-        modifiers = {};
-        if (bindType[bindType.length - 1] === ':') {
-          bindType = bindType.substring(0, bindType.length - 1);
-        }
-        switch (bindType) {
-          case 'bind':
-            break;
-          case 'catch':
-            modifiers.stop = true;
-            break;
-          case 'capture-bind':
-            modifiers.capture = true;
-            break;
-          case 'capture-catch':
-            modifiers.stop = true;
-            modifiers.capture = true;
-            break;
-        }
-
-        let parsedNativeBind = this.hookUnique('template-parse-ast-attr-v-on', item, name, expr, modifiers, scope);
-        this.hookUnique('template-parse-ast-attr-v-on-apply', { parsed: parsedNativeBind, attrs: parsedAttr, rel });
-      } else if (bindRE.test(name)) { // :prop or v-bind:prop;
-
-        let parsedBind = this.hookUnique('template-parse-ast-attr-v-bind', item, name, expr, modifiers, scope);
-        if (isComponent) { // It's a prop
-          parsedAttr[parsedBind.prop] = parsedBind.expr;
-        } else {
-          // TODO:
-        }
-
-      } else if (onRE.test(name)) {  // @ or v-on:
-        let parsedOn = this.hookUnique('template-parse-ast-attr-v-on', item, name.replace(onRE, ''), expr, modifiers, scope);
-        this.hookUnique('template-parse-ast-attr-v-on-apply', { parsed: parsedOn, attrs: parsedAttr, rel });
-        continue;
-      } else {
-        if (parsed) {
-          parsedAttr = Object.assign(parsedAttr, parsed.attrs);
-        } else {
-          parsedAttr[name] = expr;
-        }
-      }
-    }
-
-    item.parsedAttr = parsedAttr;
-
-    return [item, scope, rel];
-    */
   });
 
   this.register('template-parse-ast-tag', function parseAstTag(item, rel) {
@@ -289,8 +210,9 @@ exports = module.exports = function() {
   this.register('template-parse', function parse(html, components, ctx) {
     return toAST(html).then(ast => {
       let rel = { handlers: {}, components: components, on: {} };
-      let scope = null;
 
+      // eslint-disable-next-line
+      let scope = null;
       [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel, ctx);
 
       let code = this.hookUnique('template-parse-ast-to-str', ast);

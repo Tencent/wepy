@@ -9,6 +9,7 @@ export default function wepyInstall(wepy) {
       }
       if (checkReduxComputed(this.$options)) {
         if (!this.$store) {
+          // eslint-disable-next-line
           console.warn(`[@wepy/redux] state do not work, if store is not defined.`);
           return;
         }

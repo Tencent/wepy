@@ -35,6 +35,7 @@ exports = module.exports = {
         result = {},
         str = '';
       for (i = 0; i < len; i++) {
+        // eslint-disable-next-line
         if (exp[i] === '\'' || exp[i] === '"') {
           if (flagStack.length && flagStack[0] === exp[i]) {
             flagStack.pop();
@@ -88,7 +89,7 @@ exports = module.exports = {
       }
       return result;
     } else {
-      throw ':class expression is not correct, it has to be {\'className\': mycondition}';
+      throw `:class expression is not correct, it has to be {'className': mycondition}`;
     }
   })
 };

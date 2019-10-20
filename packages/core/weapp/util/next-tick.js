@@ -1,4 +1,3 @@
-import { noop } from './../../shared/index';
 import { handleError } from './error';
 import {
   //isIOS,
@@ -39,6 +38,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
     setImmediate(flushCallbacks);
   };
 } else if (
+  /* eslint-disable no-undef */
   typeof MessageChannel !== 'undefined' &&
   (isNative(MessageChannel) ||
     // PhantomJS
@@ -50,6 +50,7 @@ if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   macroTimerFunc = () => {
     port.postMessage(1);
   };
+  /* eslint-enable no-undef */
 } else {
   /* istanbul ignore next */
   macroTimerFunc = () => {
