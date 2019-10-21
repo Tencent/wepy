@@ -18,6 +18,7 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx"   && ! $(which expect) ]] ; then brew install expect            ; fi
 
 install:
+    - "npm install"
     - "npm run bootstrap"
 
 script:
