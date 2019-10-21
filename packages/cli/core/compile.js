@@ -164,10 +164,16 @@ class Compile extends Hook {
       let paths = this.options.static;
       let copy = p => {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
-        return fs.copy(
-          path.join(this.context, p),
-          path.join(this.context, this.options.target, relative[0] === '.' ? p : relative)
-        );
+        const target = path.join(this.context, p);
+        if (fs.existsSync(target)) {
+          if (fs.lstatSync(target).isDirectory()) {
+            const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
+            return fs.copy(target, dest);
+          } else {
+            this.logger.warn('output-static', `Path is not a directory: ${target}`);
+          }
+        }
+        return Promise.resolve(true);
       };
       if (typeof paths === 'string') return copy(paths);
       else if (isArr(paths)) return Promise.all(paths.map(p => copy(p)));
