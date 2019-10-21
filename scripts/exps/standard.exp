@@ -25,9 +25,6 @@ send "\n"
 expect "Choose a state container"
 send "jj\n"
 
-expect "Use web transform feature in your project"
-send "\n"
-
 send_user  "\nStandard template generated\n"
 
 interact
