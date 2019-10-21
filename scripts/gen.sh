@@ -42,7 +42,7 @@ cd ..
 root_path=$PWD
 
 
-npm link packages/wepy-cli
+npm link packages/cli
 
 wepy -v
 
@@ -55,40 +55,33 @@ for exp in ${exps}/*; do
 
 	cd "/tmp/templates/${name}"
 	npm install
-	node "$root_path"/packages/wepy-cli/bin/wepy.js build
+	node "$root_path"/packages/cli/bin/wepy.js build
 done
 
 # Build multiple version for standard project.
 cd /tmp/templates/standard
 
-node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web
-
-node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web --platform qq
-
-node "$root_path"/packages/wepy-cli/bin/wepy.js build --output web --platform wechat
-
-node "$root_path"/packages/wepy-cli/bin/wepy.js build --output ant
-
+node "$root_path"/packages/cli/bin/wepy.js build
 
 # Test build demos
 cd /tmp/templates
 
-node "$root_path"/packages/wepy-cli/bin/wepy.js init wepyjs/wepy-wechat-demo wepy-wechat-demo
+node "$root_path"/packages/cli/bin/wepy.js init wepyjs/wepy-wechat-demo wepy-wechat-demo
 
 # git clone https://github.com/wepyjs/wepy-wechat-demo.git
 
 cd wepy-wechat-demo
 npm install
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
+node "$root_path"/packages/cli/bin/wepy.js build
 npm run build
 
 cd ..
 
-node "$root_path"/packages/wepy-cli/bin/wepy.js init wepyjs/wepy-weui-demo wepy-weui-demo
+node "$root_path"/packages/cli/bin/wepy.js init wepyjs/wepy-weui-demo wepy-weui-demo
 # git clone https://github.com/wepyjs/wepy-weui-demo.git
 cd wepy-weui-demo
 npm install
-node "$root_path"/packages/wepy-cli/bin/wepy.js build
+node "$root_path"/packages/cli/bin/wepy.js build
 npm run build
 
 # Cleanup
