@@ -8,9 +8,9 @@ export default class Dirty {
     this.type = type || 'path';
   }
 
-  push (key, path, keyValue, pathValue) {
+  push(key, path, keyValue, pathValue) {
     if (pathValue === undefined) {
-      return；
+      return;
     }
     this._keys[key] = keyValue;
     this._path[path] = pathValue;

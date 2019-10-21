@@ -175,7 +175,7 @@ class Compile extends Hook {
 
     initParser(this);
     initPlugin(this);
-    
+
     this.hook('process-clear', 'init');
 
     return initCompiler(this, this.options.compilers);
