@@ -14,7 +14,7 @@
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
-    "test": "./scripts/test.sh",
+    "test": "npm run lint && ./scripts/test.sh",
     "clean": "./scripts/clean.sh",
     "publish": "./scripts/npm_publish/index.js publish",
     "pub": "./node_modules/.bin/verpub publish",
@@ -101,6 +101,7 @@
   "dependencies": {},
   "husky": {
     "hooks": {
+      "pre-commit": "npm run test",
       "commit-msg": "npx validate-commit-msg"
     }
   },
