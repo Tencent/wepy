@@ -173,9 +173,9 @@ class Compile extends Hook {
       else if (isArr(paths)) return Promise.all(paths.map(p => copy(p)));
     });
 
-    initPlugin(this);
     initParser(this);
-
+    initPlugin(this);
+    
     this.hook('process-clear', 'init');
 
     return initCompiler(this, this.options.compilers);
