@@ -1,28 +1,27 @@
-export default function wepyInstall (wepy) {
+export default function wepyInstall(wepy) {
   wepy.mixin({
-    beforeCreate () {
+    beforeCreate() {
       const options = this.$options;
       if (options.store) {
-        this.$store = typeof options.store === 'function'
-          ? options.store()
-          : options.store;
+        this.$store = typeof options.store === 'function' ? options.store() : options.store;
       } else if (options.parent && options.parent.$store) {
         this.$store = options.parent.$store;
       }
       if (checkReduxComputed(this.$options)) {
         if (!this.$store) {
+          // eslint-disable-next-line
           console.warn(`[@wepy/redux] state do not work, if store is not defined.`);
           return;
         }
         const { computed } = this.$options;
         const keys = Object.keys(computed);
-        let resValueMap
+        let resValueMap;
         for (let i = 0; i < keys.length; i++) {
           if ('resValueMap' in computed[keys[i]]) {
             if (!resValueMap) {
-              resValueMap = {...computed[keys[i]].resValueMap}
+              resValueMap = { ...computed[keys[i]].resValueMap };
             }
-            computed[keys[i]][this.$id] = resValueMap
+            computed[keys[i]][this.$id] = resValueMap;
           }
         }
         wepy.observe({
@@ -35,7 +34,7 @@ export default function wepyInstall (wepy) {
       }
     },
 
-    created () {
+    created() {
       if (!checkReduxComputed(this.$options)) {
         return;
       }
@@ -51,11 +50,11 @@ export default function wepyInstall (wepy) {
       });
     },
 
-    detached () {
+    detached() {
       this.$unsubscribe && this.$unsubscribe();
     }
-  })
-};
+  });
+}
 
 function checkReduxComputed(options) {
   if (!('computed' in options)) {

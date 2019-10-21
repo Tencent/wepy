@@ -3,36 +3,28 @@
  * dynamically accessing methods on Array prototype
  */
 
-import {def, hasOwn, isObject} from '../util/index'
-import { cleanPaths } from './observerPath'
+import { def, hasOwn, isObject } from '../util/index';
+import { cleanPaths } from './observerPath';
 
 const arrayProto = Array.prototype;
 export const arrayMethods = Object.create(arrayProto);
 
-const methodsToPatch = [
-  'push',
-  'pop',
-  'shift',
-  'unshift',
-  'splice',
-  'sort',
-  'reverse'
-];
+const methodsToPatch = ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'];
 
 /**
  * Intercept mutating methods and emit events
  */
-methodsToPatch.forEach(function (method) {
+methodsToPatch.forEach(function(method) {
   // cache original method
   const original = arrayProto[method];
-  def(arrayMethods, method, function mutator (...args) {
+  def(arrayMethods, method, function mutator(...args) {
+    const len = this.length;
     // 清除已经失效的 paths
-    if (this.length > 0) {
+    if (len > 0) {
       switch (method) {
         case 'pop':
-          const len = this.length
           delInvalidPaths(len - 1, this[len - 1], this);
-          break
+          break;
         case 'shift':
           delInvalidPaths(0, this[0], this);
           break;
@@ -68,9 +60,9 @@ methodsToPatch.forEach(function (method) {
   });
 });
 
-function delInvalidPaths (key, value, parent) {
+function delInvalidPaths(key, value, parent) {
   if (isObject(value) && hasOwn(value, '__ob__')) {
     // delete invalid paths
-    cleanPaths(key, value.__ob__.op, parent.__ob__.op)
+    cleanPaths(key, value.__ob__.op, parent.__ob__.op);
   }
 }

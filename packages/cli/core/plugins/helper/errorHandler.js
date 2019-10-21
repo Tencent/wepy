@@ -1,10 +1,5 @@
-const path = require('path');
-const fs = require('fs');
-const loaderUtils = require('loader-utils');
-
-
-exports = module.exports = function () {
-  this.register('error-handler', function (handler, errInfo, extra) {
+exports = module.exports = function() {
+  this.register('error-handler', function(handler, errInfo, extra) {
     if (arguments.length === 1) {
       if (typeof handler === 'object') {
         errInfo = handler;
@@ -26,8 +21,7 @@ exports = module.exports = function () {
     }
   });
 
-  this.register('error-handler-script', function (errInfo, extra) {
-
+  this.register('error-handler-script', function(errInfo, extra) {
     let { ctx, message, type, title, code, filename } = errInfo;
     let codeFrame = '';
 
@@ -47,10 +41,9 @@ exports = module.exports = function () {
     output += '\n' + 'File:\n  ' + filename;
     output += '\n' + codeFrame;
     this.logger[type](title, output);
-
   });
 
-  this.register('error-handler-template', function (errInfo, extra) {
+  this.register('error-handler-template', function(errInfo, extra) {
     let { ctx, message, type, title } = errInfo;
 
     let codeFrame = '';
@@ -64,4 +57,4 @@ exports = module.exports = function () {
     output += '\n' + codeFrame;
     this.logger[type](title, output);
   });
-}
+};

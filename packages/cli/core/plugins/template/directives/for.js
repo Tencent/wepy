@@ -1,12 +1,18 @@
 const forAliasRE = /([^]*?)\s+(?:in|of)\s+([^]*)/;
-const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/;
+const forIteratorRE = /,([^,}\]]*)(?:,([^,}\]]*))?$/;
 const stripParensRE = /^\(|\)$/g;
-const variableRE = /^\s*[a-zA-Z\$_][a-zA-Z\d_]*\s*$/;
+const variableRE = /^\s*[a-zA-Z$_][a-zA-Z\d_]*\s*$/;
 const Check = require('../util/check');
 
-exports = module.exports = function () {
-
-  this.register('template-parse-ast-pre-attr-v-for', function preParseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
+exports = module.exports = function() {
+  this.register('template-parse-ast-pre-attr-v-for', function preParseDirectivesFor({
+    item,
+    name,
+    expr,
+    modifiers,
+    scope,
+    ctx
+  }) {
     let res = {};
     let currentScope = {};
     let inMatch = expr.match(forAliasRE);
@@ -49,16 +55,21 @@ exports = module.exports = function () {
 
     let err = Check.checkExpression(res.for, `v-for="${expr}"`);
     if (err) {
-      this.hookUnique('error-handler', 'template', {
-        ctx: ctx,
-        message: err,
-        type: 'error',
-        title: 'v-for'
-      }, {
-        item: item,
-        attr: name,
-        expr: expr
-      });
+      this.hookUnique(
+        'error-handler',
+        'template',
+        {
+          ctx: ctx,
+          message: err,
+          type: 'error',
+          title: 'v-for'
+        },
+        {
+          item: item,
+          attr: name,
+          expr: expr
+        }
+      );
     }
 
     item['v-for'] = {
@@ -76,10 +87,18 @@ exports = module.exports = function () {
       scope: currentScope,
       ctx
     };
-
   });
 
-  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor ({item, name, expr, modifiers, scope, ctx}) {
+  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor({
+    /* eslint-disable no-unused-vars */
+    item,
+    name,
+    expr,
+    modifiers,
+    scope,
+    ctx
+    /* eslint-enable no-unused-vars */
+  }) {
     let attrs = item['v-for'];
     delete item['v-for'];
     return {
@@ -87,6 +106,3 @@ exports = module.exports = function () {
     };
   });
 };
-
-
-

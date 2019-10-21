@@ -1,10 +1,7 @@
-const fs = require('fs');
 const path = require('path');
 const importsToResolve = require('./importsToResolve');
 
-const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
-const isModuleName = /^~[^/\\]+$/;
-const trailingSlash = /[/\\]$/;
+//const matchMalformedModuleFilename = /(~[^/\\]+)\.less$/;
 
 function resolveImporter(compilation, file) {
   function doResolve(dir, imports) {
@@ -15,11 +12,13 @@ function resolveImporter(compilation, file) {
       return { file: resolved.path };
     });
   }
-  return function (url, prev, done) {
+  return function(url, prev, done) {
     let dir = path.dirname(prev === 'stdin' ? file : prev);
 
-    doResolve(dir, importsToResolve(url)).then(done).catch(() => ({file: url}));
-  }
+    doResolve(dir, importsToResolve(url))
+      .then(done)
+      .catch(() => ({ file: url }));
+  };
 }
 
 exports = module.exports = resolveImporter;

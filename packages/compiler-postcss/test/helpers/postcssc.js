@@ -1,7 +1,7 @@
-const path = require('path')
-const postcss = require('postcss')
-const fs = require('fs-extra')
-const specs = require('./specs')
+const path = require('path');
+const postcss = require('postcss');
+const fs = require('fs-extra');
+const specs = require('./specs');
 
 const projectPath = path.resolve(__dirname, '..', '..');
 const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
@@ -17,16 +17,20 @@ ids.forEach(id => {
 
   let options = specs.getOpt(id);
 
-  console.log(`Generate spec: ${id}`)
-  const {plugins = [], ...other} = options
-  postcss(plugins).process(content, {
-    from: postcssfile,
-    ...other
-  }).then(function (result) {
-    fs.outputFileSync(css, result.css.toString(), 'utf-8')
-  }).catch(function (err) {
-    console.log(err)
-    return
-  })
-
+  // eslint-disable-next-line
+  console.log(`Generate spec: ${id}`);
+  const { plugins = [], ...other } = options;
+  postcss(plugins)
+    .process(content, {
+      from: postcssfile,
+      ...other
+    })
+    .then(function(result) {
+      fs.outputFileSync(css, result.css.toString(), 'utf-8');
+    })
+    .catch(function(err) {
+      // eslint-disable-next-line
+      console.log(err);
+      return;
+    });
 });

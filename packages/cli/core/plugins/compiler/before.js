@@ -1,15 +1,14 @@
 const path = require('path');
 const CONST = require('../../util/const');
 
-exports = module.exports = function () {
-  const styleHooker = (content, options, ctx) => {
+exports = module.exports = function() {
+  const styleHooker = (content, options) => {
     options.supportObject = true;
   };
 
   this.register('before-compiler-less', styleHooker);
   this.register('before-compiler-sass', styleHooker);
   this.register('before-compiler-stylus', styleHooker);
-
 
   // When file changed in --watch model
   this.register('before-wepy-watch-file-changed', function beforeWatchFileChanged(buildTask) {
@@ -29,9 +28,9 @@ exports = module.exports = function () {
 
     if (isInvolved) {
       this.logger.silly('watch', `Watcher triggered by file changes: ${changedFile}`);
-      const isEntry = (changedFile === this.options.entry);
+      const isEntry = changedFile === this.options.entry;
       let ext = path.extname(changedFile);
-      const isWPY = (ext === this.options.wpyExt);
+      const isWPY = ext === this.options.wpyExt;
       ext = ext.substring(1);
 
       if (isEntry) {
@@ -53,7 +52,7 @@ exports = module.exports = function () {
     return Promise.resolve(buildTask);
   });
 
-  this.register('wepy-watch-file-changed-weapp', function (buildTask) {
+  this.register('wepy-watch-file-changed-weapp', function(buildTask) {
     buildTask.weapp = true;
     buildTask.files.push(buildTask.changed);
 
@@ -61,7 +60,7 @@ exports = module.exports = function () {
   });
 
   // when .wxs file changed
-  this.register('wepy-watch-file-changed-wxs', function (buildTask) {
+  this.register('wepy-watch-file-changed-wxs', function(buildTask) {
     let queue = [];
     const wpyExtFiles = [];
 
@@ -86,7 +85,7 @@ exports = module.exports = function () {
 
   // when .js, .ts file changed
   ['js', 'ts'].forEach(ext => {
-    this.register('wepy-watch-file-changed-' + ext, function (buildTask) {
+    this.register('wepy-watch-file-changed-' + ext, function(buildTask) {
       buildTask.outputAssets = true;
       buildTask.files.push(buildTask.changed);
       buildTask.assetExt = ext;

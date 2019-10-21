@@ -11,8 +11,6 @@ const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
 const lessPath = path.resolve(fixturesPath, 'less');
 const cssPath = path.resolve(fixturesPath, 'css');
 
-
-
 // Ignore the fail test cases;
 let ids = specs.getIds().filter(v => !/^fail-/.test(v));
 
@@ -33,20 +31,20 @@ ids.forEach(id => {
   let options = specs.getLesscOpt(id);
 
   let relativeUrls = '--relative-urls';
-  if (less.version[0] >= 3 && less.version[1] >=8 ) {
+  if (less.version[0] >= 3 && less.version[1] >= 8) {
     // https://github.com/less/less.js/blob/59e919b3fc968a403405e39cf15237936b1a6b46/bin/lessc#L479-L484
     relativeUrls = '--rewrite-urls=all';
   }
   let cmd = `${lesscPath} ${relativeUrls} ${options} ${tmpless} ${css}`;
 
+  // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);
 
-  exec(cmd, {cwd: projectPath}, (err, stdout, stderr) => {
+  exec(cmd, { cwd: projectPath }, (err, stdout, stderr) => {
     if (err || stdout || stderr) {
       err = err || new Error(stdout || stderr);
       throw err;
     }
     fs.removeSync(tmpless);
   });
-
 });

@@ -3,14 +3,10 @@ const sass = require('node-sass');
 const fs = require('fs-extra');
 const specs = require('./specs');
 
-
 const projectPath = path.resolve(__dirname, '..', '..');
 const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
 const sassPath = path.resolve(fixturesPath, 'sass');
 const cssPath = path.resolve(fixturesPath, 'css');
-
-
-let ids = specs.getIds();
 
 specs.getIds().forEach(id => {
   const ext = path.extname(id);
@@ -30,19 +26,23 @@ specs.getIds().forEach(id => {
 
   let options = specs.getOpt(id);
 
-  console.log(`Generate spec: ${id}`)
+  // eslint-disable-next-line
+  console.log(`Generate spec: ${id}`);
 
-  sass.render({
-    file: tmpsass,
-    outFile: css,
-    ...options
-  }, function (err, result) {
-    if (err) {
-      console.log(err);
-      return;
+  sass.render(
+    {
+      file: tmpsass,
+      outFile: css,
+      ...options
+    },
+    function(err, result) {
+      if (err) {
+        // eslint-disable-next-line
+        console.log(err);
+        return;
+      }
+      fs.outputFileSync(css, result.css.toString(), 'utf-8');
+      fs.removeSync(tmpsass);
     }
-    fs.outputFileSync(css, result.css.toString(), 'utf-8');
-    fs.removeSync(tmpsass);
-  });
-
+  );
 });

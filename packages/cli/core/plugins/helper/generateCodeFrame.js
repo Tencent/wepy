@@ -21,19 +21,22 @@ function indexToLineColumns(code, index) {
   return { line, column };
 }
 
-exports = module.exports = function () {
-  this.register('gen-code-frame', function (code, pos, msg, options) {
-
+exports = module.exports = function() {
+  this.register('gen-code-frame', function(code, pos, msg, options) {
     if (pos.type === 'template') {
       if (pos.item) {
         return this.hookUnique('gen-code-frame-html', code, pos.item, pos.attr, pos.expr, msg, options);
       }
     }
 
-    options = Object.assign({}, {
-      highlightCode: true,
-      message: msg || ''
-    }, options || {});
+    options = Object.assign(
+      {},
+      {
+        highlightCode: true,
+        message: msg || ''
+      },
+      options || {}
+    );
 
     if (!pos.start) {
       let newpos = {};
@@ -57,10 +60,11 @@ exports = module.exports = function () {
     return codeFrameColumns(code, pos, options);
   });
 
-  this.register('gen-code-frame-html', function (code, item, attr, expr, msg, options) {
-
+  this.register('gen-code-frame-html', function(code, item, attr, expr, msg, options) {
     let node = code.substring(item.startIndex, item.endIndex);
-    let i = 0, l = node.length, quotes = [];
+    let i = 0,
+      l = node.length,
+      quotes = [];
     let word = '';
     let inQuoteString = '';
     let startIndex = 0;
@@ -68,6 +72,7 @@ exports = module.exports = function () {
 
     while (i < l) {
       let c = node[i++];
+      // eslint-disable-next-line
       if (c === '"' || c === "'") {
         if (quotes[quotes.length - 1] === c) {
           quotes.pop();
@@ -94,7 +99,12 @@ exports = module.exports = function () {
         endIndex = i;
       }
     }
-    return this.hookUnique('gen-code-frame', code, { startIndex: item.startIndex + startIndex, endIndex: item.startIndex + endIndex + 1 }, msg, options);
-
+    return this.hookUnique(
+      'gen-code-frame',
+      code,
+      { startIndex: item.startIndex + startIndex, endIndex: item.startIndex + endIndex + 1 },
+      msg,
+      options
+    );
   });
-}
+};

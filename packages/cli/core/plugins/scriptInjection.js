@@ -1,11 +1,8 @@
-const genRel = (rel) => {
-
-  if (typeof rel === 'string')
-    return rel;
+const genRel = rel => {
+  if (typeof rel === 'string') return rel;
 
   let handlerStr = '{';
   for (let h in rel.handlers) {
-
     let handler = rel.handlers[h];
     handlerStr += `'${h}': {`;
     if (typeof handler === 'object') {
@@ -41,9 +38,8 @@ const genRel = (rel) => {
   return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr}, models: ${modelStr} }`;
 };
 
-exports = module.exports = function () {
+exports = module.exports = function() {
   this.register('script-injection', function scriptInjection(parsed, ref) {
-
     let relStr = genRel(ref);
     const { source } = parsed;
     let entry = parsed.parser.entry;
@@ -67,6 +63,7 @@ exports = module.exports = function () {
     }
 
     // avoid to import duplicated
+    // eslint-disable-next-line
     if (source.relIndex != null) {
       const idx = source.replacements.findIndex(arr => {
         return arr[arr.length - 1] === source.relIndex;

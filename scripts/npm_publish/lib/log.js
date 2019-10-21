@@ -1,13 +1,16 @@
 const chalk = require('chalk');
 
 module.exports = {
-  info (msg) {
+  info(msg) {
+    // eslint-disable-next-line no-console
     console.log(chalk.yellow('⦿ ') + msg);
   },
-  success (msg) {
+  success(msg) {
+    // eslint-disable-next-line no-console
     console.log(chalk.green('✔ ') + msg);
   },
-  error (e) {
+  error(e) {
+    // eslint-disable-next-line no-console
     console.log(chalk.red('✘ ') + e);
   }
-}
+};

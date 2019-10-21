@@ -7,17 +7,15 @@ const ResolverFactory = require('enhanced-resolve').ResolverFactory;
 const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSystem');
 const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 
-
 class Hook {
-  register (key, fn) {
-    if (!this._fns)
-      this._fns = {};
+  register(key, fn) {
+    if (!this._fns) this._fns = {};
     this._fns[key] = fn;
   }
-  hook (key, ...args) {
+  hook(key, ...args) {
     return this._fns[key].apply(this, args);
   }
-  clear () {
+  clear() {
     this._fns = {};
   }
 }
@@ -27,19 +25,24 @@ function createCompile(postcssOpt, resolveOpt) {
   postcssPlugin(postcssOpt).call(instance);
 
   instance.resolvers = {
-    normal: ResolverFactory.createResolver(Object.assign({
-      fileSystem: new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000)
-    }, resolveOpt))
+    normal: ResolverFactory.createResolver(
+      Object.assign(
+        {
+          fileSystem: new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000)
+        },
+        resolveOpt
+      )
+    )
   };
 
   let fnNormalBak = instance.resolvers.normal.resolve;
-  instance.resolvers.normal.resolve = function (...args) {
+  instance.resolvers.normal.resolve = function(...args) {
     return new Promise((resolve, reject) => {
-      args.push(function (err, filepath, meta) {
+      args.push(function(err, filepath, meta) {
         if (err) {
           reject(err);
         } else {
-          resolve({path: filepath, meta: meta});
+          resolve({ path: filepath, meta: meta });
         }
       });
       fnNormalBak.apply(instance.resolvers.normal, args);
@@ -62,31 +65,31 @@ function readSpec(id) {
 }
 
 function compare(id, done) {
-
   let compile = createCompile(specs.getOpt(id), specs.getResolveOpt(id));
 
   let spec = readSpec(id);
   let ext = path.extname(spec.file);
   let type = ext.substring(1, ext.length);
 
-  return compile.hook('wepy-compiler-' + type, spec.node, spec.file).then(node => {
-    let css = node.compiled.code;
-    expect(css).to.equal(spec.expect);
-    done();
-  }).catch(e => {
-    done();
-    throw e;
-  });
+  return compile
+    .hook('wepy-compiler-' + type, spec.node, spec.file)
+    .then(node => {
+      let css = node.compiled.code;
+      expect(css).to.equal(spec.expect);
+      done();
+    })
+    .catch(e => {
+      done();
+      throw e;
+    });
 }
 
 describe('wepy-compiler-postcss', function() {
-
   let ids = specs.getIds();
 
   ids.forEach(id => {
-    it('testing ' + id, function (done) {
+    it('testing ' + id, function(done) {
       compare(id, done);
     });
-  })
-
+  });
 });

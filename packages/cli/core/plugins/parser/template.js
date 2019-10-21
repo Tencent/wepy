@@ -1,9 +1,7 @@
 const xmllint = require('../../util/xmllint');
-const errorHandler = require('../../util/error');
 
-exports = module.exports = function () {
-  this.register('wepy-parser-template', function (node, ctx) {
-
+exports = module.exports = function() {
+  this.register('wepy-parser-template', function(node, ctx) {
     if (ctx.useCache && ctx.sfc.template.parsed) {
       return Promise.resolve(true);
     }
@@ -21,21 +19,26 @@ exports = module.exports = function () {
     let msg = xmllint.verify(code);
     msg.forEach(item => {
       let type = item.type === 'warning' ? 'warn' : 'error';
-      this.hookUnique('error-handler', 'template', {
-        ctx: ctx,
-        message: item.message,
-        type: type,
-        title: 'verify'
-      }, {
-        start: {line: item.line, column: item.col}
-      });
+      this.hookUnique(
+        'error-handler',
+        'template',
+        {
+          ctx: ctx,
+          message: item.message,
+          type: type,
+          title: 'verify'
+        },
+        {
+          start: { line: item.line, column: item.col }
+        }
+      );
       //errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
 
     let components = {};
     let sfcConfig = ctx.sfc.config;
 
-    let usingComponents = sfcConfig && sfcConfig.parsed.output  ? sfcConfig.parsed.output.usingComponents : {};
+    let usingComponents = sfcConfig && sfcConfig.parsed.output ? sfcConfig.parsed.output.usingComponents : {};
 
     for (let k in usingComponents) {
       components[k] = {
@@ -51,4 +54,4 @@ exports = module.exports = function () {
       return Promise.resolve(true);
     });
   });
-}
+};

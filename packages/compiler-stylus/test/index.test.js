@@ -4,23 +4,20 @@ const expect = require('chai').expect;
 const stylusPlugin = require('../index');
 const specs = require('./helpers/specs');
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
-const NodeJsInputFileSystem = require("enhanced-resolve/lib/NodeJsInputFileSystem");
-const CachedInputFileSystem = require("enhanced-resolve/lib/CachedInputFileSystem");
+const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSystem');
+const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 
 class Hook {
+  constructor() {}
 
-  constructor () {
-  }
-
-  register (key, fn) {
-    if (!this._fns)
-      this._fns = {};
+  register(key, fn) {
+    if (!this._fns) this._fns = {};
     this._fns[key] = fn;
   }
-  hook (key, ...args) {
+  hook(key, ...args) {
     return this._fns[key].apply(this, args);
   }
-  clear () {
+  clear() {
     this._fns = {};
   }
 }
@@ -30,26 +27,33 @@ function createCompile(stylusOpt, resolveOpt) {
   stylusPlugin(stylusOpt).call(instance);
 
   instance.resolvers = {
-    normal: ResolverFactory.createResolver(Object.assign({
-      fileSystem: new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000)
-    }, resolveOpt))
+    normal: ResolverFactory.createResolver(
+      Object.assign(
+        {
+          fileSystem: new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000)
+        },
+        resolveOpt
+      )
+    )
   };
 
   instance.logger = {
-    error (e) {
+    error(e) {
+      /* eslint-disable no-console */
       console.log('======= ERROR OUTPUT ======');
       console.log(e);
+      /* eslint-enable no-console */
     }
   };
 
   let fnNormalBak = instance.resolvers.normal.resolve;
-  instance.resolvers.normal.resolve = function (...args) {
+  instance.resolvers.normal.resolve = function(...args) {
     return new Promise((resolve, reject) => {
-      args.push(function (err, filepath, meta) {
+      args.push(function(err, filepath, meta) {
         if (err) {
           reject(err);
         } else {
-          resolve({path: filepath, meta: meta});
+          resolve({ path: filepath, meta: meta });
         }
       });
       fnNormalBak.apply(instance.resolvers.normal, args);
@@ -72,17 +76,19 @@ function readSpec(id, isFailSpec) {
 }
 
 function compare(id, done) {
-
   let compile = createCompile(specs.getOpt(id), specs.getResolveOpt(id));
 
   let spec = readSpec(id);
-  return compile.hook('wepy-compiler-stylus', spec.node, spec.file).then(node => {
-    let css = node.compiled.code;
-    expect(css).to.equal(spec.expect);
-    done();
-  }).catch(e => {
-    done(e);
-  });
+  return compile
+    .hook('wepy-compiler-stylus', spec.node, spec.file)
+    .then(node => {
+      let css = node.compiled.code;
+      expect(css).to.equal(spec.expect);
+      done();
+    })
+    .catch(e => {
+      done(e);
+    });
 }
 
 function compileFail(id, done) {
@@ -92,24 +98,26 @@ function compileFail(id, done) {
 
   let setting = specs.getId(id);
 
-  return compile.hook('wepy-compiler-stylus', spec.node, spec.file).then((res) => {
-    // e.g. uri-alias, alias is not awared in uri, so treat as compile successfully.
-    if (setting.then) {
+  return compile
+    .hook('wepy-compiler-stylus', spec.node, spec.file)
+    .then(() => {
+      // e.g. uri-alias, alias is not awared in uri, so treat as compile successfully.
+      if (setting.then) {
+        done();
+      }
+    })
+    .catch(e => {
+      if (setting.error) {
+        expect(e.lineno).to.be.gt(0);
+        expect(e.filename).to.have.string(setting.error);
+      } else {
+        expect(e).to.be.an('error');
+      }
       done();
-    }
-  }).catch(e => {
-    if (setting.error) {
-      expect(e.lineno).to.be.gt(0);
-      expect(e.filename).to.have.string(setting.error);
-    } else {
-      expect(e).to.be.an('error');
-    }
-    done();
-  });
+    });
 }
 
 describe('wepy-compiler-stylus', function() {
-
   let ids = specs.getIds();
 
   let shouldPassIds = ids.filter(id => !/^fail-/.test(id));
@@ -117,14 +125,13 @@ describe('wepy-compiler-stylus', function() {
   let shouldFailIds = ids.filter(id => /^fail-/.test(id));
 
   shouldPassIds.forEach(id => {
-    it('Pass test cases: ' + id, function (done) {
+    it('Pass test cases: ' + id, function(done) {
       compare(id, done);
     });
   });
   shouldFailIds.forEach(id => {
-    it('Fail test cases: ' + id, function (done) {
+    it('Fail test cases: ' + id, function(done) {
       compileFail(id, done);
     });
   });
-
 });

@@ -6,11 +6,17 @@ const Hook = require(`${alias.core}/hook`);
 const specs = {
   normal: {
     called: false,
-    plugins: [() => { specs.normal.called = true }]
+    plugins: [
+      () => {
+        specs.normal.called = true;
+      }
+    ]
   },
   single: {
     called: false,
-    plugins: () => { specs.single.called = true }
+    plugins: () => {
+      specs.single.called = true;
+    }
   },
   validArr: {
     type: 'error',
@@ -24,14 +30,13 @@ const specs = {
   }
 };
 
-const createCompile= (plugins) => {
+const createCompile = plugins => {
   const compile = new Hook();
 
   compile.options = { plugins };
 
   compile.logger = {
-    error (...args) {
-    }
+    error() {}
   };
 
   initPlugin(compile);
@@ -41,22 +46,20 @@ const compare = (name, done) => {
   const spec = specs[name];
 
   if (spec.type === 'error') {
-    expect(() => createCompile(spec.plugins)).to.throw(spec.error)
-    done()
+    expect(() => createCompile(spec.plugins)).to.throw(spec.error);
+    done();
   } else {
-    createCompile(spec.plugins)
+    createCompile(spec.plugins);
 
-    expect(spec.called).to.be.true
-    done()
+    expect(spec.called).to.be.true;
+    done();
   }
 };
 
-describe('init plugin', function () {
-
+describe('init plugin', function() {
   Object.keys(specs).forEach(key => {
-
-    it(`test ${key} plugin`, (done) => {
+    it(`test ${key} plugin`, done => {
       compare(key, done);
     });
-  })
+  });
 });

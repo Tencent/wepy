@@ -1,19 +1,18 @@
-import { noop } from './../../shared/index'
-import { handleError } from './error'
+import { handleError } from './error';
 import {
   //isIOS,
   isNative
-} from './../../shared/env'
+} from './../../shared/env';
 
-const callbacks = []
-let pending = false
+const callbacks = [];
+let pending = false;
 
-function flushCallbacks () {
-  pending = false
-  const copies = callbacks.slice(0)
-  callbacks.length = 0
+function flushCallbacks() {
+  pending = false;
+  const copies = callbacks.slice(0);
+  callbacks.length = 0;
   for (let i = 0; i < copies.length; i++) {
-    copies[i]()
+    copies[i]();
   }
 }
 
@@ -25,9 +24,9 @@ function flushCallbacks () {
 // when state is changed right before repaint (e.g. #6813, out-in transitions).
 // Here we use micro task by default, but expose a way to force macro task when
 // needed (e.g. in event handlers attached by v-on).
-let microTimerFunc
-let macroTimerFunc
-let useMacroTask = false
+let microTimerFunc;
+let macroTimerFunc;
+let useMacroTask = false;
 
 // Determine (macro) Task defer implementation.
 // Technically setImmediate should be the ideal choice, but it's only available
@@ -36,89 +35,95 @@ let useMacroTask = false
 /* istanbul ignore if */
 if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
   macroTimerFunc = () => {
-    setImmediate(flushCallbacks)
-  }
-} else if (typeof MessageChannel !== 'undefined' && (
-  isNative(MessageChannel) ||
-  // PhantomJS
-  MessageChannel.toString() === '[object MessageChannelConstructor]'
-)) {
-  const channel = new MessageChannel()
-  const port = channel.port2
-  channel.port1.onmessage = flushCallbacks
+    setImmediate(flushCallbacks);
+  };
+} else if (
+  /* eslint-disable no-undef */
+  typeof MessageChannel !== 'undefined' &&
+  (isNative(MessageChannel) ||
+    // PhantomJS
+    MessageChannel.toString() === '[object MessageChannelConstructor]')
+) {
+  const channel = new MessageChannel();
+  const port = channel.port2;
+  channel.port1.onmessage = flushCallbacks;
   macroTimerFunc = () => {
-    port.postMessage(1)
-  }
+    port.postMessage(1);
+  };
+  /* eslint-enable no-undef */
 } else {
   /* istanbul ignore next */
   macroTimerFunc = () => {
-    setTimeout(flushCallbacks, 0)
-  }
+    setTimeout(flushCallbacks, 0);
+  };
 }
 
 // Determine MicroTask defer implementation.
 /* istanbul ignore next, $flow-disable-line */
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
-  const p = Promise.resolve()
+  const p = Promise.resolve();
   microTimerFunc = () => {
-    p.then(flushCallbacks)
+    p.then(flushCallbacks);
     // in problematic UIWebViews, Promise.then doesn't completely break, but
     // it can get stuck in a weird state where callbacks are pushed into the
     // microtask queue but the queue isn't being flushed, until the browser
     // needs to do some other work, e.g. handle a timer. Therefore we can
     // "force" the microtask queue to be flushed by adding an empty timer.
     // if (isIOS) setTimeout(noop)
-  }
+  };
 } else {
   // fallback to macro
-  microTimerFunc = macroTimerFunc
+  microTimerFunc = macroTimerFunc;
 }
 
 /**
  * Wrap a function so that if any code inside triggers state change,
  * the changes are queued using a Task instead of a MicroTask.
  */
-export function withMacroTask (fn) {
-  return fn._withTask || (fn._withTask = function () {
-    useMacroTask = true
-    const res = fn.apply(null, arguments)
-    useMacroTask = false
-    return res
-  })
+export function withMacroTask(fn) {
+  return (
+    fn._withTask ||
+    (fn._withTask = function() {
+      useMacroTask = true;
+      const res = fn.apply(null, arguments);
+      useMacroTask = false;
+      return res;
+    })
+  );
 }
 
-export function nextTick (cb, ctx) {
-  let _resolve
+export function nextTick(cb, ctx) {
+  let _resolve;
   callbacks.push(() => {
     if (cb) {
       try {
-        cb.call(ctx)
+        cb.call(ctx);
       } catch (e) {
-        handleError(e, ctx, 'nextTick')
+        handleError(e, ctx, 'nextTick');
       }
     } else if (_resolve) {
-      _resolve(ctx)
+      _resolve(ctx);
     }
-  })
+  });
   if (!pending) {
-    pending = true
+    pending = true;
     if (useMacroTask) {
-      macroTimerFunc()
+      macroTimerFunc();
     } else {
-      microTimerFunc()
+      microTimerFunc();
     }
   }
   // $flow-disable-line
   if (!cb && typeof Promise !== 'undefined') {
     return new Promise(resolve => {
-      _resolve = resolve
-    })
+      _resolve = resolve;
+    });
   }
 }
 
 const renderCallbacks = [];
 
-export function renderFlushCallbacks () {
+export function renderFlushCallbacks() {
   const copies = renderCallbacks.slice(0);
   renderCallbacks.length = 0;
   for (let i = 0; i < copies.length; i++) {
@@ -126,21 +131,23 @@ export function renderFlushCallbacks () {
   }
 }
 
-export function renderNextTick (cb, ctx) {
+export function renderNextTick(cb, ctx) {
   let _resolve;
   renderCallbacks.push(() => {
     if (cb) {
       try {
-        cb.call(ctx)
+        cb.call(ctx);
       } catch (e) {
-        handleError(e, ctx, 'nextTick')
+        handleError(e, ctx, 'nextTick');
       }
     } else if (_resolve) {
-      _resolve(ctx)
+      _resolve(ctx);
     }
-  })
+  });
 
   if (!cb && typeof Promise !== 'undefined') {
-    return new Promise(resolve => { _resolve = resolve });
+    return new Promise(resolve => {
+      _resolve = resolve;
+    });
   }
 }

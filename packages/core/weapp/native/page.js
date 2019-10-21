@@ -1,7 +1,6 @@
 import { patchMixins, patchData, patchMethods, patchLifecycle, patchProps } from '../init/index';
 
-export function page (opt = {}, rel) {
-
+export function page(opt = {}, rel) {
   let pageConfig = {
     externalClasses: opt.externalClasses || [],
     // support component options property
@@ -9,12 +8,12 @@ export function page (opt = {}, rel) {
     options: opt.options || {}
   };
 
-
   patchMixins(pageConfig, opt, opt.mixins);
 
   if (opt.properties) {
     pageConfig.properties = opt.properties;
     if (opt.props) {
+      // eslint-disable-next-line
       console.warn(`props will be ignore, if properties is set`);
     }
   } else if (opt.props) {
@@ -29,4 +28,3 @@ export function page (opt = {}, rel) {
 
   return Component(pageConfig);
 }
-

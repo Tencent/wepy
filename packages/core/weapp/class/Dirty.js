@@ -1,7 +1,7 @@
-import {getPathMap} from '../observer/observerPath'
+import { getPathMap } from '../observer/observerPath';
 
 export default class Dirty {
-  constructor (type) {
+  constructor(type) {
     this.reset();
 
     // path||key
@@ -10,14 +10,14 @@ export default class Dirty {
 
   push (key, path, keyValue, pathValue) {
     if (pathValue === undefined) {
-      return
+      return；
     }
     this._keys[key] = keyValue;
     this._path[path] = pathValue;
     this._length++;
   }
 
-  pop () {
+  pop() {
     let data = Object.create(null);
     if (this.type === 'path') {
       data = this._path;
@@ -28,43 +28,42 @@ export default class Dirty {
     return data;
   }
 
-  get (type) {
+  get(type) {
     return type === 'path' ? this._path : this._keys;
   }
 
   /**
    * Set dirty from a ObserverPath
    */
-  set (op, key, value) {
+  set(op, key, value) {
     let pathMap;
     let pathKeys;
     // eslint-disable-next-line eqeqeq
     if (key != null) {
-      const {combinePathKeys, combinePathMap} = getPathMap(key, op.pathKeys, op.pathMap);
+      const { combinePathKeys, combinePathMap } = getPathMap(key, op.pathKeys, op.pathMap);
       pathKeys = combinePathKeys;
       pathMap = combinePathMap;
     } else {
-      pathKeys = op.pathKeys
-      pathMap = op.pathMap
+      pathKeys = op.pathKeys;
+      pathMap = op.pathMap;
     }
     /**
      * 出于性能考虑，使用 usingComponents 时， setData 内容不会被直接深复制，
      * 即 this.setData({ field: obj }) 后 this.data.field === obj 。
      * 因此不需要所有 path 都 setData 。
      */
-    const {root, path} = pathMap[pathKeys[0]];
+    const { root, path } = pathMap[pathKeys[0]];
     this.push(root, path, root === path ? value : op.ob.vm[root], value);
   }
 
-  reset () {
+  reset() {
     this._keys = {};
     this._path = {};
     this._length = 0;
     return this;
   }
 
-  length () {
+  length() {
     return this._length;
   }
-
 }

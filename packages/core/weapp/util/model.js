@@ -12,7 +12,7 @@
  * - test.xxx.a["asa"][test1[key]]
  *
  */
-export function parseModel (str) {
+export function parseModel(str) {
   str = str.trim();
   let len = str.length;
 
@@ -43,15 +43,15 @@ export function parseModel (str) {
   let exprStart = 0;
   let exprEnd = 0;
 
-  let isQuoteStart = function (chr) {
+  let isQuoteStart = function(chr) {
     return chr === 0x22 || chr === 0x27;
   };
 
-  let parseString = function (chr) {
+  let parseString = function(chr) {
     while (index < len && str.charCodeAt(++index) !== chr) {}
   };
 
-  let parseBracket = function (chr) {
+  let parseBracket = function(chr) {
     let inBracket = 1;
     exprStart = index;
     while (index < len) {
@@ -60,16 +60,13 @@ export function parseModel (str) {
         parseString(chr);
         continue;
       }
-      if (chr === 0x5B)
-        inBracket++;
-      if (chr === 0x5D)
-        inBracket--;
+      if (chr === 0x5b) inBracket++;
+      if (chr === 0x5d) inBracket--;
 
       if (inBracket === 0) {
-        exprEnd = index
+        exprEnd = index;
         break;
       }
-
     }
   };
 
@@ -77,7 +74,7 @@ export function parseModel (str) {
     let chr = str.charCodeAt(++index);
     if (isQuoteStart(chr)) {
       parseString(chr);
-    } else if (chr === 0x5B) {
+    } else if (chr === 0x5b) {
       parseBracket(chr);
     }
   }

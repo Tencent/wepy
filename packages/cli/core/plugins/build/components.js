@@ -1,9 +1,7 @@
 const path = require('path');
 
-
-exports = module.exports = function () {
-
-  this.register('build-components', function buildComponents (comps) {
+exports = module.exports = function() {
+  this.register('build-components', function buildComponents(comps) {
     this.logger.info('component', 'building components');
 
     comps.forEach(comp => {
@@ -14,8 +12,8 @@ exports = module.exports = function () {
         styleCode += v.parsed.code + '\n';
       });
       config.parsed.output.component = true;
-      const {usingComponents, ...other} = config.parsed.output
-      let newUsingComponents = {}
+      const { usingComponents, ...other } = config.parsed.output;
+      let newUsingComponents = {};
       /**
        * 在windows环境中解析的usingComponent格式为
        * usingComponent: {
@@ -27,12 +25,12 @@ exports = module.exports = function () {
        * }
        */
       for (let i in usingComponents) {
-        newUsingComponents[i] = usingComponents[i].replace(/\\/g, '/')
+        newUsingComponents[i] = usingComponents[i].replace(/\\/g, '/');
       }
       let output = {
         ...other,
         usingComponents: newUsingComponents
-      }
+      };
       config.outputCode = JSON.stringify(output, null, 4);
       this.hook('script-dep-fix', script.parsed);
       if (!script.empty && !(comp.component && comp.type === 'weapp')) {
@@ -61,4 +59,3 @@ exports = module.exports = function () {
     return comps;
   });
 };
-

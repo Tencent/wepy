@@ -10,15 +10,15 @@
 const babel = require('@babel/core');
 const path = require('path');
 
-exports = module.exports = function (options) {
-  return function () {
-    this.register('wepy-compiler-babel', function (node, ctx) {
+exports = module.exports = function(options) {
+  return function() {
+    this.register('wepy-compiler-babel', function(node, ctx) {
       let p;
       const file = typeof ctx === 'string' ? ctx : ctx.file;
       const outputFileName = path.basename(file, path.extname(file)) + '.js';
       const scriptFile = node.src ? path.resolve(path.basename(file), node.src) : file;
       try {
-        let compiled = babel.transformSync(node.content, {filename: scriptFile, ...options});
+        let compiled = babel.transformSync(node.content, { filename: scriptFile, ...options });
         node.compiled = compiled;
         if (path.extname(scriptFile) === '.ts') {
           compiled.outputFileName = outputFileName;
@@ -37,24 +37,27 @@ exports = module.exports = function (options) {
       return p;
     });
 
-
-    this.register('prewalk-VariableDeclarator', function (walker, declarator, name, decl) {
-      if (walker.lang !== 'babel')
-        return;
+    // eslint-disable-next-line
+    this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
+      if (walker.lang !== 'babel') return;
       // var core_1 = _interopRequireDefault(require('@wepy/core'))
       if (declarator.init && declarator.init.type === 'CallExpression') {
         if (declarator.init.callee.name === '_interopRequireDefault') {
           let arg = declarator.init.arguments[0];
-          if (arg && arg.type === 'CallExpression' && arg.callee.name === 'require' && arg.arguments[0].value === '@wepy/core') {
+          if (
+            arg &&
+            arg.type === 'CallExpression' &&
+            arg.callee.name === 'require' &&
+            arg.arguments[0].value === '@wepy/core'
+          ) {
             walker.scope.instances.push(name + '.default');
           }
         }
       }
     });
 
-    this.register('walker-detect-entry', function (walker, expression, exprName) {
-      if (walker.lang !== 'babel')
-        return;
+    this.register('walker-detect-entry', function(walker, expression, exprName) {
+      if (walker.lang !== 'babel') return;
       if (walker.scope.instances && walker.scope.instances.length && exprName) {
         if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
           if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
@@ -63,5 +66,5 @@ exports = module.exports = function (options) {
         }
       }
     });
-  }
-}
+  };
+};

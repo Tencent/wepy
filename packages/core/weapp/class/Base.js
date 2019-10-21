@@ -1,44 +1,44 @@
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone, toArray, handleError  } from './../util/index';
+import { isArr, isStr, isObj, toArray, handleError } from './../util/index';
 import { set, del } from '../observer/index';
 
 export default class Base {
-  constructor () {
+  constructor() {
     this._events = {};
   }
 
-  $set (target, key, val) {
+  $set(target, key, val) {
     return set(this, target, key, val);
   }
 
-  $delete (target, key) {
+  $delete(target, key) {
     return del(target, key);
   }
 
-  $on (event, fn) {
+  $on(event, fn) {
     if (isArr(event)) {
-      event.forEach((item) => {
+      event.forEach(item => {
         if (isStr(item)) {
           this.$on(item, fn);
         } else if (isObj(item)) {
           this.$on(item.event, item.fn);
         }
-      })
+      });
     } else {
       (this._events[event] || (this._events[event] = [])).push(fn);
     }
     return this;
   }
 
-  $once () {}
+  $once() {}
 
-  $off (event, fn) {
+  $off(event, fn) {
     if (!event && !fn) {
       this._events = Object.create(null);
       return this;
     }
 
     if (isArr(event)) {
-      event.forEach((item) => {
+      event.forEach(item => {
         if (isStr(item)) {
           this.$off(item, fn);
         } else if (isObj(item)) {
@@ -47,8 +47,7 @@ export default class Base {
       });
       return this;
     }
-    if (!this._events[event])
-      return this;
+    if (!this._events[event]) return this;
 
     if (!fn) {
       this._events[event] = null;
@@ -69,7 +68,7 @@ export default class Base {
     return this;
   }
 
-  $emit (event) {
+  $emit(event) {
     let vm = this;
     let lowerCaseEvent = event.toLowerCase();
     let fns = this._events[event] || [];
