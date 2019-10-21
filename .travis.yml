@@ -8,10 +8,6 @@ matrix:
     - os: linux
     - os: osx
 
-branches:
-  except:
-    - 2.0.x
-
 sudo: false
 
 before_install:
