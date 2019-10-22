@@ -1,8 +1,6 @@
 import { observe } from '../../weapp/observer/index';
 import { proxy } from '../../weapp/init/data';
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone } from '../../weapp/util/index';
-
-const AllowedTypes = [String, Number, Boolean, Object, Array, null];
+import { isArr, isStr, isObj } from '../../weapp/util/index';
 
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
@@ -10,7 +8,7 @@ const observerFn = function (output, props, prop) {
 
     // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
     if (changedPaths.length > 1) {
-      return
+      return;
     }
     let _data = newVal;
     if (typeof _data === 'function') {
@@ -47,9 +45,9 @@ export function patchProps(output, props) {
     }
   }
 
-  newProps["onInit"] = ''
+  newProps['onInit'] = '';
   output.properties = newProps;
-};
+}
 
 /*
  * init props
@@ -72,4 +70,4 @@ export function initProps(vm, properties) {
     value: vm._props,
     root: true
   });
-};
+}

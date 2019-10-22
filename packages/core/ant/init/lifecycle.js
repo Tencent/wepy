@@ -10,7 +10,7 @@ import { initData } from '../../weapp/init/data';
 import { initComputed } from '../../weapp/init/computed';
 import { initMethods } from './methods';
 import { initEvents } from '../../weapp/init/events';
-import { isStr, isArr, isFunc } from '../../shared/index';
+import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../../weapp/class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
 import { warn } from '../../weapp/util/index';
@@ -85,7 +85,6 @@ export function patchAppLifecycle(appConfig, options, rel = {}) {
 };
 
 export function patchLifecycle(output, options, rel, isComponent) {
-
   const initClass = isComponent ? WepyComponent : WepyPage;
   const initLifecycle = function (...args) {
     let vm = new initClass();
@@ -214,4 +213,4 @@ export function patchLifecycle(output, options, rel, isComponent) {
       }
     }
   });
-};
+}

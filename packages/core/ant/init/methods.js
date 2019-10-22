@@ -1,6 +1,6 @@
 import Event from '../../weapp/class/Event';
 import { callUserHook } from '../../weapp/init/hooks';
-import { isFunc, isUndef, parseModel, warn } from '../../weapp/util/index';
+import { isFunc, isUndef, warn } from '../../weapp/util/index';
 
 const eventHandler = function (method, fn) {
   let methodKey = method.toLowerCase();
@@ -8,7 +8,7 @@ const eventHandler = function (method, fn) {
     if (!isFunc(fn)) {
       throw 'undefined method: ' + method;
     }
-    let result;
+
     let wepyParams = [];
     let paramsLength = 0;
     let p;
@@ -89,7 +89,7 @@ const proxyHandler = function (e) {
   } else if (!model) {
     throw new Error('Unrecognized event');
   }
-}
+};
 
 /*
  * initialize page methods, also the app
@@ -100,41 +100,35 @@ export function initMethods(vm, methods) {
       vm[method] = methods[method];
     });
   }
-};
+}
 
 /*
  * initialize component methods
  */
 export function initComponentMethods(comConfig, methods) {
-
   comConfig.methods = {};
   Object.keys(methods).forEach(method => {
     comConfig[method] = eventHandler(method, methods[method]);
   });
-};
+}
 
 /*
  * patch method option
  */
 export function patchMethods(output, methods, isComponent) {
-
   output.methods = {};
   let target = isComponent ? output.methods : output;
 
   target._initComponent = function (e) {
     let child = e;
-    var ref = e.$wx.props["data-ref"];
-    var wpyEvt = e.$wx.props["data-wpy-evt"];
+    var ref = e.$wx.props['data-ref'];
+    var wpyEvt = e.$wx.props['data-wpy-evt'];
 
     let vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
       if (vm.$refs[ref]) {
-        warn(
-          'duplicate ref "' + ref +
-          '" will be covered by the last instance.\n',
-          vm
-        )
+        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm)
       }
       vm.$refs[ref] = child;
     }
@@ -144,10 +138,10 @@ export function patchMethods(output, methods, isComponent) {
     child.$root = vm.$root;
     // 支付宝组件嵌套时，子组件执行早已组件
     if (e.$children && e.$children.length) {
-      e.$children.forEach((x) => {
+      e.$children.forEach(x => {
         x.$app = vm.$app;
         x.$root = vm.$root;
-      })
+      });
     }
     return vm;
   };
@@ -160,4 +154,4 @@ export function patchMethods(output, methods, isComponent) {
       target[method] = methods[method];
     });
   }
-};
+}
