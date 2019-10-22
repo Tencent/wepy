@@ -1,6 +1,6 @@
-import WepyApp from '../class/WepyApp';
+import WepyApp from '../../weapp/class/WepyApp';
 import WepyPage from '../class/WepyPage';
-import WepyComponent from '../class/WepyComponent';
+import WepyComponent from '../../weapp/class/WepyComponent';
 
 import { initHooks } from '../../weapp/init/hooks';
 import { initProps } from './props';

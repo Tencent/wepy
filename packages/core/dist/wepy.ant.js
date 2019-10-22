@@ -1769,7 +1769,7 @@ function mixin(options) {
 }
 
 var WepyApp = (function (Base$$1) {
-  function WepyApp () {
+  function WepyApp() {
     Base$$1.call(this);
   }
 
@@ -1780,63 +1780,14 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyComponent$1 = (function (Base$$1) {
-  function WepyComponent () {
-    Base$$1.apply(this, arguments);
-  }
-
-  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
-  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
-  WepyComponent.prototype.constructor = WepyComponent;
-
-  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
-    var this$1 = this;
-
-    var vm = this;
-    if (isArr(cb)) {
-      cb.forEach(function (handler) {
-        this$1.$watch(expOrFn, handler, options);
-      });
-    }
-    if (isPlainObject(cb)) {
-      var handler = cb;
-      options = handler;
-      handler = handler.handler;
-      if (typeof handler === 'string')
-        { handler = this[handler]; }
-      return this.$watch(expOrFn, handler, options);
-    }
-
-    options = options || {};
-    options.user = true;
-    var watcher = new Watcher(vm, expOrFn, cb, options);
-    if (options.immediate) {
-      cb.call(vm, watcher.value);
-    }
-    return function unwatchFn () {
-      watcher.teardown();
-    }
-  };
-
-  WepyComponent.prototype.$forceUpdate = function $forceUpdate () {
-    if (this._watcher) {
-      this._watcher.update();
-    }
-  };
-
-  return WepyComponent;
-}(Base));
-
-WepyComponent$1.prototype.$nextTick = renderNextTick;
-
 var wx = my;
-var WepyPage = (function (WepyComponent) {
+var WepyPage = (function (WepyComponent$$1) {
   function WepyPage () {
-    WepyComponent.apply(this, arguments);
+    WepyComponent$$1.apply(this, arguments);
   }
 
-  if ( WepyComponent ) WepyPage.__proto__ = WepyComponent;
-  WepyPage.prototype = Object.create( WepyComponent && WepyComponent.prototype );
+  if ( WepyComponent$$1 ) WepyPage.__proto__ = WepyComponent$$1;
+  WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
   WepyPage.prototype.constructor = WepyPage;
 
   WepyPage.prototype.$launch = function $launch (url, params) {
@@ -1889,7 +1840,7 @@ var WepyPage = (function (WepyComponent) {
   };
 
   return WepyPage;
-}(WepyComponent$1));
+}(WepyComponent));
 
 function callUserHook(vm, hookName, arg) {
   var pageHook = vm.hooks[hookName];
@@ -1951,45 +1902,15 @@ function patchProps (output, props) {
   } else if (isObj(props)) {
     for (var k in props) {
       var prop = props[k];
-      
+
       // notsupport obj
       if(!isObj(prop)){
         newProps[k] = prop;
       }else{
         newProps[k] = prop.default ? prop.default : '';
       }
-
-      // // props.type
-      // if (isUndef(prop.type)){
-      //   newProp.type = null;
-      // } else if (isArr(prop.type)) {
-      //   newProp.type = null;
-      //   console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
-      // } else if (AllowedTypes.indexOf(prop.type) === -1) {
-      //   newProp.type = null;
-      //   console.warn(`Type property of props "${k}" is invalid. Only String/Number/Boolean/Object/Array/null is allowed in weapp Component`);
-      // } else {
-      //   newProp.type = prop.type;
-      // }
-      // // props.default
-      // if (!isUndef(prop.default)) {
-      //   if (isFunc(prop.default)) {
-      //     newProp.value = prop.default.call(output);
-      //   } else {
-      //     newProp.value = prop.default;
-      //   }
-      // }
-      // // TODO
-      // // props.validator
-      // // props.required
-      // newProp.observer = observerFn(output, props, prop);
-      // newProps[k] = newProp;
     }
   }
-
-  Object.keys(newProps).forEach(function (prop) {
-
-  });
 
   newProps["onInit"] = '';
   output.properties = newProps;
@@ -2169,20 +2090,21 @@ function patchMethods (output, methods, isComponent) {
   
   target._initComponent = function (e) {
     var child = e;
-    // let { ref, wpyEvt } = e.target.dataset;
+    var ref = e.$wx.props["data-ref"];
     var wpyEvt = e.$wx.props["data-wpy-evt"];
+    
     var vm = this.$wepy;
     vm.$children.push(child);
-    // if (ref) {
-    //   if (vm.$refs[ref]) {
-    //     warn(
-    //       'duplicate ref "' + ref +
-    //       '" will be covered by the last instance.\n',
-    //       vm
-    //     )
-    //   }
-    //   vm.$refs[ref] = child;
-    // }
+    if (ref) {
+      if (vm.$refs[ref]) {
+        warn(
+          'duplicate ref "' + ref +
+          '" will be covered by the last instance.\n',
+          vm
+        );
+      }
+      vm.$refs[ref] = child;
+    }
     child.$evtId = wpyEvt;
     child.$parent = vm;
     child.$app = vm.$app;
@@ -2373,7 +2295,7 @@ function patchAppLifecycle (appConfig, options, rel) {
 }
 function patchLifecycle (output, options, rel, isComponent) {
 
-  var initClass = isComponent ? WepyComponent$1 : WepyPage;
+  var initClass = isComponent ? WepyComponent : WepyPage;
   var initLifecycle = function () {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
