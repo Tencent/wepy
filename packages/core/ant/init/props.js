@@ -1,8 +1,8 @@
 import { observe } from '../../weapp/observer/index';
 import { proxy } from '../../weapp/init/data';
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone  } from '../../weapp/util/index';
+import { isFunc, isArr, isStr, isObj, isUndef, noop, clone } from '../../weapp/util/index';
 
-const AllowedTypes = [ String, Number, Boolean, Object, Array, null ];
+const AllowedTypes = [String, Number, Boolean, Object, Array, null];
 
 const observerFn = function (output, props, prop) {
   return function (newVal, oldVal, changedPaths) {
@@ -22,7 +22,7 @@ const observerFn = function (output, props, prop) {
 /*
  * patch props option
  */
-export function patchProps (output, props) {
+export function patchProps(output, props) {
   let newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -39,9 +39,9 @@ export function patchProps (output, props) {
       let prop = props[k];
 
       // notsupport obj
-      if(!isObj(prop)){
+      if (!isObj(prop)) {
         newProps[k] = prop;
-      }else{
+      } else {
         newProps[k] = prop.default ? prop.default : '';
       }
     }
@@ -54,7 +54,7 @@ export function patchProps (output, props) {
 /*
  * init props
  */
-export function initProps (vm, properties) {
+export function initProps(vm, properties) {
   vm._props = {};
 
   if (!properties) {

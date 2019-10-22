@@ -14,7 +14,7 @@ const eventHandler = function (method, fn) {
     let p;
     if (e.currentTarget && e.currentTarget.dataset) {
       let tmp = e.currentTarget.dataset;
-      while(!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
+      while (!isUndef(tmp['wpy' + methodKey + (p = String.fromCharCode(65 + paramsLength++))])) {
         wepyParams.push(tmp['wpy' + methodKey + p]);
       }
     }
@@ -94,7 +94,7 @@ const proxyHandler = function (e) {
 /*
  * initialize page methods, also the app
  */
-export function initMethods (vm, methods) {
+export function initMethods(vm, methods) {
   if (methods) {
     Object.keys(methods).forEach(method => {
       vm[method] = methods[method];
@@ -105,7 +105,7 @@ export function initMethods (vm, methods) {
 /*
  * initialize component methods
  */
-export function initComponentMethods (comConfig, methods) {
+export function initComponentMethods(comConfig, methods) {
 
   comConfig.methods = {};
   Object.keys(methods).forEach(method => {
@@ -116,16 +116,16 @@ export function initComponentMethods (comConfig, methods) {
 /*
  * patch method option
  */
-export function patchMethods (output, methods, isComponent) {
+export function patchMethods(output, methods, isComponent) {
 
   output.methods = {};
-  let target = isComponent ? output.methods: output;
-  
+  let target = isComponent ? output.methods : output;
+
   target._initComponent = function (e) {
     let child = e;
     var ref = e.$wx.props["data-ref"];
     var wpyEvt = e.$wx.props["data-wpy-evt"];
-    
+
     let vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
@@ -143,8 +143,8 @@ export function patchMethods (output, methods, isComponent) {
     child.$app = vm.$app;
     child.$root = vm.$root;
     // 支付宝组件嵌套时，子组件执行早已组件
-    if(e.$children && e.$children.length){
-      e.$children.forEach((x)=>{
+    if (e.$children && e.$children.length) {
+      e.$children.forEach((x) => {
         x.$app = vm.$app;
         x.$root = vm.$root;
       })

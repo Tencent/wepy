@@ -8,5 +8,4 @@ const wepy = initGlobalAPI(WepyConstructor);
 wepy.config = config;
 wepy.global = $global;
 wepy.version = __VERSION__;
-
 export default wepy;

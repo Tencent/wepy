@@ -1887,7 +1887,7 @@ var observerFn = function (output, props, prop) {
 /*
  * patch props option
  */
-function patchProps (output, props) {
+function patchProps(output, props) {
   var newProps = {};
   if (isStr(props)) {
     newProps = [props];
@@ -1904,9 +1904,9 @@ function patchProps (output, props) {
       var prop = props[k];
 
       // notsupport obj
-      if(!isObj(prop)){
+      if (!isObj(prop)) {
         newProps[k] = prop;
-      }else{
+      } else {
         newProps[k] = prop.default ? prop.default : '';
       }
     }
@@ -1918,7 +1918,7 @@ function patchProps (output, props) {
 /*
  * init props
  */
-function initProps (vm, properties) {
+function initProps(vm, properties) {
   vm._props = {};
 
   if (!properties) {
@@ -2073,7 +2073,7 @@ var proxyHandler = function (e) {
 /*
  * initialize page methods, also the app
  */
-function initMethods (vm, methods) {
+function initMethods(vm, methods) {
   if (methods) {
     Object.keys(methods).forEach(function (method) {
       vm[method] = methods[method];
@@ -2083,16 +2083,16 @@ function initMethods (vm, methods) {
 /*
  * patch method option
  */
-function patchMethods (output, methods, isComponent) {
+function patchMethods(output, methods, isComponent) {
 
   output.methods = {};
-  var target = isComponent ? output.methods: output;
-  
+  var target = isComponent ? output.methods : output;
+
   target._initComponent = function (e) {
     var child = e;
     var ref = e.$wx.props["data-ref"];
     var wpyEvt = e.$wx.props["data-wpy-evt"];
-    
+
     var vm = this.$wepy;
     vm.$children.push(child);
     if (ref) {
@@ -2110,8 +2110,8 @@ function patchMethods (output, methods, isComponent) {
     child.$app = vm.$app;
     child.$root = vm.$root;
     // 支付宝组件嵌套时，子组件执行早已组件
-    if(e.$children && e.$children.length){
-      e.$children.forEach(function (x){
+    if (e.$children && e.$children.length) {
+      e.$children.forEach(function (x) {
         x.$app = vm.$app;
         x.$root = vm.$root;
       });
@@ -2256,7 +2256,7 @@ var getLifecycycle = function (defaultLifecycle, rel, type) {
 /*
  * patch app lifecyle
  */
-function patchAppLifecycle (appConfig, options, rel) {
+function patchAppLifecycle(appConfig, options, rel) {
   if ( rel === void 0 ) rel = {};
 
   appConfig.onLaunch = function () {
@@ -2293,7 +2293,7 @@ function patchAppLifecycle (appConfig, options, rel) {
     }
   });
 }
-function patchLifecycle (output, options, rel, isComponent) {
+function patchLifecycle(output, options, rel, isComponent) {
 
   var initClass = isComponent ? WepyComponent : WepyPage;
   var initLifecycle = function () {
@@ -2324,7 +2324,7 @@ function patchLifecycle (output, options, rel, isComponent) {
     vm.$id = ++comid + (isComponent ? '.1' : '.0');
 
     callUserMethod(vm, vm.$options, 'beforeCreate', args);
-    
+
     initHooks(vm, options.hooks);
 
     initProps(vm, output.properties);
@@ -2339,16 +2339,16 @@ function patchLifecycle (output, options, rel, isComponent) {
 
     // create render watcher
     initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
-    
+
     return callUserMethod(vm, vm.$options, 'created', args);
   };
 
-  if(isComponent){
+  if (isComponent) {
     output.onInit = initLifecycle; // 组件生命周期函数，组件创建时触发
-  }else{
+  } else {
     output.onLoad = initLifecycle; // 页面加载时触发
   }
-  
+
   if (isComponent) {
     output.didMount = function () {
       var args = [], len = arguments.length;
@@ -2357,10 +2357,10 @@ function patchLifecycle (output, options, rel, isComponent) {
       console.log('------Component didMount----');
       var outProps = output.properties || {};
       // this.propperties are includes datas
-      
+
       var vm = this.$wepy;
       var acceptProps = vm.$wx.props;
-      
+
       // let target = isComponent ? output.methods: output;
       // target._initComponent(vm);
       vm.$wx.props.onInit(vm);
@@ -2558,7 +2558,7 @@ function patchRelations(output, relations) {
   output.relations = relations;
 }
 
-function app$1 (option, rel) {
+function app$1(option, rel) {
   var appConfig = {};
 
   patchMixins(appConfig, option, option.mixins);
@@ -2567,7 +2567,7 @@ function app$1 (option, rel) {
   return App(appConfig);
 }
 
-function component (opt, rel) {
+function component(opt, rel) {
   if ( opt === void 0 ) opt = {};
 
 
@@ -2602,7 +2602,7 @@ function component (opt, rel) {
   return Component(compConfig);
 }
 
-function page (opt, rel) {
+function page(opt, rel) {
   if ( opt === void 0 ) opt = {};
 
 
@@ -2634,13 +2634,12 @@ function page (opt, rel) {
   // return Component(pageConfig);
 }
 
-function initGlobalAPI (wepy) {
-
+function initGlobalAPI(wepy) {
   wepy.use = use;
   wepy.mixin = mixin;
 
   wepy.set = function (target, key, val) {
-    set.apply(wepy, [ undefined, target, key, val]);
+    set.apply(wepy, [undefined, target, key, val]);
   };
 
   wepy.delete = del;

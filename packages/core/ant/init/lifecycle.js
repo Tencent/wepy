@@ -54,7 +54,7 @@ const getLifecycycle = (defaultLifecycle, rel, type) => {
 /*
  * patch app lifecyle
  */
-export function patchAppLifecycle (appConfig, options, rel = {}) {
+export function patchAppLifecycle(appConfig, options, rel = {}) {
   appConfig.onLaunch = function (...args) {
     let vm = new WepyApp();
     app = vm;
@@ -84,7 +84,7 @@ export function patchAppLifecycle (appConfig, options, rel = {}) {
   });
 };
 
-export function patchLifecycle (output, options, rel, isComponent) {
+export function patchLifecycle(output, options, rel, isComponent) {
 
   const initClass = isComponent ? WepyComponent : WepyPage;
   const initLifecycle = function (...args) {
@@ -115,7 +115,7 @@ export function patchLifecycle (output, options, rel, isComponent) {
     }
 
     callUserMethod(vm, vm.$options, 'beforeCreate', args);
-    
+
     initHooks(vm, options.hooks);
 
     initProps(vm, output.properties);
@@ -130,25 +130,25 @@ export function patchLifecycle (output, options, rel, isComponent) {
 
     // create render watcher
     initRender(vm, Object.keys(vm._data).concat(Object.keys(vm._props)).concat(Object.keys(vm._computedWatchers || {})), Object.keys(vm._computedWatchers || {}));
-    
+
     return callUserMethod(vm, vm.$options, 'created', args);
   };
 
-  if(isComponent){
+  if (isComponent) {
     output.onInit = initLifecycle; // 组件生命周期函数，组件创建时触发
-  }else{
+  } else {
     output.onLoad = initLifecycle; // 页面加载时触发
   }
-  
+
   if (isComponent) {
     output.didMount = function (...args) { // Component attached  组件生命周期函数，组件创建完毕时触发
       console.log('------Component didMount----')
       let outProps = output.properties || {};
       // this.propperties are includes datas
-      
+
       let vm = this.$wepy;
       let acceptProps = vm.$wx.props;
-      
+
       // let target = isComponent ? output.methods: output;
       // target._initComponent(vm);
       vm.$wx.props.onInit(vm);

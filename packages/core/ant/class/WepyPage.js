@@ -3,19 +3,18 @@ import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
 const wx = my;
 export default class WepyPage extends WepyComponent {
-
-  $launch (url, params) {
+  $launch(url, params) {
     this.$route('reLaunch', url, params);
   }
-  $navigate (url, params) {
+  $navigate(url, params) {
     this.$route('navigate', url, params);
   }
 
-  $redirect (url, params) {
+  $redirect(url, params) {
     this.$route('redirect', url, params);
   }
 
-  $back (p = {}) {
+  $back(p = {}) {
     if (isNum(p))
       p = { delta: p };
 
@@ -25,7 +24,7 @@ export default class WepyPage extends WepyComponent {
     return wx.navigateBack(p);
   }
 
-  $route (type, url, params = {}) {
+  $route(type, url, params = {}) {
     let wxparams;
     if (isStr(url)) {
       let paramsList = [];

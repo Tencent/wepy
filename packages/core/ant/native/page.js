@@ -1,6 +1,6 @@
 import { patchMixins, patchData, patchMethods, patchLifecycle, patchProps } from '../init/index';
 
-export function page (opt = {}, rel) {
+export function page(opt = {}, rel) {
 
   let pageConfig = {
     externalClasses: opt.externalClasses || [],
