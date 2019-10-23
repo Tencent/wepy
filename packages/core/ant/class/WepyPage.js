@@ -1,6 +1,8 @@
 import WepyComponent from './../../weapp/class/WepyComponent';
 import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
+// eslint-disable-next-line
+let wx = my;
 export default class WepyPage extends WepyComponent {
   $launch(url, params) {
     this.$route('reLaunch', url, params);
@@ -18,7 +20,7 @@ export default class WepyPage extends WepyComponent {
 
     if (!p.delta) p.delta = 1;
 
-    return my.navigateBack(p);
+    return wx.navigateBack(p);
   }
 
   $route(type, url, params = {}) {
@@ -38,7 +40,7 @@ export default class WepyPage extends WepyComponent {
     } else {
       wxparams = url;
     }
-    let fn = my[type] || my[type + 'To'];
+    let fn = wx[type] || wx[type + 'To'];
     if (isFunc(fn)) {
       return fn(wxparams);
     }

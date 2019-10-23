@@ -13,6 +13,7 @@ export function component(opt = {}, rel) {
   if (opt.properties) {
     compConfig.props = opt.properties;
     if (opt.props) {
+      // eslint-disable-next-line no-console
       console.warn(`props will be ignore, if properties is set`);
     }
   } else if (opt.props) {

@@ -2,8 +2,8 @@ import { observe } from '../../weapp/observer/index';
 import { proxy } from '../../weapp/init/data';
 import { isArr, isStr, isObj } from '../../weapp/util/index';
 
-const observerFn = function (output, props, prop) {
-  return function (newVal, oldVal, changedPaths) {
+const observerFn = function() {
+  return function(newVal, oldVal, changedPaths) {
     let vm = this.$wepy;
 
     // changedPaths 长度大于 1，说明是由内部赋值改变的 prop

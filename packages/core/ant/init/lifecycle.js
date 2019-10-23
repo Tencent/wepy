@@ -146,11 +146,10 @@ export function patchLifecycle(output, options, rel, isComponent) {
   }
 
   if (isComponent) {
-    output.didMount = function (...args) { // Component attached  组件生命周期函数，组件创建完毕时触发
-      console.log('------Component didMount----')
+    output.didMount = function(...args) { // Component attached  组件生命周期函数，组件创建完毕时触发
       let outProps = output.properties || {};
+      
       // this.propperties are includes datas
-
       let vm = this.$wepy;
       let acceptProps = vm.$wx.props;
 
@@ -164,7 +163,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
       initEvents(vm);
 
-      Object.keys(outProps).forEach(k => vm[k] = acceptProps[k]);
+      Object.keys(outProps).forEach(k => (vm[k] = acceptProps[k]));
 
       return callUserMethod(vm, vm.$options, 'didMount', args);
     };
@@ -189,7 +188,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
       // TODO: page attached
       return callUserMethod(vm, vm.$options, 'onShow', args);
-    }
+    };
     // Page lifecycle will be called under methods
     // e.g:
     // Component({

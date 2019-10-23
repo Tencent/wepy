@@ -2257,6 +2257,8 @@ function app$1(option, rel) {
   return App(appConfig);
 }
 
+// eslint-disable-next-line
+var wx$1 = my;
 var WepyPage$1 = (function (WepyComponent$$1) {
   function WepyPage () {
     WepyComponent$$1.apply(this, arguments);
@@ -2284,7 +2286,7 @@ var WepyPage$1 = (function (WepyComponent$$1) {
 
     if (!p.delta) { p.delta = 1; }
 
-    return my.navigateBack(p);
+    return wx$1.navigateBack(p);
   };
 
   WepyPage.prototype.$route = function $route (type, url, params) {
@@ -2306,7 +2308,7 @@ var WepyPage$1 = (function (WepyComponent$$1) {
     } else {
       wxparams = url;
     }
-    var fn = my[type] || my[type + 'To'];
+    var fn = wx$1[type] || wx$1[type + 'To'];
     if (isFunc(fn)) {
       return fn(wxparams);
     }
@@ -2315,8 +2317,8 @@ var WepyPage$1 = (function (WepyComponent$$1) {
   return WepyPage;
 }(WepyComponent));
 
-var observerFn$1 = function (output, props, prop) {
-  return function (newVal, oldVal, changedPaths) {
+var observerFn$1 = function() {
+  return function(newVal, oldVal, changedPaths) {
     var vm = this.$wepy;
 
     // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
@@ -2472,7 +2474,7 @@ function patchMethods$1(output, methods, isComponent) {
   output.methods = {};
   var target = isComponent ? output.methods : output;
 
-  target._initComponent = function (e) {
+  target._initComponent = function(e) {
     var child = e;
     var ref = e.$wx.props['data-ref'];
     var wpyEvt = e.$wx.props['data-wpy-evt'];
@@ -2607,14 +2609,13 @@ function patchLifecycle$1(output, options, rel, isComponent) {
   }
 
   if (isComponent) {
-    output.didMount = function () {
+    output.didMount = function() {
       var args = [], len = arguments.length;
       while ( len-- ) args[ len ] = arguments[ len ];
  // Component attached  组件生命周期函数，组件创建完毕时触发
-      console.log('------Component didMount----');
       var outProps = output.properties || {};
+      
       // this.propperties are includes datas
-
       var vm = this.$wepy;
       var acceptProps = vm.$wx.props;
 
@@ -2628,7 +2629,7 @@ function patchLifecycle$1(output, options, rel, isComponent) {
 
       initEvents(vm);
 
-      Object.keys(outProps).forEach(function (k) { return vm[k] = acceptProps[k]; });
+      Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
 
       return callUserMethod$1(vm, vm.$options, 'didMount', args);
     };
@@ -2710,6 +2711,7 @@ function component(opt, rel) {
   if (opt.properties) {
     compConfig.props = opt.properties;
     if (opt.props) {
+      // eslint-disable-next-line no-console
       console.warn("props will be ignore, if properties is set");
     }
   } else if (opt.props) {
@@ -2732,7 +2734,6 @@ function component(opt, rel) {
 function page(opt, rel) {
   if ( opt === void 0 ) opt = {};
 
-
   var pageConfig = {
     externalClasses: opt.externalClasses || [],
     // support component options property
@@ -2745,6 +2746,7 @@ function page(opt, rel) {
   if (opt.properties) {
     pageConfig.properties = opt.properties;
     if (opt.props) {
+      // eslint-disable-next-line
       console.warn("props will be ignore, if properties is set");
     }
   } else if (opt.props) {
@@ -2758,7 +2760,6 @@ function page(opt, rel) {
   patchLifecycle$1(pageConfig, opt, rel);
 
   return Page(pageConfig);
-  // return Component(pageConfig);
 }
 
 function initGlobalAPI(wepy) {

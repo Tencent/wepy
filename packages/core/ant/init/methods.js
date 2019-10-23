@@ -120,7 +120,7 @@ export function patchMethods(output, methods, isComponent) {
   output.methods = {};
   let target = isComponent ? output.methods : output;
 
-  target._initComponent = function (e) {
+  target._initComponent = function(e) {
     let child = e;
     var ref = e.$wx.props['data-ref'];
     var wpyEvt = e.$wx.props['data-wpy-evt'];
@@ -129,7 +129,7 @@ export function patchMethods(output, methods, isComponent) {
     vm.$children.push(child);
     if (ref) {
       if (vm.$refs[ref]) {
-        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm)
+        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm);
       }
       vm.$refs[ref] = child;
     }
