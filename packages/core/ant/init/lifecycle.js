@@ -146,7 +146,8 @@ export function patchLifecycle(output, options, rel, isComponent) {
   }
 
   if (isComponent) {
-    output.didMount = function(...args) { // Component attached  组件生命周期函数，组件创建完毕时触发
+    output.didMount = function(...args) { 
+      // Component attached  组件生命周期函数，组件创建完毕时触发
       let outProps = output.properties || {};
       
       // this.propperties are includes datas
@@ -172,6 +173,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
       // Page attached
       let vm = this.$wepy;
       let app = vm.$app;
+      // eslint-disable-next-line
       let pages = getCurrentPages();
       let currentPage = pages[pages.length - 1];
       let path = currentPage.__route__;
