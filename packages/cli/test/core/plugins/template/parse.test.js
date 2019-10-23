@@ -6,7 +6,6 @@ const Hook = require(`${alias.core}/hook`);
 const tag = require(`${alias.core}/tag`);
 const initPlugin = require(`${alias.core}/init/plugin`);
 const moduleSet = require(`${alias.core}/moduleSet`);
-const pt = require(`${alias.plugins}/template/parse`);
 
 function cached(fn) {
   var _cache = {};
@@ -62,8 +61,10 @@ function createLogger(type) {
     if (type === 'silly' || type === 'info') {
       return;
     }
+    /* eslint-disable no-console */
     console.log('==== This is ' + type + ' log===');
     console.log(...args);
+    /* eslint-enable no-console */
   };
 }
 
@@ -102,8 +103,10 @@ function assetHanlder(handlers) {
           fixture.replace(/\s*/gi, '').replace(/\n*/gi, '')
         );
       } catch (e) {
+        /* eslint-disable no-console */
         console.log('Compiled Handler: ' + id + '.' + type + '.js');
         console.log(func);
+        /* eslint-enable no-console */
         throw e;
       }
     }

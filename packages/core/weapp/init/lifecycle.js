@@ -1,10 +1,6 @@
 import WepyApp from '../class/WepyApp';
 import WepyPage from '../class/WepyPage';
 import WepyComponent from '../class/WepyComponent';
-import { observe } from './../observer/index';
-import { proxy } from './data';
-import Watcher from './../observer/watcher';
-import $global from './../global';
 import { initHooks } from './hooks';
 import { initProps } from './props';
 import { initWatch } from './watch';
@@ -13,7 +9,7 @@ import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
 import { initEvents } from './events';
-import { isStr, isArr, isFunc } from '../../shared/index';
+import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
 import { warn } from '../util/index';
@@ -150,7 +146,6 @@ export function patchLifecycle(output, options, rel, isComponent) {
       // this.propperties are includes datas
       let acceptProps = this.properties;
       let vm = this.$wepy;
-      let parent = this.triggerEvent('_init', vm);
 
       // created 不能调用 setData，如果有 dirty 在此更新
       vm.$forceUpdate();
@@ -166,6 +161,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
       // Page attached
       let vm = this.$wepy;
       let app = vm.$app;
+      // eslint-disable-next-line
       let pages = getCurrentPages();
       let currentPage = pages[pages.length - 1];
       let path = currentPage.__route__;

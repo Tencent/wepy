@@ -8,8 +8,6 @@ const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
 const sassPath = path.resolve(fixturesPath, 'sass');
 const cssPath = path.resolve(fixturesPath, 'css');
 
-let ids = specs.getIds();
-
 specs.getIds().forEach(id => {
   const ext = path.extname(id);
   const name = id.replace(new RegExp(ext + '$'), '');
@@ -28,6 +26,7 @@ specs.getIds().forEach(id => {
 
   let options = specs.getOpt(id);
 
+  // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);
 
   sass.render(
@@ -38,6 +37,7 @@ specs.getIds().forEach(id => {
     },
     function(err, result) {
       if (err) {
+        // eslint-disable-next-line
         console.log(err);
         return;
       }

@@ -39,8 +39,10 @@ function createCompile(stylusOpt, resolveOpt) {
 
   instance.logger = {
     error(e) {
+      /* eslint-disable no-console */
       console.log('======= ERROR OUTPUT ======');
       console.log(e);
+      /* eslint-enable no-console */
     }
   };
 
@@ -98,7 +100,7 @@ function compileFail(id, done) {
 
   return compile
     .hook('wepy-compiler-stylus', spec.node, spec.file)
-    .then(res => {
+    .then(() => {
       // e.g. uri-alias, alias is not awared in uri, so treat as compile successfully.
       if (setting.then) {
         done();

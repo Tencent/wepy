@@ -6,11 +6,9 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
 
-const acorn = require('acorn-dynamic-import').default;
 const hashUtil = require('../../util/hash');
 const Walker = require('../../ast/walker');
 const toAst = require('../../ast/toAST');
@@ -91,7 +89,7 @@ exports = module.exports = function() {
 
       let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', node, ctx, dep));
 
-      return Promise.all(depTasks).then(rst => {
+      return Promise.all(depTasks).then(() => {
         return node.parsed;
       });
     } else {

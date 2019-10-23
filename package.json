@@ -14,7 +14,7 @@
     "build": "node ./node_modules/gulp/bin/gulp build",
     "watch-compile": "npm run build -- --watch",
     "watch": "node ./node_modules/gulp/bin/gulp watch",
-    "test": "./scripts/test.sh",
+    "test": "npm run lint && ./scripts/test.sh",
     "clean": "./scripts/clean.sh",
     "publish": "./scripts/npm_publish/index.js publish",
     "pub": "./node_modules/.bin/verpub publish",
@@ -60,6 +60,7 @@
     "husky": "^1.0.0-rc.13",
     "istanbul": "^0.4.5",
     "jsonlint": "^1.6.2",
+    "learn": "^0.1.5",
     "lerna": "^3.15.0",
     "less": "^3.9.0",
     "mkpath": "^1.0.0",
@@ -99,8 +100,12 @@
     }
   },
   "dependencies": {},
+  "engines": {
+    "node": ">=8.9.4"
+  },
   "husky": {
     "hooks": {
+      "pre-commit": "npm run test",
       "commit-msg": "npx validate-commit-msg"
     }
   },

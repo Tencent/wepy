@@ -1,4 +1,3 @@
-import config from '../util/config';
 //import { callHook, activateChildComponent } from '../instance/lifecycle';
 
 import { warn, nextTick } from '../util/index';
@@ -57,6 +56,7 @@ function flushSchedulerQueue(times = 0) {
     has[id] = null;
     watcher.run();
     // in dev build, check and stop circular updates.
+    // eslint-disable-next-line
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1;
       if (circular[id] > MAX_UPDATE_COUNT) {
@@ -103,6 +103,7 @@ function flushSchedulerQueue(times = 0) {
   }
 }
 
+/*
 function callUpdatedHooks(queue) {
   let i = queue.length;
   while (i--) {
@@ -112,7 +113,7 @@ function callUpdatedHooks(queue) {
       callHook(vm, 'updated');
     }
   }
-}
+}*/
 
 /**
  * Queue a kept-alive component that was activated during patch.
@@ -125,12 +126,14 @@ export function queueActivatedComponent(vm) {
   activatedChildren.push(vm);
 }
 
+/*
 function callActivatedHooks(queue) {
   for (let i = 0; i < queue.length; i++) {
     queue[i]._inactive = true;
-    activateChildComponent(queue[i], true /* true */);
+    activateChildComponent(queue[i], true);
   }
 }
+*/
 
 /**
  * Push a watcher into the watcher queue.
@@ -139,6 +142,7 @@ function callActivatedHooks(queue) {
  */
 export function queueWatcher(watcher) {
   const id = watcher.id;
+  // eslint-disable-next-line
   if (has[id] == null) {
     has[id] = true;
     if (!flushing) {

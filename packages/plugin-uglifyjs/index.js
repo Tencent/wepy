@@ -22,7 +22,7 @@ function formatSizeUnits(bytes) {
     bytes = (bytes / 1024).toFixed(2) + ' KB';
   } else if (bytes > 1) {
     bytes = bytes + ' bytes';
-  } else if (bytes == 1) {
+  } else if (bytes === 1) {
     bytes = bytes + ' byte';
   } else {
     bytes = '0 bytes';

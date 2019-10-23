@@ -96,7 +96,7 @@ function parse(opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
       }
     } else {
       if (!check(defaultItem.type, val)) {
-        throw `Unexpected type: ${k} expect a ${defaultItem.type.name}`;
+        throw new Error(`Unexpected type: ${k} expect a ${defaultItem.type.name}`);
       }
       setValue(ret, k, val);
     }
@@ -106,7 +106,7 @@ function parse(opt = {}, baseOpt = DEFAULT_OPTIONS, fromCommandLine) {
 
 function convert(args) {
   if (!fs.existsSync(DEFAULT_CONFIG)) {
-    throw `No configuration file found in the current directory.`;
+    throw new Error(`No configuration file found in the current directory.`);
   }
 
   let opt = require(DEFAULT_CONFIG);

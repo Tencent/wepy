@@ -8,7 +8,6 @@
  */
 const fs = require('fs');
 const path = require('path');
-const loaderUtils = require('loader-utils');
 
 const hashUtil = require('../../util/hash');
 
@@ -81,7 +80,6 @@ exports = module.exports = function() {
           );
           throw new Error('EXIT');
         } else {
-          console.log(node);
           this.hookUnique(
             'error-handler',
             'script',

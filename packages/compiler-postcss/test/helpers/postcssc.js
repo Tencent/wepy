@@ -17,6 +17,7 @@ ids.forEach(id => {
 
   let options = specs.getOpt(id);
 
+  // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);
   const { plugins = [], ...other } = options;
   postcss(plugins)
@@ -28,6 +29,7 @@ ids.forEach(id => {
       fs.outputFileSync(css, result.css.toString(), 'utf-8');
     })
     .catch(function(err) {
+      // eslint-disable-next-line
       console.log(err);
       return;
     });

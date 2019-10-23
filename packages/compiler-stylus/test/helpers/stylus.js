@@ -32,6 +32,7 @@ ids.forEach(id => {
   const relativeUrls = '--resolve-url';
   let cmd = `${styluscPath} ${relativeUrls} ${options} ${tmpstylus} ${css}`;
 
+  // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);
 
   exec(cmd, { cwd: projectPath }, (err, stdout, stderr) => {

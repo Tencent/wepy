@@ -1,6 +1,6 @@
 import Event from '../class/Event';
 import { callUserHook } from './hooks';
-import { isFunc, isUndef, parseModel, warn } from './../util/index';
+import { isFunc, isUndef, warn } from './../util/index';
 
 const eventHandler = function(method, fn) {
   let methodKey = method.toLowerCase();
@@ -8,7 +8,6 @@ const eventHandler = function(method, fn) {
     if (!isFunc(fn)) {
       throw 'undefined method: ' + method;
     }
-    let result;
     let wepyParams = [];
     let paramsLength = 0;
     let p;
@@ -19,7 +18,7 @@ const eventHandler = function(method, fn) {
       }
     }
     args = args.concat(wepyParams);
-    $event = new Event(e);
+    const $event = new Event(e);
     return fn.apply(this.$wepy, [$event].concat(args));
   };
 };
@@ -117,7 +116,7 @@ export function initComponentMethods(comConfig, methods) {
 /*
  * patch method option
  */
-export function patchMethods(output, methods, isComponent) {
+export function patchMethods(output, methods) {
   output.methods = {};
   let target = output.methods;
 

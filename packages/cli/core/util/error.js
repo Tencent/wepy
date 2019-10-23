@@ -8,6 +8,7 @@ exports = module.exports = {
     const result = codeFrameColumns(codeFrame, location, {
       /* options */
     });
+    // eslint-disable-next-line
     console.log(result);
   },
   error(msg, file, codeFrame, location) {
@@ -16,6 +17,7 @@ exports = module.exports = {
     const result = codeFrameColumns(codeFrame, location, {
       /* options */
     });
+    // eslint-disable-next-line
     console.log(result);
     process.exit();
   }

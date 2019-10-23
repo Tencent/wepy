@@ -1,4 +1,4 @@
-import { isFunc, isArr, isStr, isObj, isUndef, noop, clone, toArray, handleError } from './../util/index';
+import { isArr, isStr, isObj, toArray, handleError } from './../util/index';
 import { set, del } from '../observer/index';
 
 export default class Base {

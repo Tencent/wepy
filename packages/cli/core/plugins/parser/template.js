@@ -1,5 +1,4 @@
 const xmllint = require('../../util/xmllint');
-const errorHandler = require('../../util/error');
 
 exports = module.exports = function() {
   this.register('wepy-parser-template', function(node, ctx) {

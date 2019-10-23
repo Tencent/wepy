@@ -1,6 +1,7 @@
 const path = require('path');
 const utils = require('loader-utils');
 
+// eslint-disable-next-line
 const matchModuleImport = /^~([^\/]+|@[^\/]+[\/][^\/]+)$/;
 
 /**

@@ -18,11 +18,11 @@ methodsToPatch.forEach(function(method) {
   // cache original method
   const original = arrayProto[method];
   def(arrayMethods, method, function mutator(...args) {
+    const len = this.length;
     // 清除已经失效的 paths
-    if (this.length > 0) {
+    if (len > 0) {
       switch (method) {
         case 'pop':
-          const len = this.length;
           delInvalidPaths(len - 1, this[len - 1], this);
           break;
         case 'shift':

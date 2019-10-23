@@ -1,4 +1,3 @@
-const fs = require('fs');
 const loaderUtils = require('loader-utils');
 const stylus = require('stylus');
 const isModuleName = /^~[^/\\]+$/;

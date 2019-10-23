@@ -6,7 +6,7 @@ describe('plugin-define', function() {
   it('test plugin-define', function(done) {
     let wepyPath = path.resolve(process.cwd(), '../cli/bin/wepy.js');
 
-    exec(`cd test/fixtures && node ${wepyPath} build`, function(error, stdout, stderr) {
+    exec(`cd test/fixtures && node ${wepyPath} build`, function(error) {
       if (error) {
         throw error;
       }

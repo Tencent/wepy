@@ -1,4 +1,3 @@
-import Base from './Base';
 import WepyComponent from './WepyComponent';
 import { initData } from '../init/data';
 import { initWatch } from '../init/watch';

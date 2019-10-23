@@ -8,8 +8,11 @@ export default class Dirty {
     this.type = type || 'path';
   }
 
-  push(key, path, keyVal, pathValue) {
-    this._keys[key] = keyVal;
+  push(key, path, keyValue, pathValue) {
+    if (pathValue === undefined) {
+      return;
+    }
+    this._keys[key] = keyValue;
     this._path[path] = pathValue;
     this._length++;
   }

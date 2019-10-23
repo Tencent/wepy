@@ -37,6 +37,7 @@ ids.forEach(id => {
   }
   let cmd = `${lesscPath} ${relativeUrls} ${options} ${tmpless} ${css}`;
 
+  // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);
 
   exec(cmd, { cwd: projectPath }, (err, stdout, stderr) => {

@@ -26,10 +26,6 @@ const MODEL_MAP = {
   'radio-group': {
     type: 'change',
     value: null
-  },
-  picker: {
-    type: 'change',
-    value: 'value'
   }
 };
 
@@ -191,7 +187,7 @@ function generateModelFunctionInScope(scope, iterators, expr) {
 exports = module.exports = function() {
   let modelid = 0;
 
-  this.register('template-parse-ast-attr-v-model', function parseVModel({ item, name, expr, modifiers, scope, ctx }) {
+  this.register('template-parse-ast-attr-v-model', function parseVModel({ item, expr, scope }) {
     let attrs = item.attribs;
 
     let conflicts = ['value', 'v-bind', ':value'].filter(v => !!attrs[v]);

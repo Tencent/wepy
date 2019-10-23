@@ -48,6 +48,7 @@ exports = module.exports = function(options) {
       return p;
     });
 
+    // eslint-disable-next-line
     this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
       if (walker.lang !== 'typescript') return;
       // var core_1 = __importDefault(require('@wepy/core'))

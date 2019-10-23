@@ -39,14 +39,13 @@ function printLinterOutput(res, options) {
     const fmt = options.formatter(res.results);
 
     if (fmt && options.output) {
+      // eslint-disable-next-line
       console.log(fmt);
     }
   }
 }
 
 exports = module.exports = function(options = {}) {
-  const cwd = process.cwd();
-
   return function() {
     // Clear the eslint cache when watch process done
     this.register('process-clear', function() {
