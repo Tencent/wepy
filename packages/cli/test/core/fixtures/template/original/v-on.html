@@ -9,3 +9,6 @@
 <div v-for="(item, index) in list">
   <button @tap="myClickInFor(item)"></button>
 </div>
+
+<div capture-bind:tap="handleCaptureBindTap"></div>
+<div capture-catch:tap="handleCaptureCatchTap"></div>
