@@ -24,7 +24,7 @@ const builds = {
     format: 'cjs',
     version: resolvePkgInfo('core').version,
     banner
-  },  
+  },
   'core-ant': {
     entry: 'packages/core/index.ant.js',
     dest: 'packages/core/dist/wepy.ant.js',
