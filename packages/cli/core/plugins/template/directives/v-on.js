@@ -92,6 +92,8 @@ exports = module.exports = function() {
   let totalEvtCache = {}; // Global event cache
 
   this.register('template-parse-ast-attr-v-on.capture', function({ item, name, expr, event, scope, ctx }) {
+    // bind:tap="xxx" or catch:tap="xxx"
+    event.type = event.type.replace(/^bind/, 'bind:').replace(/^catch/, 'catch:');
     event.type = 'capture-' + event.type;
     return { item, name, expr, event, scope, ctx };
   });
