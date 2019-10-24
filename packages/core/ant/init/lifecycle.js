@@ -146,7 +146,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
   }
 
   if (isComponent) {
-    output.didMount = function(...args){ 
+    output.didMount = function(...args) {
       // Component attached  组件生命周期函数，组件创建完毕时触发
       let outProps = output.properties || {};
 
