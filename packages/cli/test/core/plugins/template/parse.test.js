@@ -34,7 +34,14 @@ const spec = {
     { file: 'v-show' },
     { file: 'bindClass' },
     { file: 'joinStyle' },
-    { file: 'attrWithoutValue' }
+    { file: 'attrWithoutValue' },
+    {
+      file: 'ref',
+      component: {
+        'custom-component-01': '~@/component/custom-component-01',
+        'custom-component-02': '~@/component/custom-component-02'
+      }
+    }
   ],
   event: [
     {
@@ -117,7 +124,7 @@ function assertCodegen(originalRaw, assertRaw, options = {}, ctx, done) {
   const compiler = createCompiler(options);
   compiler.assets.add(ctx.file);
   compiler
-    .hookUnique('template-parse', originalRaw, {}, ctx)
+    .hookUnique('template-parse', originalRaw, options.component || {}, ctx)
     .then(rst => {
       expect(rst.code).to.equal(assertRaw);
       if (ctx.file === 'v-on') {
@@ -135,14 +142,14 @@ describe('template-parse', function() {
   spec.attr.forEach(ctx => {
     it('test attr: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
-      assertCodegen(originalRaw, assertRaw, {}, ctx, done);
+      assertCodegen(originalRaw, assertRaw, ctx, ctx, done);
     });
   });
 
   spec.event.forEach(ctx => {
     it('test attr: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
-      assertCodegen(originalRaw, assertRaw, {}, ctx, done);
+      assertCodegen(originalRaw, assertRaw, ctx, ctx, done);
     });
   });
 });

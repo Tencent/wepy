@@ -2402,6 +2402,8 @@ function patchLifecycle(output, options, rel, isComponent) {
       var acceptProps = this.properties;
       var vm = this.$wepy;
 
+      this.triggerEvent('_init', vm);
+
       // created 不能调用 setData，如果有 dirty 在此更新
       vm.$forceUpdate();
 
@@ -2424,6 +2426,24 @@ function patchLifecycle(output, options, rel, isComponent) {
       var currentPage = pages[pages.length - 1];
       var path = currentPage.__route__;
       var webViewId = currentPage.__wxWebviewId__;
+
+      var refs = rel.refs || [];
+      var query = wx.createSelectorQuery();
+
+      refs.forEach(function (item) {
+        var elemId = item.elemId;
+        var actualAttrName = item.name;
+
+        if (item.isBindAttr) {
+          // if this is a bind attr
+          actualAttrName = vm[item.name];
+          vm.$watch(item.name, function (newAttrName, oldAttrName) {
+            vm.$refs[oldAttrName] = null;
+            vm.$refs[newAttrName] = query.select(("#" + elemId));
+          });
+        }
+        vm.$refs[actualAttrName] = query.select(("#" + elemId));
+      });
 
       // created 不能调用 setData，如果有 dirty 在此更新
       vm.$forceUpdate();

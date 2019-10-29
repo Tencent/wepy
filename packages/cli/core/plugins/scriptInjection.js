@@ -35,7 +35,9 @@ const genRel = rel => {
   delete copy.handlers;
   delete copy.models;
 
-  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr}, models: ${modelStr} }`;
+  return `{info: ${JSON.stringify(copy || {})}, handlers: ${handlerStr}, models: ${modelStr}, refs: ${JSON.stringify(
+    rel.refs
+  )} }`;
 };
 
 exports = module.exports = function() {
