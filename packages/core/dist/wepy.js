@@ -2431,18 +2431,18 @@ function patchLifecycle(output, options, rel, isComponent) {
       var query = wx.createSelectorQuery();
 
       refs.forEach(function (item) {
-        var elemId = item.elemId;
+        var selector = item.selector;
         var actualAttrName = item.name;
 
-        if (item.isBindAttr) {
+        if (item.bind) {
           // if this is a bind attr
           actualAttrName = vm[item.name];
-          vm.$watch(item.name, function (newAttrName, oldAttrName) {
+          vm.$watch(item.name, function(newAttrName, oldAttrName) {
             vm.$refs[oldAttrName] = null;
-            vm.$refs[newAttrName] = query.select(("#" + elemId));
+            vm.$refs[newAttrName] = query.select(selector);
           });
         }
-        vm.$refs[actualAttrName] = query.select(("#" + elemId));
+        vm.$refs[actualAttrName] = query.select(selector);
       });
 
       // created 不能调用 setData，如果有 dirty 在此更新
