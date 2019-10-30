@@ -7,6 +7,7 @@ exports = module.exports = function() {
       let assetsId = this.assets.get(ctx.file);
       let refCache;
       let elemId;
+      let selector;
 
       let components = rel.components;
 
@@ -17,6 +18,7 @@ exports = module.exports = function() {
       }
       refCache = totalRefCache[assetsId];
       elemId = `ref-${assetsId}-${refCache.increaseId}`;
+      selector = `#${elemId}`;
 
       if (!rel.refs) {
         rel.refs = [];
@@ -28,9 +30,9 @@ exports = module.exports = function() {
       if (!components[item.name]) {
         parsedRef.attrs['id'] = elemId;
         rel.refs.push({
-          elemId: elemId,
+          selector: selector,
           name: `${expr}`,
-          isBindAttr: isBindAttr
+          bind: isBindAttr
         });
         refCache.increaseId++;
       } else {
