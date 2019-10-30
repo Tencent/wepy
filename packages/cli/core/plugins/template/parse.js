@@ -85,7 +85,8 @@ exports = module.exports = function() {
         hook = 'template-parse-ast-attr-[other]';
       }
 
-      parsed = this.hookUnique(hook, { item, name, expr, modifiers, scope, ctx });
+      parsed = this.hookUnique(hook, { item, name, expr, modifiers, scope, ctx, rel });
+      rel = parsed.rel || rel;
 
       let applyHook = parsed.hook || `template-parse-ast-attr-${name}-apply`;
       if (!this.hasHook(applyHook)) {
