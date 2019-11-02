@@ -1,15 +1,17 @@
 exports = module.exports = function() {
   let totalRefCache = {};
 
-  function getParseRefFunc(isBindAttr = false) {
+  function getParseRefFunc(hasBindAttrRef = false) {
     return function({ item, ctx, expr, rel }) {
+      let attrs = item.attribs;
       let parsedRef = {};
       let assetsId = this.assets.get(ctx.file);
       let refCache;
       let elemId;
-      let selector;
 
       let components = rel.components;
+      let hasAttrId = attrs.hasOwnProperty('id');
+      let hasBindAttrId = attrs.hasOwnProperty(':id');
 
       if (!totalRefCache[assetsId]) {
         totalRefCache[assetsId] = {
@@ -17,8 +19,6 @@ exports = module.exports = function() {
         };
       }
       refCache = totalRefCache[assetsId];
-      elemId = `ref-${assetsId}-${refCache.increaseId}`;
-      selector = `#${elemId}`;
 
       if (!rel.refs) {
         rel.refs = [];
@@ -28,15 +28,25 @@ exports = module.exports = function() {
       parsedRef.attrs = parsedRef.attrs || {};
 
       if (!components[item.name]) {
-        parsedRef.attrs['id'] = elemId;
+        if (hasAttrId || hasBindAttrId) {
+          elemId = hasAttrId ? attrs['id'] : attrs[':id'];
+        } else {
+          elemId = `ref-${assetsId}-${refCache.increaseId}`;
+          parsedRef.attrs['id'] = elemId;
+          refCache.increaseId++;
+        }
         rel.refs.push({
-          selector: selector,
-          name: `${expr}`,
-          bind: isBindAttr
+          id: {
+            name: `${elemId}`,
+            bind: hasBindAttrId
+          },
+          ref: {
+            name: `${expr}`,
+            bind: hasBindAttrRef
+          }
         });
-        refCache.increaseId++;
       } else {
-        parsedRef.attrs['data-ref'] = isBindAttr ? `{{ ${expr} }}` : `${expr}`;
+        parsedRef.attrs['data-ref'] = hasBindAttrRef ? `{{ ${expr} }}` : `${expr}`;
       }
       return parsedRef;
     };

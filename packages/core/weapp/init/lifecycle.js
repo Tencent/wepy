@@ -173,18 +173,38 @@ export function patchLifecycle(output, options, rel, isComponent) {
       let query = wx.createSelectorQuery();
 
       refs.forEach(item => {
-        let selector = item.selector;
-        let actualAttrName = item.name;
+        // {
+        //   id: { name: 'hello', bind: true },
+        //   ref: { name: 'value', bind: false }
+        // }
+        let idAttr = item.id;
+        let refAttr = item.ref;
+        let actualAttrIdName = idAttr.name;
+        let actualAttrRefName = refAttr.name;
+        let selector = `#${actualAttrIdName}`;
 
-        if (item.bind) {
-          // if this is a bind attr
-          actualAttrName = vm[item.name];
-          vm.$watch(item.name, function(newAttrName, oldAttrName) {
+        if (idAttr.bind) {
+          // if id is a bind attr
+          actualAttrIdName = vm[idAttr.name];
+          selector = `#${actualAttrIdName}`;
+          vm.$watch(idAttr.name, function(newAttrName) {
+            actualAttrIdName = newAttrName;
+            selector = `#${actualAttrIdName}`;
+            vm.$refs[actualAttrRefName] = query.select(selector);
+          });
+        }
+
+        if (refAttr.bind) {
+          // if ref is a bind attr
+          actualAttrRefName = vm[refAttr.name];
+
+          vm.$watch(refAttr.name, function(newAttrName, oldAttrName) {
+            actualAttrRefName = newAttrName;
             vm.$refs[oldAttrName] = null;
             vm.$refs[newAttrName] = query.select(selector);
           });
         }
-        vm.$refs[actualAttrName] = query.select(selector);
+        vm.$refs[actualAttrRefName] = query.select(selector);
       });
 
       // created 不能调用 setData，如果有 dirty 在此更新
