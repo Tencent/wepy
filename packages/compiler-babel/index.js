@@ -10,20 +10,56 @@
 const babel = require('@babel/core');
 const path = require('path');
 
+function registerChainHook(chain) {
+  // eslint-disable-next-line
+  chain.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
+    // var core_1 = _interopRequireDefault(require('@wepy/core'))
+    if (declarator.init && declarator.init.type === 'CallExpression') {
+      if (declarator.init.callee.name === '_interopRequireDefault') {
+        let arg = declarator.init.arguments[0];
+        if (
+          arg &&
+          arg.type === 'CallExpression' &&
+          arg.callee.name === 'require' &&
+          arg.arguments[0].value === '@wepy/core'
+        ) {
+          walker.scope.instances.push(name + '.default');
+        }
+      }
+    }
+  });
+
+  chain.register('walker-detect-entry', function(walker, expression, exprName) {
+    if (walker.scope.instances && walker.scope.instances.length && exprName) {
+      if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
+        if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
+          walker.entry = expression;
+        }
+      }
+    }
+  });
+  registerChainHook.registed = true;
+  return chain;
+}
+
 exports = module.exports = function(options) {
   return function() {
-    this.register('wepy-compiler-babel', function(node, ctx) {
+    this.register('wepy-compiler-babel', function(chain) {
+      if (!registerChainHook.registed) {
+        registerChainHook(chain);
+      }
       let p;
-      const file = typeof ctx === 'string' ? ctx : ctx.file;
+      const bead = chain.bead;
+      const file = bead.path;
       const outputFileName = path.basename(file, path.extname(file)) + '.js';
-      const scriptFile = node.src ? path.resolve(path.basename(file), node.src) : file;
+      const scriptFile = bead.refPath;
       try {
-        let compiled = babel.transformSync(node.content, { filename: scriptFile, ...options });
-        node.compiled = compiled;
+        let compiled = babel.transformSync(bead.content, { filename: scriptFile, ...options });
+        bead.compiled = compiled;
         if (path.extname(scriptFile) === '.ts') {
           compiled.outputFileName = outputFileName;
         }
-        p = Promise.resolve(node);
+        p = Promise.resolve(chain);
       } catch (e) {
         this.hookUnique('error-handler', {
           type: 'error',
@@ -35,36 +71,6 @@ exports = module.exports = function(options) {
         p = Promise.reject(e);
       }
       return p;
-    });
-
-    // eslint-disable-next-line
-    this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
-      if (walker.lang !== 'babel') return;
-      // var core_1 = _interopRequireDefault(require('@wepy/core'))
-      if (declarator.init && declarator.init.type === 'CallExpression') {
-        if (declarator.init.callee.name === '_interopRequireDefault') {
-          let arg = declarator.init.arguments[0];
-          if (
-            arg &&
-            arg.type === 'CallExpression' &&
-            arg.callee.name === 'require' &&
-            arg.arguments[0].value === '@wepy/core'
-          ) {
-            walker.scope.instances.push(name + '.default');
-          }
-        }
-      }
-    });
-
-    this.register('walker-detect-entry', function(walker, expression, exprName) {
-      if (walker.lang !== 'babel') return;
-      if (walker.scope.instances && walker.scope.instances.length && exprName) {
-        if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
-          if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
-            walker.entry = expression;
-          }
-        }
-      }
     });
   };
 };
