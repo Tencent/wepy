@@ -40,7 +40,8 @@ exports = module.exports = function(ins) {
     './../plugins/helper/generateCodeFrame',
     './../plugins/helper/errorHandler',
 
-    './../plugins/compiler/index'
+    './../plugins/compiler/index',
+    './../compile/loader/wepyLoader'
   ].map(v => require(v).call(ins));
   // check custom plugins
   const customPluginFns = checkPlugins(ins, ins.options.plugins);

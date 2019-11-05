@@ -7,23 +7,20 @@
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
 const fs = require('fs');
-const path = require('path');
-
-const hashUtil = require('../../util/hash');
+// const path = require('path');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-file', function(node, depFileCtx) {
-    let file = depFileCtx.file;
+  this.register('wepy-parser-file', function(chain) {
+    const bead = chain.bead;
+    const file = bead.path;
     let fileContent = fs.readFileSync(file, 'utf-8');
-    let fileHash = hashUtil.hash(fileContent);
 
-    if (this.compiled[file] && fileHash === this.compiled[file].hash) {
-      // 文件 hash 一致，说明文件无修改
-      depFileCtx = this.compiled[file];
-      depFileCtx.useCache = true;
+    bead.reload(fileContent);
 
-      return Promise.resolve(depFileCtx);
+    if (bead.compiled) {
+      return Promise.resolve(chain);
     } else {
+      /*
       this.compiled[file] = depFileCtx;
       depFileCtx.hash = fileHash;
       this.fileDep.cleanDeps(file);
@@ -101,6 +98,7 @@ exports = module.exports = function() {
           throw new Error('EXIT');
         }
       }
+      */
     }
   });
 };

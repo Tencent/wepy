@@ -9,6 +9,7 @@ const DEFAULT_OPTIONS = {
   output: { type: String, default: 'weapp' },
   platform: { type: String },
   wpyExt: { type: String, default: '.wpy' },
+  weappRule: { type: [String, Object], default: '.wpy' },
   eslint: { type: Boolean, default: true },
   cliLogs: { type: Boolean, default: false },
   watch: { type: Boolean, default: false },

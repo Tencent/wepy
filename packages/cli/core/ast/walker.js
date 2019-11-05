@@ -1,11 +1,10 @@
 class AstWalker {
-  constructor(compilation, ast, lang) {
+  constructor(ast, chain) {
     this.ast = ast;
     this.state = {};
     this.deps = [];
     this.replacements = [];
-    this.compilation = compilation;
-    this.lang = lang;
+    this.chain = chain;
   }
 
   run() {
@@ -383,8 +382,8 @@ class AstWalker {
         case 'VariableDeclarator': {
           this.enterPattern(declarator.id, (name, decl) => {
             // For old version compiler-babel, we can remove it later
-            if (this.compilation.hasHook('prewalk-' + declarator.type, this, declarator, name, decl)) {
-              this.compilation.hook('prewalk-' + declarator.type, this, declarator, name, decl);
+            if (this.chain.hasHook('prewalk-' + declarator.type, this, declarator, name, decl)) {
+              this.chain.hook('prewalk-' + declarator.type, this, declarator, name, decl);
             } else {
               // Ignore child scope
               if (this.scope.instances && declarator.init && declarator.init.type === 'CallExpression') {
@@ -558,8 +557,8 @@ class AstWalker {
       const exprName = this.getNameForExpression(expression.argument);
       if (exprName && exprName.free) {
         let hookName = 'walker-unary-expression-undefined';
-        if (this.compilation.hasHook(hookName)) {
-          this.compilation.hookSeq(hookName, this, expression, exprName);
+        if (this.chain.hasHook(hookName)) {
+          this.chain.hookSeq(hookName, this, expression, exprName);
         }
       }
     }
@@ -732,8 +731,8 @@ class AstWalker {
       if (expression.callee.type === 'MemberExpression') {
         let exprName = this.getNameForExpression(expression.callee);
         // For old version compiler-babel, we can remove it later
-        if (this.compilation.hasHook('walker-detect-entry')) {
-          this.compilation.hook('walker-detect-entry', this, expression, exprName);
+        if (this.chain.hasHook('walker-detect-entry')) {
+          this.chain.hook('walker-detect-entry', this, expression, exprName);
         } else {
           if (this.scope.instances && exprName && this.scope.instances.indexOf(exprName.instance) !== -1) {
             // calling wepy instance
@@ -772,8 +771,8 @@ class AstWalker {
     const exprName = this.getNameForExpression(expression);
     if (exprName && exprName.free) {
       let hookName = 'walker-member-expression-undefined';
-      if (this.compilation.hasHook(hookName)) {
-        this.compilation.hookSeq(hookName, this, expression, exprName);
+      if (this.chain.hasHook(hookName)) {
+        this.chain.hookSeq(hookName, this, expression, exprName);
       }
     }
     this.walkExpression(expression.object);
@@ -783,8 +782,8 @@ class AstWalker {
   walkIdentifier(expression) {
     if (this.scope.definitions.indexOf(expression.name) === -1) {
       let hookName = 'walker-identifier-undefined';
-      if (this.compilation.hasHook(hookName)) {
-        this.compilation.hookSeq(hookName, this, expression);
+      if (this.chain.hasHook(hookName)) {
+        this.chain.hookSeq(hookName, this, expression);
       }
     }
   }

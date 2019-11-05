@@ -1,11 +1,15 @@
 exports = module.exports = function() {
-  this.register('wepy-parser-style', function(node, ctx) {
-    // If this file have dependences, then ignore cache for it.
-    if (ctx.useCache && node.parsed && (node.parsed.dep || []).length === 0) {
-      return Promise.resolve(true);
-    }
-    node.parsed = node.compiled;
+  this.register('wepy-parser-style', function(chain) {
+    const bead = chain.bead;
 
-    return Promise.resolve(true);
+    // TODO: Check file stat instead of read whole file.
+    let fileContent = this.cache.get(bead.id);
+
+    bead.reload(fileContent);
+    if (bead.compiled) {
+      return Promise.resolve(chain);
+    }
+    bead.parsed = bead.compiled;
+    return chain;
   });
 };

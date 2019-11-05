@@ -9,21 +9,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const hashUtil = require('../../util/hash');
 const Walker = require('../../ast/walker');
 const toAst = require('../../ast/toAST');
+const ScriptBead = require('../../compile/ScriptBead');
+const Chain = require('../../compile/Chain');
 const ReplaceSource = require('webpack-sources').ReplaceSource;
 const RawSource = require('webpack-sources').RawSource;
 
 // 记录 npm 文件是否已经遍历过
-const npmTraverseFileMap = {};
+// const npmTraverseFileMap = {};
 
 exports = module.exports = function() {
-  this.register('wepy-parser-dep', function(node, ctx, dep) {
-    return this.resolvers.normal.resolve({ issuer: ctx.file }, path.dirname(ctx.file), dep.module, {}).then(rst => {
-      let npm = rst.meta.descriptionFileRoot !== this.context;
-
-      let assets = this.assets;
+  this.register('wepy-parser-dep', function(chain, dep) {
+    const bead = chain.bead;
+    return this.resolvers.normal.resolve({ issuer: bead.path }, path.dirname(bead.path), dep.module, {}).then(rst => {
+      // let assets = this.assets;
       let file = rst.path;
 
       if (!file) {
@@ -31,10 +31,21 @@ exports = module.exports = function() {
         return rst.path;
       }
 
-      let data = assets.data(file);
-      if (data !== undefined && this.compiled[file] && this.compiled[file].hash) {
-        let fileContent = fs.readFileSync(file, 'utf-8');
-        let fileHash = hashUtil.hash(fileContent);
+      let depBead = this.beads[file];
+      // No need to check cache here, because wepy-parser-file will check it.
+      if (depBead) {
+        // If no bead exist, then create empty bead, wepy-parser-file will fill it.
+        depBead = this.createBead(file, file, '', ScriptBead);
+      }
+      const newChain = new Chain(depBead);
+      newChain.setPrevious(chain);
+
+      // npm package file root is not context
+      if (rst.meta.descriptionFileRoot !== this.context) {
+        newChain.npm.self = true;
+      }
+      return this.hookUnique('wepy-parser-script', newChain);
+      /*
         if (fileHash === this.compiled[file].hash) {
           // File is not changed, do not compile again
           if (
@@ -69,11 +80,71 @@ exports = module.exports = function() {
         dep,
         wxs: !!ctx.wxs
       });
+      */
     });
   });
 
-  this.register('wepy-parser-script', function(node, ctx) {
+  this.register('wepy-parser-script', function(chain) {
+    const bead = chain.bead;
     let assets = this.assets;
+
+    // TODO: Check file stat instead of read whole file.
+    let fileContent = this.cache.get(bead.id);
+
+    bead.reload(fileContent);
+    if (bead.compiled) {
+      return Promise.resolve(chain);
+    }
+
+    let source = new ReplaceSource(new RawSource(bead.compiled.code));
+    let astData = toAst(bead.compiled.code);
+
+    let walker = new Walker(astData, chain);
+    walker.run();
+
+    let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', chain, dep));
+    return Promise.all(depTasks).then(chains => {
+      return chain;
+      let obj = {
+        file: ctx.file,
+        parser: walker,
+        code: node.compiled.code,
+        encoding: node.compiled.encoding || 'utf-8',
+        outputFileName: node.compiled.outputFileName,
+        source: source,
+        depModules: rst,
+        npm: !!ctx.npm,
+        type: ctx.type,
+        component: ctx.component
+      };
+
+      this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));
+
+      let componentValue = ctx.component;
+      const t = this.assets.type(ctx.file);
+      if (t !== undefined) {
+        // if it has type in this.assets
+        componentValue = t.component;
+      }
+      let types = {
+        component: componentValue,
+        npm: ctx.npm,
+        dep: ctx.dep,
+        type: ctx.type,
+        wxs: ctx.wxs
+      };
+
+      this.assets.update(ctx.file, obj, types);
+      obj.id = assets.get(ctx.file);
+      if (ctx.npm && !(ctx.component && ctx.type === 'weapp') && !ctx.wxs) {
+        this.vendors.update(ctx.file, obj, types);
+        obj.vendorId = this.vendors.get(ctx.file);
+      }
+      return obj;
+      return chain;
+    });
+
+    /*
     if (ctx.npm && !ctx.component && !ctx.wxs) {
       if (this.vendors.pending(ctx.file)) {
         // file compile is pending
@@ -139,5 +210,6 @@ exports = module.exports = function() {
         return obj;
       });
     }
+    */
   });
 };

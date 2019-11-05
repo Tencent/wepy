@@ -4,10 +4,10 @@ const fs = require('fs');
 const RawSource = require('webpack-sources').RawSource;
 
 exports = module.exports = function() {
-  this.register('wepy-compiler-wxss', function(node, ctx) {
-    let code = node.content;
-
-    let ast = css.parse(code);
+  this.register('wepy-compiler-wxss', function(chain) {
+    const bead = chain.bead;
+    let ast = css.parse(bead.content);
+    const file = bead.path;
 
     ast.stylesheet.rules.forEach(rule => {
       if (rule.type === 'import') {
@@ -16,7 +16,7 @@ exports = module.exports = function() {
         if (importfile.startsWith('"') || importfile.startsWith("'")) {
           importfile = importfile.substring(1, importfile.length - 1);
         }
-        importfile = path.resolve(ctx.file, '..', importfile);
+        importfile = path.resolve(file, '..', importfile);
 
         let encoding = 'utf-8';
 
@@ -26,7 +26,7 @@ exports = module.exports = function() {
           try {
             importCode = fs.readFileSync(importfile, encoding);
           } catch (e) {
-            this.logger.warn('compiler', `Can not open file ${importfile} in ${ctx.file}`);
+            this.logger.warn('compiler', `Can not open file ${importfile} in ${file}`);
           }
 
           if (importCode) {
@@ -37,7 +37,7 @@ exports = module.exports = function() {
                 encoding: encoding,
                 source: new RawSource(importCode)
               },
-              { url: true, npm: ctx.npm }
+              { url: true, npm: chain.npm.self }
             );
 
             this.hookUnique(
@@ -45,15 +45,15 @@ exports = module.exports = function() {
               {
                 content: importCode
               },
-              Object.assign({}, ctx, { dep: true })
+              chain
             );
           }
         }
       }
     });
-    node.compiled = {
-      code: node.content
+    bead.compiled = {
+      code: bead.content
     };
-    return Promise.resolve(node);
+    return Promise.resolve(chain);
   });
 };

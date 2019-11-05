@@ -35,4 +35,12 @@ describe('parseOptions', function() {
         .stabilityThreshold
     ).to.equal(1000);
   });
+
+  it('parse weappRule', function() {
+    expect(po.parse({ weappRule: '.wpy' }).weappRule).to.deep.equal('.wpy');
+
+    expect(po.parse().weappRule).to.deep.equal('.wpy');
+    expect(po.parse({ weappRule: {} }).weappRule).to.deep.equal({});
+    expect(po.parse({ weappRule: { script: {} } }).weappRule).to.deep.equal({ script: {} });
+  });
 });

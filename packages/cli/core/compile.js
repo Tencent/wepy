@@ -15,17 +15,26 @@ const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSyste
 const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
+const CacheFile = require('./CacheFile');
 const fileDep = require('./fileDep');
 const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
 const { isArr } = require('./util/tools');
+const extTransform = require('./util/extTransform');
 const { debounce } = require('throttle-debounce');
 
 const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
+
+//const Chain = require('./compile/Chain');
+const PageChain = require('./compile/PageChain');
+const AppChain = require('./compile/AppChain');
+
+const WepyBead = require('./compile/WepyBead');
+const ScriptBead = require('./compile/ScriptBead');
 
 class Compile extends Hook {
   constructor(opt) {
@@ -54,6 +63,8 @@ class Compile extends Hook {
     };
 
     this.logger = logger;
+
+    this.cache = new CacheFile();
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
@@ -136,7 +147,7 @@ class Compile extends Hook {
 
   init() {
     this.register('process-clear', () => {
-      this.compiled = {};
+      this.beads = {};
       this.vendors = new moduleSet();
       this.assets = new moduleSet();
       this.fileDep = new fileDep();
@@ -187,6 +198,46 @@ class Compile extends Hook {
     return initCompiler(this, this.options.compilers);
   }
 
+  createBead(id, filepath, content, BeadType) {
+    let bead = null;
+    if (this.beads[id]) {
+      bead = this.beads[id];
+      bead.reload(content);
+    } else {
+      bead = new BeadType(id, filepath, content);
+      this.cache.set(id, content);
+      this.beads[id] = bead;
+    }
+    return bead;
+  }
+
+  createBeadFromFile(file, BeadType) {
+    return this.createBead(file, file, fs.readFileSync(file, 'utf-8'), BeadType);
+  }
+
+  createAppChain(file) {
+    const pathObj = path.parse(file);
+    const isWepy = pathObj.ext === this.options.wpyExt;
+    let bead = this.createBeadFromFile(file, isWepy ? WepyBead : ScriptBead);
+    const chain = new AppChain(bead);
+    if (isWepy) {
+      bead.type = 'app';
+      chain.wepy.self = true;
+    }
+    return chain;
+  }
+  createPageChain(file) {
+    const pathObj = path.parse(file);
+    const isWepy = pathObj.ext === this.options.wpyExt;
+    let bead = this.createBeadFromFile(file, isWepy ? WepyBead : ScriptBead);
+    const chain = new PageChain(bead);
+    if (isWepy) {
+      bead.type = 'page';
+      chain.wepy.self = true;
+    }
+    return chain;
+  }
+
   start() {
     if (this.running) {
       return;
@@ -195,9 +246,13 @@ class Compile extends Hook {
     this.running = true;
     this.logger.info('build app', 'start...');
 
-    this.hookUnique('wepy-parser-wpy', { path: this.options.entry, type: 'app' })
-      .then(app => {
-        let sfc = app.sfc;
+    const chain = this.createAppChain(this.options.entry);
+
+    this.hookUnique('wepy-parser-wpy', chain)
+      //{ path: this.options.entry, type: 'app' })
+      .then(chain => {
+        const bead = chain.bead;
+        let sfc = bead.sfc;
         let config = sfc.config;
 
         let appConfig = config.parsed.output;
@@ -205,18 +260,18 @@ class Compile extends Hook {
           appConfig.pages = [];
           this.hookUnique('error-handler', {
             type: 'warn',
-            ctx: app,
+            bead,
             message: `Missing "pages" in App config`
           });
         }
         let pages = appConfig.pages.map(v => {
-          return path.resolve(app.file, '..', v);
+          return path.resolve(bead.path, '..', v);
         });
 
         if (appConfig.subPackages || appConfig.subpackages) {
           (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
             sub.pages.forEach(v => {
-              pages.push(path.resolve(app.file, '../' + sub.root || '', v));
+              pages.push(path.resolve(bead.path, '../' + sub.root || '', v));
             });
           });
         }
@@ -226,28 +281,34 @@ class Compile extends Hook {
 
           file = v + this.options.wpyExt;
           if (fs.existsSync(file)) {
-            return this.hookUnique('wepy-parser-wpy', { path: file, type: 'page' });
+            const pageChain = this.createPageChain(file);
+            pageChain.root = chain;
+            pageChain.setPrevious(chain);
+            return this.hookUnique('wepy-parser-wpy', pageChain);
           }
           file = v + '.js';
           if (fs.existsSync(file)) {
-            return this.hookUnique('wepy-parser-component', { path: file, type: 'page', npm: false });
+            const pageChain = this.createPageChain(file);
+            pageChain.root = chain;
+            pageChain.setPrevious(chain);
+            return this.hookUnique('wepy-parser-component', pageChain);
           }
           this.hookUnique('error-handler', {
             type: 'error',
-            ctx: app,
+            bead,
             message: `Can not resolve page: ${v}`
           });
         });
 
         if (appConfig.tabBar && appConfig.tabBar.custom) {
-          let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
+          let file = path.resolve(bead.path, '..', 'custom-tab-bar/index' + this.options.wpyExt);
           if (fs.existsSync(file)) {
             tasks.push(this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' }));
           }
         }
 
-        this.hookSeq('build-app', app);
-        this.hookUnique('output-app', app);
+        this.hookSeq('build-app', bead);
+        this.hookUnique('output-app', bead);
         return Promise.all(tasks);
       })
       .then(this.buildComps.bind(this))
@@ -458,6 +519,58 @@ class Compile extends Hook {
     });
   }
 
+  getLang(type, ext) {
+    const rule = this.options.weappRule[type];
+    let lang = null;
+    for (let i = 0; i < rule.length; i++) {
+      if (rule[i].ext === ext) {
+        lang = rule[i].lang;
+        break;
+      }
+    }
+    if (!lang) {
+      throw new Error(`Please define weappRule.${type}.lang for ${ext}`);
+    }
+
+    return lang;
+  }
+
+  getLoader(type, ext) {
+    const loaderName = this.getLang(type, ext);
+
+    return function(bead) {
+      const key = 'wepy-loader-' + loaderName;
+      if (!this.hasHook(key)) {
+        return Promise.resolve(bead);
+      }
+      return this.hookUnique(key, bead);
+    }.bind(this);
+  }
+
+  compileAndParse(type, newChain) {
+    const bead = newChain.bead;
+    const lang = this.getLang(type, bead.ext);
+    // Compile chain
+    const key = 'wepy-compiler-' + lang;
+    if (!this.hasHook(key)) {
+      throw new Error(`Compiler "${key}" is not find.`);
+    }
+    return this.hookAsyncSeq('before-' + key, newChain.previous)
+      .then(() => {
+        return this.hookUnique(key, newChain);
+      })
+      .then(chain => {
+        // Parse chain
+        const key = 'wepy-parser-' + type;
+        if (!this.hasHook(key)) {
+          throw new Error(`Parser "${key}" is not find.`);
+        }
+        return this.hookAsyncSeq('before-' + key, chain).then(chain => {
+          return this.hookUnique(key, chain);
+        });
+      });
+  }
+
   applyCompiler(node, ctx) {
     ctx.id = this.assets.add(ctx.file);
 
@@ -560,6 +673,8 @@ class Compile extends Hook {
 
 exports = module.exports = program => {
   const opt = parseOptions.parse(program);
+
+  opt.weappRule = extTransform(opt.weappRule);
 
   const compilation = new Compile(opt);
 

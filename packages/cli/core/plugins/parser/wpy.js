@@ -10,24 +10,43 @@ const sfcCompiler = require('vue-template-compiler');
 const fs = require('fs');
 const path = require('path');
 const loaderUtils = require('loader-utils');
-
-const hashUtil = require('../../util/hash');
+const AppChain = require('../../compile/AppChain');
+const Chain = require('../../compile/Chain');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-wpy', function(comp) {
-    let sfc, flow;
-    let file = comp.path;
-    let type = comp.type;
+  this.register('wepy-parser-wpy', function(chain) {
+    const bead = chain.bead;
 
-    let context = {
-      file,
-      type,
-      npm: type === 'module',
-      component: true
-    };
-
-    let fileContent = fs.readFileSync(file, 'utf-8');
-    let fileHash = hashUtil.hash(fileContent);
+    // config -> wxs -> template -> script -> styles
+    return this.hookUnique('wepy-loader-wpy', bead)
+      .then(bead => {
+        const newChain = new Chain(bead.sfc.config);
+        newChain.setPrevious(chain);
+        return this.compileAndParse('config', newChain);
+      })
+      .then(() => {
+        // TODO: ignore wxs
+        if (chain instanceof AppChain) {
+          return chain;
+        }
+        const newChain = new Chain(bead.sfc.template);
+        newChain.setPrevious(chain);
+        return this.compileAndParse('template', newChain);
+      })
+      .then(() => {
+        const newChain = new Chain(bead.sfc.script);
+        newChain.setPrevious(chain);
+        return this.compileAndParse('script', newChain);
+      })
+      .then(() => {
+        return Promise.all(
+          chain.bead.sfc.styles.map(styleBead => {
+            const newChain = new Chain(styleBead);
+            newChain.setPrevious(chain);
+            return this.compileAndParse('style', newChain);
+          })
+        ).then(() => chain);
+      });
 
     if (this.compiled[file] && fileHash === this.compiled[file].hash) {
       // 文件 hash 一致，说明文件无修改

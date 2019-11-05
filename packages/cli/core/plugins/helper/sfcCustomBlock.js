@@ -1,4 +1,5 @@
 exports = module.exports = function() {
+  /*
   this.register('sfc-custom-block', function(sfc) {
     if (!sfc.customBlocks || sfc.customBlocks.length === 0) return sfc;
 
@@ -35,4 +36,5 @@ exports = module.exports = function() {
     sfc.wxs.push(block);
     return { sfc, block };
   });
+  */
 };

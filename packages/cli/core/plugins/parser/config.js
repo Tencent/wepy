@@ -1,24 +1,17 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
+const AppChain = require('../../compile/AppChain');
+const PageChain = require('../../compile/PageChain');
 
 let appUsingComponents = null;
 
 exports = module.exports = function() {
-  this.register('wepy-parser-config', function(rst, ctx) {
-    // If file is not changed, then use cache.
-    if (ctx.useCache && ctx.sfc.config.parsed) {
-      return Promise.resolve(true);
-    }
+  this.register('wepy-parser-config', function(chain) {
+    const bead = chain.bead;
+    const isApp = chain.previous instanceof AppChain;
+    const isPage = chain.previous instanceof PageChain;
 
-    if (!rst) {
-      if (!appUsingComponents) {
-        return Promise.resolve(true);
-      } else {
-        rst.content = JSON.stringify({});
-      }
-    }
-
-    let configString = rst.content.replace(/^\n*/, '').replace(/\n*$/, '');
+    let configString = bead.content.replace(/^\n*/, '').replace(/\n*$/, '');
     configString = (configString || '{}').trim();
     let config = null;
     try {
@@ -28,8 +21,8 @@ exports = module.exports = function() {
       // TODO: added error handler code
       return Promise.reject(`invalid json: ${configString}`);
     }
-    if (ctx.type !== 'app') {
-      // app.json does not need it
+
+    if (isApp) {
       config.component = true;
     }
     if (!config.usingComponents) {
@@ -39,18 +32,18 @@ exports = module.exports = function() {
     let componentKeys = Object.keys(config.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
-      ctx.sfc.config.parsed = {
+      bead.parsed = {
         output: config
       };
       return Promise.resolve(true);
     }
     // page Components will inherit app using components
-    if (appUsingComponents && ctx.type === 'page') {
+    if (appUsingComponents && isPage) {
       appUsingComponents.forEach(comp => {
         // Existing in page components, then ignore
         // Resolve path for page components
         if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
-          const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
+          const relativePath = path.relative(path.dirname(bead.path), comp.resolved.path);
           const parsedPath = path.parse(relativePath);
           // Remove wpy ext
           config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
@@ -86,7 +79,7 @@ exports = module.exports = function() {
         hookName = 'raw';
       }
 
-      return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, ctx).then(
+      return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, chain).then(
         ({ name, prefix, resolved, target, npm }) => {
           if (hookName === 'raw') {
             resolvedUsingComponents[name] = url;
@@ -96,7 +89,7 @@ exports = module.exports = function() {
               url
             });
           } else {
-            let relativePath = path.relative(path.dirname(ctx.file), target);
+            let relativePath = path.relative(path.dirname(bead.path), target);
             let parsedPath = path.parse(relativePath);
             resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
             parseComponents.push({
@@ -115,31 +108,31 @@ exports = module.exports = function() {
     });
 
     return Promise.all(plist).then(() => {
-      if (ctx.type === 'app') {
+      if (isApp) {
         appUsingComponents = parseComponents;
         delete config.usingComponents;
       } else {
         config.usingComponents = resolvedUsingComponents;
       }
 
-      ctx.sfc.config.parsed = {
+      bead.parsed = {
         output: config,
         components: parseComponents
       };
-      return true;
+      return chain;
     });
   });
 
   // eslint-disable-next-line
-  this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, ctx) {
+  this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, chain) {
     return Promise.resolve({
       name,
       prefix
     });
   });
 
-  this.register('wepy-parser-config-component-module', function(name, prefix, source, target, ctx) {
-    let contextDir = path.dirname(ctx.file);
+  this.register('wepy-parser-config-component-module', function(name, prefix, source, target, chain) {
+    let contextDir = path.dirname(chain.bead.path);
     return this.resolvers.normal.resolve({}, contextDir, source, {}).then(resolved => {
       return {
         name: name,
@@ -151,10 +144,10 @@ exports = module.exports = function() {
     });
   });
 
-  this.register('wepy-parser-config-component-path', function(name, prefix, source, target, ctx) {
+  this.register('wepy-parser-config-component-path', function(name, prefix, source, target, chain) {
     const moduleRequest = loaderUtils.urlToRequest(source, source.charAt(0) === '/' ? '' : null);
 
-    let contextDir = path.dirname(ctx.file);
+    let contextDir = path.dirname(chain.bead.path);
 
     return this.resolvers.normal.resolve({}, contextDir, moduleRequest, {}).then(resolved => {
       return {

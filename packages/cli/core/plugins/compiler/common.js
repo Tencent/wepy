@@ -1,10 +1,10 @@
 exports = module.exports = function() {
   ['js', 'json', 'css', 'wxml'].forEach(lang => {
-    this.register('wepy-compiler-' + lang, function(node) {
-      node.compiled = {
-        code: node.content
+    this.register('wepy-compiler-' + lang, function(chain) {
+      chain.bead.compiled = {
+        code: chain.bead.content
       };
-      return Promise.resolve(node);
+      return Promise.resolve(chain);
     });
   });
 };

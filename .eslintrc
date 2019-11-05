@@ -6,6 +6,7 @@
     "mocha": true
   },
   "rules": {
+    "no-debugger": 0,
     "strict": [0],
     "eqeqeq": 2,
     "quotes": [2, "single", {"allowTemplateLiterals": true}],
