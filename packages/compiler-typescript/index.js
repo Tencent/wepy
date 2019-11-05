@@ -9,12 +9,53 @@
 const path = require('path');
 const ts = require('typescript');
 
+function registerChainHook(chain) {
+  // eslint-disable-next-line
+  chain.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
+    // var core_1 = __importDefault(require('@wepy/core'))
+    if (declarator.init && declarator.init.type === 'CallExpression') {
+      if (declarator.init.callee.name === '__importDefault') {
+        let arg = declarator.init.arguments[0];
+        if (
+          arg &&
+          arg.type === 'CallExpression' &&
+          arg.callee.name === 'require' &&
+          arg.arguments[0].value === '@wepy/core'
+        ) {
+          walker.scope.instances.push(name + '.default');
+        }
+      }
+      /*
+       * var core_1 = require('@wepy/core');
+      if (declarator.init.callee.name === 'require') {
+        if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === '@wepy/core') {
+          walker.scope.instances.push(name + '.default');
+        }
+      }*/
+    }
+  });
+
+  chain.register('walker-detect-entry', function(walker, expression, exprName) {
+    if (walker.scope.instances && walker.scope.instances.length && exprName) {
+      if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
+        if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
+          walker.entry = expression;
+        }
+      }
+    }
+  });
+  registerChainHook.registed = true;
+  return chain;
+}
 exports = module.exports = function(options) {
   return function() {
-    this.register('wepy-compiler-typescript', function(node, ctx) {
+    this.register('wepy-compiler-typescript', function(chain) {
+      if (!registerChainHook.registed) {
+        registerChainHook(chain);
+      }
       let p;
-      let file = typeof ctx === 'string' ? ctx : ctx.file;
-      let source = node.content;
+      const bead = chain.bead;
+      const file = bead.path;
       let params = Object.assign(
         {},
         {
@@ -27,14 +68,14 @@ exports = module.exports = function(options) {
         options
       );
       try {
-        let compiled = ts.transpileModule(source, params);
+        let compiled = ts.transpileModule(bead.content, params);
         compiled.code = compiled.outputText;
-        let fileObj = path.parse(ctx.file);
+        let fileObj = path.parse(file);
         delete compiled.outputText;
-        node.compiled = compiled;
+        bead.compiled = compiled;
 
         compiled.outputFileName = fileObj.name + '.js';
-        p = Promise.resolve(node);
+        p = Promise.resolve(chain);
       } catch (e) {
         this.hookUnique('error-handler', {
           type: 'error',
@@ -46,43 +87,6 @@ exports = module.exports = function(options) {
         p = Promise.reject(e);
       }
       return p;
-    });
-
-    // eslint-disable-next-line
-    this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
-      if (walker.lang !== 'typescript') return;
-      // var core_1 = __importDefault(require('@wepy/core'))
-      if (declarator.init && declarator.init.type === 'CallExpression') {
-        if (declarator.init.callee.name === '__importDefault') {
-          let arg = declarator.init.arguments[0];
-          if (
-            arg &&
-            arg.type === 'CallExpression' &&
-            arg.callee.name === 'require' &&
-            arg.arguments[0].value === '@wepy/core'
-          ) {
-            walker.scope.instances.push(name + '.default');
-          }
-        }
-        /*
-         * var core_1 = require('@wepy/core');
-        if (declarator.init.callee.name === 'require') {
-          if (declarator.init.arguments && declarator.init.arguments[0] && declarator.init.arguments[0].value === '@wepy/core') {
-            walker.scope.instances.push(name + '.default');
-          }
-        }*/
-      }
-    });
-
-    this.register('walker-detect-entry', function(walker, expression, exprName) {
-      if (walker.lang !== 'typescript') return;
-      if (walker.scope.instances && walker.scope.instances.length && exprName) {
-        if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
-          if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
-            walker.entry = expression;
-          }
-        }
-      }
     });
   };
 };
