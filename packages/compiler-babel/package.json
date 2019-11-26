@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-babel",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "wepy compile babel",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,6 @@
     "@babel/core": "^7.1.0"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/compiler-babel@2.0.3",
-  "_commitid": "2880689"
+  "_id": "@wepy/compiler-babel@2.0.4",
+  "_commitid": "70778d6"
 }
