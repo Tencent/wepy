@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-sass",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "wepy compile sass",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,6 @@
     "enhanced-resolve": "^4.0.0"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/compiler-sass@2.0.1",
-  "_commitid": "64fee2f"
+  "_id": "@wepy/compiler-sass@2.0.2",
+  "_commitid": "f7340a9"
 }
