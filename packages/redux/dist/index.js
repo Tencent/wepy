@@ -2,15 +2,12 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-function normalizeMap (map) {
-  if (typeof map === 'string')
-    { map = [ map ]; }
-  return Array.isArray(map)
-    ?  map.map(function (k) { return ({ key: k, val: k }); })
-    : Object.keys(map).map(function (k) { return ({ key: k, val: map[k] }); });
+function normalizeMap(map) {
+  if (typeof map === 'string') { map = [map]; }
+  return Array.isArray(map) ? map.map(function (k) { return ({ key: k, val: k }); }) : Object.keys(map).map(function (k) { return ({ key: k, val: map[k] }); });
 }
 
-var mapState = function (states) {
+var mapState = function(states) {
   var res = Object.create(null);
   var resValueMap = Object.create(null);
   normalizeMap(states).forEach(function (ref) {
@@ -24,9 +21,7 @@ var mapState = function (states) {
     resValueMap[key] = Object.preventExtensions({ value: undefined });
     res[key] = function mappedState() {
       var state = this.$store.getState();
-      var value = typeof val === 'function'
-        ?  val.call(this, state)
-        : state[val];
+      var value = typeof val === 'function' ? val.call(this, state) : state[val];
 
       // 利用 redux state 每次改变都会返回一个新 state 的特性，只需做引用比较
       var resValueMap = res[key][this.$id];
@@ -41,7 +36,7 @@ var mapState = function (states) {
   return res;
 };
 
-var mapActions = function (actions) {
+var mapActions = function(actions) {
   var res = {};
   normalizeMap(actions).forEach(function (ref) {
     var key = ref.key;
@@ -52,6 +47,7 @@ var mapActions = function (actions) {
       while ( len-- ) args[ len ] = arguments[ len ];
 
       if (!this.$store) {
+        // eslint-disable-next-line
         console.warn(("[@wepy/redux] action \"" + key + "\" do not work, if store is not defined."));
         return;
       }
@@ -70,21 +66,20 @@ var mapActions = function (actions) {
   return res;
 };
 
-function wepyInstall (wepy) {
+function wepyInstall(wepy) {
   wepy.mixin({
-    beforeCreate: function beforeCreate () {
+    beforeCreate: function beforeCreate() {
       var this$1 = this;
 
       var options = this.$options;
       if (options.store) {
-        this.$store = typeof options.store === 'function'
-          ? options.store()
-          : options.store;
+        this.$store = typeof options.store === 'function' ? options.store() : options.store;
       } else if (options.parent && options.parent.$store) {
         this.$store = options.parent.$store;
       }
       if (checkReduxComputed(this.$options)) {
         if (!this.$store) {
+          // eslint-disable-next-line
           console.warn("[@wepy/redux] state do not work, if store is not defined.");
           return;
         }
@@ -110,7 +105,7 @@ function wepyInstall (wepy) {
       }
     },
 
-    created: function created () {
+    created: function created() {
       var this$1 = this;
 
       if (!checkReduxComputed(this.$options)) {
@@ -129,11 +124,12 @@ function wepyInstall (wepy) {
       });
     },
 
-    detached: function detached () {
+    detached: function detached() {
       this.$unsubscribe && this.$unsubscribe();
     }
   });
 }
+
 function checkReduxComputed(options) {
   if (!('computed' in options)) {
     return false;

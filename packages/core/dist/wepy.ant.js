@@ -1253,13 +1253,16 @@ function flushSchedulerQueue(times) {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
-  queue.sort(function (a, b) { return a.id - b.id; });
+  times === 0 && queue.sort(function (a, b) { return a.id - b.id; });
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
   // there would be mutilple renderWatcher in the queue.
   var renderWatcher = [];
-  for (index = 0; index < queue.length; index++) {
+  if (times === 0) {
+    index = 0;
+  }
+  for (; index < queue.length; index++) {
     // if it's renderWatcher, run it in the end
     watcher = queue[index];
     if (watcher && watcher.isRenderWatcher) {
