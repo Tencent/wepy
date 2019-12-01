@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-define",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "wepy define plugin",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,6 @@
   },
   "license": "MIT",
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/plugin-define@2.0.2",
-  "_commitid": "f443739"
+  "_id": "@wepy/plugin-define@2.0.3",
+  "_commitid": "68f3784"
 }

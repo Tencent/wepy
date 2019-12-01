@@ -1,11 +1,17 @@
 {
   "name": "@wepy/use-promisify",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "wepy promisify",
   "main": "/dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Gcaufy <gcaufy@gmail.com>",
-  "license": "MIT"
+  "author": {
+    "name": "Gcaufy",
+    "email": "gcaufy@gmail.com"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/use-promisify@2.0.1",
+  "_commitid": "4c1c967"
 }

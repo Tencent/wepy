@@ -7,10 +7,10 @@
  * @param  {String}   type   weapp-style|error-first, default to weapp-style
  * @return {Function}        promisified function
  */
-var promisify = function (fn, caller, type) {
+var promisify = function(fn, caller, type) {
   if ( type === void 0 ) type = 'weapp-style';
 
-  return function () {
+  return function() {
     var args = [], len = arguments.length;
     while ( len-- ) args[ len ] = arguments[ len ];
 
@@ -19,10 +19,10 @@ var promisify = function (fn, caller, type) {
         case 'weapp-style':
           fn.call(caller, Object.assign({}, args[0],
             {
-              success: function success (res) {
+              success: function success(res) {
                 resolve(res);
               },
-              fail: function fail (err) {
+              fail: function fail(err) {
                 reject(err);
               }
             }));
@@ -31,8 +31,7 @@ var promisify = function (fn, caller, type) {
           fn.apply(caller, args.concat(resolve).concat(reject));
           break;
         case 'error-first':
-          fn.apply(caller, args.concat( [function (err, res) { return (err ? reject(err) : resolve(res)); }])
-          );
+          fn.apply(caller, args.concat( [function (err, res) { return (err ? reject(err) : resolve(res)); }]));
           break;
       }
     });
@@ -88,74 +87,74 @@ var noPromiseMethods = [
 
 var simplifyArgs = {
   // network
-  'request': 'url',
-  'downloadFile': 'url',
-  'connectSocket': 'url',
-  'sendSocketMessage': 'data',
+  request: 'url',
+  downloadFile: 'url',
+  connectSocket: 'url',
+  sendSocketMessage: 'data',
 
   // media
-  'previewImage': 'urls',
-  'getImageInfo': 'src',
-  'saveImageToPhotosAlbum': 'filePath',
-  'playVoice': 'filePath',
-  'playBackgroundAudio': 'dataUrl',
-  'seekBackgroundAudio': 'position',
-  'saveVideoToPhotosAlbum': 'filePath',
+  previewImage: 'urls',
+  getImageInfo: 'src',
+  saveImageToPhotosAlbum: 'filePath',
+  playVoice: 'filePath',
+  playBackgroundAudio: 'dataUrl',
+  seekBackgroundAudio: 'position',
+  saveVideoToPhotosAlbum: 'filePath',
 
   // files
-  'saveFile': 'tempFilePath',
-  'getFileInfo': 'filePath',
-  'getSavedFileInfo': 'filePath',
-  'removeSavedFile': 'filePath',
-  'openDocument': 'filePath',
+  saveFile: 'tempFilePath',
+  getFileInfo: 'filePath',
+  getSavedFileInfo: 'filePath',
+  removeSavedFile: 'filePath',
+  openDocument: 'filePath',
 
   // device
-  'setStorage': 'key,data',
-  'getStorage': 'key',
-  'removeStorage': 'key',
-  'openLocation': 'latitude,longitude',
-  'makePhoneCall': 'phoneNumber',
-  'setClipboardData': 'data',
-  'getConnectedBluetoothDevices': 'services',
-  'createBLEConnection': 'deviceId',
-  'closeBLEConnection': 'deviceId',
-  'getBLEDeviceServices': 'deviceId',
-  'startBeaconDiscovery': 'uuids',
-  'setScreenBrightness': 'value',
-  'setKeepScreenOn': 'keepScreenOn',
+  setStorage: 'key,data',
+  getStorage: 'key',
+  removeStorage: 'key',
+  openLocation: 'latitude,longitude',
+  makePhoneCall: 'phoneNumber',
+  setClipboardData: 'data',
+  getConnectedBluetoothDevices: 'services',
+  createBLEConnection: 'deviceId',
+  closeBLEConnection: 'deviceId',
+  getBLEDeviceServices: 'deviceId',
+  startBeaconDiscovery: 'uuids',
+  setScreenBrightness: 'value',
+  setKeepScreenOn: 'keepScreenOn',
 
   // screen
-  'showToast': 'title',
-  'showLoading': 'title,mask',
-  'showModal': 'title,content',
-  'showActionSheet': 'itemList,itemColor',
-  'setNavigationBarTitle': 'title',
-  'setNavigationBarColor': 'frontColor,backgroundColor',
+  showToast: 'title',
+  showLoading: 'title,mask',
+  showModal: 'title,content',
+  showActionSheet: 'itemList,itemColor',
+  setNavigationBarTitle: 'title',
+  setNavigationBarColor: 'frontColor,backgroundColor',
 
   // tabBar
-  'setTabBarBadge': 'index,text',
-  'removeTabBarBadge': 'idnex',
-  'showTabBarRedDot': 'index',
-  'hideTabBarRedDot': 'index',
-  'showTabBar': 'animation',
-  'hideTabBar': 'animation',
+  setTabBarBadge: 'index,text',
+  removeTabBarBadge: 'idnex',
+  showTabBarRedDot: 'index',
+  hideTabBarRedDot: 'index',
+  showTabBar: 'animation',
+  hideTabBar: 'animation',
 
   // topBar
-  'setTopBarText': 'text',
+  setTopBarText: 'text',
 
   // navigator
-  'navigateTo': 'url',
-  'redirectTo': 'url',
-  'navigateBack': 'delta',
-  'reLaunch': 'url',
+  navigateTo: 'url',
+  redirectTo: 'url',
+  navigateBack: 'delta',
+  reLaunch: 'url',
 
   // pageScroll
-  'pageScrollTo': 'scrollTop,duration'
+  pageScrollTo: 'scrollTop,duration'
 };
 
 var makeObj = function (arr) {
   var obj = {};
-  arr.forEach(function (v) { return obj[v] = 1; });
+  arr.forEach(function (v) { return (obj[v] = 1); });
   return obj;
 };
 
@@ -169,7 +168,7 @@ var makeObj = function (arr) {
  */
 var index = {
   version: "2.0.0",
-  install: function install (wepy, removeFromPromisify) {
+  install: function install(wepy, removeFromPromisify) {
     var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
     var noPromiseMap = {};
@@ -183,34 +182,38 @@ var index = {
 
     Object.keys(_wx).forEach(function (key) {
       if (!noPromiseMap[key] && key.substr(0, 2) !== 'on' && key.substr(-4) !== 'Sync') {
-        _wx[key] = promisify(function () {
-          var args = [], len = arguments.length;
-          while ( len-- ) args[ len ] = arguments[ len ];
+        _wx[key] = promisify(
+          function() {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
 
-          var fixArgs = args[0];
-          var failFn = args.pop();
-          var successFn = args.pop();
-          if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
-            fixArgs = {};
-            var ps = simplifyArgs[key];
-            if (args.length) {
-              ps.split(',').forEach(function (p, i) {
-                if (i in args) {
-                  fixArgs[p] = args[i];
-                }
-              });
+            var fixArgs = args[0];
+            var failFn = args.pop();
+            var successFn = args.pop();
+            if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
+              fixArgs = {};
+              var ps = simplifyArgs[key];
+              if (args.length) {
+                ps.split(',').forEach(function (p, i) {
+                  if (i in args) {
+                    fixArgs[p] = args[i];
+                  }
+                });
+              }
             }
-          }
-          fixArgs.success = successFn;
-          fixArgs.fail = failFn;
+            fixArgs.success = successFn;
+            fixArgs.fail = failFn;
 
-          return wx[key].call(wx, fixArgs);
-        }, _wx, 'weapp-fix');
+            return wx[key].call(wx, fixArgs);
+          },
+          _wx,
+          'weapp-fix'
+        );
       }
     });
 
     wepy.promisify = promisify;
   }
-}
+};
 
 module.exports = index;

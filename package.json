@@ -1,6 +1,6 @@
 {
   "name": "wepy",
-  "version": "1.1.8",
+  "version": "2.0.0-alpha.22",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
@@ -17,8 +17,9 @@
     "test": "npm run lint && ./scripts/test.sh",
     "clean": "./scripts/clean.sh",
     "publish": "./scripts/npm_publish/index.js publish",
-    "pub": "./node_modules/.bin/verpub publish",
-    "pub:dry": "./node_modules/.bin/verpub publish --dry-run",
+    "view": "./node_modules/.bin/verpub view -l",
+    "release": "./node_modules/.bin/verpub publish",
+    "release:dry": "./node_modules/.bin/verpub publish --dry-run",
     "commit": "git cz"
   },
   "repository": {
@@ -132,5 +133,7 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "_id": "wepy@2.0.0-alpha.22",
+  "_commitid": "64ac431"
 }
