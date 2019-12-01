@@ -6,7 +6,8 @@
     "wepy": "bin/wepy.js"
   },
   "scripts": {
-    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
+    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha",
+    "cover": "istanbul cover _mocha -- -t 50000 -R spec test/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
     "babel": "^6.23.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-1": "^6.16.0",
-    "chai": "^4.1.2"
+    "chai": "^4.1.2",
+    "istanbul": "^0.4.5"
   },
   "dependencies": {
     "@babel/code-frame": "^7.0.0",
