@@ -24,8 +24,7 @@
     "babel": "^6.23.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-stage-1": "^6.16.0",
-    "chai": "^4.1.2",
-    "tty-table": "^2.8.0"
+    "chai": "^4.1.2"
   },
   "dependencies": {
     "@babel/code-frame": "^7.0.0",
@@ -69,7 +68,8 @@
     "validate-npm-package-name": "^3.0.0",
     "vue-template-compiler": "^2.5.16",
     "vue-template-es2015-compiler": "^1.6.0",
-    "webpack-sources": "^1.1.0"
+    "webpack-sources": "^1.1.0",
+    "tty-table": "^2.8.0"
   },
   "engines": {
     "node": ">=6"
