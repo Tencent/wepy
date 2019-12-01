@@ -1,6 +1,6 @@
 {
   "name": "wepy",
-  "version": "1.1.8",
+  "version": "2.0.0-alpha.22",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
@@ -133,5 +133,7 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "_id": "wepy@2.0.0-alpha.22",
+  "_commitid": "64ac431"
 }
