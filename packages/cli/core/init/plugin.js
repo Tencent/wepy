@@ -22,6 +22,10 @@ function checkPlugins(ins, plugins) {
 exports = module.exports = function(ins) {
   // system plugins
   [
+    './../plugins/make/index',
+    './../plugins/make/script',
+
+    './../plugins/scriptDepFix',
     './../plugins/scriptDepFix',
     './../plugins/scriptInjection',
     './../plugins/build/app',

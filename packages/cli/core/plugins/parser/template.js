@@ -1,9 +1,16 @@
 const xmllint = require('../../util/xmllint');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-template', function(node, ctx) {
-    if (ctx.useCache && ctx.sfc.template.parsed) {
-      return Promise.resolve(true);
+  this.register('wepy-parser-template', function(chain) {
+    const bead = chain.bead;
+
+    if (bead.parsed) {
+      return Promise.resolve(chain);
+    }
+
+    debugger;
+
+    if (chain.weapp.self) {
     }
 
     // If it's weapp, do not compile it.

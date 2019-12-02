@@ -30,6 +30,9 @@ exports = module.exports = class Chain extends Hook {
 
     // root Chain
     this.root = null;
+
+    // next Chain
+    this.series = [];
   }
 
   // Update previous chain
@@ -39,5 +42,15 @@ exports = module.exports = class Chain extends Hook {
       this[item].belong = pChain[item].self || pChain[item].belong;
     });
     this.root = pChain.root;
+  }
+
+  setSeries(sChains) {
+    this.series = sChains;
+  }
+
+  createChain(bead) {
+    const newChain = new Chain(bead);
+    newChain.setPrevious(this);
+    return newChain;
   }
 };

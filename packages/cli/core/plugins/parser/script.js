@@ -33,9 +33,9 @@ exports = module.exports = function() {
 
       let depBead = this.beads[file];
       // No need to check cache here, because wepy-parser-file will check it.
-      if (depBead) {
+      if (!depBead) {
         // If no bead exist, then create empty bead, wepy-parser-file will fill it.
-        depBead = this.createBead(file, file, '', ScriptBead);
+        depBead = this.producer.make(ScriptBead, file);
       }
       const newChain = new Chain(depBead);
       newChain.setPrevious(chain);
@@ -44,7 +44,7 @@ exports = module.exports = function() {
       if (rst.meta.descriptionFileRoot !== this.context) {
         newChain.npm.self = true;
       }
-      return this.hookUnique('wepy-parser-script', newChain);
+      return this.hookUnique('make', newChain, 'script');
       /*
         if (fileHash === this.compiled[file].hash) {
           // File is not changed, do not compile again
@@ -88,22 +88,25 @@ exports = module.exports = function() {
     const bead = chain.bead;
     let assets = this.assets;
 
-    // TODO: Check file stat instead of read whole file.
-    let fileContent = this.cache.get(bead.id);
-
-    bead.reload(fileContent);
-    if (bead.compiled) {
+    if (bead.parsed) {
       return Promise.resolve(chain);
     }
 
     let source = new ReplaceSource(new RawSource(bead.compiled.code));
     let astData = toAst(bead.compiled.code);
 
-    let walker = new Walker(astData, chain);
-    walker.run();
+    bead.parsed = {
+      source,
+      ast: astData,
+      dependences: [],
+      replaces: [],
+      walker: new Walker(astData, chain)
+    };
+    bead.parsed.walker.run();
 
-    let depTasks = walker.deps.map(dep => this.hookUnique('wepy-parser-dep', chain, dep));
+    let depTasks = bead.parsed.dependences.map(dep => this.hookUnique('wepy-parser-dep', chain, dep));
     return Promise.all(depTasks).then(chains => {
+      chain.setSeries(chains);
       return chain;
       let obj = {
         file: ctx.file,

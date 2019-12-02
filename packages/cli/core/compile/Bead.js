@@ -19,6 +19,8 @@ exports = module.exports = class Bead {
     this.compiled = null;
     // Parsed result
     this.parsed = null;
+
+    this.series = [];
   }
 
   load() {}

@@ -41,10 +41,12 @@ const genRel = rel => {
 };
 
 exports = module.exports = function() {
-  this.register('script-injection', function scriptInjection(parsed, ref) {
+  this.register('script-injection', function scriptInjection(chain, ref) {
+    const bead = chain.bead;
+    const parsed = bead.parsed;
+    const source = parsed.source;
     let relStr = genRel(ref);
-    const { source } = parsed;
-    let entry = parsed.parser.entry;
+    let entry = parsed.walker.entry;
     if (!entry) {
       this.hookUnique('error-handler', {
         type: 'warn',

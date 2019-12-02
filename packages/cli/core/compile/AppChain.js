@@ -1,9 +1,7 @@
-const Chain = require('./Chain');
+const WeappChain = require('./WeappChain');
 
-exports = module.exports = class AppChain extends Chain {
+exports = module.exports = class AppChain extends WeappChain {
   constructor(bead) {
     super(bead);
-    this.root = this;
-    this.previous = null;
   }
 };

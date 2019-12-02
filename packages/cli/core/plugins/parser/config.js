@@ -7,6 +7,7 @@ let appUsingComponents = null;
 
 exports = module.exports = function() {
   this.register('wepy-parser-config', function(chain) {
+    debugger;
     const bead = chain.bead;
     const isApp = chain.previous instanceof AppChain;
     const isPage = chain.previous instanceof PageChain;
@@ -35,7 +36,7 @@ exports = module.exports = function() {
 
     if (!appUsingComponents && componentKeys.length === 0) {
       bead.parsed = {
-        output: config
+        source: config
       };
       return Promise.resolve(true);
     }
@@ -122,7 +123,7 @@ exports = module.exports = function() {
       }
 
       bead.parsed = {
-        output: config,
+        source: config,
         components: parseComponents
       };
       return chain;

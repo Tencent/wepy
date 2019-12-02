@@ -11,7 +11,8 @@ const DEFAULT_WEAPP_RULES = require('./../../util/const').DEFAULT_WEAPP_RULES;
 const trailingSlash = /[/\\]$/;
 
 exports = module.exports = function() {
-  this.register('wepy-loader-wpy', function(bead) {
+  this.register('wepy-loader-wpy', function(chain) {
+    const bead = chain.bead;
     let sfcObj = sfcCompiler.parseComponent(bead.content, { pad: 'sapce' });
     sfcObj = this.hookSeq('sfc-custom-block', sfcObj);
 
@@ -23,28 +24,35 @@ exports = module.exports = function() {
         }
       } else {
         if (!sfcObj[key]) {
-          sfcObj[key] = { content: DEFAULT_WEAPP_RULES.script.content };
+          sfcObj[key] = { content: DEFAULT_WEAPP_RULES[key].content };
         }
       }
     }
 
     // Create sfc bead
-    bead.sfc.config = this.createBead(bead.id + '$config', bead.path, sfcObj.config.content, ConfigBead);
-    bead.sfc.script = this.createBead(bead.id + '$script', bead.path, sfcObj.script.content, ScriptBead);
+    chain.sfc.config = chain.createChain(
+      this.producer.make(ConfigBead, bead.path, bead.id + '$config', sfcObj.config.content)
+    );
+
+    chain.sfc.script = chain.createChain(
+      this.producer.make(ScriptBead, bead.path, bead.id + '$script', sfcObj.script.content)
+    );
     // App do not need template
     if (!bead.isApp()) {
-      bead.sfc.template = this.createBead(bead.id + '$template', bead.path, sfcObj.template.content, TemplateBead);
+      chain.sfc.template = chain.createChain(
+        this.producer.make(TemplateBead, bead.path, bead.id + '$template', sfcObj.template.content)
+      );
     }
-    bead.sfc.styles = sfcObj.styles.map((obj, i) => {
-      return this.createBead(bead.id + '$style$' + i, bead.path, obj.content, StyleBead);
+    chain.sfc.styles = sfcObj.styles.map((obj, i) => {
+      return chain.createChain(this.producer.make(StyleBead, bead.path, bead.id + '$style$' + i, obj.content));
     });
 
-    return this.hookAsyncSeq('parse-sfc-sfc', bead, sfcObj).then(() => bead);
+    return this.hookAsyncSeq('parse-sfc-sfc', chain, sfcObj).then(() => chain);
   });
 
-  this.register('parse-sfc-src', function(sfcBead, sfcObj) {
+  this.register('parse-sfc-src', function(sfcChain, sfcObj) {
     let tasks = [];
-    let dir = path.parse(sfcBead.path).dir;
+    let dir = path.parse(sfcChain.path).dir;
     dir = dir.replace(trailingSlash, '');
 
     for (let type in sfcObj) {
@@ -56,7 +64,7 @@ exports = module.exports = function() {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
           tasks.push(
             this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
-              const bead = sfcBead.sfc[type];
+              const bead = sfcChain.sfc[type];
               bead.reload(fs.readFileSync(rst.path, 'utf-8'));
               // Update reference path. error handler will show the reference path
               // e.g. a.wpy <script src=b.js />, error handler shows b.js

@@ -1,29 +1,18 @@
 const path = require('path');
 
 exports = module.exports = function() {
-  this.register('build-app', function buildApp(app) {
+  this.register('build-app', function buildApp(chain) {
     this.logger.info('app', 'building App');
 
-    let { script, styles, config } = app.sfc;
+    let { script, styles, config } = chain.sfc;
 
     let targetFile = path.join(this.context, this.options.target, 'app');
 
-    config.outputCode = JSON.stringify(config.parsed.output, null, 4);
+    this.hook('script-dep-fix', script);
+    this.hook('script-injection', script, this.options.appConfig);
 
-    this.hook('script-dep-fix', script.parsed);
-    this.hook('script-injection', script.parsed, this.options.appConfig);
-    script.outputCode = script.parsed.source.source();
+    chain.bead.outputFile = targetFile;
 
-    let styleCode = '';
-
-    styles.forEach(v => {
-      styleCode += v.parsed.code + '\n';
-    });
-
-    styles.outputCode = styleCode;
-
-    app.outputFile = targetFile;
-
-    return app;
+    return chain;
   });
 };

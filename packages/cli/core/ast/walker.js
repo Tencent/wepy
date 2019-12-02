@@ -2,8 +2,6 @@ class AstWalker {
   constructor(ast, chain) {
     this.ast = ast;
     this.state = {};
-    this.deps = [];
-    this.replacements = [];
     this.chain = chain;
   }
 
@@ -233,7 +231,7 @@ class AstWalker {
       module: source,
       loc: statement.source.loc
     };
-    this.deps.push(dep);
+    this.chain.bead.parsed.dependences.push(dep);
     return;
     /*
     // this.applyPluginsBailResult("import", statement, source);
@@ -1194,7 +1192,7 @@ class AstWalker {
         this.state.module,
         expr.loc
       );*/
-      this.deps.push(dep);
+      this.chain.bead.parsed.dependences.push(dep);
       this.state.current = dep;
     }
 

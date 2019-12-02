@@ -1,7 +1,8 @@
-import Chain from './Chain';
-export default class WepyChain extends Chain {
-  constructor() {
-    super();
-    this.wepy.self = true;
+const WeappChain = require('./WeappChain');
+
+exports = module.exports = class WepyChain extends WeappChain {
+  constructor(bead) {
+    super(bead);
+    this.sfc = {};
   }
-}
+};

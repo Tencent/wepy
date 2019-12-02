@@ -11,41 +11,28 @@ const fs = require('fs');
 const path = require('path');
 const loaderUtils = require('loader-utils');
 const AppChain = require('../../compile/AppChain');
-const Chain = require('../../compile/Chain');
 
 exports = module.exports = function() {
   this.register('wepy-parser-wpy', function(chain) {
-    const bead = chain.bead;
-
     // config -> wxs -> template -> script -> styles
-    return this.hookUnique('wepy-loader-wpy', bead)
-      .then(bead => {
-        const newChain = new Chain(bead.sfc.config);
-        newChain.setPrevious(chain);
-        return this.compileAndParse('config', newChain);
+    return this.hookUnique('wepy-loader-wpy', chain)
+      .then(chain => {
+        return this.compileAndParse('config', chain.sfc.config);
       })
       .then(() => {
         // TODO: ignore wxs
         if (chain instanceof AppChain) {
           return chain;
         }
-        const newChain = new Chain(bead.sfc.template);
-        newChain.setPrevious(chain);
-        return this.compileAndParse('template', newChain);
+        return this.compileAndParse('template', chain.sfc.template);
       })
       .then(() => {
-        const newChain = new Chain(bead.sfc.script);
-        newChain.setPrevious(chain);
-        return this.compileAndParse('script', newChain);
+        return this.compileAndParse('script', chain.sfc.script);
       })
       .then(() => {
-        return Promise.all(
-          chain.bead.sfc.styles.map(styleBead => {
-            const newChain = new Chain(styleBead);
-            newChain.setPrevious(chain);
-            return this.compileAndParse('style', newChain);
-          })
-        ).then(() => chain);
+        return Promise.all(chain.sfc.styles.map(styleChain => this.compileAndParse('style', styleChain))).then(
+          () => chain
+        );
       });
 
     if (this.compiled[file] && fileHash === this.compiled[file].hash) {

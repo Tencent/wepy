@@ -1,5 +1,9 @@
 const path = require('path');
 
+function replaceDep(source, dep, replacer) {
+  source.replace(dep.expr.start, dep.expr.end - 1, replacer);
+}
+
 exports = module.exports = function() {
   /*
    * S1: __wepy_require(n);
@@ -7,7 +11,29 @@ exports = module.exports = function() {
    * S3: require('/vendor.js')(n);
    * S4: import 'xxxx' from 'xxx';j
    */
-  this.register('script-dep-fix', function scriptDepFix(parsed, isNPM) {
+  this.register('script-dep-fix', function scriptDepFix(chain) {
+    const bead = chain.bead;
+    const parsed = bead.parsed;
+
+    chain.series.forEach((subChain, i) => {
+      let replaceMent = '';
+      const subBead = subChain.bead;
+      if (!chain.npm.belong && !chain.npm.self) {
+        if (!subChain.npm.belong && !subChain.npm.self) {
+          // use relative path
+          const relativePath = path.relative(path.dirname(bead.path), subBead.path).replace(/\\/g, '/');
+          replaceMent = `require('${relativePath}')`;
+        } else {
+          replaceMent = `__wepy_require(${subBead.no})`;
+        }
+      } else {
+      }
+
+      replaceDep(parsed.source, parsed.dependences[i], replaceMent);
+    });
+    return chain;
+
+    debugger;
     if (!parsed.fixedDeps) {
       parsed.fixedDeps = [];
     }

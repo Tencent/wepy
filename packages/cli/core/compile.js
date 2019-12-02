@@ -33,6 +33,7 @@ const initPlugin = require('./init/plugin');
 const PageChain = require('./compile/PageChain');
 const AppChain = require('./compile/AppChain');
 
+const Producer = require('./Producer');
 const WepyBead = require('./compile/WepyBead');
 const ScriptBead = require('./compile/ScriptBead');
 
@@ -65,6 +66,7 @@ class Compile extends Hook {
     this.logger = logger;
 
     this.cache = new CacheFile();
+    this.producer = new Producer();
 
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
@@ -153,42 +155,6 @@ class Compile extends Hook {
       this.fileDep = new fileDep();
     });
 
-    ['output-app', 'output-pages', 'output-components'].forEach(k => {
-      this.register(k, data => {
-        if (!isArr(data)) data = [data];
-
-        data.forEach(v => this.output('wpy', v));
-      });
-    });
-
-    this.register('output-vendor', data => {
-      this.output('vendor', data);
-    });
-
-    this.register('output-assets', list => {
-      list.forEach(file => {
-        this.output('assets', file);
-      });
-    });
-
-    this.register('output-static', () => {
-      let paths = this.options.static;
-      let copy = p => {
-        let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
-        const target = path.join(this.context, p);
-        if (fs.existsSync(target)) {
-          if (fs.lstatSync(target).isDirectory()) {
-            const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
-            return fs.copy(target, dest);
-          } else {
-            this.logger.warn('output-static', `Path is not a directory: ${target}`);
-          }
-        }
-        return Promise.resolve(true);
-      };
-      if (typeof paths === 'string') return copy(paths);
-      else if (isArr(paths)) return Promise.all(paths.map(p => copy(p)));
-    });
 
     initParser(this);
     initPlugin(this);
@@ -198,27 +164,10 @@ class Compile extends Hook {
     return initCompiler(this, this.options.compilers);
   }
 
-  createBead(id, filepath, content, BeadType) {
-    let bead = null;
-    if (this.beads[id]) {
-      bead = this.beads[id];
-      bead.reload(content);
-    } else {
-      bead = new BeadType(id, filepath, content);
-      this.cache.set(id, content);
-      this.beads[id] = bead;
-    }
-    return bead;
-  }
-
-  createBeadFromFile(file, BeadType) {
-    return this.createBead(file, file, fs.readFileSync(file, 'utf-8'), BeadType);
-  }
-
   createAppChain(file) {
     const pathObj = path.parse(file);
     const isWepy = pathObj.ext === this.options.wpyExt;
-    let bead = this.createBeadFromFile(file, isWepy ? WepyBead : ScriptBead);
+    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
     const chain = new AppChain(bead);
     if (isWepy) {
       bead.type = 'app';
@@ -229,7 +178,7 @@ class Compile extends Hook {
   createPageChain(file) {
     const pathObj = path.parse(file);
     const isWepy = pathObj.ext === this.options.wpyExt;
-    let bead = this.createBeadFromFile(file, isWepy ? WepyBead : ScriptBead);
+    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
     const chain = new PageChain(bead);
     if (isWepy) {
       bead.type = 'page';
@@ -251,11 +200,10 @@ class Compile extends Hook {
     this.hookUnique('wepy-parser-wpy', chain)
       //{ path: this.options.entry, type: 'app' })
       .then(chain => {
-        const bead = chain.bead;
-        let sfc = bead.sfc;
+        const { bead, sfc } = chain;
         let config = sfc.config;
 
-        let appConfig = config.parsed.output;
+        let appConfig = config.bead.parsed.source;
         if (!appConfig.pages || appConfig.pages.length === 0) {
           appConfig.pages = [];
           this.hookUnique('error-handler', {
@@ -307,8 +255,8 @@ class Compile extends Hook {
           }
         }
 
-        this.hookSeq('build-app', bead);
-        this.hookUnique('output-app', bead);
+        this.hookSeq('build-app', chain);
+        this.hookUnique('output-app', chain);
         return Promise.all(tasks);
       })
       .then(this.buildComps.bind(this))
@@ -615,60 +563,6 @@ class Compile extends Hook {
     return targetFile;
   }
 
-  outputFile(filename, code, encoding) {
-    this.hookAsyncSeq('output-file', { filename, code, encoding })
-      .then(({ filename, code, encoding }) => {
-        if (!code) {
-          logger.silly('output', 'empty content: ' + filename);
-        } else {
-          logger.silly('output', 'write file: ' + filename);
-
-          fs.outputFile(filename, code, encoding || 'utf-8', err => {
-            if (err) {
-              // eslint-disable-next-line no-console
-              console.log(err);
-            }
-          });
-        }
-      })
-      .catch(e => {
-        if (e.handler) {
-          this.hookUnique('error-handler', e.handler, e.error, e.pos);
-        } else {
-          // TODO
-          throw e;
-        }
-      });
-  }
-
-  output(type, item) {
-    let filename, code, encoding;
-
-    if (type === 'wpy') {
-      const sfc = item.sfc;
-      const outputMap = {
-        script: 'js',
-        styles: 'wxss',
-        config: 'json',
-        template: 'wxml'
-      };
-
-      Object.keys(outputMap).forEach(k => {
-        if (sfc[k] && sfc[k].outputCode) {
-          filename = item.outputFile + '.' + outputMap[k];
-          code = sfc[k].outputCode;
-
-          this.outputFile(filename, code, encoding);
-        }
-      });
-    } else {
-      filename = item.targetFile;
-      code = item.outputCode;
-      encoding = item.encoding;
-
-      this.outputFile(filename, code, encoding);
-    }
-  }
 }
 
 exports = module.exports = program => {

@@ -4,4 +4,8 @@ exports = module.exports = class ConfigBead extends Bead {
     super(id, filepath, content);
     this.lang = 'json';
   }
+
+  output() {
+    return JSON.stringify(this.source, null, 2);
+  }
 };
