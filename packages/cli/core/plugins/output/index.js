@@ -1,8 +1,8 @@
 const path = require('path');
 const fs = require('fs-extra');
 const { promisify } = require('util');
-const { isArr } = require('./util/tools');
-const logger = require('./util/logger');
+const { isArr } = require('../../util/tools');
+const logger = require('../../util/logger');
 
 function output(chain) {
   let info = getOutputInfo(chain);
@@ -10,25 +10,29 @@ function output(chain) {
     info = [info];
   }
   return Promise.all(
-    info.map(item => {
-      return this.hookAsyncSeq('output-file', { filename: item.filename, code: item.code, encoding: item.encoding })
-        .then(({ filename, code, encoding }) => {
-          if (!code) {
-            logger.silly('output', 'empty content: ' + filename);
-          } else {
-            logger.silly('output', 'write file: ' + filename);
-            return promisify(fs.outputFile)(filename, code, encoding || 'utf-8');
-          }
-        })
-        .catch(e => {
-          if (e.handler) {
-            this.hookUnique('error-handler', e.handler, e.error, e.pos);
-          } else {
-            // TODO
-            throw e;
-          }
-        });
-    })
+    info
+      .filter(item => !!item)
+      .map(item => {
+        return this.hookAsyncSeq('output-file', { filename: item.filename, code: item.code, encoding: item.encoding })
+          .then(({ filename, code, encoding }) => {
+            if (!filename) {
+            }
+            if (!code) {
+              logger.silly('output', 'empty content: ' + filename);
+            } else {
+              logger.silly('output', 'write file: ' + filename);
+              return promisify(fs.outputFile)(filename, code, encoding || 'utf-8');
+            }
+          })
+          .catch(e => {
+            if (e.handler) {
+              this.hookUnique('error-handler', e.handler, e.error, e.pos);
+            } else {
+              // TODO
+              throw e;
+            }
+          });
+      })
   );
 }
 
@@ -50,15 +54,25 @@ function getOutputInfo(chain) {
       if (isArr(sfc[k])) {
         code = sfc[k].map(c => c.bead.output()).join('\n');
       } else {
-        code = sfc[k].bead.output();
+        // App do not have template
+        if (!sfc[k]) {
+          return false;
+        } else {
+          code = sfc[k].bead.output();
+        }
       }
       return { filename, code, encoding };
     });
   } else {
-    filename = chain.bead.outputFile;
-    code = chain.bead.output();
-    encoding = chain.encoding;
-    return { filename, code, encoding };
+    // It's vendor
+    if (!chain.bead && chain.outputCode) {
+      return { filename: chain.targetFile, code: chain.outputCode, encoding: chain.encoding };
+    } else {
+      filename = chain.bead.outputFile;
+      code = chain.bead.output();
+      encoding = chain.encoding;
+      return { filename, code, encoding };
+    }
   }
 }
 

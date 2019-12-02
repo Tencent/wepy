@@ -22,6 +22,7 @@ function checkPlugins(ins, plugins) {
 exports = module.exports = function(ins) {
   // system plugins
   [
+    './../plugins/output/index',
     './../plugins/make/index',
     './../plugins/make/script',
 

@@ -36,7 +36,7 @@ const parseModifiers = (name = '') => {
 };
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr', function parseAstAttr(item, scope, rel, ctx) {
+  this.register('template-parse-ast-attr', function parseAstAttr(chain, item, scope) {
     let attrs = item.attribs;
     let parsedAttr = item.parsedAttr || {};
     let parsed = null;
@@ -61,13 +61,13 @@ exports = module.exports = function() {
         hook = 'template-parse-ast-pre-attr-[other]';
       }
 
-      ({ item, name, expr, modifiers, scope, ctx } = this.hookUniqueReturnArg(hook, {
+      ({ chain, item, name, expr, modifiers, scope } = this.hookUniqueReturnArg(hook, {
+        chain,
         item,
         name,
         expr,
         modifiers,
-        scope,
-        ctx
+        scope
       }));
 
       cleanAttrs.push({
@@ -85,33 +85,31 @@ exports = module.exports = function() {
         hook = 'template-parse-ast-attr-[other]';
       }
 
-      parsed = this.hookUnique(hook, { item, name, expr, modifiers, scope, ctx, rel });
-      rel = parsed.rel || rel;
+      let payload = this.hookUnique(hook, { chain, item, name, expr, modifiers, scope });
 
-      let applyHook = parsed.hook || `template-parse-ast-attr-${name}-apply`;
+      let applyHook = payload.hook || `template-parse-ast-attr-${name}-apply`;
       if (!this.hasHook(applyHook)) {
         applyHook = `template-parse-ast-attr-[other]-apply`;
       }
 
-      ({ parsed, rel } = this.hookUniqueReturnArg(applyHook, { parsed, rel }));
-
-      if (parsed && parsed.attrs) {
-        parsedAttr = Object.assign(parsedAttr, parsed.attrs);
+      payload = this.hookUniqueReturnArg(applyHook, { chain, item, scope, payload });
+      if (payload && payload.attrs) {
+        parsedAttr = Object.assign(parsedAttr, payload.attrs);
       }
     });
 
     item.parsedAttr = parsedAttr;
 
-    return [item, scope, rel, ctx];
+    return [chain, item, scope];
   });
 
-  this.register('template-parse-ast-tag', function parseAstTag(item, rel) {
+  this.register('template-parse-ast-tag', function parseAstTag(chain, item, scope) {
     let htmlTags = this.tags.htmlTags;
     let wxmlTags = this.tags.wxmlTags;
     let html2wxmlMap = this.tags.html2wxmlMap;
     let logger = this.logger;
 
-    let components = rel.components;
+    let components = chain.bead.parsed.rel.components;
     if (components[item.name]) {
       // It's a user defined component
       logger.silly('tag', `Found user defined component "${item.name}"`);
@@ -131,24 +129,27 @@ exports = module.exports = function() {
       // Tag is a unknow tag
       logger.silly('tag', `Assume "${item.name}" is a user defined component`);
     }
-
-    return [item, rel];
+    return [chain, item, scope];
   });
 
-  this.register('template-parse-ast', function parseAST(ast, scope, rel, ctx) {
+  this.register('template-parse-ast', function parseAST(chain, ast, scope) {
+    const bead = chain.bead;
+    const parsed = bead.parsed;
+    const { rel } = parsed;
+
     let currentScope;
     ast.forEach(item => {
       if (item.type === 'tag') {
-        [item, rel] = this.hookSeq('template-parse-ast-tag', item, rel);
+        [chain, item, scope] = this.hookSeq('template-parse-ast-tag', chain, item, scope);
       }
       if (item.attribs) {
-        [item, currentScope, rel] = this.hookSeq('template-parse-ast-attr', item, scope, rel, ctx);
+        [chain, item, currentScope] = this.hookSeq('template-parse-ast-attr', chain, item, scope);
       }
       if (item.children && item.children.length) {
-        [item.childen, currentScope, rel] = this.hookSeq('template-parse-ast', item.children, currentScope, rel, ctx);
+        [chain, item.childen, currentScope] = this.hookSeq('template-parse-ast', chain, item.children, currentScope);
       }
     });
-    return [ast, scope, rel, ctx];
+    return [chain, scope];
   });
 
   this.register('template-parse-ast-to-str', function astToStr(ast) {
@@ -208,21 +209,23 @@ exports = module.exports = function() {
     return str;
   });
 
-  this.register('template-parse', function parse(html, components, ctx) {
-    return toAST(html).then(ast => {
-      let rel = { handlers: {}, components: components, on: {} };
+  this.register('template-parse', function parse(chain) {
+    const bead = chain.bead;
+    const parsed = bead.parsed;
 
+    return toAST(bead.content).then(ast => {
+      let rel = parsed.rel;
       // eslint-disable-next-line
       let scope = null;
-      [ast, scope, rel] = this.hookSeq('template-parse-ast', ast, null, rel, ctx);
+      parsed.ast = ast;
+
+      this.hookSeq('template-parse-ast', chain, ast, scope);
 
       let code = this.hookUnique('template-parse-ast-to-str', ast);
-
-      return {
-        code: code,
-        rel: rel,
-        ast: ast
-      };
+      parsed.code = code;
+      parsed.ast = ast;
+      parsed.rel = rel;
+      return chain;
     });
   });
 };

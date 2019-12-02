@@ -12,7 +12,7 @@ const createPlugin = require('./createPlugin');
 
 exports = module.exports = function(options) {
   return function() {
-    this.register('wepy-compiler-less', function(node, ctx) {
+    this.register('wepy-compiler-less', function(chain) {
       let config = Object.assign(
         {
           relativeUrls: true,
@@ -20,17 +20,18 @@ exports = module.exports = function(options) {
         },
         options
       );
-      let file = typeof ctx === 'string' ? ctx : ctx.file;
+      const bead = chain.bead;
+      const file = bead.path;
       config.filename = file;
       config.plugins.push(createPlugin(this));
 
-      return less.render(node.content || '', config).then(rst => {
-        node.compiled = {
+      return less.render(bead.content || '', config).then(rst => {
+        bead.compiled = {
           code: rst.css,
-          dep: rst.imports
+          dependences: rst.imports
         };
-        this.fileDep.addDeps(file, node.compiled.dep);
-        return node;
+        this.fileDep.addDeps(file, bead.compiled.dependences);
+        return chain;
       });
     });
 

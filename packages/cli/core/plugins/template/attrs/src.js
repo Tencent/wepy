@@ -21,17 +21,17 @@ exports = module.exports = function() {
     return parsed;
   });
 
-  this.register('template-parse-ast-attr-src', function parseAssetUrl({ expr, ctx }) {
+  this.register('template-parse-ast-attr-src', function parseAssetUrl({ chain, expr }) {
     let parsed = this.hookUnique('url-to-module', expr);
 
     if (parsed.isModule) {
-      const context = path.dirname(ctx.file);
+      const context = path.dirname(chain.bead.path);
       const assets = this.assets;
       const type = 'url';
       const encoding = 'base64';
 
       parsed.file = this.resolvers.normal.resolveSync({}, context, parsed.url, {});
-      parsed.url = path.relative(path.dirname(ctx.file), parsed.file);
+      parsed.url = path.relative(path.dirname(chain.bead.path), parsed.file);
 
       if (path.sep === '\\') {
         // It's Win, change path to posix path
@@ -43,7 +43,7 @@ exports = module.exports = function() {
 
       // add assets dependencies
       let obj = {
-        file: ctx.file,
+        file: chain.bead.path,
         parser: {},
         code: code,
         encoding,

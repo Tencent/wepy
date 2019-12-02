@@ -8,21 +8,16 @@ exports = module.exports = function() {
       return Promise.resolve(chain);
     }
 
-    debugger;
-
-    if (chain.weapp.self) {
-    }
-
     // If it's weapp, do not compile it.
-    if (ctx.type === 'weapp') {
-      ctx.sfc.template.parsed = {
-        code: node.content,
+    if (chain.self().weapp) {
+      chain.sfc.template.parsed = {
+        code: bead.content,
         rel: {}
       };
-      return Promise.resolve(true);
+      return chain;
     }
 
-    let code = node.content;
+    let code = bead.content;
     let msg = xmllint.verify(code);
     msg.forEach(item => {
       let type = item.type === 'warning' ? 'warn' : 'error';
@@ -30,7 +25,7 @@ exports = module.exports = function() {
         'error-handler',
         'template',
         {
-          ctx: ctx,
+          chain,
           message: item.message,
           type: type,
           title: 'verify'
@@ -39,13 +34,12 @@ exports = module.exports = function() {
           start: { line: item.line, column: item.col }
         }
       );
-      //errorHandler[type](item.message, ctx.file, code, { start: {line: item.line, column: item.col}});
     });
 
     let components = {};
-    let sfcConfig = ctx.sfc.config;
+    let sfcConfig = chain.previous.sfc.config;
 
-    let usingComponents = sfcConfig && sfcConfig.parsed.output ? sfcConfig.parsed.output.usingComponents : {};
+    let usingComponents = sfcConfig && sfcConfig.bead.parsed.source ? sfcConfig.bead.parsed.source.usingComponents : {};
 
     for (let k in usingComponents) {
       components[k] = {
@@ -53,12 +47,13 @@ exports = module.exports = function() {
       };
     }
 
-    return this.hookUnique('template-parse', node.content, components, ctx).then(rst => {
-      ctx.sfc.template.parsed = {
-        code: rst.code,
-        rel: rst.rel
-      };
-      return Promise.resolve(true);
-    });
+    bead.parsed = {
+      rel: {
+        components,
+        handlers: {},
+        on: {}
+      }
+    };
+    return this.hookUnique('template-parse', chain);
   });
 };

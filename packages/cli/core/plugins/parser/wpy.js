@@ -17,7 +17,7 @@ exports = module.exports = function() {
     // config -> wxs -> template -> script -> styles
     return this.hookUnique('wepy-loader-wpy', chain)
       .then(chain => {
-        return this.compileAndParse('config', chain.sfc.config);
+        return this.hookUnique('make', chain.sfc.config, 'config');
       })
       .then(() => {
         // TODO: ignore wxs
@@ -30,7 +30,7 @@ exports = module.exports = function() {
         return this.compileAndParse('script', chain.sfc.script);
       })
       .then(() => {
-        return Promise.all(chain.sfc.styles.map(styleChain => this.compileAndParse('style', styleChain))).then(
+        return Promise.all(chain.sfc.styles.map(styleChain => this.hookUnique('make', styleChain, 'style'))).then(
           () => chain
         );
       });

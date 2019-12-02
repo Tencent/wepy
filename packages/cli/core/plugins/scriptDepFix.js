@@ -18,8 +18,8 @@ exports = module.exports = function() {
     chain.series.forEach((subChain, i) => {
       let replaceMent = '';
       const subBead = subChain.bead;
-      if (!chain.npm.belong && !chain.npm.self) {
-        if (!subChain.npm.belong && !subChain.npm.self) {
+      if (!chain.belong().npm && !chain.self().npm) {
+        if (!subChain.belong().npm && !subChain.self().npm) {
           // use relative path
           const relativePath = path.relative(path.dirname(bead.path), subBead.path).replace(/\\/g, '/');
           replaceMent = `require('${relativePath}')`;
@@ -27,13 +27,13 @@ exports = module.exports = function() {
           replaceMent = `__wepy_require(${subBead.no})`;
         }
       } else {
+        replaceMent = `__wepy_require(${subBead.no})`;
       }
 
       replaceDep(parsed.source, parsed.dependences[i], replaceMent);
     });
     return chain;
 
-    debugger;
     if (!parsed.fixedDeps) {
       parsed.fixedDeps = [];
     }

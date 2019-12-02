@@ -5,14 +5,10 @@ exports = module.exports = function() {
     this.logger.info('component', 'building components');
 
     comps.forEach(comp => {
-      let { script, styles, config, template, wxs } = comp.sfc;
+      let { script, config, template, wxs } = comp.sfc;
 
-      let styleCode = '';
-      styles.forEach(v => {
-        styleCode += v.parsed.code + '\n';
-      });
-      config.parsed.output.component = true;
-      const { usingComponents, ...other } = config.parsed.output;
+      config.bead.parsed.source.component = true;
+      const { usingComponents, ...other } = config.bead.parsed.source;
       let newUsingComponents = {};
       /**
        * 在windows环境中解析的usingComponent格式为
@@ -27,18 +23,14 @@ exports = module.exports = function() {
       for (let i in usingComponents) {
         newUsingComponents[i] = './' + usingComponents[i].replace(/\\/g, '/');
       }
-      let output = {
+      config.bead.parsed.source = {
         ...other,
         usingComponents: newUsingComponents
       };
-      config.outputCode = JSON.stringify(output, null, 4);
-      this.hook('script-dep-fix', script.parsed);
+      this.hook('script-dep-fix', script);
       if (!script.empty && !(comp.component && comp.type === 'weapp')) {
-        this.hook('script-injection', script.parsed, template.parsed.rel);
+        this.hook('script-injection', script, template.bead.parsed.rel);
       }
-      script.outputCode = script.parsed.source.source();
-      styles.outputCode = styleCode;
-      template.outputCode = template.parsed.code;
 
       if (wxs && wxs.length) {
         let wxsCode = '';
@@ -51,7 +43,7 @@ exports = module.exports = function() {
           '<!----------   wxs end   ----------->\n' +
           template.outputCode;
       }
-      let targetFile = comp.npm ? this.getModuleTarget(comp.file) : this.getTarget(comp.file);
+      let targetFile = comp.self().npm ? this.getModuleTarget(comp.bead.path) : this.getTarget(comp.bead.path);
       let target = path.parse(targetFile);
       comp.outputFile = path.join(target.dir, target.name);
     });

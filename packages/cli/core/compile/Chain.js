@@ -4,6 +4,10 @@ exports = module.exports = class Chain extends Hook {
   constructor(bead) {
     super();
     this.bead = bead;
+    this._metrics = { belong: {}, self: {} };
+    this._allowedMetrics = ['npm', 'weapp', 'wepy'];
+
+    /*
     this.npm = {
       // This chain is belong to a npm package.
       belong: false,
@@ -24,6 +28,7 @@ exports = module.exports = class Chain extends Hook {
       // This is is a native weapp component.
       self: false
     };
+    */
 
     // previous Chain
     this.previous = null;
@@ -35,12 +40,44 @@ exports = module.exports = class Chain extends Hook {
     this.series = [];
   }
 
+  belong(key, v) {
+    // Set belong key
+    if (key) {
+      if (this._allowedMetrics.indexOf(key) === -1) {
+        throw new Error('Metric ' + key + ' is not allowed');
+      }
+      if (v === undefined) v = true;
+      if (!this._metrics.belong[key]) {
+        this._metrics.belong[key] = v;
+      }
+    } else {
+      return this._metrics.belong;
+    }
+  }
+
+  self(key, v) {
+    // Set belong key
+    if (key) {
+      if (this._allowedMetrics.indexOf(key) === -1) {
+        throw new Error('Metric ' + key + ' is not allowed');
+      }
+      if (v === undefined) v = true;
+      if (!this._metrics.self[key]) {
+        this._metrics.self[key] = true;
+      }
+    } else {
+      return this._metrics.self;
+    }
+  }
+
   // Update previous chain
   setPrevious(pChain) {
     this.previous = pChain;
-    ['npm', 'wepy', 'weapp'].forEach(item => {
-      this[item].belong = pChain[item].self || pChain[item].belong;
-    });
+    Object.keys(this.belong())
+      .concat(Object.keys(this.self()))
+      .forEach(item => {
+        this.belong(item, pChain.belong()[item] || pChain.self()[item]);
+      });
     this.root = pChain.root;
   }
 

@@ -1,6 +1,6 @@
-const WeappChain = require('./WeappChain');
+const Chain = require('./Chain');
 
-exports = module.exports = class PageChain extends WeappChain {
+exports = module.exports = class PageChain extends Chain {
   constructor(bead) {
     super(bead);
     this.sfc = {};

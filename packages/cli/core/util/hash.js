@@ -3,9 +3,6 @@ const fs = require('fs');
 
 exports = module.exports = {
   hash(s) {
-    if (s === undefined) {
-      debugger;
-    }
     let md5 = crypto.createHash('md5');
     md5.update(s);
     return md5.digest('hex');

@@ -7,7 +7,6 @@ let appUsingComponents = null;
 
 exports = module.exports = function() {
   this.register('wepy-parser-config', function(chain) {
-    debugger;
     const bead = chain.bead;
     const isApp = chain.previous instanceof AppChain;
     const isPage = chain.previous instanceof PageChain;

@@ -171,7 +171,7 @@ class Compile extends Hook {
     const chain = new AppChain(bead);
     if (isWepy) {
       bead.type = 'app';
-      chain.wepy.self = true;
+      chain.self('wepy');
     }
     return chain;
   }
@@ -182,7 +182,7 @@ class Compile extends Hook {
     const chain = new PageChain(bead);
     if (isWepy) {
       bead.type = 'page';
-      chain.wepy.self = true;
+      chain.self('wepy');
     }
     return chain;
   }
@@ -477,7 +477,7 @@ class Compile extends Hook {
       }
     }
     if (!lang) {
-      throw new Error(`Please define weappRule.${type}.lang for ${ext}`);
+      lang = rule[0].lang;
     }
 
     return lang;

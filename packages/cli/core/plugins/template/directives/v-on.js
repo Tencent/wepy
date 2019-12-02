@@ -91,14 +91,14 @@ const parseHandler = (name = '', value = '', scope) => {
 exports = module.exports = function() {
   let totalEvtCache = {}; // Global event cache
 
-  this.register('template-parse-ast-attr-v-on.capture', function({ item, name, expr, event, scope, ctx }) {
+  this.register('template-parse-ast-attr-v-on.capture', function({ chain, item, name, expr, event, scope }) {
     // bind:tap="xxx" or catch:tap="xxx"
     event.type = event.type.replace(/^bind/, 'bind:').replace(/^catch/, 'catch:');
     event.type = 'capture-' + event.type;
-    return { item, name, expr, event, scope, ctx };
+    return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on.stop', function({ item, name, expr, event, scope, ctx }) {
+  this.register('template-parse-ast-attr-v-on.stop', function({ chain, item, name, expr, event, scope }) {
     if (event.type.startsWith('bind')) {
       // bindtap="xxx"
       event.type = event.type.replace(/^bind/, 'catch');
@@ -106,10 +106,10 @@ exports = module.exports = function() {
       // capture-bindtap="xxx"
       event.type = event.type.replace(/-bind/, '-catch');
     }
-    return { item, name, expr, event, scope, ctx };
+    return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on.wxs', function({ item, name, expr, event, scope, ctx }) {
+  this.register('template-parse-ast-attr-v-on.wxs', function({ chain, item, name, expr, event, scope }) {
     event.expr = `{{ ${event.parsed.callee.name} }}`;
     event.proxy = false;
     event.params = event.parsed.params.map(p => {
@@ -119,10 +119,10 @@ exports = module.exports = function() {
         return `{{ ${p.name} }}`;
       }
     });
-    return { item, name, expr, event, scope, ctx };
+    return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on', function parseAstOn({ item, name, expr, modifiers, scope, ctx }) {
+  this.register('template-parse-ast-attr-v-on', function parseAstOn({ chain, item, name, expr, modifiers, scope }) {
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
@@ -147,13 +147,13 @@ exports = module.exports = function() {
     const eventCallee = parsedEvent.parsed.callee;
     if (eventCallee && eventCallee.name) {
       const calleeChunks = eventCallee.name.split('.');
-      const wxsBlock = ctx.sfc.wxs;
+      const wxsChain = chain.previous.sfc.wxs;
 
       if (
         calleeChunks.length > 1 &&
-        wxsBlock &&
-        Array.isArray(wxsBlock) &&
-        wxsBlock.find(item => item.attrs.module === calleeChunks[0])
+        wxsChain &&
+        Array.isArray(wxsChain) &&
+        wxsChain.find(item => item.bead.attrs.module === calleeChunks[0])
       ) {
         modifiers.wxs = true;
 
@@ -161,7 +161,7 @@ exports = module.exports = function() {
           'error-handler',
           'template',
           {
-            ctx: ctx,
+            chain,
             message: `seems '${calleeChunks[0]}' is a wxs module, please manully add a  .wxs modifier for the event.`,
             type: 'warn',
             title: 'v-on'
@@ -178,7 +178,7 @@ exports = module.exports = function() {
     for (let k in modifiers) {
       let hookName = 'template-parse-ast-attr-v-on.' + k;
       if (this.hasHook(hookName)) {
-        this.hook(hookName, { item, name, expr, event: parsedEvent, scope, ctx });
+        this.hook(hookName, { chain, item, name, expr, event: parsedEvent, scope });
       }
     }
     parsedEvent.params.forEach((p, i) => {
@@ -189,7 +189,7 @@ exports = module.exports = function() {
     });
     parsedEvent.tag = item.name;
     if (parsedEvent.proxy) {
-      let assetsId = this.assets.get(ctx.file);
+      let assetsId = this.assets.get(chain.bead.path);
       let evtCache;
 
       if (!totalEvtCache[assetsId]) {
@@ -205,11 +205,13 @@ exports = module.exports = function() {
       } else {
         parsedEvent.id = item.events[item.events.length - 1].id;
       }
+      /*
       if (!ctx.events) {
         // generate rel
         ctx.events = [];
         ctx.events.push(parsedEvent);
       }
+      */
       evtCache.increaseId++;
       parsedEvent.params = parsedEvent.params.map(p => `{{ ${p} }}`);
     }
@@ -225,11 +227,12 @@ exports = module.exports = function() {
     };
   });
 
-  this.register('template-parse-ast-attr-v-on-apply', function parseBindClass({ parsed, rel }) {
-    let vOn = parsed['v-on'];
+  this.register('template-parse-ast-attr-v-on-apply', function parseBindClass({ chain, payload }) {
+    let rel = chain.bead.parsed.rel;
+    let vOn = payload['v-on'];
 
     if (!vOn.proxy) {
-      return { parsed, rel };
+      return payload;
     }
 
     let isComponent = !!rel.components[vOn.tag];
@@ -248,7 +251,6 @@ exports = module.exports = function() {
     if (!rel.handlers[vOn.id]) rel.handlers[vOn.id] = {};
 
     rel.handlers[vOn.id][vOn.event] = vOn.proxy;
-
-    return { parsed, rel };
+    return payload;
   });
 };

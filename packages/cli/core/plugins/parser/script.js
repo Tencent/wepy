@@ -31,18 +31,13 @@ exports = module.exports = function() {
         return rst.path;
       }
 
-      let depBead = this.beads[file];
-      // No need to check cache here, because wepy-parser-file will check it.
-      if (!depBead) {
-        // If no bead exist, then create empty bead, wepy-parser-file will fill it.
-        depBead = this.producer.make(ScriptBead, file);
-      }
+      let depBead = this.producer.make(ScriptBead, file);
       const newChain = new Chain(depBead);
       newChain.setPrevious(chain);
 
       // npm package file root is not context
       if (rst.meta.descriptionFileRoot !== this.context) {
-        newChain.npm.self = true;
+        newChain.self('npm');
       }
       return this.hookUnique('make', newChain, 'script');
       /*
@@ -106,6 +101,15 @@ exports = module.exports = function() {
 
     let depTasks = bead.parsed.dependences.map(dep => this.hookUnique('wepy-parser-dep', chain, dep));
     return Promise.all(depTasks).then(chains => {
+      chains.forEach(c => {
+        if (chain.belong().npm || chain.self().npm) {
+          this.producer.vendors(c);
+        } else if (c.belong().npm || c.self().npm) {
+          this.producer.vendors(c);
+        } else {
+
+        }
+      });
       chain.setSeries(chains);
       return chain;
       let obj = {

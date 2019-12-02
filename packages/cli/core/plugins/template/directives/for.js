@@ -6,12 +6,12 @@ const Check = require('../util/check');
 
 exports = module.exports = function() {
   this.register('template-parse-ast-pre-attr-v-for', function preParseDirectivesFor({
+    chain,
     item,
     name,
     expr,
     modifiers,
-    scope,
-    ctx
+    scope
   }) {
     let res = {};
     let currentScope = {};
@@ -59,7 +59,7 @@ exports = module.exports = function() {
         'error-handler',
         'template',
         {
-          ctx: ctx,
+          chain,
           message: err,
           type: 'error',
           title: 'v-for'
@@ -85,7 +85,7 @@ exports = module.exports = function() {
       expr,
       modifiers,
       scope: currentScope,
-      ctx
+      chain
     };
   });
 

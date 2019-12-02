@@ -257,10 +257,11 @@ exports = module.exports = function() {
     return rst;
   });
 
-  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply({ parsed, rel }) {
-    let model = parsed.model;
+  this.register('template-parse-ast-attr-v-model-apply', function parseVModelApply({ chain, payload }) {
+    let model = payload.model;
     let expr = model.expr.trim();
-    let attrs = parsed.attrs;
+    let attrs = payload.attrs;
+    let rel = chain.bead.parsed.rel;
 
     if (rel.model) {
       return;
@@ -314,7 +315,6 @@ exports = module.exports = function() {
         rel.models[model.id].handler = generateModelFunction(expr);
       }
     }
-
-    return { parsed, rel };
+    return payload;
   });
 };

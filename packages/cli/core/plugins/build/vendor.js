@@ -45,23 +45,26 @@ exports = module.exports = function() {
   this.register('build-vendor', function buildPages(vendor) {
     this.logger.info('vendor', 'building vendor');
 
-    let vendorList = this.vendors.array();
+    // VendorList is a chain list, do it may have duplicates beads.
+    // So may need a hashmap to store the beads who were writen in vendor
+    let writeBeads = {};
+    let vendorList = this.producer.vendors();
+
     let code = '';
 
-    vendorList.forEach((item, i) => {
-      let data = this.vendors.data(item);
-
-      this.hook('script-dep-fix', data, true);
-
-      code += '/***** module ' + i + ' start *****/\n';
-      code += '/***** ' + data.file + ' *****/\n';
-      code += 'function(module, exports, __wepy_require) {';
-      code += data.source.source() + '\n';
-      code += '}';
-      if (i !== vendorList.length - 1) {
+    vendorList.forEach(item => {
+      if (!writeBeads[item.bead.id]) {
+        this.hook('script-dep-fix', item);
+        code += '/***** module ' + item.bead.no + ' start *****/\n';
+        code += '/***** ' + item.bead.path + ' *****/\n';
+        code += 'function(module, exports, __wepy_require) {';
+        code += item.bead.parsed.source.source() + '\n';
+        code += '}';
         code += ',';
+        code += '/***** module ' + item.bead.no + ' end *****/\n\n\n';
+      } else {
+        writeBeads[item.bead.id] = true;
       }
-      code += '/***** module ' + i + ' end *****/\n\n\n';
     });
 
     let template = VENDOR_INJECTION.concat([]);
