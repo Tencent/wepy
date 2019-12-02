@@ -27,7 +27,6 @@ exports = module.exports = function(ins) {
     './../plugins/make/script',
 
     './../plugins/scriptDepFix',
-    './../plugins/scriptDepFix',
     './../plugins/scriptInjection',
     './../plugins/build/app',
     './../plugins/build/pages',

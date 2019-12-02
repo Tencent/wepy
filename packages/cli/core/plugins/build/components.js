@@ -45,7 +45,7 @@ exports = module.exports = function() {
       }
       let targetFile = comp.self().npm ? this.getModuleTarget(comp.bead.path) : this.getTarget(comp.bead.path);
       let target = path.parse(targetFile);
-      comp.outputFile = path.join(target.dir, target.name);
+      comp.bead.outputFile = path.join(target.dir, target.name);
     });
 
     return comps;

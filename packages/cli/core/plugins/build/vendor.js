@@ -35,10 +35,10 @@ var process = { env: {} };
    // Load entry module and return exports
    module.exports = __wepy_require;
    return __wepy_require;
-})([
+})({
 `,
   '',
-  ']);'
+  '});'
 ];
 
 exports = module.exports = function() {
@@ -57,21 +57,20 @@ exports = module.exports = function() {
         this.hook('script-dep-fix', item);
         code += '/***** module ' + item.bead.no + ' start *****/\n';
         code += '/***** ' + item.bead.path + ' *****/\n';
-        code += 'function(module, exports, __wepy_require) {';
+        code += 'm' + item.bead.no + ': ' + 'function(module, exports, __wepy_require) {';
         code += item.bead.parsed.source.source() + '\n';
         code += '}';
         code += ',';
         code += '/***** module ' + item.bead.no + ' end *****/\n\n\n';
-      } else {
-        writeBeads[item.bead.id] = true;
       }
+      writeBeads[item.bead.id] = true;
     });
 
     let template = VENDOR_INJECTION.concat([]);
     template[1] = code;
 
     vendor.outputCode = template.join('');
-    vendor.targetFile = path.join(this.context, this.options.target, 'vendor.js');
+    vendor.outputFile = path.join(this.context, this.options.target, 'vendor.js');
 
     return vendor;
   });

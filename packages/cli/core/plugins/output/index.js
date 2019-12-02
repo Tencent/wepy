@@ -66,7 +66,7 @@ function getOutputInfo(chain) {
   } else {
     // It's vendor
     if (!chain.bead && chain.outputCode) {
-      return { filename: chain.targetFile, code: chain.outputCode, encoding: chain.encoding };
+      return { filename: chain.outputFile, code: chain.outputCode, encoding: chain.encoding };
     } else {
       filename = chain.bead.outputFile;
       code = chain.bead.output();
@@ -86,13 +86,11 @@ exports = module.exports = function() {
   });
 
   this.register('output-vendor', data => {
-    output.bind(this)(data, 'vendor');
+    return output.bind(this)(data, 'vendor');
   });
 
   this.register('output-assets', list => {
-    list.forEach(file => {
-      output.bind(this)(file, 'assets');
-    });
+    return Promise.all(list.map(file => output.bind(this)(file, 'assets')));
   });
 
   this.register('output-static', () => {

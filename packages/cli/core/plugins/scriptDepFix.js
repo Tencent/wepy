@@ -1,7 +1,50 @@
 const path = require('path');
 
-function replaceDep(source, dep, replacer) {
-  source.replace(dep.expr.start, dep.expr.end - 1, replacer);
+function replaceDep(parsed, dep, replacer) {
+  parsed.replaces.push(replacer);
+  parsed.source.replace(dep.expr.start, dep.expr.end - 1, replacer);
+}
+
+/*
+ * resovle relative require
+ * e.g.
+ * pages/a.js require util/b.js
+ * resolve to:
+ * require('../b.js');
+ */
+function resovleRelativeRequire(bead, subBead) {
+  // use relative path
+  let relativePath = path.relative(path.dirname(bead.path), subBead.path).replace(/\\/g, '/');
+  if (!relativePath.startsWith('.')) {
+    relativePath = './' + relativePath;
+  }
+  return `require('${relativePath}')`;
+}
+
+/*
+ * resovle a npm require
+ * e.g.
+ * pages/a.js require('npm')
+ * resolve to:
+ * require('../vendor.js')(${npmId});
+ */
+function resovleVendorRequire(root, src, bead, subBead) {
+  let vendorjs = path.isAbsolute(src) ? path.join(src, 'vendor.js') : path.join(root, src, 'vendor.js');
+
+  let relativePath = path.relative(path.dirname(bead.path), vendorjs);
+  relativePath = relativePath.replace(/\\/g, '/');
+  return `require('./${relativePath}')('m${subBead.no}')`;
+}
+
+/*
+ * resovle a npm require
+ * e.g.
+ * npm.js require('another-npm')
+ * resolve to:
+ * __wepy_require(m${anotherNpmId});
+ */
+function resovleNpmRequire(subBead) {
+  return `__wepy_require('m${subBead.no}')`;
 }
 
 exports = module.exports = function() {
@@ -15,22 +58,23 @@ exports = module.exports = function() {
     const bead = chain.bead;
     const parsed = bead.parsed;
 
+    if (parsed.replaces.length === chain.series.length) {
+      return chain;
+    }
     chain.series.forEach((subChain, i) => {
+      debugger;
       let replaceMent = '';
       const subBead = subChain.bead;
       if (!chain.belong().npm && !chain.self().npm) {
         if (!subChain.belong().npm && !subChain.self().npm) {
-          // use relative path
-          const relativePath = path.relative(path.dirname(bead.path), subBead.path).replace(/\\/g, '/');
-          replaceMent = `require('${relativePath}')`;
+          replaceMent = resovleRelativeRequire(bead, subBead);
         } else {
-          replaceMent = `__wepy_require(${subBead.no})`;
+          replaceMent = resovleVendorRequire(this.context, this.options.src, bead, subBead);
         }
       } else {
-        replaceMent = `__wepy_require(${subBead.no})`;
+        replaceMent = resovleNpmRequire(subBead);
       }
-
-      replaceDep(parsed.source, parsed.dependences[i], replaceMent);
+      replaceDep(parsed, parsed.dependences[i], replaceMent);
     });
     return chain;
 

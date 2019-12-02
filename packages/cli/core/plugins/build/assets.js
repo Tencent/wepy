@@ -6,7 +6,33 @@ exports = module.exports = function() {
 
     let result = [];
 
-    this.assets.array().forEach(file => {
+    // this is a chain list, do it may have duplicates beads.
+    // So may need a hashmap to store the beads who were writen in vendor
+    let writeBeads = {};
+
+    this.producer.asserts().forEach(item => {
+      if (!writeBeads[item.bead.id]) {
+        this.hook('script-dep-fix', item);
+
+        let filepath = item.bead.path;
+        let fileobj = path.parse(filepath);
+
+        // For typescript, it should output .js
+        if (item.bead.compiled.outputFileName && item.bead.compiled.outputFileName !== fileobj.base) {
+          filepath = path.join(fileobj.dir, item.bead.compiled.outputFileName);
+        }
+        const targetFile = this.getTarget(filepath);
+        result.push({
+          src: item.bead.path,
+          outputFile: targetFile,
+          outputCode: item.bead.output(),
+          encoding: item.bead.encoding
+        });
+      }
+      writeBeads[item.bead.id] = true;
+    });
+    return result;
+    /*
       let t = this.assets.type(file);
       let d = this.assets.data(file);
 
@@ -39,5 +65,6 @@ exports = module.exports = function() {
     });
 
     return result;
+    */
   });
 };

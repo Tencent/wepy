@@ -24,7 +24,7 @@ exports = module.exports = function() {
 
       let targetFile = this.getTarget(page.file);
       let target = path.parse(targetFile);
-      page.outputFile = path.join(target.dir, target.name);
+      page.bead.outputFile = path.join(target.dir, target.name);
     });
 
     return pages;
