@@ -44,7 +44,7 @@ function registerChainHook(chain) {
 
 exports = module.exports = function(options) {
   return function() {
-    this.register('wepy-compiler-babel', function(chain) {
+    this.register('compile-babel', function(chain) {
       if (!registerChainHook.registed) {
         registerChainHook(chain);
       }

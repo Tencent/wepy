@@ -4,7 +4,7 @@ const fs = require('fs');
 const RawSource = require('webpack-sources').RawSource;
 
 exports = module.exports = function() {
-  this.register('wepy-compiler-wxss', function(chain) {
+  this.register('compile-wxss', function(chain) {
     const bead = chain.bead;
     let ast = css.parse(bead.content);
     const file = bead.path;

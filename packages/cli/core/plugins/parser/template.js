@@ -1,7 +1,7 @@
 const xmllint = require('../../util/xmllint');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-template', function(chain) {
+  this.register('parse-template', function(chain) {
     const bead = chain.bead;
 
     if (bead.parsed) {
@@ -54,6 +54,6 @@ exports = module.exports = function() {
         on: {}
       }
     };
-    return this.hookUnique('template-parse', chain);
+    return this.hookUnique('parse-template-main', chain);
   });
 };

@@ -52,6 +52,6 @@ exports = module.exports = function() {
     };
   }
 
-  this.register('template-parse-ast-attr-ref', getParseRefFunc().bind(this));
-  this.register('template-parse-ast-attr-:ref', getParseRefFunc(true).bind(this));
+  this.register('parse-template-ast-attr-ref', getParseRefFunc().bind(this));
+  this.register('parse-template-ast-attr-:ref', getParseRefFunc(true).bind(this));
 };

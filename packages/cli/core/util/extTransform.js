@@ -7,17 +7,18 @@ function transferWeappRule(option, type) {
   let addRule = {};
   let addDefault = false;
 
-  const defaultLang = DEFAULT_WEAPP_RULES[type].lang;
-  const defaultExt = DEFAULT_WEAPP_RULES[type].ext;
+  const defaultRule = DEFAULT_WEAPP_RULES[type];
+  const defaultLang = defaultRule ? defaultRule.lang : type;
+  const defaultExt = defaultRule ? defaultRule.ext : type;
 
   if (isUndef(option)) {
     addRule.lang = defaultLang;
     addRule.ext = defaultExt;
   }
   if (isStr(option)) {
-    addRule.lang = defaultLang;
+    addRule.lang = defaultLang || type;
     addRule.ext = option;
-    addDefault = option !== defaultExt;
+    addDefault = defaultRule && option !== defaultExt;
   }
   if (isPlainObject(option)) {
     addRule.lang = option.lang || defaultLang;
@@ -48,6 +49,14 @@ exports = module.exports = function extTransform(weappRule) {
   ruleType.forEach(t => {
     result[t] = transferWeappRule(isStr(weappRule) ? weappRule : weappRule[t], t);
   });
+
+  if (isPlainObject(weappRule)) {
+    for (let k in weappRule) {
+      if (!result[k]) {
+        result[k] = transferWeappRule(weappRule[k], k);
+      }
+    }
+  }
 
   return result;
 };

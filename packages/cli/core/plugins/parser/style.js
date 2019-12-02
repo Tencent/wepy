@@ -1,5 +1,5 @@
 exports = module.exports = function() {
-  this.register('wepy-parser-style', function(chain) {
+  this.register('parse-style', function(chain) {
     const bead = chain.bead;
 
     if (bead.parsed) {

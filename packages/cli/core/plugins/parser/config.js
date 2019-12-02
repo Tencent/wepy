@@ -6,7 +6,7 @@ const PageChain = require('../../compile/PageChain');
 let appUsingComponents = null;
 
 exports = module.exports = function() {
-  this.register('wepy-parser-config', function(chain) {
+  this.register('parse-config', function(chain) {
     const bead = chain.bead;
     const isApp = chain.previous instanceof AppChain;
     const isPage = chain.previous instanceof PageChain;

@@ -12,7 +12,7 @@ const createPlugin = require('./createPlugin');
 
 exports = module.exports = function(options) {
   return function() {
-    this.register('wepy-compiler-less', function(chain) {
+    this.register('compile-less', function(chain) {
       let config = Object.assign(
         {
           relativeUrls: true,
@@ -35,7 +35,7 @@ exports = module.exports = function(options) {
       });
     });
 
-    this.register('wepy-watch-file-changed-less', function(buildTask) {
+    this.register('watch-file-changed-less', function(buildTask) {
       buildTask.files = this.fileDep.getSources(buildTask.changed);
       if (buildTask.files.includes(this.options.entry)) {
         buildTask.partial = false;

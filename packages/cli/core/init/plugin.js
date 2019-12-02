@@ -1,3 +1,4 @@
+const WepyMaker = require('../plugins/maker/wepy/index');
 const { isArr, isFunc } = require('../util/tools');
 
 function checkPlugins(ins, plugins) {
@@ -47,6 +48,9 @@ exports = module.exports = function(ins) {
     './../plugins/compiler/index',
     './../compile/loader/wepyLoader'
   ].map(v => require(v).call(ins));
+
+  // system plugins
+  [new WepyMaker()].map(item => item.install(ins));
   // check custom plugins
   const customPluginFns = checkPlugins(ins, ins.options.plugins);
 

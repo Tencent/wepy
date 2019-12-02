@@ -6,16 +6,16 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const sfcCompiler = require('vue-template-compiler');
-const fs = require('fs');
-const path = require('path');
-const loaderUtils = require('loader-utils');
+// const sfcCompiler = require('vue-template-compiler');
+// const fs = require('fs');
+// const path = require('path');
+// const loaderUtils = require('loader-utils');
 const AppChain = require('../../compile/AppChain');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-wpy', function(chain) {
+  this.register('parse-wepy', function(chain) {
     // config -> wxs -> template -> script -> styles
-    return this.hookUnique('wepy-loader-wpy', chain)
+    return Promise.resolve(chain)
       .then(chain => {
         return this.hookUnique('make', chain.sfc.config, 'config');
       })
@@ -24,10 +24,10 @@ exports = module.exports = function() {
         if (chain instanceof AppChain) {
           return chain;
         }
-        return this.compileAndParse('template', chain.sfc.template);
+        return this.hookUnique('make', chain.sfc.template, 'template');
       })
       .then(() => {
-        return this.compileAndParse('script', chain.sfc.script);
+        return this.hookUnique('make', chain.sfc.script, 'script');
       })
       .then(() => {
         return Promise.all(chain.sfc.styles.map(styleChain => this.hookUnique('make', styleChain, 'style'))).then(
@@ -35,6 +35,7 @@ exports = module.exports = function() {
         );
       });
 
+    /*
     if (this.compiled[file] && fileHash === this.compiled[file].hash) {
       // 文件 hash 一致，说明文件无修改
       context = this.compiled[file];
@@ -148,5 +149,6 @@ exports = module.exports = function() {
       });
     }
     return Promise.all(tasks);
+    */
   });
 };

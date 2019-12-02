@@ -1,7 +1,7 @@
 const exprParser = require('../../../util/exprParser');
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr-:style', function parseBindStyle({ item, expr }) {
+  this.register('parse-template-ast-attr-:style', function parseBindStyle({ item, expr }) {
     let exprObj = exprParser.str2obj(expr);
     item.bindStyle = Object.keys(exprObj).map(name => {
       // eslint-disable-next-line

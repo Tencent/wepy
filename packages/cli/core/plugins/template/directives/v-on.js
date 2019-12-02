@@ -91,14 +91,14 @@ const parseHandler = (name = '', value = '', scope) => {
 exports = module.exports = function() {
   let totalEvtCache = {}; // Global event cache
 
-  this.register('template-parse-ast-attr-v-on.capture', function({ chain, item, name, expr, event, scope }) {
+  this.register('parse-template-ast-attr-v-on.capture', function({ chain, item, name, expr, event, scope }) {
     // bind:tap="xxx" or catch:tap="xxx"
     event.type = event.type.replace(/^bind/, 'bind:').replace(/^catch/, 'catch:');
     event.type = 'capture-' + event.type;
     return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on.stop', function({ chain, item, name, expr, event, scope }) {
+  this.register('parse-template-ast-attr-v-on.stop', function({ chain, item, name, expr, event, scope }) {
     if (event.type.startsWith('bind')) {
       // bindtap="xxx"
       event.type = event.type.replace(/^bind/, 'catch');
@@ -109,7 +109,7 @@ exports = module.exports = function() {
     return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on.wxs', function({ chain, item, name, expr, event, scope }) {
+  this.register('parse-template-ast-attr-v-on.wxs', function({ chain, item, name, expr, event, scope }) {
     event.expr = `{{ ${event.parsed.callee.name} }}`;
     event.proxy = false;
     event.params = event.parsed.params.map(p => {
@@ -122,7 +122,7 @@ exports = module.exports = function() {
     return { chain, item, name, expr, event, scope };
   });
 
-  this.register('template-parse-ast-attr-v-on', function parseAstOn({ chain, item, name, expr, modifiers, scope }) {
+  this.register('parse-template-ast-attr-v-on', function parseAstOn({ chain, item, name, expr, modifiers, scope }) {
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
@@ -176,7 +176,7 @@ exports = module.exports = function() {
     }
 
     for (let k in modifiers) {
-      let hookName = 'template-parse-ast-attr-v-on.' + k;
+      let hookName = 'parse-template-ast-attr-v-on.' + k;
       if (this.hasHook(hookName)) {
         this.hook(hookName, { chain, item, name, expr, event: parsedEvent, scope });
       }
@@ -221,13 +221,13 @@ exports = module.exports = function() {
     item.events.push(parsedEvent);
 
     return {
-      hook: 'template-parse-ast-attr-v-on-apply',
+      hook: 'parse-template-ast-attr-v-on-apply',
       'v-on': parsedEvent,
       attrs: {}
     };
   });
 
-  this.register('template-parse-ast-attr-v-on-apply', function parseBindClass({ chain, payload }) {
+  this.register('parse-template-ast-attr-v-on-apply', function parseBindClass({ chain, payload }) {
     let rel = chain.bead.parsed.rel;
     let vOn = payload['v-on'];
 

@@ -9,6 +9,6 @@ const ADDITIONS_DIRECTIVES_HANDLES = {
 
 exports = module.exports = function() {
   Object.keys(ADDITIONS_DIRECTIVES_HANDLES).forEach(directives => {
-    this.register('template-parse-ast-attr-' + directives, ADDITIONS_DIRECTIVES_HANDLES[directives]);
+    this.register('parse-template-ast-attr-' + directives, ADDITIONS_DIRECTIVES_HANDLES[directives]);
   });
 };

@@ -62,7 +62,6 @@ exports = module.exports = function() {
       return chain;
     }
     chain.series.forEach((subChain, i) => {
-      debugger;
       let replaceMent = '';
       const subBead = subChain.bead;
       if (!chain.belong().npm && !chain.self().npm) {

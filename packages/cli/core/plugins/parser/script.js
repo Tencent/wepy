@@ -20,7 +20,7 @@ const RawSource = require('webpack-sources').RawSource;
 // const npmTraverseFileMap = {};
 
 exports = module.exports = function() {
-  this.register('wepy-parser-dep', function(chain, dep) {
+  this.register('parse-script-dep', function(chain, dep) {
     const bead = chain.bead;
     return this.resolvers.normal.resolve({ issuer: bead.path }, path.dirname(bead.path), dep.module, {}).then(rst => {
       // let assets = this.assets;
@@ -79,7 +79,7 @@ exports = module.exports = function() {
     });
   });
 
-  this.register('wepy-parser-script', function(chain) {
+  this.register('parse-script', function(chain) {
     const bead = chain.bead;
     let assets = this.assets;
 
@@ -99,7 +99,7 @@ exports = module.exports = function() {
     };
     bead.parsed.walker.run();
 
-    let depTasks = bead.parsed.dependences.map(dep => this.hookUnique('wepy-parser-dep', chain, dep));
+    let depTasks = bead.parsed.dependences.map(dep => this.hookUnique('parse-script-dep', chain, dep));
     return Promise.all(depTasks).then(chains => {
       chains.forEach(c => {
         if (chain.belong().npm || chain.self().npm) {

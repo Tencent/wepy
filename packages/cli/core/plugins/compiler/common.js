@@ -1,6 +1,6 @@
 exports = module.exports = function() {
   ['js', 'json', 'css', 'wxml'].forEach(lang => {
-    this.register('wepy-compiler-' + lang, function(chain) {
+    this.register('compile-' + lang, function(chain) {
       chain.bead.compiled = {
         code: chain.bead.content
       };

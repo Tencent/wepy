@@ -36,7 +36,7 @@ const parseModifiers = (name = '') => {
 };
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr', function parseAstAttr(chain, item, scope) {
+  this.register('parse-template-ast-attr', function parseAstAttr(chain, item, scope) {
     let attrs = item.attribs;
     let parsedAttr = item.parsedAttr || {};
     let parsed = null;
@@ -47,7 +47,7 @@ exports = module.exports = function() {
     for (let name in attrs) {
       let expr = attrs[name];
 
-      ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
+      ({ item, name, expr } = this.hookUniqueReturnArg('parse-template-ast-pre-attr-' + name, { item, name, expr }));
 
       let modifiers = parseModifiers(name);
 
@@ -55,10 +55,10 @@ exports = module.exports = function() {
         name = name.replace(modifierRE, '');
       }
 
-      let hook = 'template-parse-ast-pre-attr-' + name;
+      let hook = 'parse-template-ast-pre-attr-' + name;
 
       if (!this.hasHook(hook)) {
-        hook = 'template-parse-ast-pre-attr-[other]';
+        hook = 'parse-template-ast-pre-attr-[other]';
       }
 
       ({ chain, item, name, expr, modifiers, scope } = this.hookUniqueReturnArg(hook, {
@@ -80,16 +80,16 @@ exports = module.exports = function() {
 
     // Apply walk attributes
     cleanAttrs.forEach(({ item, name, expr, modifiers }) => {
-      let hook = 'template-parse-ast-attr-' + name;
+      let hook = 'parse-template-ast-attr-' + name;
       if (!this.hasHook(hook)) {
-        hook = 'template-parse-ast-attr-[other]';
+        hook = 'parse-template-ast-attr-[other]';
       }
 
       let payload = this.hookUnique(hook, { chain, item, name, expr, modifiers, scope });
 
-      let applyHook = payload.hook || `template-parse-ast-attr-${name}-apply`;
+      let applyHook = payload.hook || `parse-template-ast-attr-${name}-apply`;
       if (!this.hasHook(applyHook)) {
-        applyHook = `template-parse-ast-attr-[other]-apply`;
+        applyHook = `parse-template-ast-attr-[other]-apply`;
       }
 
       payload = this.hookUniqueReturnArg(applyHook, { chain, item, scope, payload });
@@ -103,7 +103,7 @@ exports = module.exports = function() {
     return [chain, item, scope];
   });
 
-  this.register('template-parse-ast-tag', function parseAstTag(chain, item, scope) {
+  this.register('parse-template-ast-tag', function parseAstTag(chain, item, scope) {
     let htmlTags = this.tags.htmlTags;
     let wxmlTags = this.tags.wxmlTags;
     let html2wxmlMap = this.tags.html2wxmlMap;
@@ -132,7 +132,7 @@ exports = module.exports = function() {
     return [chain, item, scope];
   });
 
-  this.register('template-parse-ast', function parseAST(chain, ast, scope) {
+  this.register('parse-template-ast', function parseAST(chain, ast, scope) {
     const bead = chain.bead;
     const parsed = bead.parsed;
     const { rel } = parsed;
@@ -140,19 +140,19 @@ exports = module.exports = function() {
     let currentScope;
     ast.forEach(item => {
       if (item.type === 'tag') {
-        [chain, item, scope] = this.hookSeq('template-parse-ast-tag', chain, item, scope);
+        [chain, item, scope] = this.hookSeq('parse-template-ast-tag', chain, item, scope);
       }
       if (item.attribs) {
-        [chain, item, currentScope] = this.hookSeq('template-parse-ast-attr', chain, item, scope);
+        [chain, item, currentScope] = this.hookSeq('parse-template-ast-attr', chain, item, scope);
       }
       if (item.children && item.children.length) {
-        [chain, item.childen, currentScope] = this.hookSeq('template-parse-ast', chain, item.children, currentScope);
+        [chain, item.childen, currentScope] = this.hookSeq('parse-template-ast', chain, item.children, currentScope);
       }
     });
     return [chain, scope];
   });
 
-  this.register('template-parse-ast-to-str', function astToStr(ast) {
+  this.register('parse-template-ast-to-str', function astToStr(ast) {
     let str = '';
     ast.forEach(item => {
       if (item.type === 'text') {
@@ -201,7 +201,7 @@ exports = module.exports = function() {
         }
         str += '>';
         if (item.children && item.children.length) {
-          str += this.hookUnique('template-parse-ast-to-str', item.children);
+          str += this.hookUnique('parse-template-ast-to-str', item.children);
         }
         str += `</${item.name}>`;
       }
@@ -209,7 +209,7 @@ exports = module.exports = function() {
     return str;
   });
 
-  this.register('template-parse', function parse(chain) {
+  this.register('parse-template-main', function parse(chain) {
     const bead = chain.bead;
     const parsed = bead.parsed;
 
@@ -219,9 +219,9 @@ exports = module.exports = function() {
       let scope = null;
       parsed.ast = ast;
 
-      this.hookSeq('template-parse-ast', chain, ast, scope);
+      this.hookSeq('parse-template-ast', chain, ast, scope);
 
-      let code = this.hookUnique('template-parse-ast-to-str', ast);
+      let code = this.hookUnique('parse-template-ast-to-str', ast);
       parsed.code = code;
       parsed.ast = ast;
       parsed.rel = rel;

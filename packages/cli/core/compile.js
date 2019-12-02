@@ -31,6 +31,7 @@ const initPlugin = require('./init/plugin');
 
 //const Chain = require('./compile/Chain');
 const PageChain = require('./compile/PageChain');
+const ComponentChain = require('./compile/ComponentChain');
 const AppChain = require('./compile/AppChain');
 
 const Producer = require('./Producer');
@@ -187,6 +188,18 @@ class Compile extends Hook {
     return chain;
   }
 
+  createComponentChain(file) {
+    const pathObj = path.parse(file);
+    const isWepy = pathObj.ext === this.options.wpyExt;
+    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
+    const chain = new ComponentChain(bead);
+    if (isWepy) {
+      bead.type = 'component';
+      chain.self('wepy');
+    }
+    return chain;
+  }
+
   start() {
     if (this.running) {
       return;
@@ -197,8 +210,8 @@ class Compile extends Hook {
 
     const chain = this.createAppChain(this.options.entry);
 
-    this.hookUnique('wepy-parser-wpy', chain)
-      //{ path: this.options.entry, type: 'app' })
+    //{ path: this.options.entry, type: 'app' })
+    return this.hookUnique('make', chain)
       .then(chain => {
         const { bead, sfc } = chain;
         let config = sfc.config;
@@ -232,14 +245,14 @@ class Compile extends Hook {
             const pageChain = this.createPageChain(file);
             pageChain.root = chain;
             pageChain.setPrevious(chain);
-            return this.hookUnique('wepy-parser-wpy', pageChain);
+            return this.hookUnique('make', pageChain);
           }
           file = v + '.js';
           if (fs.existsSync(file)) {
             const pageChain = this.createPageChain(file);
             pageChain.root = chain;
             pageChain.setPrevious(chain);
-            return this.hookUnique('wepy-parser-component', pageChain);
+            return this.hookUnique('make', pageChain);
           }
           this.hookUnique('error-handler', {
             type: 'error',
@@ -278,10 +291,14 @@ class Compile extends Hook {
 
       comps.forEach(comp => {
         let config = comp.sfc.config || {};
-        let parsed = config.parsed || {};
+        let parsed = config.bead.parsed || {};
         let parsedComponents = parsed.components || [];
 
         parsedComponents.forEach(com => {
+
+          const chain = this.createAppChain(com.path);
+          tasks.push(this.hookUnique('make', chain));
+          /*
           if (com.type === 'wepy' && !components.includes(com.path)) {
             // wepy 组件
             tasks.push(this.hookUnique('wepy-parser-wpy', com));
@@ -291,6 +308,7 @@ class Compile extends Hook {
             tasks.push(this.hookUnique('wepy-parser-component', com));
             originalComponents.push(com.path);
           }
+          */
         });
       });
 

@@ -1,7 +1,7 @@
 const parseClass = require('../../../ast/parseClass');
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr-:class', function parseBindClass({ item, expr }) {
+  this.register('parse-template-ast-attr-:class', function parseBindClass({ item, expr }) {
     let exprArray = parseClass(expr);
     let bindClass = [];
     exprArray.forEach(item => {

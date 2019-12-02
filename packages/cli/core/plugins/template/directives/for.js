@@ -5,7 +5,7 @@ const variableRE = /^\s*[a-zA-Z$_][a-zA-Z\d_]*\s*$/;
 const Check = require('../util/check');
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-pre-attr-v-for', function preParseDirectivesFor({
+  this.register('parse-template-ast-pre-attr-v-for', function preParseDirectivesFor({
     chain,
     item,
     name,
@@ -89,7 +89,7 @@ exports = module.exports = function() {
     };
   });
 
-  this.register('template-parse-ast-attr-v-for', function parseDirectivesFor({
+  this.register('parse-template-ast-attr-v-for', function parseDirectivesFor({
     /* eslint-disable no-unused-vars */
     item,
     name,

@@ -4,7 +4,7 @@ const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
 exports = module.exports = function() {
 
-  this.register('template-parse-ast-attr-[other]', function parseDirectivesFor({
+  this.register('parse-template-ast-attr-[other]', function parseDirectivesFor({
     chain,
     item,
     name,
@@ -33,17 +33,17 @@ exports = module.exports = function() {
           modifiers.capture = true;
           break;
       }
-      return this.hookUnique('template-parse-ast-attr-v-on', { chain, item, name, expr, modifiers, scope });
+      return this.hookUnique('parse-template-ast-attr-v-on', { chain, item, name, expr, modifiers, scope });
     }
 
     if (bindRE.test(name)) {
       // :prop or v-bind:prop;
 
-      return this.hookUnique('template-parse-ast-attr-v-bind', { chain, item, name, expr, modifiers, scope });
+      return this.hookUnique('parse-template-ast-attr-v-bind', { chain, item, name, expr, modifiers, scope });
     } else if (onRE.test(name)) {
       // @ or v-on:
       name = name.replace(onRE, '');
-      return this.hookUnique('template-parse-ast-attr-v-on', { chain, item, name, expr, modifiers, scope });
+      return this.hookUnique('parse-template-ast-attr-v-on', { chain, item, name, expr, modifiers, scope });
     }
 
     return {
@@ -53,7 +53,7 @@ exports = module.exports = function() {
     };
   });
 
-  this.register('template-parse-ast-attr-[other]-apply', function applyDirective({ payload }) {
+  this.register('parse-template-ast-attr-[other]-apply', function applyDirective({ payload }) {
     return payload;
   });
 };
