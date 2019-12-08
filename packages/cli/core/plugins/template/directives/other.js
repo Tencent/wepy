@@ -3,7 +3,6 @@ const bindRE = /^:|^v-bind:/;
 const nativeBindRE = /^bind:?|^catch:?|^capture-bind:?|^capture-catch:?/;
 
 exports = module.exports = function() {
-
   this.register('parse-template-ast-attr-[other]', function parseDirectivesFor({
     chain,
     item,

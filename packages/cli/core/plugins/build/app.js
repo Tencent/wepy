@@ -4,7 +4,7 @@ exports = module.exports = function() {
   this.register('build-app', function buildApp(chain) {
     this.logger.info('app', 'building App');
 
-    let { script, styles, config } = chain.sfc;
+    let { script } = chain.sfc;
 
     let targetFile = path.join(this.context, this.options.target, 'app');
 

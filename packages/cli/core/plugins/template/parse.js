@@ -39,7 +39,6 @@ exports = module.exports = function() {
   this.register('parse-template-ast-attr', function parseAstAttr(chain, item, scope) {
     let attrs = item.attribs;
     let parsedAttr = item.parsedAttr || {};
-    let parsed = null;
 
     let cleanAttrs = [];
 
@@ -133,10 +132,6 @@ exports = module.exports = function() {
   });
 
   this.register('parse-template-ast', function parseAST(chain, ast, scope) {
-    const bead = chain.bead;
-    const parsed = bead.parsed;
-    const { rel } = parsed;
-
     let currentScope;
     ast.forEach(item => {
       if (item.type === 'tag') {

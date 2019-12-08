@@ -21,7 +21,6 @@ const logger = require('./util/logger');
 const VENDOR_DIR = require('./util/const').VENDOR_DIR;
 const Hook = require('./hook');
 const tag = require('./tag');
-const { isArr } = require('./util/tools');
 const extTransform = require('./util/extTransform');
 const { debounce } = require('throttle-debounce');
 
@@ -156,7 +155,6 @@ class Compile extends Hook {
       this.fileDep = new fileDep();
     });
 
-
     initParser(this);
     initPlugin(this);
 
@@ -277,9 +275,6 @@ class Compile extends Hook {
   }
 
   buildComps(comps) {
-    let components = [];
-    let originalComponents = [];
-
     function buildComponents(comps) {
       if (!comps) {
         return Promise.resolve();
@@ -295,8 +290,7 @@ class Compile extends Hook {
         let parsedComponents = parsed.components || [];
 
         parsedComponents.forEach(com => {
-
-          const chain = this.createAppChain(com.path);
+          const chain = this.createComponentChain(com.path);
           tasks.push(this.hookUnique('make', chain));
           /*
           if (com.type === 'wepy' && !components.includes(com.path)) {
@@ -580,7 +574,6 @@ class Compile extends Hook {
     let targetFile = path.join(this.context, targetDir || this.options.target, VENDOR_DIR, relative);
     return targetFile;
   }
-
 }
 
 exports = module.exports = program => {

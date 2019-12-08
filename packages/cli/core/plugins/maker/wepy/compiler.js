@@ -21,18 +21,21 @@ const beadsMap = {
 exports = module.exports = function() {
   this.register('compile-wepy', function(chain) {
     const bead = chain.bead;
-    let sfcObj = sfcCompiler.parseComponent(bead.content, { pad: 'sapce' });
+    let sfcObj = sfcCompiler.parseComponent(bead.content, { pad: 'space' });
     sfcObj = this.hookSeq('sfc-custom-block', sfcObj);
+    if (!chain.sfc) {
+      chain.sfc = {};
+    }
 
     // Set default content
     for (const key in DEFAULT_WEAPP_RULES) {
       if (key === 'style') {
         if (!sfcObj.styles || sfcObj.styles.length === 0) {
-          sfcObj.styles = [{ content: DEFAULT_WEAPP_RULES.style.content }];
+          sfcObj.styles = [{ content: DEFAULT_WEAPP_RULES.style.content, lang: DEFAULT_WEAPP_RULES[key].lang }];
         }
       } else {
         if (!sfcObj[key]) {
-          sfcObj[key] = { content: DEFAULT_WEAPP_RULES[key].content };
+          sfcObj[key] = { content: DEFAULT_WEAPP_RULES[key].content, lang: DEFAULT_WEAPP_RULES[key].lang };
         }
       }
     }
@@ -41,7 +44,7 @@ exports = module.exports = function() {
         chain.sfc[item] = sfcObj[item].map((obj, i) => {
           const newBead = this.producer.make(beadsMap[item], bead.path, `${bead.id}$${item}$${i}`, obj.content);
           newBead.data = obj;
-          newBead.lang = obj.lang || bead.lang;
+          newBead.lang = obj.lang || bead.lang || DEFAULT_WEAPP_RULES[item].lang;
           return chain.createChain(newBead);
         });
       } else {
@@ -50,7 +53,7 @@ exports = module.exports = function() {
         } else {
           const newBead = this.producer.make(beadsMap[item], bead.path, bead.id + '$' + item, sfcObj[item].content);
           newBead.data = sfcObj[item];
-          newBead.lang = sfcObj[item].lang || newBead.lang;
+          newBead.lang = sfcObj[item].lang || newBead.lang || DEFAULT_WEAPP_RULES[item].lang;
           chain.sfc[item] = chain.createChain(newBead);
         }
       }

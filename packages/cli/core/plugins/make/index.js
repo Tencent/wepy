@@ -1,5 +1,5 @@
 exports = module.exports = function() {
-  const langExtCache = [];
+  const langExtCache = {};
   this.register('make-lookup-lang-from-ext', function(ext) {
     if (langExtCache[ext]) {
       return langExtCache[ext];

@@ -6,7 +6,6 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const fs = require('fs');
 const path = require('path');
 
 const Walker = require('../../ast/walker');
@@ -81,7 +80,6 @@ exports = module.exports = function() {
 
   this.register('parse-script', function(chain) {
     const bead = chain.bead;
-    let assets = this.assets;
 
     if (bead.parsed) {
       return Promise.resolve(chain);
@@ -111,43 +109,6 @@ exports = module.exports = function() {
         }
       });
       chain.setSeries(chains);
-      return chain;
-      let obj = {
-        file: ctx.file,
-        parser: walker,
-        code: node.compiled.code,
-        encoding: node.compiled.encoding || 'utf-8',
-        outputFileName: node.compiled.outputFileName,
-        source: source,
-        depModules: rst,
-        npm: !!ctx.npm,
-        type: ctx.type,
-        component: ctx.component
-      };
-
-      this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));
-
-      let componentValue = ctx.component;
-      const t = this.assets.type(ctx.file);
-      if (t !== undefined) {
-        // if it has type in this.assets
-        componentValue = t.component;
-      }
-      let types = {
-        component: componentValue,
-        npm: ctx.npm,
-        dep: ctx.dep,
-        type: ctx.type,
-        wxs: ctx.wxs
-      };
-
-      this.assets.update(ctx.file, obj, types);
-      obj.id = assets.get(ctx.file);
-      if (ctx.npm && !(ctx.component && ctx.type === 'weapp') && !ctx.wxs) {
-        this.vendors.update(ctx.file, obj, types);
-        obj.vendorId = this.vendors.get(ctx.file);
-      }
-      return obj;
       return chain;
     });
 
