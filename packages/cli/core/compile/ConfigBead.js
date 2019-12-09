@@ -6,6 +6,6 @@ exports = module.exports = class ConfigBead extends Bead {
   }
 
   output() {
-    return JSON.stringify(this.parsed.source, null, 2);
+    return this.parsed.source.source();
   }
 };

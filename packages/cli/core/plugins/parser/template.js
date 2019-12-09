@@ -1,4 +1,5 @@
 const xmllint = require('../../util/xmllint');
+const Source = require('../../compile/Source');
 
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {
@@ -12,7 +13,7 @@ exports = module.exports = function() {
     // If it's weapp, do not compile it.
     if (chain.self().weapp) {
       chain.sfc.template.parsed = {
-        code: compiledCode,
+        source: new Source(compiledCode),
         rel: {}
       };
       return chain;
@@ -39,7 +40,7 @@ exports = module.exports = function() {
     let components = {};
     let sfcConfig = chain.previous.sfc.config;
 
-    let usingComponents = sfcConfig && sfcConfig.bead.parsed.source ? sfcConfig.bead.parsed.source.usingComponents : {};
+    let usingComponents = sfcConfig && sfcConfig.bead.parsed.source.meta() ? sfcConfig.bead.parsed.source.meta().usingComponents : {};
 
     for (let k in usingComponents) {
       components[k] = {

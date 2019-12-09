@@ -2,6 +2,7 @@ const path = require('path');
 const loaderUtils = require('loader-utils');
 const AppChain = require('../../compile/AppChain');
 const PageChain = require('../../compile/PageChain');
+const ConfigSource = require('../../compile/ConfigSource');
 
 let appUsingComponents = null;
 
@@ -12,31 +13,32 @@ exports = module.exports = function() {
     const isApp = chain.previous instanceof AppChain;
     const isPage = chain.previous instanceof PageChain;
 
+    let source = null;
     let configString = compiledCode.replace(/^\n*/, '').replace(/\n*$/, '');
     configString = (configString || '{}').trim();
-    let config = null;
+
     try {
-      let fn = new Function('return ' + configString);
-      config = fn();
-    } catch (e) {
-      // TODO: added error handler code
-      return Promise.reject(`invalid json: ${configString}`);
+      source = new ConfigSource(configString);
+    } catch (err) {
+      return Promise.reject(err.message);
     }
+    
+    let meta = source.meta();
 
     if (isApp) {
-      config.component = true;
+      meta.component = true;
     }
-    if (!config.usingComponents) {
-      config.usingComponents = {};
+    if (!meta.usingComponents) {
+      meta.usingComponents = {};
     }
 
-    let userDefineComponents = config.usingComponents || {};
+    let userDefineComponents = meta.usingComponents || {};
     let appDefinedComponents = {};
-    let componentKeys = Object.keys(config.usingComponents);
+    let componentKeys = Object.keys(meta.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
       bead.parsed = {
-        source: config
+        source: source
       };
       return Promise.resolve(true);
     }
@@ -117,13 +119,13 @@ exports = module.exports = function() {
     return Promise.all(plist).then(() => {
       if (isApp) {
         appUsingComponents = parseComponents;
-        delete config.usingComponents;
+        delete meta.usingComponents;
       } else {
-        config.usingComponents = Object.assign({}, resolvedUsingComponents, appDefinedComponents);
+        meta.usingComponents = Object.assign({}, resolvedUsingComponents, appDefinedComponents);
       }
 
       bead.parsed = {
-        source: config,
+        source: source,
         components: parseComponents
       };
       return chain;

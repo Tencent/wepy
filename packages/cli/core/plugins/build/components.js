@@ -7,8 +7,10 @@ exports = module.exports = function() {
     comps.forEach(comp => {
       let { script, config, template, wxs } = comp.sfc;
 
-      config.bead.parsed.source.component = true;
-      const { usingComponents, ...other } = config.bead.parsed.source;
+      let meta = config.bead.parsed.source.meta();
+
+      meta.component = true;
+      const { usingComponents, ...other } = meta;
       let newUsingComponents = {};
       /**
        * 在windows环境中解析的usingComponent格式为
@@ -23,10 +25,10 @@ exports = module.exports = function() {
       for (let i in usingComponents) {
         newUsingComponents[i] = './' + usingComponents[i].replace(/\\/g, '/');
       }
-      config.bead.parsed.source = {
+      config.bead.parsed.source.meta({
         ...other,
         usingComponents: newUsingComponents
-      };
+      });
       this.hook('script-dep-fix', script);
       /*
       if (!script.empty && !(comp.component && comp.type === 'weapp')) {

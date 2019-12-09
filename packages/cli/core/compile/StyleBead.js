@@ -6,6 +6,6 @@ exports = module.exports = class StyleBead extends Bead {
   }
 
   output() {
-    return this.parsed.code;
+    return this.parsed.source.source();
   }
 };
