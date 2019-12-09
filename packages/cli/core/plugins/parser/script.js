@@ -80,13 +80,14 @@ exports = module.exports = function() {
 
   this.register('parse-script', function(chain) {
     const bead = chain.bead;
+    const compiledCode = bead.compiled.code;
 
     if (bead.parsed) {
       return Promise.resolve(chain);
     }
 
-    let source = new ReplaceSource(new RawSource(bead.compiled.code));
-    let astData = toAst(bead.compiled.code);
+    let source = new ReplaceSource(new RawSource(compiledCode));
+    let astData = toAst(compiledCode);
 
     bead.parsed = {
       source,

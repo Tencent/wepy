@@ -8,10 +8,11 @@ let appUsingComponents = null;
 exports = module.exports = function() {
   this.register('parse-config', function(chain) {
     const bead = chain.bead;
+    const compiledCode = bead.compiled.code;
     const isApp = chain.previous instanceof AppChain;
     const isPage = chain.previous instanceof PageChain;
 
-    let configString = bead.content.replace(/^\n*/, '').replace(/\n*$/, '');
+    let configString = compiledCode.replace(/^\n*/, '').replace(/\n*$/, '');
     configString = (configString || '{}').trim();
     let config = null;
     try {

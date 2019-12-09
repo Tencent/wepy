@@ -3,6 +3,7 @@ const xmllint = require('../../util/xmllint');
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {
     const bead = chain.bead;
+    const compiledCode = bead.compiled.code;
 
     if (bead.parsed) {
       return Promise.resolve(chain);
@@ -11,14 +12,13 @@ exports = module.exports = function() {
     // If it's weapp, do not compile it.
     if (chain.self().weapp) {
       chain.sfc.template.parsed = {
-        code: bead.content,
+        code: compiledCode,
         rel: {}
       };
       return chain;
     }
 
-    let code = bead.content;
-    let msg = xmllint.verify(code);
+    let msg = xmllint.verify(compiledCode);
     msg.forEach(item => {
       let type = item.type === 'warning' ? 'warn' : 'error';
       this.hookUnique(
