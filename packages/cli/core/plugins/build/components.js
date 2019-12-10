@@ -7,7 +7,7 @@ exports = module.exports = function() {
     comps.forEach(comp => {
       let { script, config, template, wxs } = comp.sfc;
 
-      let meta = config.bead.parsed.source.meta();
+      let meta = config.bead.parsed.code.meta();
 
       meta.component = true;
       const { usingComponents, ...other } = meta;
@@ -25,7 +25,7 @@ exports = module.exports = function() {
       for (let i in usingComponents) {
         newUsingComponents[i] = './' + usingComponents[i].replace(/\\/g, '/');
       }
-      config.bead.parsed.source.meta({
+      config.bead.parsed.code.meta({
         ...other,
         usingComponents: newUsingComponents
       });

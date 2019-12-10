@@ -2,7 +2,7 @@ const path = require('path');
 
 function replaceDep(parsed, dep, replacer) {
   parsed.replaces.push(replacer);
-  parsed.source.replace(dep.expr.start, dep.expr.end - 1, replacer);
+  parsed.code.replace(dep.expr.start, dep.expr.end - 1, replacer);
 }
 
 /*

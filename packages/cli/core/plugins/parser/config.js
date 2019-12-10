@@ -37,7 +37,7 @@ exports = module.exports = function() {
 
     if (!appUsingComponents && componentKeys.length === 0) {
       bead.parsed = {
-        source: source
+        code: source
       };
       return Promise.resolve(true);
     }
@@ -124,7 +124,7 @@ exports = module.exports = function() {
       }
 
       bead.parsed = {
-        source: source,
+        code: source,
         components: parseComponents
       };
       return chain;

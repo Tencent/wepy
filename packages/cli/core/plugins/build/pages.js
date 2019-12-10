@@ -17,7 +17,7 @@ exports = module.exports = function() {
       this.hook('script-dep-fix', script.parsed);
       this.hook('script-injection', script.parsed, template.parsed.rel);
 
-      script.outputCode = script.parsed.source.source();
+      script.outputCode = script.parsed.code.source();
 
       styles.outputCode = styleCode;
       template.outputCode = template.parsed.code;

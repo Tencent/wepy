@@ -89,7 +89,7 @@ exports = module.exports = function() {
     let astData = toAst(compiledCode);
 
     bead.parsed = {
-      source,
+      code: source,
       ast: astData,
       dependences: [],
       replaces: [],

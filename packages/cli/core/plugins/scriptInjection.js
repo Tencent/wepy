@@ -44,7 +44,7 @@ exports = module.exports = function() {
   this.register('script-injection', function scriptInjection(chain, ref) {
     const bead = chain.bead;
     const parsed = bead.parsed;
-    const source = parsed.source;
+    const source = parsed.code;
     let relStr = genRel(ref);
     let entry = parsed.walker.entry;
     if (!entry) {

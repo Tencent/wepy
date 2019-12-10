@@ -6,6 +6,6 @@ exports = module.exports = class TemplateBead extends Bead {
   }
 
   output() {
-    return this.parsed.source.source();
+    return this.parsed.code.source();
   }
 };

@@ -210,7 +210,7 @@ class Compile extends Hook {
         const { bead, sfc } = chain;
         let config = sfc.config;
 
-        let appConfig = config.bead.parsed.source.meta();
+        let appConfig = config.bead.parsed.code.meta();
         if (!appConfig.pages || appConfig.pages.length === 0) {
           appConfig.pages = [];
           this.hookUnique('error-handler', {

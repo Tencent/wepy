@@ -9,7 +9,7 @@ exports = module.exports = function() {
       return Promise.resolve(chain);
     }
     bead.parsed = {
-      source: new RawSource(compiledCode)
+      code: new RawSource(compiledCode)
     };
     return chain;
   });

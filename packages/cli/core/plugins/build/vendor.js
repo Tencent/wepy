@@ -58,7 +58,7 @@ exports = module.exports = function() {
         code += '/***** module ' + item.bead.no + ' start *****/\n';
         code += '/***** ' + item.bead.path + ' *****/\n';
         code += 'm' + item.bead.no + ': ' + 'function(module, exports, __wepy_require) {';
-        code += item.bead.parsed.source.source() + '\n';
+        code += item.bead.parsed.code.source() + '\n';
         code += '}';
         code += ',';
         code += '/***** module ' + item.bead.no + ' end *****/\n\n\n';

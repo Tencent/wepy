@@ -13,7 +13,7 @@ exports = module.exports = function() {
     // If it's weapp, do not compile it.
     if (chain.self().weapp) {
       chain.sfc.template.parsed = {
-        source: new RawSource(compiledCode),
+        code: new RawSource(compiledCode),
         rel: {}
       };
       return chain;
@@ -40,7 +40,7 @@ exports = module.exports = function() {
     let components = {};
     let sfcConfig = chain.previous.sfc.config;
 
-    let usingComponents = sfcConfig && sfcConfig.bead.parsed.source.meta() ? sfcConfig.bead.parsed.source.meta().usingComponents : {};
+    let usingComponents = sfcConfig && sfcConfig.bead.parsed.code.meta() ? sfcConfig.bead.parsed.code.meta().usingComponents : {};
 
     for (let k in usingComponents) {
       components[k] = {
