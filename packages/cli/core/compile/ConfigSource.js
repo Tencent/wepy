@@ -1,13 +1,13 @@
-const Source = require('./Source')
+const RawSource = require('webpack-sources').RawSource;
 
-exports = module.exports = class ConfigSource extends Source {
-  constructor (raw) {
-    super(raw);
+exports = module.exports = class ConfigSource extends RawSource {
+  constructor (value, convertToString = false) {
+    super(value, convertToString);
     try {
-      let fn = new Function('return ' + raw);
+      let fn = new Function('return ' + value);
       this._meta = fn();
     } catch (e) {
-      throw new Error(`invalid json: ${raw}`);
+      throw new Error(`invalid json: ${value}`);
     }
   }
 

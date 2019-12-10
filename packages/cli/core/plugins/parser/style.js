@@ -1,4 +1,4 @@
-const Source = require('../../compile/Source');
+const RawSource = require('webpack-sources').RawSource;
 
 exports = module.exports = function() {
   this.register('parse-style', function(chain) {
@@ -9,7 +9,7 @@ exports = module.exports = function() {
       return Promise.resolve(chain);
     }
     bead.parsed = {
-      source: new Source(compiledCode)
+      source: new RawSource(compiledCode)
     };
     return chain;
   });

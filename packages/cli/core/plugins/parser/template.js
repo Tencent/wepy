@@ -1,5 +1,5 @@
 const xmllint = require('../../util/xmllint');
-const Source = require('../../compile/Source');
+const RawSource = require('webpack-sources').RawSource;
 
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {
@@ -13,7 +13,7 @@ exports = module.exports = function() {
     // If it's weapp, do not compile it.
     if (chain.self().weapp) {
       chain.sfc.template.parsed = {
-        source: new Source(compiledCode),
+        source: new RawSource(compiledCode),
         rel: {}
       };
       return chain;
