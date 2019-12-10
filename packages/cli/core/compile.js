@@ -29,13 +29,9 @@ const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
 
 //const Chain = require('./compile/Chain');
-const PageChain = require('./compile/PageChain');
-const ComponentChain = require('./compile/ComponentChain');
-const AppChain = require('./compile/AppChain');
-
+const { AppChain, PageChain, ComponentChain } = require('./compile/chain');
+const { WepyBead, ScriptBead } = require('./compile/bead');
 const Producer = require('./Producer');
-const WepyBead = require('./compile/WepyBead');
-const ScriptBead = require('./compile/ScriptBead');
 
 class Compile extends Hook {
   constructor(opt) {

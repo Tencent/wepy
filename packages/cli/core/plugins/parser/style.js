@@ -1,4 +1,4 @@
-const RawSource = require('webpack-sources').RawSource;
+const RawSource = require('../../compile/source').RawSource;
 
 exports = module.exports = function() {
   this.register('parse-style', function(chain) {

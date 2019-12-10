@@ -10,10 +10,9 @@ const path = require('path');
 
 const Walker = require('../../ast/walker');
 const toAst = require('../../ast/toAST');
-const ScriptBead = require('../../compile/ScriptBead');
-const Chain = require('../../compile/Chain');
-const ReplaceSource = require('webpack-sources').ReplaceSource;
-const RawSource = require('webpack-sources').RawSource;
+const ScriptBead = require('../../compile/bead').ScriptBead;
+const Chain = require('../../compile/chain').Chain;
+const { ReplaceSource, RawSource } = require('../../compile/source');
 
 // 记录 npm 文件是否已经遍历过
 // const npmTraverseFileMap = {};

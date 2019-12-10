@@ -1,8 +1,7 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
-const AppChain = require('../../compile/AppChain');
-const PageChain = require('../../compile/PageChain');
-const ConfigSource = require('../../compile/ConfigSource');
+const { AppChain, PageChain } = require('../../compile/chain');
+const JsonSource = require('../../compile/source').JsonSource;
 
 let appUsingComponents = null;
 
@@ -18,7 +17,7 @@ exports = module.exports = function() {
     configString = (configString || '{}').trim();
 
     try {
-      source = new ConfigSource(configString);
+      source = new JsonSource(configString);
     } catch (err) {
       return Promise.reject(err.message);
     }

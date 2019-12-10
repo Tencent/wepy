@@ -1,6 +1,6 @@
 const RawSource = require('webpack-sources').RawSource;
 
-exports = module.exports = class ConfigSource extends RawSource {
+exports = module.exports = class JsonSource extends RawSource {
   constructor (value, convertToString = false) {
     super(value, convertToString);
     try {

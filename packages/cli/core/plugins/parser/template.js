@@ -1,5 +1,5 @@
 const xmllint = require('../../util/xmllint');
-const RawSource = require('webpack-sources').RawSource;
+const RawSource = require('../../compile/source').RawSource;
 
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {

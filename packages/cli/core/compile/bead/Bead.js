@@ -1,5 +1,5 @@
 const path = require('path');
-const hashUtil = require('../util/hash');
+const hashUtil = require('../../util/hash');
 exports = module.exports = class Bead {
   constructor(id, filepath, content) {
     // Compile physical file path; works for compile and output.

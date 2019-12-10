@@ -1,10 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const AppChain = require('../AppChain');
-const ConfigBead = require('../ConfigBead');
-const ScriptBead = require('../ScriptBead');
-const StyleBead = require('../StyleBead');
-const TemplateBead = require('../TemplateBead');
+const AppChain = require('../chain').AppChain;
+const { ConfigBead, ScriptBead, StyleBead, TemplateBead } = require('../bead');
 const sfcCompiler = require('vue-template-compiler');
 const loaderUtils = require('loader-utils');
 const DEFAULT_WEAPP_RULES = require('./../../util/const').DEFAULT_WEAPP_RULES;

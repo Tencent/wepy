@@ -1,0 +1,10 @@
+exports.Source = require('webpack-sources').Source;
+exports.RawSource = require('webpack-sources').RawSource;
+exports.OriginalSource = require('webpack-sources').OriginalSource;
+exports.SourceMapSource = require('webpack-sources').SourceMapSource;
+exports.CachedSource = require('webpack-sources').CachedSource;
+exports.ConcatSource = require('webpack-sources').ConcatSource;
+exports.ReplaceSource = require('webpack-sources').ReplaceSource;
+exports.PrefixSource = require('webpack-sources').PrefixSource;
+exports.SizeOnlySource = require('webpack-sources').SizeOnlySource;
+exports.JsonSource = require('./JsonSource');

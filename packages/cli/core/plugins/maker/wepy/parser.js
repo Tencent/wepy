@@ -11,7 +11,7 @@
 // const path = require('path');
 // const loaderUtils = require('loader-utils');
 
-const AppChain = require('../../../compile/AppChain');
+const AppChain = require('../../../compile/chain').AppChain;
 
 exports = module.exports = function() {
   this.register('parse-wepy', function(chain) {

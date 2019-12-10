@@ -1,6 +1,6 @@
 const htmlparser = require('htmlparser2');
 const tools = require('../../util/tools');
-const RawSource = require('webpack-sources').RawSource;
+const RawSource = require('../../compile/source').RawSource;
 const modifierRE = /\.[^.]+/g;
 
 const toAST = html => {

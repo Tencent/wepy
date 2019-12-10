@@ -1,4 +1,4 @@
-const Hook = require('../hook');
+const Hook = require('../../hook');
 
 exports = module.exports = class Chain extends Hook {
   constructor(bead) {
