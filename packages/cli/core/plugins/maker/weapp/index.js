@@ -1,16 +1,14 @@
 const compiler = require('./compiler');
-const template = require('../wepy/template');
-const scriptInjection = require('./scriptInjection');
+const parser = require('./parser');
 
-exports = module.exports = class WepyMaker {
+exports = module.exports = class WeappMaker {
   constructor(options) {
     this.options = options;
   }
   install(compilation) {
     if (!this._installed) {
       compiler.call(compilation);
-      template.call(compilation);
-      scriptInjection.call(compilation);
+      parser.call(compilation);
       this._installed = true;
     }
   }

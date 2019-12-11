@@ -1,4 +1,5 @@
 const path = require('path');
+const ScriptBead = require('../compile/bead').ScriptBead;
 
 function replaceDep(parsed, dep, replacer) {
   parsed.replaces.push(replacer);
@@ -57,6 +58,9 @@ exports = module.exports = function() {
   this.register('script-dep-fix', function scriptDepFix(chain) {
     const bead = chain.bead;
     const parsed = bead.parsed;
+    if (!(bead instanceof ScriptBead)) {
+      return chain;
+    }
 
     if (parsed.replaces.length === chain.series.length) {
       return chain;

@@ -2,7 +2,7 @@ const path = require('path');
 const hashUtil = require('../../util/hash');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-wxs', function(node, ctx) {
+  this.register('parse-wxs', function(node, ctx) {
     if (ctx.useCache && !node.src && ctx.sfc.template.parsed) {
       return Promise.resolve(true);
     }

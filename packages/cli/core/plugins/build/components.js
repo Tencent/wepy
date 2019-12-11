@@ -34,6 +34,7 @@ exports = module.exports = function() {
       if (!script.empty && !(comp.component && comp.type === 'weapp')) {
         this.hook('script-injection', script, template.bead.parsed.rel);
       }*/
+      this.hook('script-injection', script, template.bead.parsed.rel);
 
       if (wxs && wxs.length) {
         let wxsCode = '';

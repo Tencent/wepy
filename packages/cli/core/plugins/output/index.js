@@ -99,11 +99,11 @@ exports = module.exports = function() {
       let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
       const target = path.join(this.context, p);
       if (fs.existsSync(target)) {
-        if (fs.lstatSync(target).isDirectory()) {
+        if (fs.lstatSync(target).isDirectory() || fs.lstatSync(target).isFile()) {
           const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
           return fs.copy(target, dest);
         } else {
-          this.logger.warn('output-static', `Path is not a directory: ${target}`);
+          this.logger.warn('output-static', `Path should be a directory or file: ${target}`);
         }
       }
       return Promise.resolve(true);

@@ -6,21 +6,24 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const fs = require('fs');
+const RawSource = require('../../compile/source').RawSource;
+
 // const path = require('path');
 
 exports = module.exports = function() {
-  this.register('wepy-parser-file', function(chain) {
+  this.register('parse-file', function(chain) {
     const bead = chain.bead;
-    const file = bead.path;
-    let fileContent = fs.readFileSync(file, 'utf-8');
+    const compiledCode = bead.compiled.code;
 
-    bead.reload(fileContent);
+    bead.reload(compiledCode);
 
-    if (bead.compiled) {
-      return Promise.resolve(chain);
-    } else {
-      /*
+    bead.parsed = {
+      code: new RawSource(compiledCode)
+    };
+
+    return chain;
+
+    /*
       this.compiled[file] = depFileCtx;
       depFileCtx.hash = fileHash;
       this.fileDep.cleanDeps(file);
@@ -99,6 +102,6 @@ exports = module.exports = function() {
         }
       }
       */
-    }
+    // }
   });
 };

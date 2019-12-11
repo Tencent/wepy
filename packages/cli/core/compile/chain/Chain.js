@@ -5,7 +5,21 @@ exports = module.exports = class Chain extends Hook {
     super();
     this.bead = bead;
     this._metrics = { belong: {}, self: {} };
-    this._allowedMetrics = ['npm', 'weapp', 'wepy'];
+    this._allowedMetrics = [
+      /**
+       * npm resource.
+       */
+      'npm',
+      /**
+       * if current chain instanceof weapp chain(AppChain/PageChain/ComponentChain), the
+       * current chain should be compiled to four type files(script/config/style/template).
+       */
+      'weapp',
+      /**
+       * it will be removed later.
+       */
+      'wepy'
+    ];
 
     /*
     this.npm = {

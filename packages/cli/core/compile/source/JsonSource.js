@@ -1,7 +1,7 @@
 const RawSource = require('webpack-sources').RawSource;
 
 exports = module.exports = class JsonSource extends RawSource {
-  constructor (value, convertToString = false) {
+  constructor(value, convertToString = false) {
     super(value, convertToString);
     try {
       let fn = new Function('return ' + value);
@@ -11,14 +11,14 @@ exports = module.exports = class JsonSource extends RawSource {
     }
   }
 
-  source () {
+  source() {
     return JSON.stringify(this._meta, null, 2);
   }
 
-  meta (_meta) {
+  meta(_meta) {
     if (_meta) {
       this._meta = _meta;
     }
     return this._meta;
   }
-}
+};

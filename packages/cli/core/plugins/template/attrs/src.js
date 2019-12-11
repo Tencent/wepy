@@ -1,7 +1,5 @@
-const fs = require('fs-extra');
 const path = require('path');
-const ReplaceSource = require('webpack-sources').ReplaceSource;
-const RawSource = require('webpack-sources').RawSource;
+const FileBead = require('../../../compile/bead').FileBead;
 
 exports = module.exports = function() {
   this.register('url-to-module', function urlToModule(url) {
@@ -26,9 +24,6 @@ exports = module.exports = function() {
 
     if (parsed.isModule) {
       const context = path.dirname(chain.bead.path);
-      const assets = this.assets;
-      const type = 'url';
-      const encoding = 'base64';
 
       parsed.file = this.resolvers.normal.resolveSync({}, context, parsed.url, {});
       parsed.url = path.relative(path.dirname(chain.bead.path), parsed.file);
@@ -38,20 +33,12 @@ exports = module.exports = function() {
         parsed.url = parsed.url.replace(/\\/g, '/');
       }
 
-      const code = fs.readFileSync(parsed.file, encoding);
-      const source = new ReplaceSource(new RawSource(code));
-
       // add assets dependencies
-      let obj = {
-        file: chain.bead.path,
-        parser: {},
-        code: code,
-        encoding,
-        source: source,
-        depModules: null,
-        type: type
-      };
-      assets.update(parsed.file, obj, { url: true });
+      const newBead = this.producer.make(FileBead, parsed.file);
+      const newChain = chain.createChain(newBead);
+      this.hookUnique('make', newChain).then(c => {
+        this.producer.asserts(c);
+      });
     }
     parsed.attr = { attrs: { src: parsed.url } };
     return parsed.attr;

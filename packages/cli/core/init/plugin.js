@@ -1,4 +1,5 @@
 const WepyMaker = require('../plugins/maker/wepy/index');
+const WeappMaker = require('../plugins/maker/weapp/index');
 const { isArr, isFunc } = require('../util/tools');
 
 function checkPlugins(ins, plugins) {
@@ -30,7 +31,6 @@ exports = module.exports = function(ins) {
     './../plugins/scriptDepFix',
     './../plugins/scriptInjection',
     './../plugins/build/app',
-    './../plugins/build/pages',
     './../plugins/build/components',
     './../plugins/build/vendor',
     './../plugins/build/assets',
@@ -50,7 +50,7 @@ exports = module.exports = function(ins) {
   ].map(v => require(v).call(ins));
 
   // system plugins
-  [new WepyMaker()].map(item => item.install(ins));
+  [new WepyMaker(), new WeappMaker()].map(item => item.install(ins));
   // check custom plugins
   const customPluginFns = checkPlugins(ins, ins.options.plugins);
 

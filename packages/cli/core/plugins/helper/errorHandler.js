@@ -3,10 +3,11 @@ exports = module.exports = function() {
     if (arguments.length === 1) {
       if (typeof handler === 'object') {
         errInfo = handler;
-        let { ctx, message, type, snapshot, file, title } = errInfo;
+        let { chain, message, type, snapshot, file, title } = errInfo;
+        let bead = chain.bead;
         let output = 'Message:\n  ' + message;
-        if (ctx && ctx.file) {
-          file = ctx.file;
+        if (bead && bead.path) {
+          file = bead.path;
         }
         if (file) {
           output += '\n' + 'File:\n  ' + file;
@@ -22,14 +23,15 @@ exports = module.exports = function() {
   });
 
   this.register('error-handler-script', function(errInfo, extra) {
-    let { ctx, message, type, title, code, filename } = errInfo;
+    let { chain, message, type, title, code, filename } = errInfo;
+    let bead = chain.bead;
     let codeFrame = '';
 
-    if (ctx && ctx.file) {
-      filename = filename || ctx.file;
+    if (bead && bead.path) {
+      filename = filename || bead.path;
     }
-    if (ctx && ctx.sfc && ctx.script && ctx.script.content) {
-      code = ctx.sfc.script.content;
+    if (bead && bead.content) {
+      code = bead.content;
     }
 
     if (extra) {
@@ -44,16 +46,16 @@ exports = module.exports = function() {
   });
 
   this.register('error-handler-template', function(errInfo, extra) {
-    let { ctx, message, type, title } = errInfo;
-
+    let { chain, message, type, title } = errInfo;
+    let bead = chain.bead;
     let codeFrame = '';
 
     if (extra) {
       extra.type = 'template';
-      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', ctx.sfc.template.content, extra, message);
+      codeFrame = 'Snapshot:\n' + this.hookUnique('gen-code-frame', bead.content, extra, message);
     }
     let output = 'Message:\n  ' + message;
-    output += '\n' + 'File:\n  ' + ctx.file;
+    output += '\n' + 'File:\n  ' + bead.path;
     output += '\n' + codeFrame;
     this.logger[type](title, output);
   });

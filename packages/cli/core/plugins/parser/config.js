@@ -21,7 +21,7 @@ exports = module.exports = function() {
     } catch (err) {
       return Promise.reject(err.message);
     }
-    
+
     let meta = source.meta();
 
     if (isApp) {
@@ -77,6 +77,8 @@ exports = module.exports = function() {
         request = matchs[2];
       }
 
+      request = path.isAbsolute(request) ? path.join(process.cwd(), this.options.src, request) : request;
+
       let target = request;
       let source = request;
 
@@ -88,28 +90,32 @@ exports = module.exports = function() {
       }
 
       return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, chain).then(
-        ({ name, prefix, resolved, target, npm }) => {
+        ({ name, resolved, target, npm }) => {
           if (hookName === 'raw') {
+            const comChain = this.createComponentChain(url);
+            comChain.setPrevious(chain);
+
+            comChain.ignore = true;
+
+            if (npm) comChain.self('npm');
+
             resolvedUsingComponents[name] = url;
-            parseComponents.push({
-              name,
-              prefix,
-              url
-            });
+            parseComponents.push(comChain);
           } else {
+            const comChain = this.createComponentChain(resolved.path);
+            comChain.setPrevious(chain);
             let relativePath = path.relative(path.dirname(bead.path), target);
             let parsedPath = path.parse(relativePath);
+            let isWepy = parsedPath.ext === this.options.wpyExt;
+
+            if (npm) comChain.self('npm');
+            /**
+             * Todo: it would be remove later.
+             */
+            if (isWepy) comChain.self('wepy');
+
             resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
-            parseComponents.push({
-              name,
-              prefix,
-              resolved,
-              path: resolved.path,
-              target,
-              npm,
-              request: relativePath,
-              type: parsedPath.ext === this.options.wpyExt ? 'wepy' : 'weapp'
-            });
+            parseComponents.push(comChain);
           }
         }
       );

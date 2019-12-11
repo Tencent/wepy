@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
-    "lint": "eslint ./ --ext .js",
+    "lint": "eslint ./ --fix --ext .js",
     "dev:core": "rollup -w -c scripts/config.js --environment TARGET:core",
     "dev:all": "node ./scripts/build.js",
     "dev:watch": "chokidar '**/*.wpy' '**/*.js' -c 'npm run dev:all' -i '/dist/'",

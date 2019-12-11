@@ -1,0 +1,10 @@
+const Bead = require('./Bead');
+exports = module.exports = class FileBead extends Bead {
+  constructor(id, filepath, content) {
+    super(id, filepath, content);
+  }
+
+  output() {
+    return this.parsed.code.source();
+  }
+};

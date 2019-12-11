@@ -14,7 +14,11 @@ class Producer {
       id = filepath;
     }
     if (!content) {
-      content = fs.readFileSync(filepath, 'utf-8');
+      try {
+        content = fs.readFileSync(filepath, 'utf-8');
+      } catch (err) {
+        content = '';
+      }
     }
     let bead;
     if (this.beadsMap[id]) {

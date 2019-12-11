@@ -1,5 +1,4 @@
 const xmllint = require('../../util/xmllint');
-const RawSource = require('../../compile/source').RawSource;
 
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {
@@ -9,15 +8,14 @@ exports = module.exports = function() {
     if (bead.parsed) {
       return Promise.resolve(chain);
     }
-
     // If it's weapp, do not compile it.
-    if (chain.self().weapp) {
-      chain.sfc.template.parsed = {
-        code: new RawSource(compiledCode),
-        rel: {}
-      };
-      return chain;
-    }
+    // if (chain.previous.self().weapp) {
+    //   bead.parsed = {
+    //     code: new RawSource(compiledCode),
+    //     rel: {}
+    //   };
+    //   return chain;
+    // }
 
     let msg = xmllint.verify(compiledCode);
     msg.forEach(item => {
@@ -40,7 +38,8 @@ exports = module.exports = function() {
     let components = {};
     let sfcConfig = chain.previous.sfc.config;
 
-    let usingComponents = sfcConfig && sfcConfig.bead.parsed.code.meta() ? sfcConfig.bead.parsed.code.meta().usingComponents : {};
+    let usingComponents =
+      sfcConfig && sfcConfig.bead.parsed.code.meta() ? sfcConfig.bead.parsed.code.meta().usingComponents : {};
 
     for (let k in usingComponents) {
       components[k] = {

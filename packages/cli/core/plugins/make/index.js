@@ -1,12 +1,20 @@
+const DEFAULT_WEAPP_RULES = require('../../util/const').DEFAULT_WEAPP_RULES;
+const DEFAULT_WEAPP_TYPE = Object.keys(DEFAULT_WEAPP_RULES);
+
 exports = module.exports = function() {
   const langExtCache = {};
-  this.register('make-lookup-lang-from-ext', function(ext) {
+  this.register('make-lookup-lang-from-ext', function(chain, ext) {
     if (langExtCache[ext]) {
       return langExtCache[ext];
     }
+
     const rst = [];
     const rule = this.options.weappRule;
     for (let k in rule) {
+      /**
+       * if current chain instanceof weapp chain, ignore default weapp type rule(script/style/config/template)
+       */
+      if (chain.self().weapp && DEFAULT_WEAPP_TYPE.includes(k)) continue;
       rule[k].forEach(item => {
         if (item.ext === ext) {
           rst.push(item);
@@ -17,15 +25,17 @@ exports = module.exports = function() {
     return rst;
   });
 
-  this.register('make-lookup-lang', function(bead, type) {
+  this.register('make-lookup-lang', function(chain, type) {
+    const bead = chain.bead;
     if (bead.lang) {
       return bead.lang;
     }
     const ext = bead.ext;
-    if (type === undefined) {
-      const rule = this.hookUnique('make-lookup-lang-from-ext', ext);
+    if (chain.self().weapp || type === undefined) {
+      const rule = this.hookUnique('make-lookup-lang-from-ext', chain, ext);
       if (rule.length === 0) {
-        throw new Error('Can not from any rule for ext: ' + ext);
+        return 'file';
+        // throw new Error('Can not from any rule for ext: ' + ext);
       }
       return rule[0].lang;
     } else {
@@ -57,13 +67,17 @@ exports = module.exports = function() {
    *       parse              ->         chain.bead.parsed
    */
   this.register('make', function(chain, type) {
-    const bead = chain.bead;
-    const lang = this.hookUnique('make-lookup-lang', bead, type);
-    type = type || lang;
+    if (chain.self().weapp) {
+      // use weapp parser
+      type = 'weapp';
+    }
+    const lang = this.hookUnique('make-lookup-lang', chain, type);
+    type = type || 'file';
     // Compile chain
-    const key = 'compile-' + lang;
+    let key = 'compile-' + lang;
     if (!this.hasHook(key)) {
-      throw new Error(`Compiler "${key}" is not find.`);
+      key = 'compile-file';
+      // throw new Error(`Compiler "${key}" is not find.`);
     }
     return this.hookAsyncSeq('before-' + key, chain.previous)
       .then(() => {

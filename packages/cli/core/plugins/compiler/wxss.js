@@ -1,12 +1,17 @@
 const css = require('css');
 const path = require('path');
 const fs = require('fs');
-const RawSource = require('webpack-sources').RawSource;
+const FileBead = require('../../compile/bead').FileBead;
 
 exports = module.exports = function() {
   this.register('compile-wxss', function(chain) {
     const bead = chain.bead;
-    let ast = css.parse(bead.content);
+    let ast;
+    try {
+      ast = css.parse(bead.content);
+    } catch (err) {
+      this.logger.error('compiler', err.message);
+    }
     const file = bead.path;
 
     ast.stylesheet.rules.forEach(rule => {
@@ -20,35 +25,34 @@ exports = module.exports = function() {
 
         let encoding = 'utf-8';
 
-        if (this.assets.get(importfile) === undefined) {
-          let importCode;
+        // if (this.assets.get(importfile) === undefined) {
+        let importCode;
 
-          try {
-            importCode = fs.readFileSync(importfile, encoding);
-          } catch (e) {
-            this.logger.warn('compiler', `Can not open file ${importfile} in ${file}`);
-          }
-
-          if (importCode) {
-            // add assets dependencies
-            this.assets.update(
-              importfile,
-              {
-                encoding: encoding,
-                source: new RawSource(importCode)
-              },
-              { url: true, npm: chain.npm.self }
-            );
-
-            this.hookUnique(
-              'wepy-compiler-wxss',
-              {
-                content: importCode
-              },
-              chain
-            );
-          }
+        try {
+          importCode = fs.readFileSync(importfile, encoding);
+        } catch (e) {
+          this.logger.warn('compiler', `Can not open file ${importfile} in ${file}`);
         }
+
+        if (importCode) {
+          // add assets dependencies
+          const newBead = this.producer.make(FileBead, importfile);
+          const newChain = chain.createChain(newBead);
+          this.hookUnique('make', newChain).then(c => {
+            this.producer.asserts(c);
+          });
+          // this.assets.update(
+          //   importfile,
+          //   {
+          //     encoding: encoding,
+          //     source: new RawSource(importCode)
+          //   },
+          //   { url: true, npm: chain.self().npm }
+          // );
+
+          this.hookUnique('compile-wxss', newChain);
+        }
+        // }
       }
     });
     bead.compiled = {

@@ -67,13 +67,15 @@ class Compile extends Hook {
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
 
     this.options.resolve.extensions = ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt];
+    this.options.resolve.mainFields = ['miniprogram', 'main'];
 
     this.resolvers.normal = ResolverFactory.createResolver(
       Object.assign(
         {
           fileSystem: this.inputFileSystem
         },
-        this.options.resolve
+        this.options.resolve,
+        this.options.resolve.mainFields
       )
     );
 
@@ -83,7 +85,8 @@ class Compile extends Hook {
           fileSystem: this.inputFileSystem,
           resolveToContext: true
         },
-        this.options.resolve
+        this.options.resolve,
+        this.options.resolve.mainFields
       )
     );
 
@@ -92,7 +95,8 @@ class Compile extends Hook {
         {
           fileSystem: this.inputFileSystem
         },
-        this.options.resolve
+        this.options.resolve,
+        this.options.resolve.mainFields
       )
     );
 
@@ -102,7 +106,8 @@ class Compile extends Hook {
           fileSystem: this.inputFileSystem,
           resolveToContext: true
         },
-        this.options.resolve
+        this.options.resolve,
+        this.options.resolve.mainFields
       )
     );
 
@@ -215,7 +220,7 @@ class Compile extends Hook {
           appConfig.pages = [];
           this.hookUnique('error-handler', {
             type: 'warn',
-            bead,
+            chain,
             message: `Missing "pages" in App config`
           });
         }
@@ -250,7 +255,7 @@ class Compile extends Hook {
           }
           this.hookUnique('error-handler', {
             type: 'error',
-            bead,
+            chain,
             message: `Can not resolve page: ${v}`
           });
         });
@@ -285,9 +290,9 @@ class Compile extends Hook {
         let parsed = config.bead.parsed || {};
         let parsedComponents = parsed.components || [];
 
-        parsedComponents.forEach(com => {
-          const chain = this.createComponentChain(com.path);
-          tasks.push(this.hookUnique('make', chain));
+        parsedComponents.forEach(comChain => {
+          // const chain = this.createComponentChain(com.path);
+          if (!comChain.ignore) tasks.push(this.hookUnique('make', comChain));
           /*
           if (com.type === 'wepy' && !components.includes(com.path)) {
             // wepy 组件
@@ -369,7 +374,6 @@ class Compile extends Hook {
       }
       this.hookUnique('error-handler', {
         type: 'error',
-        ctx: {},
         message: `Can not resolve page: ${file}`
       });
     });

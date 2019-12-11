@@ -14,7 +14,7 @@
 const AppChain = require('../../../compile/chain').AppChain;
 
 exports = module.exports = function() {
-  this.register('parse-wepy', function(chain) {
+  this.register('parse-weapp', function(chain) {
     // config -> wxs -> template -> script -> styles
     return Promise.resolve(chain)
       .then(chain => {

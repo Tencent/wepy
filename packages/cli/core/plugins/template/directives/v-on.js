@@ -123,6 +123,7 @@ exports = module.exports = function() {
   });
 
   this.register('parse-template-ast-attr-v-on', function parseAstOn({ chain, item, name, expr, modifiers, scope }) {
+    let bead = chain.bead;
     let handler = expr.trim();
 
     let parsedEvent = parseHandler(name, handler, scope);
@@ -201,7 +202,7 @@ exports = module.exports = function() {
 
       if (!item.events) {
         item.events = [];
-        parsedEvent.id = `${assetsId}-${evtCache.increaseId}`;
+        parsedEvent.id = `${bead.no}-${evtCache.increaseId}`;
       } else {
         parsedEvent.id = item.events[item.events.length - 1].id;
       }

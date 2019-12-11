@@ -71,7 +71,8 @@ const HTML2WXML_MAP = {
   span: 'label',
   'contact-button': 'contact-button',
   // support template [template](https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/template.html)
-  'wx-template': 'template'
+  'wx-template': 'template',
+  template: 'template'
 };
 
 /**
