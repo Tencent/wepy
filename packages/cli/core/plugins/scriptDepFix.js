@@ -58,9 +58,14 @@ exports = module.exports = function() {
   this.register('script-dep-fix', function scriptDepFix(chain) {
     const bead = chain.bead;
     const parsed = bead.parsed;
+    const walker = parsed.walker;
     if (!(bead instanceof ScriptBead)) {
       return chain;
     }
+
+    walker.replacements.forEach(item => {
+      replaceDep(parsed, item, item.value);
+    });
 
     if (parsed.replaces.length === chain.series.length) {
       return chain;

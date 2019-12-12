@@ -3,6 +3,7 @@ class AstWalker {
     this.ast = ast;
     this.state = {};
     this.chain = chain;
+    this.replacements = [];
   }
 
   run() {
