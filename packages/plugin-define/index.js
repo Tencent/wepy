@@ -45,28 +45,39 @@ const toCode = code => {
   return code + '';
 };
 
+function registerChainHook (chain, options) {
+  chain.register('walker-unary-expression-undefined', function(parser, expr, names) {
+    if (expr.operator === 'typeof') {
+      let v = options[`typeof ${names.name}`] || options[`typeof(${names.name})`];
+      if (v) {
+        parser.replacements.push({ expr, value: toCode(v) });
+      }
+    }
+    return [parser, expr, names];
+  });
+  chain.register('walker-member-expression-undefined', function(parser, expr, names) {
+    if (options.hasOwnProperty(names.name)) {
+      parser.replacements.push({ expr, value: toCode(options[names.name]) });
+    }
+    return [parser, expr, names];
+  });
+  chain.register('walker-identifier-undefined', function(parser, expr) {
+    if (options.hasOwnProperty(expr.name)) {
+      parser.replacements.push({ expr, value: toCode(options[expr.name]) });
+    }
+    return [parser, expr];
+  });
+
+  chain.__plugin_define_registed = true;
+}
+
 exports = module.exports = function DefinePlugin(options = {}) {
   return function() {
-    this.register('walker-unary-expression-undefined', function(parser, expr, names) {
-      if (expr.operator === 'typeof') {
-        let v = options[`typeof ${names.name}`] || options[`typeof(${names.name})`];
-        if (v) {
-          parser.replacements.push({ expr, value: toCode(v) });
-        }
+    this.register('before-parse-script', function (chain) {
+      if (!chain.__plugin_define_registed) {
+        registerChainHook(chain, options);
       }
-      return [parser, expr, names];
-    });
-    this.register('walker-member-expression-undefined', function(parser, expr, names) {
-      if (options.hasOwnProperty(names.name)) {
-        parser.replacements.push({ expr, value: toCode(options[names.name]) });
-      }
-      return [parser, expr, names];
-    });
-    this.register('walker-identifier-undefined', function(parser, expr) {
-      if (options.hasOwnProperty(expr.name)) {
-        parser.replacements.push({ expr, value: toCode(options[expr.name]) });
-      }
-      return [parser, expr];
-    });
+      return Promise.resolve(chain);
+    })
   };
 };
