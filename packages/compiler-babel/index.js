@@ -38,14 +38,14 @@ function registerChainHook(chain) {
       }
     }
   });
-  registerChainHook.registed = true;
+  chain.__compile_babel_registed = true;
   return chain;
 }
 
 exports = module.exports = function(options) {
   return function() {
     this.register('compile-babel', function(chain) {
-      if (!registerChainHook.registed) {
+      if (!chain.__compile_babel_registed) {
         registerChainHook(chain);
       }
       let p;
