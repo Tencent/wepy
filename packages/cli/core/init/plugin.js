@@ -45,8 +45,7 @@ exports = module.exports = function(ins) {
     './../plugins/helper/generateCodeFrame',
     './../plugins/helper/errorHandler',
 
-    './../plugins/compiler/index',
-    './../compile/loader/wepyLoader'
+    './../plugins/compiler/index'
   ].map(v => require(v).call(ins));
 
   // system plugins
