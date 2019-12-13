@@ -86,7 +86,7 @@ exports = module.exports = function() {
   });
 
   this.register('output-vendor', data => {
-    return output.bind(this)(data, 'vendor');
+    return data.ignore && output.bind(this)(data, 'vendor');
   });
 
   this.register('output-assets', list => {

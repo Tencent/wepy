@@ -49,6 +49,12 @@ exports = module.exports = function() {
     // So may need a hashmap to store the beads who were writen in vendor
     let writeBeads = {};
     let vendorList = this.producer.vendors();
+ 
+    if (vendorList.length === 0) {
+      // Empty vendor list.
+      vendor.ignore = true;
+      return false;
+    }
 
     let code = '';
 
