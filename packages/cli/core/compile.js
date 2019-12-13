@@ -291,19 +291,7 @@ class Compile extends Hook {
         let parsedComponents = parsed.components || [];
 
         parsedComponents.forEach(comChain => {
-          // const chain = this.createComponentChain(com.path);
-          if (!comChain.ignore) tasks.push(this.hookUnique('make', comChain));
-          /*
-          if (com.type === 'wepy' && !components.includes(com.path)) {
-            // wepy 组件
-            tasks.push(this.hookUnique('wepy-parser-wpy', com));
-            components.push(com.path);
-          } else if (com.type === 'weapp' && !originalComponents.includes(com.path)) {
-            // 原生组件
-            tasks.push(this.hookUnique('wepy-parser-component', com));
-            originalComponents.push(com.path);
-          }
-          */
+          if (!comChain.ignore()) tasks.push(this.hookUnique('make', comChain));
         });
       });
 

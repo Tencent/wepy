@@ -94,8 +94,8 @@ exports = module.exports = function() {
           if (hookName === 'raw') {
             const comChain = this.createComponentChain(url);
             comChain.setPrevious(chain);
-
-            comChain.ignore = true;
+            // It will not be make
+            comChain.ignore(true);
 
             if (npm) comChain.self('npm');
 

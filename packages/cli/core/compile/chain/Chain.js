@@ -52,6 +52,17 @@ exports = module.exports = class Chain extends Hook {
 
     // next Chain
     this.series = [];
+
+    // ignore this chain, and it will not be make
+    this._ignore = false;
+  }
+
+  ignore(v) {
+    // set ignore
+    if (v === undefined) {
+      return this._ignore;
+    }
+    return this._ignore = !!v;
   }
 
   belong(key, v) {
