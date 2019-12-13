@@ -1,62 +1,37 @@
 const path = require('path');
-const hashUtil = require('../../util/hash');
+const WxsBead = require('../../compile/bead').WxsBead;
+const { ReplaceSource, RawSource } = require('../../compile/source');
 
 exports = module.exports = function() {
-  this.register('parse-wxs', function(node, ctx) {
-    if (ctx.useCache && !node.src && ctx.sfc.template.parsed) {
-      return Promise.resolve(true);
+  this.register('parse-wxs', function(chain) {
+    const bead = chain.bead;
+    if (bead.parsed) {
+      return Promise.resolve(chain);
     }
-    let moduleId = node.attrs.module;
-    let code = node.compiled.code.trim();
-    let output = `<wxs module="${moduleId}"${node.src ? ' src="' + node.src + '"' : ''}>${
-      !node.src ? '\n' + code + '\n' : ''
+    let validRef = bead.refPath !== bead.path;
+    let moduleId = bead.module;
+    let compiledCode = bead.compiled.code.trim();
+    debugger
+    compiledCode = `<wxs module="${moduleId}"${validRef ? ' src="' + path.relative(path.dirname(bead.path), bead.refPath) + '"' : ''}>${
+      !validRef ? '\n' + compiledCode + '\n' : ''
     }</wxs>`;
-    node.parsed = {
-      output
+    
+    bead.parsed = {
+      code: new ReplaceSource(new RawSource(compiledCode))
     };
-    const fileHash = node.src ? hashUtil.hash(code) : ctx.hash;
-    // If have src attribute, then use src.wxs as ctx key
-    // If do not have src, then create a fake xxx.wpy_wxs as ctx key.
-    // Can not use wpy ctx, because it's generated in wpy parse.
-    const cacheKey = node.src ? path.resolve(path.dirname(ctx.file), node.src) : ctx.file + '_wxs';
-    const isHashEqual = !!this.compiled[cacheKey] && fileHash === this.compiled[cacheKey].hash;
-    let wxsCtx = null;
 
-    if (node.src && isHashEqual) {
-      // If node has src, then use src file cache
-      wxsCtx = this.compiled[cacheKey];
-      wxsCtx.useCache = true;
-      return Promise.resolve(wxsCtx);
-    } else {
-      wxsCtx = Object.assign({}, ctx, {
-        // If node have a src, then ctx.file has to be node.src related, otherwise, there will be an error while require a wxs file in the wxs file
-        file: node.src ? cacheKey : ctx.file,
-        wxs: true,
-        hash: fileHash
-      });
-      this.compiled[cacheKey] = wxsCtx;
+    if (validRef) {
+       // e.g. a.wpy <script src=b.js />, error handler shows b.js
+      const newBead = this.producer.make(WxsBead, bead.refPath);
+      newBead.lang = bead.lang;
+      const newChain = chain.createChain(newBead);
 
-      // If sfc file hash is equal
-      if (isHashEqual) {
-        return Promise.resolve(wxsCtx);
-      }
-      if (node.src) {
-        this.assets.add(cacheKey, {
-          npm: wxsCtx.npm,
-          wxs: true,
-          dep: true,
-          component: wxsCtx.component,
-          type: wxsCtx.type
-        });
-      }
+      return this.hookUnique('make', newChain, 'file')
+        .then((c) => {
+          this.producer.asserts(c);
+        })
+        .then(() => chain);
     }
-
-    node = {
-      type: 'script',
-      lang: node.lang,
-      content: code,
-      src: node.src
-    };
-    return this.applyCompiler(node, wxsCtx);
+    return Promise.resolve(chain);
   });
 };

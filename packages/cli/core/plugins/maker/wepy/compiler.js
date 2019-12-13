@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const AppChain = require('../../../compile/chain').AppChain;
-const { ConfigBead, ScriptBead, StyleBead, TemplateBead } = require('../../../compile/bead');
+const { ConfigBead, ScriptBead, WxsBead, StyleBead, TemplateBead } = require('../../../compile/bead');
 const sfcCompiler = require('vue-template-compiler');
 const loaderUtils = require('loader-utils');
 const DEFAULT_WEAPP_RULES = require('./../../../util/const').DEFAULT_WEAPP_RULES;
@@ -11,6 +11,7 @@ const trailingSlash = /[/\\]$/;
 const beadsMap = {
   config: ConfigBead,
   script: ScriptBead,
+  wxs: WxsBead,
   template: TemplateBead,
   styles: StyleBead
 };
@@ -36,12 +37,17 @@ exports = module.exports = function() {
         }
       }
     }
-    ['config', 'script', 'template', 'styles'].forEach(item => {
+    const sfcType = ['config', 'script', 'template', 'styles'];
+
+    if (sfcObj.hasOwnProperty('wxs')) sfcType.push('wxs');
+
+    sfcType.forEach(item => {
       if (Array.isArray(sfcObj[item])) {
         chain.sfc[item] = sfcObj[item].map((obj, i) => {
           const newBead = this.producer.make(beadsMap[item], bead.path, `${bead.id}$${item}$${i}`, obj.content);
           newBead.data = obj;
           newBead.lang = obj.lang || bead.lang || DEFAULT_WEAPP_RULES[item].lang;
+          if (obj.module) newBead.setModule(obj.module);
           return chain.createChain(newBead);
         });
       } else {
@@ -55,29 +61,30 @@ exports = module.exports = function() {
         }
       }
     });
-    return this.hookAsyncSeq('parse-sfc-sfc', chain, sfcObj).then(() => chain);
+    return this.hookAsyncSeq('parse-sfc-src', chain, sfcObj).then(() => chain);
   });
 
   this.register('parse-sfc-src', function(sfcChain, sfcObj) {
     let tasks = [];
-    let dir = path.parse(sfcChain.bead.path).dir;
+    let bead = sfcChain.bead;
+    let dir = path.parse(bead.path).dir;
     dir = dir.replace(trailingSlash, '');
 
     for (let type in sfcObj) {
       // wxs is an array.
       let nodes = [].concat(sfcObj[type]);
-      nodes.forEach(node => {
+      let chains = [].concat(sfcChain.sfc[type]);
+      nodes.forEach((node, i) => {
         const src = node ? node.src : '';
         if (src) {
           const request = loaderUtils.urlToRequest(src, src.charAt(0) === '/' ? '' : null);
           tasks.push(
             this.resolvers.normal.resolve({}, dir, request, {}).then(rst => {
-              const bead = sfcChain.sfc[type].bead;
-              bead.reload(fs.readFileSync(rst.path, 'utf-8'));
+              const chain = chains[i];
+              const bead = chain.bead;
               // Update reference path. error handler will show the reference path
               // e.g. a.wpy <script src=b.js />, error handler shows b.js
               bead.refPath = rst.path;
-              this.fileDep.addDeps(bead.path, [bead.refPath]);
             })
           );
         }
@@ -119,6 +126,7 @@ exports = module.exports = function() {
     if (!sfc.wxs) sfc.wxs = [];
     block.lang = block.attrs.lang || 'js';
     block.type = 'wxs';
+    block.module = block.attrs.module || 'wxsModule';
     sfc.wxs.push(block);
     return { sfc, block };
   });

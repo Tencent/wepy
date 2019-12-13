@@ -39,13 +39,15 @@ exports = module.exports = function() {
       if (wxs && wxs.length) {
         let wxsCode = '';
         wxs.forEach(item => {
-          wxsCode += item.parsed.output + '\n';
+          wxsCode += item.bead.output() + '\n';
         });
-        template.outputCode =
-          '<!----------   wxs start ----------->\n' +
-          wxsCode +
-          '<!----------   wxs end   ----------->\n' +
-          template.outputCode;
+
+        wxsCode = 
+        '<!--           wxs start           -->\n' +
+        wxsCode +
+        '<!--           wxs end             -->\n';
+        
+        template.bead.parsed.code.insert(0, wxsCode);
       }
       let targetFile = comp.self().npm ? this.getModuleTarget(comp.bead.path) : this.getTarget(comp.bead.path);
       let target = path.parse(targetFile);

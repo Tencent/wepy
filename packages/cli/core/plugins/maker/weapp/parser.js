@@ -21,6 +21,11 @@ exports = module.exports = function() {
         return this.hookUnique('make', chain.sfc.config, 'config');
       })
       .then(() => {
+        if (chain.sfc.wxs) {
+          return Promise.all(chain.sfc.wxs.map(wxsChain => this.hookUnique('make', wxsChain, 'wxs')));
+        }
+      })
+      .then(() => {
         // TODO: ignore wxs
         if (chain instanceof AppChain) {
           return chain;
