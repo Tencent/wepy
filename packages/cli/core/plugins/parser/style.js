@@ -1,4 +1,4 @@
-const RawSource = require('../../compile/source').RawSource;
+const { ReplaceSource, RawSource } = require('../../compile/source');
 
 exports = module.exports = function() {
   this.register('parse-style', function(chain) {
@@ -9,7 +9,7 @@ exports = module.exports = function() {
       return Promise.resolve(chain);
     }
     bead.parsed = {
-      code: new RawSource(compiledCode)
+      code: new ReplaceSource(new RawSource(compiledCode))
     };
     return chain;
   });

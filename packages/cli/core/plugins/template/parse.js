@@ -1,6 +1,6 @@
 const htmlparser = require('htmlparser2');
 const tools = require('../../util/tools');
-const RawSource = require('../../compile/source').RawSource;
+const { ReplaceSource, RawSource } = require('../../compile/source');
 const modifierRE = /\.[^.]+/g;
 
 const toAST = html => {
@@ -217,8 +217,8 @@ exports = module.exports = function() {
 
       this.hookSeq('parse-template-ast', chain, ast, scope);
 
-      let code = this.hookUnique('parse-template-ast-to-str', ast);
-      parsed.code = new RawSource(code);
+      let compiledCode = this.hookUnique('parse-template-ast-to-str', ast);
+      parsed.code = new ReplaceSource(new RawSource(compiledCode))
       parsed.ast = ast;
       parsed.rel = rel;
       return chain;

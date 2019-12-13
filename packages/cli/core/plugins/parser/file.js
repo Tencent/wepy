@@ -6,7 +6,7 @@
  * http://opensource.org/licenses/MIT
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
  */
-const RawSource = require('../../compile/source').RawSource;
+const { ReplaceSource, RawSource } = require('../../compile/source');
 
 // const path = require('path');
 
@@ -18,7 +18,7 @@ exports = module.exports = function() {
     bead.reload(compiledCode);
 
     bead.parsed = {
-      code: new RawSource(compiledCode)
+      code: new ReplaceSource(new RawSource(compiledCode))
     };
 
     return chain;
