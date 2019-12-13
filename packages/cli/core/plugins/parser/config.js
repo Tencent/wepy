@@ -16,6 +16,10 @@ exports = module.exports = function() {
     let configString = compiledCode.replace(/^\n*/, '').replace(/\n*$/, '');
     configString = (configString || '{}').trim();
 
+    if (bead.parsed) {
+      return Promise.resolve(chain);
+    }
+
     try {
       source = new JsonSource(configString);
     } catch (err) {

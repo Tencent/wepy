@@ -15,93 +15,14 @@ exports = module.exports = function() {
     const bead = chain.bead;
     const compiledCode = bead.compiled.code;
 
-    bead.reload(compiledCode);
+    if (bead.parsed) {
+      return Promise.resolve(chain);
+    }
 
     bead.parsed = {
       code: new ReplaceSource(new RawSource(compiledCode))
     };
 
-    return chain;
-
-    /*
-      this.compiled[file] = depFileCtx;
-      depFileCtx.hash = fileHash;
-      this.fileDep.cleanDeps(file);
-
-      let ext = path.extname(file);
-
-      let componentValue = ext === this.options.wpyExt;
-      if (ext === '.js') {
-        // if it is a weapp component, it must has a .wxml file
-        const dirName = path.dirname(file);
-        const baseName = path.basename(file, '.js');
-        const wxmlFile = path.format({
-          dir: dirName,
-          base: baseName + '.wxml'
-        });
-        componentValue = fs.existsSync(wxmlFile);
-      }
-
-      this.assets.add(depFileCtx.file, {
-        npm: depFileCtx.npm,
-        dep: true,
-        component: componentValue,
-        type: depFileCtx.type,
-        wxs: depFileCtx.wxs
-      });
-
-      if (ext === '.js' || ext === '.ts' || ext === '.wxs') {
-        if (depFileCtx.npm && depFileCtx.type !== 'weapp') {
-          // weapp component npm may have import in it.
-          return this.applyCompiler({ type: 'script', lang: 'js', content: fileContent }, depFileCtx);
-        } else {
-          return this.applyCompiler({ type: 'script', lang: node.lang || 'babel', content: fileContent }, depFileCtx);
-        }
-      } else {
-        if (ext === this.options.wpyExt) {
-          // TODO: why they import a wpy file.
-          this.hookUnique(
-            'error-handler',
-            'script',
-            {
-              code: node.compiled.code,
-              ctx: depFileCtx,
-              type: 'error',
-              message: 'Can not import a wepy component, please use "usingComponents" to declear a component',
-              title: 'dependence'
-            },
-            node.compiled.map
-              ? {
-                  sourcemap: node.compiled.map,
-                  start: depFileCtx.dep.loc.start,
-                  end: depFileCtx.dep.loc.end
-                }
-              : depFileCtx.dep.loc
-          );
-          throw new Error('EXIT');
-        } else {
-          this.hookUnique(
-            'error-handler',
-            'script',
-            {
-              code: node.compiled ? node.compiled.code : '',
-              ctx: depFileCtx,
-              type: 'error',
-              message: `Unrecognized import extension: ${depFileCtx.file}`,
-              title: 'dependence'
-            },
-            node.compiled && node.compiled.map
-              ? {
-                  sourcemap: node.compiled.map,
-                  start: depFileCtx.dep.loc.start,
-                  end: depFileCtx.dep.loc.end
-                }
-              : depFileCtx.dep.loc
-          );
-          throw new Error('EXIT');
-        }
-      }
-      */
-    // }
+    return Promise.resolve(chain);
   });
 };
