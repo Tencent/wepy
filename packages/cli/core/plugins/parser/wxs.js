@@ -11,7 +11,7 @@ exports = module.exports = function() {
     let validRef = bead.refPath !== bead.path;
     let moduleId = bead.module;
     let compiledCode = bead.compiled.code.trim();
-    debugger
+
     compiledCode = `<wxs module="${moduleId}"${validRef ? ' src="' + path.relative(path.dirname(bead.path), bead.refPath) + '"' : ''}>${
       !validRef ? '\n' + compiledCode + '\n' : ''
     }</wxs>`;

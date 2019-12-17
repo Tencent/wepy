@@ -53,7 +53,7 @@ exports = module.exports = function() {
     if (vendorList.length === 0) {
       // Empty vendor list.
       vendor.ignore = true;
-      return false;
+      return vendor;
     }
 
     let code = '';
