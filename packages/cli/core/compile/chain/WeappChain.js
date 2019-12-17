@@ -5,6 +5,6 @@ exports = module.exports = class WeappChain extends Chain {
   constructor(bead) {
     super(bead);
     this.sfc = {};
-    this.weapp.self = true;
+    super.self('weapp');
   }
 };
