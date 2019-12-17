@@ -9,10 +9,6 @@
 const fs = require('fs-extra');
 const path = require('path');
 const chokidar = require('chokidar');
-const ResolverFactory = require('enhanced-resolve').ResolverFactory;
-const node = require('enhanced-resolve/lib/node');
-const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSystem');
-const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 const parseOptions = require('./parseOptions');
 const moduleSet = require('./moduleSet');
 const CacheFile = require('./CacheFile');
@@ -32,12 +28,12 @@ const initPlugin = require('./init/plugin');
 const { AppChain, PageChain, ComponentChain } = require('./compile/chain');
 const { WepyBead, ScriptBead } = require('./compile/bead');
 const Producer = require('./Producer');
+const Resolver = require('./Resolver');
 
 class Compile extends Hook {
   constructor(opt) {
     super();
-    let self = this;
-
+    
     this.version = require('../package.json').version;
     this.options = opt;
 
@@ -64,79 +60,29 @@ class Compile extends Hook {
     this.cache = new CacheFile();
     this.producer = new Producer();
 
-    this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
+    const resolver = new Resolver(Object.assign({}, this.options.resolve, {
+      extensions: ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt],
+      mainFields: ['miniprogram', 'main']
+    }));  
+ 
+    this.resolvers.weapp = {};
 
-    this.options.resolve.extensions = ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt];
-    this.options.resolve.mainFields = ['miniprogram', 'main'];
+    ['script', 'style', 'template', 'config'].forEach(type => {
+      const exts = this.options.weappRule[type].map(o => o.ext);
+      this.resolvers.weapp[type] = resolver.create({
+        extensions: exts
+      })
+    });
 
-    this.resolvers.normal = ResolverFactory.createResolver(
-      Object.assign(
-        {
-          fileSystem: this.inputFileSystem
-        },
-        this.options.resolve,
-        this.options.resolve.mainFields
-      )
-    );
+    this.resolvers.normal = resolver.create();
 
-    this.resolvers.context = ResolverFactory.createResolver(
-      Object.assign(
-        {
-          fileSystem: this.inputFileSystem,
-          resolveToContext: true
-        },
-        this.options.resolve,
-        this.options.resolve.mainFields
-      )
-    );
+    this.resolvers.context = resolver.create({
+      resolveToContext: true
+    });
 
-    this.resolvers.normal.resolveSync = node.create.sync(
-      Object.assign(
-        {
-          fileSystem: this.inputFileSystem
-        },
-        this.options.resolve,
-        this.options.resolve.mainFields
-      )
-    );
-
-    this.resolvers.context.resolveSync = node.create.sync(
-      Object.assign(
-        {
-          fileSystem: this.inputFileSystem,
-          resolveToContext: true
-        },
-        this.options.resolve,
-        this.options.resolve.mainFields
-      )
-    );
-
-    let fnNormalBak = this.resolvers.normal.resolve;
-    this.resolvers.normal.resolve = function(...args) {
-      return new Promise((resolve, reject) => {
-        args.push(function(err, filepath, meta) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve({ path: filepath, meta: meta });
-          }
-        });
-        fnNormalBak.apply(self.resolvers.normal, args);
-      });
-    };
-    let fnContextBak = this.resolvers.context.resolve;
-    this.resolvers.context.resolve = function(...args) {
-      return new Promise((resolve, reject) => {
-        args.push(function(err, filepath, meta) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve({ path: filepath, meta: meta });
-          }
-        });
-        fnContextBak.apply(self.resolvers.context, args);
-      });
-    };
+    this.resolvers.normal.resolveSync = resolver.createSync();
+    
+    this.resolvers.context.resolveSync = resolver.createSync();
   }
 
   clear(type) {
