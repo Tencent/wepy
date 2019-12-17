@@ -37,7 +37,7 @@ exports = module.exports = function() {
       const newBead = this.producer.make(FileBead, parsed.file);
       const newChain = chain.createChain(newBead);
       this.hookUnique('make', newChain).then(c => {
-        this.producer.asserts(c);
+        this.producer.assets(c);
       });
     }
     parsed.attr = { attrs: { src: parsed.url } };

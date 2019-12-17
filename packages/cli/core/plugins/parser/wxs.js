@@ -28,7 +28,7 @@ exports = module.exports = function() {
 
       return this.hookUnique('make', newChain, 'file')
         .then((c) => {
-          this.producer.asserts(c);
+          this.producer.assets(c);
         })
         .then(() => chain);
     }

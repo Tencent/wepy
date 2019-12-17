@@ -6,7 +6,7 @@ class Producer {
     this.beads = [];
     this.beadsMap = {};
     this._vendors = [];
-    this._asserts = [];
+    this._assets = [];
   }
 
   make(BeadType, filepath, id, content) {
@@ -44,13 +44,13 @@ class Producer {
     }
   }
 
-  asserts(chain) {
+  assets(chain) {
     if (chain !== undefined) {
-      if (!this._asserts.includes(chain)) {
-        this._asserts.push(chain);
+      if (!this._assets.includes(chain)) {
+        this._assets.push(chain);
       }
     } else {
-      return this._asserts;
+      return this._assets;
     }
   }
 }

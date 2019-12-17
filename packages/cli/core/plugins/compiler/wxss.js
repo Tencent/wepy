@@ -39,7 +39,7 @@ exports = module.exports = function() {
           const newBead = this.producer.make(FileBead, importfile);
           const newChain = chain.createChain(newBead);
           this.hookUnique('make', newChain).then(c => {
-            this.producer.asserts(c);
+            this.producer.assets(c);
           });
           // this.assets.update(
           //   importfile,

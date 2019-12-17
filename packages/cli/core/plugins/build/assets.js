@@ -10,7 +10,7 @@ exports = module.exports = function() {
     // So may need a hashmap to store the beads who were writen in vendor
     let writeBeads = {};
 
-    this.producer.asserts().forEach(item => {
+    this.producer.assets().forEach(item => {
       if (!writeBeads[item.bead.id]) {
         this.hook('script-dep-fix', item);
 

@@ -105,7 +105,7 @@ exports = module.exports = function() {
         } else if (c.belong().npm || c.self().npm) {
           this.producer.vendors(c);
         } else {
-          this.producer.asserts(c);
+          this.producer.assets(c);
         }
       });
       chain.setSeries(chains);
