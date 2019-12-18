@@ -63,9 +63,12 @@ exports = module.exports = function() {
       return chain;
     }
 
-    walker.replacements.forEach(item => {
-      replaceDep(parsed, item, item.value);
-    });
+    if (!parsed.fixedReplacements && walker.replacements) {
+      walker.replacements.forEach(item => {
+        replaceDep(parsed, item, item.value);
+      });
+      parsed.fixedReplacements = true;
+    }
 
     if (parsed.replaces.length === chain.series.length) {
       return chain;
