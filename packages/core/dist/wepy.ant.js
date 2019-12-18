@@ -2368,7 +2368,8 @@ function patchLifecycle(output, options, rel, isComponent) {
       Object.keys(vm._computedWatchers || {})
     );
 
-    return callUserMethod(vm, vm.$options, 'created', args);
+    callUserMethod(vm, vm.$options, 'created', args);
+    return callUserMethod(vm, vm.$options, 'onLoad', args);
   };
 
   if (isComponent) {
@@ -2688,6 +2689,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.11";
+wepy.version = "2.0.0-alpha.12";
 
 module.exports = wepy;

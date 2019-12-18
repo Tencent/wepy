@@ -136,7 +136,8 @@ export function patchLifecycle(output, options, rel, isComponent) {
       Object.keys(vm._computedWatchers || {})
     );
 
-    return callUserMethod(vm, vm.$options, 'created', args);
+    callUserMethod(vm, vm.$options, 'created', args);
+    return callUserMethod(vm, vm.$options, 'onLoad', args);
   };
 
   if (isComponent) {
