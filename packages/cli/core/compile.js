@@ -25,8 +25,8 @@ const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
 
 //const Chain = require('./compile/Chain');
-const { AppChain, PageChain, ComponentChain } = require('./compile/chain');
-const { WepyBead, ScriptBead } = require('./compile/bead');
+const { AppChain, PageChain, ComponentChain, Chain } = require('./compile/chain');
+const { Bead } = require('./compile/bead');
 const Producer = require('./Producer');
 const Resolver = require('./Resolver');
 
@@ -68,7 +68,9 @@ class Compile extends Hook {
     this.resolvers.weapp = {};
 
     ['script', 'style', 'template', 'config'].forEach(type => {
-      const exts = this.options.weappRule[type].map(o => o.ext);
+      const exts = [
+        ...new Set(this.options.weappRule[type].map(o => o.ext))
+      ];
       this.resolvers.weapp[type] = resolver.create({
         extensions: exts
       })
@@ -113,10 +115,11 @@ class Compile extends Hook {
   createAppChain(file) {
     const pathObj = path.parse(file);
     const isWepy = pathObj.ext === this.options.wpyExt;
-    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
+
+    const bead = this.producer.make(Bead, file);
     const chain = new AppChain(bead);
+
     if (isWepy) {
-      bead.type = 'app';
       chain.self('wepy');
     }
     return chain;
@@ -124,10 +127,11 @@ class Compile extends Hook {
   createPageChain(file) {
     const pathObj = path.parse(file);
     const isWepy = pathObj.ext === this.options.wpyExt;
-    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
+
+    const bead = this.producer.make(Bead, file);
     const chain = new PageChain(bead);
+
     if (isWepy) {
-      bead.type = 'page';
       chain.self('wepy');
     }
     return chain;
@@ -136,10 +140,11 @@ class Compile extends Hook {
   createComponentChain(file) {
     const pathObj = path.parse(file);
     const isWepy = pathObj.ext === this.options.wpyExt;
-    let bead = this.producer.make(isWepy ? WepyBead : ScriptBead, file);
+
+    const bead = this.producer.make(Bead, file);
     const chain = new ComponentChain(bead);
+
     if (isWepy) {
-      bead.type = 'component';
       chain.self('wepy');
     }
     return chain;
@@ -382,23 +387,46 @@ class Compile extends Hook {
         // if more then one files changed, build the whole app.
         this.start();
       } else {
-        let buildTask = {
-          changed: changedFiles[0],
-          partial: true,
-          files: [],
-          outputAssets: false
-        };
-        this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-          if (task.weapp && task.files.length > 0) {
-            this.weappBuild(buildTask);
-          } else if (task.outputAssets && task.files.length > 0) {
-            this.assetsBuild(buildTask);
-          } else if (task.partial && task.files.length > 0) {
-            this.partialBuild(buildTask);
-          } else {
-            this.start();
-          }
-        });
+        // let buildTask = {
+        //   changed: changedFiles[0],
+        //   partial: true,
+        //   files: [],
+        //   outputAssets: false
+        // };
+        // this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
+        //   if (task.weapp && task.files.length > 0) {
+        //     this.weappBuild(buildTask);
+        //   } else if (task.outputAssets && task.files.length > 0) {
+        //     this.assetsBuild(buildTask);
+        //   } else if (task.partial && task.files.length > 0) {
+        //     this.partialBuild(buildTask);
+        //   } else {
+        //     this.start();
+        //   }
+        // });
+        const changedFile = changedFiles[0];
+        const bead = this.producer.make(Bead, changedFile);
+        const chain = new Chain(bead);
+
+        const tasks = [];
+
+        if (bead.chainType().app) {
+          this.start()
+        } else if (bead.chainType().page || bead.chainType().component) {
+          tasks.push(this.hookUnique('make', chain));
+
+          Promise.all(tasks)
+            .then(this.buildComps.bind(this))
+            .catch(this.handleBuildErr.bind(this));
+        } else if (bead.chainType().assets) {
+          tasks.push(this.hookUnique('make', chain));
+          
+          Promise.all(tasks)
+          .then(() => this.buildComps(undefined))
+          .catch(this.handleBuildErr.bind(this));
+        }
+
+        
       }
     });
 

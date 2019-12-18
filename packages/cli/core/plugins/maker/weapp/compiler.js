@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const loaderUtils = require('loader-utils');
 const AppChain = require('../../../compile/chain').AppChain;
 const { ConfigBead, ScriptBead, StyleBead, TemplateBead } = require('../../../compile/bead');
 const DEFAULT_WEAPP_RULES = require('./../../../util/const').DEFAULT_WEAPP_RULES;
@@ -18,18 +19,56 @@ const beadsMap = {
   styles: StyleBead
 };
 
+const sfcTypeMap = {
+  style: 'styles',
+  config: 'config',
+  script: 'script',
+  template: 'template'
+}
+
 exports = module.exports = function() {
-  this.register('compile-weapp', function(chain) {
+  this.register('compile-weapp-dispatch', function(chain) {
     const bead = chain.bead;
+    const parsedPath = path.parse(bead.path);
+    const chainType = bead.chainType();
 
-    let parsedPath = path.parse(bead.path);
-    let file = path.join(parsedPath.dir, parsedPath.name);
-
-    let sfcObj = {
+    const sfcObj = {
       styles: [],
       script: {},
-      template: {}
+      config: {}
     };
+
+    if (!chainType.app) sfcObj.template = {};
+
+    Object.keys(sfcTypeMap).map(item => {
+      const request = './' + parsedPath.name;
+      this.resolvers.weapp[item].resolve({}, parsedPath.dir, request, {})
+        .then(rst => {
+            // if (sfcObj[type])
+            // const newBead = this.producer.make(beadsMap[item], file + obj.ext, `${bead.id}$${item}$${i}`, obj.content);
+            // newBead.data = obj;
+            // newBead.lang = obj.lang;
+            // chain.sfc[type] = chain.createChain(newBead);
+        })
+    });
+  });
+
+  this.register('compile-weapp', function(chain) {
+    const bead = chain.bead;
+    const parsedPath = path.parse(bead.path);
+    const file = path.join(parsedPath.dir, parsedPath.name);
+    
+    const sfcObj = {
+      styles: [],
+      script: {},
+      template: {},
+      config: {}
+    };
+
+    bead.parser('weapp');
+
+    this.hookUnique('compile-weapp-dispatch', chain);
+
     sfcObj.styles[0] = {
       content: readFile(file + '.wxss'),
       type: 'style',

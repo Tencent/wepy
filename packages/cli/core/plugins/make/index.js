@@ -31,12 +31,17 @@ exports = module.exports = function() {
       return bead.lang;
     }
     const ext = bead.ext;
-    if (chain.self().weapp || type === undefined) {
+    if (type === undefined) {
       const rule = this.hookUnique('make-lookup-lang-from-ext', chain, ext);
       if (rule.length === 0) {
         return 'file';
         // throw new Error('Can not from any rule for ext: ' + ext);
       }
+      /** 
+       *  FIXME:
+       *  Array indexes are just enumerable properties with integer names and are otherwise identical to general object properties.
+       *  There is no guarantee that for...in will return the indexes in any particular order...Because the order of iteration is implementation-dependent.
+      */
       return rule[0].lang;
     } else {
       const rule = this.options.weappRule[type];
@@ -66,26 +71,39 @@ exports = module.exports = function() {
    *         |
    *       parse              ->         chain.bead.parsed
    */
-  this.register('make', function(chain, type) {
-    if (chain.self().weapp) {
+  this.register('make', function(chain, parser) {
+    let lang;
+    let bead = chain.bead;
+
+    if (
+      // First time compiler, we can known chain type. 
+      chain.self().weapp ||
+      // Watch mode we can get bead chain type.
+      bead.chainType().app ||
+      bead.chainType().page ||
+      bead.chainType().component
+    ) {
       // use weapp parser
-      type = 'weapp';
+      lang = 'weapp';
+    } else {
+      lang = this.hookUnique('make-lookup-lang', chain, parser);
     }
-    const lang = this.hookUnique('make-lookup-lang', chain, type);
-    type = type || 'file';
+    
     // Compile chain
     let key = 'compile-' + lang;
     if (!this.hasHook(key)) {
-      key = 'compile-file';
-      // throw new Error(`Compiler "${key}" is not find.`);
+      throw new Error(`Compiler "${key}" is not find.`);
     }
+
     return this.hookAsyncSeq('before-' + key, chain.previous)
       .then(() => {
         return this.hookUnique(key, chain);
       })
       .then(chain => {
+        // bead parser should be confirmed in compile
+        parser = parser || bead.parser() || 'file';
         // Parse chain
-        const key = 'parse-' + type;
+        const key = 'parse-' + parser;
         if (!this.hasHook(key)) {
           throw new Error(`Parser "${key}" is not find.`);
         }

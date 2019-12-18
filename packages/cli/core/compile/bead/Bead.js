@@ -23,6 +23,29 @@ exports = module.exports = class Bead {
     this.lang = null;
     // Customize data
     this.data = null;
+    // Parser type
+    this._parser = 'weapp';
+    // Chain type
+    this._metrics = { chainType: {} };
+    // Valid metrics
+    this._allowedMetrics = [
+      /**
+       * Current beads would be used in app compile chain.
+       */
+      'app',
+      /**
+       * Current beads would be used in page compile chain.
+       */
+      'page',
+      /**
+       * Current beads would be used in component compile chain.
+       */
+      'component',
+      /**
+       * Current beads would be used in normal chain.
+       */
+      'assets'
+    ];
   }
 
   load() {}
@@ -35,8 +58,36 @@ exports = module.exports = class Bead {
       this.clean();
     }
   }
+
   clean() {
     this.parsed = null;
     this.compiled = null;
+  }
+
+  parser(v) {
+    // Set ignore
+    if (v === undefined) {
+      return this._parser;
+    }
+    return this._parser = v;
+  }
+
+  chainType(key, v) {
+    // Set belong key
+    if (key) {
+      if (this._allowedMetrics.indexOf(key) === -1) {
+        throw new Error('Metric ' + key + ' is not allowed');
+      }
+      if (v === undefined) v = true;
+      if (!this._metrics.chainType[key]) {
+        this._metrics.chainType[key] = v;
+      }
+    } else {
+      return this._metrics.chainType;
+    }
+  }
+
+  output() {
+    return this.parsed.code.source();
   }
 };

@@ -55,6 +55,9 @@ exports = module.exports = class Chain extends Hook {
 
     // ignore this chain, and it will not be make
     this._ignore = false;
+
+    // weapp compile pipeline
+    this.weapp = {};
   }
 
   ignore(v) {

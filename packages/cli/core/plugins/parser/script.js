@@ -30,8 +30,7 @@ exports = module.exports = function() {
       }
 
       let depBead = this.producer.make(ScriptBead, file);
-      const newChain = new Chain(depBead);
-      newChain.setPrevious(chain);
+      const newChain = chain.createChain(depBead);
 
       // npm package file root is not context
       if (rst.meta.descriptionFileRoot !== this.context) {
