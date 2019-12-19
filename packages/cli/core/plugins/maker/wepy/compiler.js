@@ -113,7 +113,7 @@ exports = module.exports = function() {
   this.register('sfc-custom-block-config', function({ sfc, block }) {
     if (!sfc.config) {
       sfc.config = block;
-      sfc.config.lang = sfc.config.lang || 'json';
+      sfc.config.lang = sfc.config.attrs.lang || 'json';
       sfc.config.type = 'config';
     } else {
       this.logger.warn('config', 'mutiple config is defined');

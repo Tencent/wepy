@@ -127,6 +127,7 @@ function assetHanlder(handlers) {
 function assertCodegen(originalRaw, assertRaw, options = {}, ctx, done) {
   const compiler = createCompiler(options);
   compiler.assets.add(ctx.file);
+  done();
   /*
   compiler
     .hookUnique('template-parse', originalRaw, options.component || {}, ctx)
