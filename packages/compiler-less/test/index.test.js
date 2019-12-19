@@ -78,14 +78,23 @@ function readSpec(id, isFailSpec) {
   };
 }
 
+function makeChain(file) {
+  return {
+    bead: {
+      path: file,
+      content: fs.readFileSync(file, 'utf-8')
+    }
+  };
+}
+
 function compare(id, done) {
   let compile = createCompile(specs.getOpt(id), specs.getResolveOpt(id));
 
   let spec = readSpec(id);
   return compile
-    .hook('wepy-compiler-less', spec.node, spec.file)
-    .then(node => {
-      let css = node.compiled.code;
+    .hook('compile-less', makeChain(spec.file))
+    .then(chain => {
+      let css = chain.bead.compiled.code;
       expect(css).to.equal(spec.expect);
       done();
     })
@@ -102,7 +111,7 @@ function compileFail(id, done) {
   let setting = specs.getId(id);
 
   return compile
-    .hook('wepy-compiler-less', spec.node, spec.file)
+    .hook('compile-less', makeChain(spec.file))
     .then(() => {
       // e.g. uri-alias, alias is not awared in uri, so treat as compile successfully.
       if (setting.then) {
@@ -120,7 +129,7 @@ function compileFail(id, done) {
     });
 }
 
-describe('wepy-compiler-less', function() {
+describe('compile-less', function() {
   let ids = specs.getIds();
 
   let shouldPassIds = ids.filter(id => !/^fail-/.test(id));
