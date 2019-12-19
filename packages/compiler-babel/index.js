@@ -62,6 +62,7 @@ exports = module.exports = function(options) {
         p = Promise.resolve(chain);
       } catch (e) {
         this.hookUnique('error-handler', {
+          chain,
           type: 'error',
           title: 'babel',
           file: scriptFile,
