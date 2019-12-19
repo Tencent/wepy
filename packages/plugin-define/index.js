@@ -45,7 +45,7 @@ const toCode = code => {
   return code + '';
 };
 
-function registerChainHook (chain, options) {
+function registerChainHook(chain, options) {
   chain.register('walker-unary-expression-undefined', function(parser, expr, names) {
     if (expr.operator === 'typeof') {
       let v = options[`typeof ${names.name}`] || options[`typeof(${names.name})`];
@@ -73,11 +73,11 @@ function registerChainHook (chain, options) {
 
 exports = module.exports = function DefinePlugin(options = {}) {
   return function() {
-    this.register('before-parse-script', function (chain) {
+    this.register('before-parse-script', function(chain) {
       if (!chain.__plugin_define_registed) {
         registerChainHook(chain, options);
       }
       return Promise.resolve(chain);
-    })
+    });
   };
 };

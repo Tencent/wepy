@@ -12,22 +12,22 @@ exports = module.exports = function() {
     let moduleId = bead.module;
     let compiledCode = bead.compiled.code.trim();
 
-    compiledCode = `<wxs module="${moduleId}"${validRef ? ' src="' + path.relative(path.dirname(bead.path), bead.refPath) + '"' : ''}>${
-      !validRef ? '\n' + compiledCode + '\n' : ''
-    }</wxs>`;
-    
+    compiledCode = `<wxs module="${moduleId}"${
+      validRef ? ' src="' + path.relative(path.dirname(bead.path), bead.refPath) + '"' : ''
+    }>${!validRef ? '\n' + compiledCode + '\n' : ''}</wxs>`;
+
     bead.parsed = {
       code: new ReplaceSource(new RawSource(compiledCode))
     };
 
     if (validRef) {
-       // e.g. a.wpy <script src=b.js />, error handler shows b.js
+      // e.g. a.wpy <script src=b.js />, error handler shows b.js
       const newBead = this.producer.make(WxsBead, bead.refPath);
       newBead.lang = bead.lang;
       const newChain = chain.createChain(newBead);
 
       return this.hookUnique('make', newChain, 'file')
-        .then((c) => {
+        .then(c => {
           this.producer.assets(c);
         })
         .then(() => chain);

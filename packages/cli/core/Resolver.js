@@ -1,16 +1,15 @@
-
 const ResolverFactory = require('enhanced-resolve').ResolverFactory;
 const node = require('enhanced-resolve/lib/node');
 const NodeJsInputFileSystem = require('enhanced-resolve/lib/NodeJsInputFileSystem');
 const CachedInputFileSystem = require('enhanced-resolve/lib/CachedInputFileSystem');
 
-exports = module.exports = class Resolver{
-  constructor (options) {
+exports = module.exports = class Resolver {
+  constructor(options) {
     this._options = options;
     this.inputFileSystem = new CachedInputFileSystem(new NodeJsInputFileSystem(), 60000);
   }
 
-  wrapper (context) {
+  wrapper(context) {
     let fnBak = context.resolve;
 
     context.resolve = function(...args) {
@@ -25,23 +24,35 @@ exports = module.exports = class Resolver{
         fnBak.apply(context, args);
       });
     };
-    
+
     return context;
   }
 
-  create (options = {}) {
-    const context = ResolverFactory.createResolver(Object.assign({
-      fileSystem: this.inputFileSystem
-    }, this._options, options));
+  create(options = {}) {
+    const context = ResolverFactory.createResolver(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem
+        },
+        this._options,
+        options
+      )
+    );
 
     return this.wrapper(context);
   }
 
-  createSync (options = {}) {
-    const context = node.create.sync(Object.assign({
-      fileSystem: this.inputFileSystem
-    }, this._options, options));
+  createSync(options = {}) {
+    const context = node.create.sync(
+      Object.assign(
+        {
+          fileSystem: this.inputFileSystem
+        },
+        this._options,
+        options
+      )
+    );
 
     return context;
   }
-}
+};

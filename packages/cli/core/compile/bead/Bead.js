@@ -69,7 +69,7 @@ exports = module.exports = class Bead {
     if (v === undefined) {
       return this._parser;
     }
-    return this._parser = v;
+    return (this._parser = v);
   }
 
   chainType(key, v) {

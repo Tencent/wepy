@@ -42,11 +42,8 @@ exports = module.exports = function() {
           wxsCode += item.bead.output() + '\n';
         });
 
-        wxsCode = 
-        '<!--           wxs start           -->\n' +
-        wxsCode +
-        '<!--           wxs end             -->\n';
-        
+        wxsCode = '<!--           wxs start           -->\n' + wxsCode + '<!--           wxs end             -->\n';
+
         template.bead.parsed.code.insert(0, wxsCode);
       }
       let targetFile = comp.self().npm ? this.getModuleTarget(comp.bead.path) : this.getTarget(comp.bead.path);

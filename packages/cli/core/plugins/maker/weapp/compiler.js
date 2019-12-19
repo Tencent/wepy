@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const loaderUtils = require('loader-utils');
 const AppChain = require('../../../compile/chain').AppChain;
 const { ConfigBead, ScriptBead, StyleBead, TemplateBead } = require('../../../compile/bead');
 const DEFAULT_WEAPP_RULES = require('./../../../util/const').DEFAULT_WEAPP_RULES;
@@ -24,7 +23,7 @@ const sfcTypeMap = {
   config: 'config',
   script: 'script',
   template: 'template'
-}
+};
 
 exports = module.exports = function() {
   this.register('compile-weapp-dispatch', function(chain) {
@@ -42,14 +41,13 @@ exports = module.exports = function() {
 
     Object.keys(sfcTypeMap).map(item => {
       const request = './' + parsedPath.name;
-      this.resolvers.weapp[item].resolve({}, parsedPath.dir, request, {})
-        .then(rst => {
-            // if (sfcObj[type])
-            // const newBead = this.producer.make(beadsMap[item], file + obj.ext, `${bead.id}$${item}$${i}`, obj.content);
-            // newBead.data = obj;
-            // newBead.lang = obj.lang;
-            // chain.sfc[type] = chain.createChain(newBead);
-        })
+      this.resolvers.weapp[item].resolve({}, parsedPath.dir, request, {}).then(() => {
+        // if (sfcObj[type])
+        // const newBead = this.producer.make(beadsMap[item], file + obj.ext, `${bead.id}$${item}$${i}`, obj.content);
+        // newBead.data = obj;
+        // newBead.lang = obj.lang;
+        // chain.sfc[type] = chain.createChain(newBead);
+      });
     });
   });
 
@@ -57,7 +55,7 @@ exports = module.exports = function() {
     const bead = chain.bead;
     const parsedPath = path.parse(bead.path);
     const file = path.join(parsedPath.dir, parsedPath.name);
-    
+
     const sfcObj = {
       styles: [],
       script: {},

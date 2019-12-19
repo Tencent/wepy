@@ -37,11 +37,11 @@ exports = module.exports = function() {
         return 'file';
         // throw new Error('Can not from any rule for ext: ' + ext);
       }
-      /** 
+      /**
        *  FIXME:
        *  Array indexes are just enumerable properties with integer names and are otherwise identical to general object properties.
        *  There is no guarantee that for...in will return the indexes in any particular order...Because the order of iteration is implementation-dependent.
-      */
+       */
       return rule[0].lang;
     } else {
       const rule = this.options.weappRule[type];
@@ -76,7 +76,7 @@ exports = module.exports = function() {
     let bead = chain.bead;
 
     if (
-      // First time compiler, we can known chain type. 
+      // First time compiler, we can known chain type.
       chain.self().weapp ||
       // Watch mode we can get bead chain type.
       bead.chainType().app ||
@@ -88,7 +88,7 @@ exports = module.exports = function() {
     } else {
       lang = this.hookUnique('make-lookup-lang', chain, parser);
     }
-    
+
     // Compile chain
     let key = 'compile-' + lang;
     if (!this.hasHook(key)) {

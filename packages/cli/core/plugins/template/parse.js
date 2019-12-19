@@ -218,7 +218,7 @@ exports = module.exports = function() {
       this.hookSeq('parse-template-ast', chain, ast, scope);
 
       let compiledCode = this.hookUnique('parse-template-ast-to-str', ast);
-      parsed.code = new ReplaceSource(new RawSource(compiledCode))
+      parsed.code = new ReplaceSource(new RawSource(compiledCode));
       parsed.ast = ast;
       parsed.rel = rel;
       return chain;

@@ -1,4 +1,3 @@
-const fs = require('fs');
 const path = require('path');
 const AppChain = require('../../../compile/chain').AppChain;
 const { ConfigBead, ScriptBead, WxsBead, StyleBead, TemplateBead } = require('../../../compile/bead');

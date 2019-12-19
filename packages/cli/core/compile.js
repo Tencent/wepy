@@ -33,7 +33,7 @@ const Resolver = require('./Resolver');
 class Compile extends Hook {
   constructor(opt) {
     super();
-    
+
     this.version = require('../package.json').version;
     this.options = opt;
 
@@ -60,20 +60,20 @@ class Compile extends Hook {
     this.cache = new CacheFile();
     this.producer = new Producer();
 
-    const resolver = new Resolver(Object.assign({}, this.options.resolve, {
-      extensions: ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt],
-      mainFields: ['miniprogram', 'main']
-    }));  
- 
+    const resolver = new Resolver(
+      Object.assign({}, this.options.resolve, {
+        extensions: ['.js', '.ts', '.json', '.node', '.wxs', this.options.wpyExt],
+        mainFields: ['miniprogram', 'main']
+      })
+    );
+
     this.resolvers.weapp = {};
 
     ['script', 'style', 'template', 'config'].forEach(type => {
-      const exts = [
-        ...new Set(this.options.weappRule[type].map(o => o.ext))
-      ];
+      const exts = [...new Set(this.options.weappRule[type].map(o => o.ext))];
       this.resolvers.weapp[type] = resolver.create({
         extensions: exts
-      })
+      });
     });
 
     this.resolvers.normal = resolver.create();
@@ -83,7 +83,7 @@ class Compile extends Hook {
     });
 
     this.resolvers.normal.resolveSync = resolver.createSync();
-    
+
     this.resolvers.context.resolveSync = resolver.createSync();
   }
 
@@ -411,7 +411,7 @@ class Compile extends Hook {
         const tasks = [];
 
         if (bead.chainType().app) {
-          this.start()
+          this.start();
         } else if (bead.chainType().page || bead.chainType().component) {
           tasks.push(this.hookUnique('make', chain));
 
@@ -420,13 +420,11 @@ class Compile extends Hook {
             .catch(this.handleBuildErr.bind(this));
         } else if (bead.chainType().assets) {
           tasks.push(this.hookUnique('make', chain));
-          
-          Promise.all(tasks)
-          .then(() => this.buildComps(undefined))
-          .catch(this.handleBuildErr.bind(this));
-        }
 
-        
+          Promise.all(tasks)
+            .then(() => this.buildComps(undefined))
+            .catch(this.handleBuildErr.bind(this));
+        }
       }
     });
 
