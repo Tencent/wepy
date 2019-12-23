@@ -19,23 +19,23 @@ exports = module.exports = function() {
     //   return chain;
     // }
 
-    let msg = xmllint.verify(compiledCode);
-    msg.forEach(item => {
-      let type = item.type === 'warning' ? 'warn' : 'error';
-      this.hookUnique(
-        'error-handler',
-        'template',
-        {
-          chain,
-          message: item.message,
-          type: type,
-          title: 'verify'
-        },
-        {
-          start: { line: item.line, column: item.col }
-        }
-      );
-    });
+    // let msg = xmllint.verify(compiledCode);
+    // msg.forEach(item => {
+    //   let type = item.type === 'warning' ? 'warn' : 'error';
+    //   this.hookUnique(
+    //     'error-handler',
+    //     'template',
+    //     {
+    //       chain,
+    //       message: item.message,
+    //       type: type,
+    //       title: 'verify'
+    //     },
+    //     {
+    //       start: { line: item.line, column: item.col }
+    //     }
+    //   );
+    // });
 
     let components = {};
     let sfcConfig = chain.previous.sfc.config;

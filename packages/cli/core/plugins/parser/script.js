@@ -14,6 +14,37 @@ const ScriptBead = require('../../compile/bead').ScriptBead;
 const { ReplaceSource, RawSource } = require('../../compile/source');
 
 exports = module.exports = function() {
+  this.register('before-parse-script', function(chain) {
+    const self = this;
+    const bead = chain.bead;
+    const id = bead.id;
+    const p = bead.path;
+
+    let circularQueue = [];
+
+    circularQueue.push(path.relative(self.options.src, p));
+
+    function findCircular (c) {
+      if (!c) return;
+
+      const newBead = c.bead;
+      const newId = newBead.id;
+      const newPath = newBead.path;
+
+      if (newId === id) {
+        circularQueue.push(path.relative(self.options.src, p));
+        const circularRelation = circularQueue.join(' -> ');
+        throw new Error('Error in Circular dependency detected: ' + circularRelation);
+      } else {
+        circularQueue.push(path.relative(self.options.src, newPath));
+        findCircular(c.previous);
+      }
+    }
+
+    findCircular(chain.previous);
+
+    return Promise.resolve(chain);
+  })
   this.register('parse-script-dep', function(chain, dep) {
     chain = chain.sfc ? chain.sfc.script : chain;
 
