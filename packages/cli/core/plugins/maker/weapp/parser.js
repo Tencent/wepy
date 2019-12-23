@@ -27,7 +27,7 @@ exports = module.exports = function() {
       })
       .then(() => {
         // TODO: ignore wxs
-        if (chain instanceof AppChain) {
+        if (chain instanceof AppChain || chain.bead.chainType().app) {
           return chain;
         }
         return this.hookUnique('make', chain.sfc.template, 'template');

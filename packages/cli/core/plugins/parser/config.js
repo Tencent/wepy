@@ -7,10 +7,12 @@ let appUsingComponents = null;
 
 exports = module.exports = function() {
   this.register('parse-config', function(chain) {
+    chain = chain.sfc ? chain.sfc.config : chain;
+
     const bead = chain.bead;
     const compiledCode = bead.compiled.code;
-    const isApp = chain.previous instanceof AppChain;
-    const isPage = chain.previous instanceof PageChain;
+    const isApp = chain.previous instanceof AppChain || chain.previous.bead.chainType().app;
+    const isPage = chain.previous instanceof PageChain || chain.previous.bead.chainType().page;
 
     let source = null;
     let configString = compiledCode.replace(/^\n*/, '').replace(/\n*$/, '');
@@ -43,7 +45,7 @@ exports = module.exports = function() {
       bead.parsed = {
         code: source
       };
-      return Promise.resolve(true);
+      return Promise.resolve(chain);
     }
 
     // page Components will inherit app using components
@@ -110,13 +112,8 @@ exports = module.exports = function() {
             comChain.setPrevious(chain);
             let relativePath = path.relative(path.dirname(bead.path), target);
             let parsedPath = path.parse(relativePath);
-            let isWepy = parsedPath.ext === this.options.wpyExt;
 
             if (npm) comChain.self('npm');
-            /**
-             * Todo: it would be remove later.
-             */
-            if (isWepy) comChain.self('wepy');
 
             resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
             parseComponents.push(comChain);

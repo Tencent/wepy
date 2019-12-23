@@ -29,6 +29,7 @@ exports = module.exports = function() {
         ...other,
         usingComponents: newUsingComponents
       });
+
       this.hook('script-dep-fix', script);
       /*
       if (!script.empty && !(comp.component && comp.type === 'weapp')) {

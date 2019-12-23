@@ -2,6 +2,8 @@ const xmllint = require('../../util/xmllint');
 
 exports = module.exports = function() {
   this.register('parse-template', function(chain) {
+    chain = chain.sfc ? chain.sfc.template : chain;
+
     const bead = chain.bead;
     const compiledCode = bead.compiled.code;
 

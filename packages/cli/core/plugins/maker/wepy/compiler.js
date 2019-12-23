@@ -15,9 +15,20 @@ const beadsMap = {
   styles: StyleBead
 };
 
+const sfcWeappMap = {
+  config: 'config',
+  script: 'script',
+  template: 'template',
+  styles: 'style',
+  wxs: 'wxs'
+};
+
 exports = module.exports = function() {
   this.register('compile-wepy', function(chain) {
     const bead = chain.bead;
+    bead.parser('weapp');
+    chain.self('wepy');
+
     let sfcObj = sfcCompiler.parseComponent(bead.content, { pad: 'space' });
     sfcObj = this.hookSeq('sfc-custom-block', sfcObj);
     if (!chain.sfc) {
@@ -45,7 +56,7 @@ exports = module.exports = function() {
         chain.sfc[item] = sfcObj[item].map((obj, i) => {
           const newBead = this.producer.make(beadsMap[item], bead.path, `${bead.id}$${item}$${i}`, obj.content);
           newBead.data = obj;
-          newBead.lang = obj.lang || bead.lang || DEFAULT_WEAPP_RULES[item].lang;
+          newBead.lang = obj.lang || bead.lang || DEFAULT_WEAPP_RULES[sfcWeappMap[item]].lang;
           if (obj.module) newBead.setModule(obj.module);
           return chain.createChain(newBead);
         });
@@ -55,7 +66,7 @@ exports = module.exports = function() {
         } else {
           const newBead = this.producer.make(beadsMap[item], bead.path, bead.id + '$' + item, sfcObj[item].content);
           newBead.data = sfcObj[item];
-          newBead.lang = sfcObj[item].lang || newBead.lang || DEFAULT_WEAPP_RULES[item].lang;
+          newBead.lang = sfcObj[item].lang || newBead.lang || DEFAULT_WEAPP_RULES[sfcWeappMap[item]].lang;
           chain.sfc[item] = chain.createChain(newBead);
         }
       }

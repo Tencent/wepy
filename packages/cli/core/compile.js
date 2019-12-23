@@ -114,39 +114,27 @@ class Compile extends Hook {
 
   createAppChain(file) {
     const pathObj = path.parse(file);
-    const isWepy = pathObj.ext === this.options.wpyExt;
 
-    const bead = this.producer.make(Bead, file);
+    const bead = this.producer.make(Bead, path.join(pathObj.dir, pathObj.name));
     const chain = new AppChain(bead);
 
-    if (isWepy) {
-      chain.self('wepy');
-    }
     return chain;
   }
   createPageChain(file) {
     const pathObj = path.parse(file);
-    const isWepy = pathObj.ext === this.options.wpyExt;
 
-    const bead = this.producer.make(Bead, file);
+    const bead = this.producer.make(Bead, path.join(pathObj.dir, pathObj.name));
     const chain = new PageChain(bead);
 
-    if (isWepy) {
-      chain.self('wepy');
-    }
     return chain;
   }
 
   createComponentChain(file) {
     const pathObj = path.parse(file);
-    const isWepy = pathObj.ext === this.options.wpyExt;
 
-    const bead = this.producer.make(Bead, file);
+    const bead = this.producer.make(Bead, path.join(pathObj.dir, pathObj.name));
     const chain = new ComponentChain(bead);
 
-    if (isWepy) {
-      chain.self('wepy');
-    }
     return chain;
   }
 
@@ -277,71 +265,6 @@ class Compile extends Hook {
       });
   }
 
-  weappBuild(buildTask) {
-    if (this.running) {
-      return;
-    }
-    this.running = true;
-    this.logger.info('build weapp files', 'start...');
-
-    const tasks = buildTask.files.map(file => {
-      const comp = this.compiled[file];
-
-      return this.hookUnique('wepy-parser-component', comp);
-    });
-
-    Promise.all(tasks)
-      .then(this.buildComps.bind(this))
-      .catch(this.handleBuildErr.bind(this));
-  }
-
-  partialBuild(buildTask) {
-    if (this.running) {
-      return;
-    }
-    this.running = true;
-    this.logger.info('build wpy files', 'start...');
-
-    // just compile these files of wpyExt
-    const tasks = buildTask.files.map(file => {
-      if (fs.existsSync(file)) {
-        let type = 'page';
-        if (this.compiled[file]) {
-          type = this.compiled[file].type;
-        }
-        return this.hookUnique('wepy-parser-wpy', { path: file, type });
-      }
-      this.hookUnique('error-handler', {
-        type: 'error',
-        message: `Can not resolve page: ${file}`
-      });
-    });
-
-    Promise.all(tasks)
-      .then(this.buildComps.bind(this))
-      .catch(this.handleBuildErr.bind(this));
-  }
-
-  assetsBuild(buildTask) {
-    if (this.running) {
-      return;
-    }
-    this.running = true;
-    this.logger.info('build ' + buildTask.assetExt + ' files', 'start...');
-
-    const tasks = buildTask.files.map(file => {
-      const ctx = this.compiled[file];
-      return this.hookUnique('wepy-parser-file', {}, ctx);
-    });
-
-    // just compile, build and out assets
-    Promise.all(tasks)
-      .then(() => {
-        return this.buildComps(undefined);
-      })
-      .catch(this.handleBuildErr.bind(this));
-  }
-
   handleBuildErr(err) {
     this.running = false;
     if (err.message !== 'EXIT') {
@@ -387,29 +310,11 @@ class Compile extends Hook {
         // if more then one files changed, build the whole app.
         this.start();
       } else {
-        // let buildTask = {
-        //   changed: changedFiles[0],
-        //   partial: true,
-        //   files: [],
-        //   outputAssets: false
-        // };
-        // this.hookAsyncSeq('before-wepy-watch-file-changed', buildTask).then(task => {
-        //   if (task.weapp && task.files.length > 0) {
-        //     this.weappBuild(buildTask);
-        //   } else if (task.outputAssets && task.files.length > 0) {
-        //     this.assetsBuild(buildTask);
-        //   } else if (task.partial && task.files.length > 0) {
-        //     this.partialBuild(buildTask);
-        //   } else {
-        //     this.start();
-        //   }
-        // });
         const changedFile = changedFiles[0];
         const bead = this.producer.make(Bead, changedFile);
         const chain = new Chain(bead);
-
         const tasks = [];
-
+        debugger;
         if (bead.chainType().app) {
           this.start();
         } else if (bead.chainType().page || bead.chainType().component) {
@@ -424,6 +329,8 @@ class Compile extends Hook {
           Promise.all(tasks)
             .then(() => this.buildComps(undefined))
             .catch(this.handleBuildErr.bind(this));
+        } else {
+          this.start();
         }
       }
     });
@@ -437,87 +344,6 @@ class Compile extends Hook {
         onFileChanged();
       }
     });
-  }
-
-  getLang(type, ext) {
-    const rule = this.options.weappRule[type];
-    let lang = null;
-    for (let i = 0; i < rule.length; i++) {
-      if (rule[i].ext === ext) {
-        lang = rule[i].lang;
-        break;
-      }
-    }
-    if (!lang) {
-      lang = rule[0].lang;
-    }
-
-    return lang;
-  }
-
-  getLoader(type, ext) {
-    const loaderName = this.getLang(type, ext);
-
-    return function(bead) {
-      const key = 'wepy-loader-' + loaderName;
-      if (!this.hasHook(key)) {
-        return Promise.resolve(bead);
-      }
-      return this.hookUnique(key, bead);
-    }.bind(this);
-  }
-
-  compileAndParse(type, newChain) {
-    const bead = newChain.bead;
-    const lang = this.getLang(type, bead.ext);
-    // Compile chain
-    const key = 'wepy-compiler-' + lang;
-    if (!this.hasHook(key)) {
-      throw new Error(`Compiler "${key}" is not find.`);
-    }
-    return this.hookAsyncSeq('before-' + key, newChain.previous)
-      .then(() => {
-        return this.hookUnique(key, newChain);
-      })
-      .then(chain => {
-        // Parse chain
-        const key = 'wepy-parser-' + type;
-        if (!this.hasHook(key)) {
-          throw new Error(`Parser "${key}" is not find.`);
-        }
-        return this.hookAsyncSeq('before-' + key, chain).then(chain => {
-          return this.hookUnique(key, chain);
-        });
-      });
-  }
-
-  applyCompiler(node, ctx) {
-    ctx.id = this.assets.add(ctx.file);
-
-    if (node.lang) {
-      let hookKey = 'wepy-compiler-' + node.lang;
-
-      if (!this.hasHook(hookKey)) {
-        throw `Missing plugins ${hookKey}`;
-      }
-
-      let task;
-
-      // If file is not changed, and compiled cache exsit.
-      // Style may have dependences, maybe the dependences file changed. so ignore the cache for the style who have deps.
-      if (ctx.useCache && node.compiled && (node.compiled.dep || []).length === 0) {
-        task = Promise.resolve(node);
-      } else {
-        task = this.hookUnique(hookKey, node, ctx);
-      }
-      return task
-        .then(node => {
-          return this.hookAsyncSeq('before-wepy-parser-' + node.type, { node, ctx });
-        })
-        .then(({ node, ctx }) => {
-          return this.hookUnique('wepy-parser-' + node.type, node, ctx);
-        });
-    }
   }
 
   getTarget(file, targetDir) {
