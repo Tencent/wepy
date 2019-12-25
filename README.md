@@ -25,7 +25,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 * 支持多种插件处理，文件压缩，图片压缩，内容替换等
 * 支持 Sourcemap，ESLint 等
 * 小程序细节优化，如请求列队，事件优化等
-
+* 支持编译为支付宝小程序 [compile2ant](https://github.com/SpringHgui/compile2ant)
 
 ### Demo
 
