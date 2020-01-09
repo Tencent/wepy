@@ -25,7 +25,11 @@ exports = module.exports = function() {
        * }
        */
       for (let i in usingComponents) {
-        newUsingComponents[i] = './' + usingComponents[i].replace(/\\/g, '/');
+        if (usingComponents[i].startsWith('plugin://')) {
+          newUsingComponents[i] = usingComponents[i];
+        } else {
+          newUsingComponents[i] = './' + usingComponents[i].replace(/\\/g, '/');
+        }
       }
       let output = {
         ...other,
