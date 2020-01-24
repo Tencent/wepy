@@ -1,0 +1,15 @@
+{
+  "name": "@wepy/use-intercept",
+  "version": "2.0.1",
+  "description": "wepy intercept",
+  "main": "/dist/index.js",
+  "scripts": {
+    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
+  },
+  "author": {
+    "name": "Gcaufy",
+    "email": "gcaufy@gmail.com"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!"
+}

@@ -56,6 +56,14 @@ const builds = {
     format: 'cjs',
     version: resolvePkgInfo('use-promisify').version,
     banner
+  },
+  'use-intercept': {
+    entry: 'packages/use-intercept/index.js',
+    dest: 'packages/use-intercept/dist/index.js',
+    env: 'development',
+    format: 'cjs',
+    version: resolvePkgInfo('use-intercept').version,
+    banner
   }
 };
 
