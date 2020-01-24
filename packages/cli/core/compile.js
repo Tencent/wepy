@@ -172,6 +172,8 @@ class Compile extends Hook {
           } else {
             this.logger.warn('output-static', `Path is not a directory: ${target}`);
           }
+        } else {
+          this.logger.warn('output-static', `Static path not found: ${target}`);
         }
         return Promise.resolve(true);
       };
