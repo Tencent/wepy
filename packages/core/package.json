@@ -1,6 +1,6 @@
 {
   "name": "@wepy/core",
-  "version": "2.0.0-alpha.12",
+  "version": "2.0.0-alpha.13",
   "main": "./dist/wepy.js",
   "typings": "types/index.d.ts",
   "scripts": {
@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/core@2.0.0-alpha.12",
-  "_commitid": "26afe17",
+  "_id": "@wepy/core@2.0.0-alpha.13",
+  "_commitid": "7529ad8",
   "devDependencies": {
     "esm": "^3.2.25",
     "typescript": "^3.3.3"
