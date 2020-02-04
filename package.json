@@ -1,8 +1,8 @@
 {
   "name": "wepy",
-  "version": "2.0.0-alpha.22",
+  "version": "0.0.0",
   "description": "",
-  "main": "lib/wepy.js",
+  "main": "",
   "scripts": {
     "lint": "eslint ./ --ext .js",
     "dev": "chokidar '**/*.wpy' '**/*.js' -c 'npm run dev:all' -i '/dist/'",
@@ -129,7 +129,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "_id": "wepy@2.0.0-alpha.22",
-  "_commitid": "64ac431"
+  }
 }
