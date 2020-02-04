@@ -1,5 +1,6 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
+const slash = require('slash');
 
 let appUsingComponents = null;
 
@@ -104,7 +105,8 @@ exports = module.exports = function() {
           } else {
             let relativePath = path.relative(path.dirname(ctx.file), target);
             let parsedPath = path.parse(relativePath);
-            resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+            // Windows may got windows path, covert to use posix path
+            resolvedUsingComponents[name] = './' + slash(path.join(parsedPath.dir, parsedPath.name));
             parseComponents.push({
               name,
               prefix,
@@ -136,6 +138,7 @@ exports = module.exports = function() {
     });
   });
 
+  // raw and plugin do nothing
   // eslint-disable-next-line
   this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, ctx) {
     return Promise.resolve({
