@@ -69,7 +69,7 @@
     "serve-static": "^1.11.1",
     "through2": "^2.0.3",
     "validate-commit-msg": "^2.14.0",
-    "verpub": "^0.1.0"
+    "verpub": "^0.1.2"
   },
   "babel": {
     "comments": false,
