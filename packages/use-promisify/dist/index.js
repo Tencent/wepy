@@ -18,14 +18,12 @@ var promisify = function(fn, caller, type) {
       switch (type) {
         case 'weapp-style':
           fn.call(caller, Object.assign({}, args[0],
-            {
-              success: function success(res) {
+            {success: function success(res) {
                 resolve(res);
               },
               fail: function fail(err) {
                 reject(err);
-              }
-            }));
+              }}));
           break;
         case 'weapp-fix':
           fn.apply(caller, args.concat(resolve).concat(reject));
@@ -149,7 +147,14 @@ var simplifyArgs = {
   reLaunch: 'url',
 
   // pageScroll
-  pageScrollTo: 'scrollTop,duration'
+  pageScrollTo: 'scrollTop,duration',
+
+  // Open API
+  getSetting: 'withSubscriptions',
+  getUserInfo: 'withCredentials,lang',
+  authorize: 'scope',
+  requestSubscribeMessage: 'tmplIds',
+  showRedPackage: 'url'
 };
 
 var makeObj = function (arr) {
@@ -167,7 +172,7 @@ var makeObj = function (arr) {
  * wepy.login().then().catch()
  */
 var index = {
-  version: "2.0.0",
+  version: "2.0.1",
   install: function install(wepy, removeFromPromisify) {
     var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
