@@ -1,6 +1,6 @@
 {
   "name": "wepy",
-  "version": "2.0.0-alpha.22",
+  "version": "2.0.0-alpha.23",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
@@ -130,6 +130,6 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "_id": "wepy@2.0.0-alpha.22",
-  "_commitid": "64ac431"
+  "_id": "wepy@2.0.0-alpha.23",
+  "_commitid": "2a06e91"
 }
