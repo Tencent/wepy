@@ -42,7 +42,7 @@
     "download-git-repo": "^1.0.2",
     "enhanced-resolve": "^4.1.0",
     "fs-extra": "^8.1.0",
-    "handlebars": "^4.1.2",
+    "handlebars": "^4.3.0",
     "hash-sum": "^1.0.2",
     "htmlhint": "^0.11.0",
     "htmlparser2": "^3.9.2",
