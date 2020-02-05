@@ -4,6 +4,7 @@ diff
 log
 npm-debug.log
 demo/
+.nyc_output/
 .vscode
 coverage
 lerna-debug.log
