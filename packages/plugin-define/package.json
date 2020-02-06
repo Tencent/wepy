@@ -4,7 +4,9 @@
   "description": "wepy define plugin",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/*.test.js"
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha ./test/*.test.js",
+    "test:integration": "mocha ./test/*.integration.js"
   },
   "keywords": [
     "wepy",
@@ -16,5 +18,8 @@
   "license": "MIT",
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/plugin-define@2.0.3",
-  "_commitid": "68f3784"
+  "_commitid": "68f3784",
+  "devDependencies": {
+    "@wepy/cli": "^2.0.0-alpha.23"
+  }
 }
