@@ -4,6 +4,8 @@ const expect = require('chai').expect;
 
 describe('plugin-define', function() {
   it('test plugin-define', function(done) {
+    this.timeout(5000);
+
     let wepyPath = path.resolve(process.cwd(), '../cli/bin/wepy.js');
 
     exec(`cd test/fixtures && node ${wepyPath} build`, function(error) {
