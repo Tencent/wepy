@@ -11,6 +11,9 @@ jobs:
       matrix:
         node-version: [8.x, 10.x]
     steps:
+    - name: Setup Linux Environment
+      run: | 
+        sudo apt-get -qy update && sudo apt-get install -y expect
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
