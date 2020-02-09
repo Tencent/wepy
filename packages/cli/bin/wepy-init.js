@@ -65,24 +65,23 @@ exports = module.exports = (template, rawName, program) => {
   }
 
   function downloadOfficialTemplate(templateName, dist, opt, branch) {
-    if (branch === '2.0.x') {
-      downloadLog(`Download template "${templateName}" from Tencent COS`);
-      return download.downloadFromCos(templateName, tmp, opt).catch(e => {
-        downloadLog(`Download URL is: ${e.url}`);
-        downloadLog(`Download from Tencent COS failed, try Github Raw download`, 'warn');
-        downloadLog(e, 'warn');
-        return download.downloadFromGitRaw(templateName, dist, opt, branch).catch(e => {
+    downloadLog(`Download template "${templateName}" in branch "${branch}" from Github Raw`);
+    return download
+      .downloadFromGitRaw(templateName, dist, opt, branch)
+      .catch(e => {
+        if (branch === '2.0.x') {
           downloadLog(`Download URL is: ${e.url}`);
+          downloadLog(`Download from Github raw failed, try Tencent COS download`, 'warn');
+          downloadLog(e, 'warn');
+          return download.downloadFromCos(templateName, tmp, opt);
+        } else {
           throw e;
-        });
-      });
-    } else {
-      downloadLog(`Download template "${templateName}" in branch "${branch}" from Github Raw`);
-      return download.downloadFromGitRaw(templateName, dist, opt, branch).catch(e => {
+        }
+      })
+      .catch(e => {
         downloadLog(`Download URL is: ${e.url}`);
         throw e;
       });
-    }
   }
 
   function downloadAndGenerate(template) {
