@@ -75,7 +75,7 @@ const parseHandler = (name = '', value = '', scope) => {
   info = parseHandlerProxy(value, scope);
 
   if (name === 'click') name = 'tap';
-  type = 'bind' + name;
+  type = 'bind:' + name;
   return {
     event: name,
     type: type,
@@ -93,7 +93,7 @@ exports = module.exports = function() {
 
   this.register('template-parse-ast-attr-v-on.capture', function({ item, name, expr, event, scope, ctx }) {
     // bind:tap="xxx" or catch:tap="xxx"
-    event.type = event.type.replace(/^bind/, 'bind:').replace(/^catch/, 'catch:');
+    event.type = event.type.replace(/^bind/, 'bind').replace(/^catch/, 'catch');
     event.type = 'capture-' + event.type;
     return { item, name, expr, event, scope, ctx };
   });

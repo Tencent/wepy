@@ -1,14 +1,16 @@
-<view data-wpy-evt="0-0" bindtap="_proxy"></view>
-<view data-wpy-evt="0-1" catchtap="_proxy"></view>
+<view data-wpy-evt="0-0" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-1" catch:tap="_proxy"></view>
 <view data-wpy-evt="0-2" capture-bind:tap="_proxy"></view>
 <view data-wpy-evt="0-3" capture-catch:tap="_proxy"></view>
 <view data-wpy-evt="0-4" capture-catch:tap="_proxy"></view>
 
-<view data-wpy-evt="0-5" bindtap="_proxy"></view>
+<view data-wpy-evt="0-5" bind:tap="_proxy"></view>
 
 <view wx:for="{{ list }}" wx:for-index="index" wx:for-item="item" wx:key="index">
-  <button data-wpy-evt="0-6" bindtap="_proxy" data-wpytap-a="{{ item }}"></button>
+  <button data-wpy-evt="0-6" bind:tap="_proxy" data-wpytap-a="{{ item }}"></button>
 </view>
 
 <view data-wpy-evt="0-7" capture-bind:tap="_proxy"></view>
 <view data-wpy-evt="0-8" capture-catch:tap="_proxy"></view>
+
+<view data-wpy-evt="0-9" bind:click-right="_proxy"></view>
