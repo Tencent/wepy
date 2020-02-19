@@ -1859,8 +1859,12 @@ var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
 }(WepyComponent));
 
 function callUserHook(vm, hookName, arg) {
-  var pageHook = vm.hooks[hookName];
-  var appHook = vm.$app.hooks[hookName];
+  var pageHook = vm.hooks ? vm.hooks[hookName] : null;
+  var appHook = vm.$app && vm.$app.hooks ? vm.$app.hooks[hookName] : null;
+
+  if (!vm.$app) {
+    warn('$app is not initialized in this Component', vm);
+  }
 
   var result = arg;
 
@@ -2735,6 +2739,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.12";
+wepy.version = "2.0.0-alpha.13";
 
 module.exports = wepy;
