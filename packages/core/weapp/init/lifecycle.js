@@ -100,6 +100,8 @@ export function patchLifecycle(output, options, rel, isComponent) {
     vm._watchers = [];
     if (!isComponent) {
       vm.$root = vm;
+    }
+    if (app) {
       vm.$app = app;
     }
     if (this.is === 'custom-tab-bar/index') {
