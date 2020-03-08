@@ -128,7 +128,7 @@ const simplifyArgs = {
 
   // tabBar
   setTabBarBadge: 'index,text',
-  removeTabBarBadge: 'idnex',
+  removeTabBarBadge: 'index',
   showTabBarRedDot: 'index',
   hideTabBarRedDot: 'index',
   showTabBar: 'animation',
