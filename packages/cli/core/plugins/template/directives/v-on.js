@@ -43,6 +43,11 @@ const parseHandlerProxy = (expr, scope) => {
     if (parsedHandler.identifiers.$event) {
       eventInArg = true;
     }
+
+    if (parsedHandler.identifiers.arguments) {
+      eventInArg = true;
+      handlerExpr = handlerExpr.replace('arguments', '$event.$wx.detail.arguments');
+    }
   }
 
   let proxy = `function proxy (${injectParams.join(', ')}) {
