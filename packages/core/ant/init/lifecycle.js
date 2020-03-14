@@ -9,7 +9,7 @@ import { initRender } from '../../weapp/init/render';
 import { initData } from '../../weapp/init/data';
 import { initComputed } from '../../weapp/init/computed';
 import { initMethods } from './methods';
-import { initEvents } from '../../weapp/init/events';
+import { initEvents } from './events';
 import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../../weapp/class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
