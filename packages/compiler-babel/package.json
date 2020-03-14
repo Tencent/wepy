@@ -4,7 +4,7 @@
   "description": "wepy compile babel",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test/*.test.js"
   },
   "keywords": [
     "babel"
@@ -18,5 +18,11 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/compiler-babel@2.0.4",
-  "_commitid": "70778d6"
+  "_commitid": "70778d6",
+  "devDependencies": {
+    "acorn": "^5.4.1",
+    "acorn-dynamic-import": "^3.0.0",
+    "acorn-walk": "^7.1.1",
+    "babel-preset-env": "^1.7.0"
+  }
 }

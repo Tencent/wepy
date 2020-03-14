@@ -37,20 +37,36 @@ exports = module.exports = function(options) {
       return p;
     });
 
+    /*  There are two format for the bable compilation
+     *  1. var _core = _interopRequireDefault(require("@wepy/core"));
+     *
+     *  2. var core = require("@wepy/core");
+     *     var _core2 = _interopRequireDefault(core);
+     */
+
     // eslint-disable-next-line
     this.register('prewalk-VariableDeclarator', function(walker, declarator, name, decl) {
       if (walker.lang !== 'babel') return;
-      // var core_1 = _interopRequireDefault(require('@wepy/core'))
+
       if (declarator.init && declarator.init.type === 'CallExpression') {
-        if (declarator.init.callee.name === '_interopRequireDefault') {
-          let arg = declarator.init.arguments[0];
+        if (declarator.init.callee.name === 'require') {
+          const arg = declarator.init.arguments[0];
+          if (arg && arg.type === 'Literal' && arg.value === '@wepy/core') {
+            walker.scope.instances.push(declarator.id.name);
+          }
+        } else if (declarator.init.callee.name === '_interopRequireDefault') {
+          const arg = declarator.init.arguments[0];
           if (
             arg &&
             arg.type === 'CallExpression' &&
             arg.callee.name === 'require' &&
             arg.arguments[0].value === '@wepy/core'
           ) {
-            walker.scope.instances.push(name + '.default');
+            // var _core = _interopRequireDefault(require('@wepy/core'));
+            walker.scope.instances.push(name);
+          } else if (arg && arg.type === 'Identifier' && walker.scope.instances.indexOf(arg.name) > -1) {
+            // var core2 = _interopRequireDefault(core);
+            walker.scope.instances.push(name);
           }
         }
       }
@@ -60,7 +76,7 @@ exports = module.exports = function(options) {
       if (walker.lang !== 'babel') return;
       if (walker.scope.instances && walker.scope.instances.length && exprName) {
         if (exprName.callee === 'app' || exprName.callee === 'page' || exprName.callee === 'component') {
-          if (walker.scope.instances.indexOf(exprName.instance) !== -1) {
+          if (walker.scope.instances.some(item => item + '.default' === exprName.instance)) {
             walker.entry = expression;
           }
         }
