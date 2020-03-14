@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-babel",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "wepy compile babel",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,8 @@
     "@babel/core": "^7.1.0"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/compiler-babel@2.0.4",
-  "_commitid": "70778d6",
+  "_id": "@wepy/compiler-babel@2.0.5",
+  "_commitid": "e4c7adb",
   "devDependencies": {
     "acorn": "^5.4.1",
     "acorn-dynamic-import": "^3.0.0",
