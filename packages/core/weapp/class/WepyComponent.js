@@ -50,7 +50,7 @@ export default class WepyComponent extends Base {
   }
 
   $trigger(event, data, option) {
-    this.$wx.triggerEvent(event, data, option);
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
   }
 }
 

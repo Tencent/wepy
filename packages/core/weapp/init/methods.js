@@ -78,10 +78,6 @@ const proxyHandler = function(e) {
   }
   if (isFunc(fn)) {
     const paramsWithEvent = params.concat($event);
-    const customComData = e.detail._isCustomCom && e.detail.data;
-    if (customComData) {
-      paramsWithEvent.push(customComData);
-    }
     const hookRes = callUserHook(vm, 'before-event', {
       event: $event,
       params: paramsWithEvent
