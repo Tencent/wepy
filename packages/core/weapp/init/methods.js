@@ -1,6 +1,6 @@
 import Event from '../class/Event';
 import { callUserHook } from './hooks';
-import { isFunc, isUndef, warn } from './../util/index';
+import { isFunc, isUndef, camelize, warn } from './../util/index';
 
 const eventHandler = function(method, fn) {
   let methodKey = method.toLowerCase();
@@ -47,10 +47,11 @@ const proxyHandler = function(e) {
 
   let noParams = false;
   let noModelParams = !model;
+  const camelizedType = camelize(type);
   while (i++ < 26 && (!noParams || !noModelParams)) {
     let alpha = String.fromCharCode(64 + i);
     if (!noParams) {
-      let key = 'wpy' + type + alpha;
+      let key = 'wpy' + camelizedType + alpha;
       if (!(key in dataset)) {
         // it can be undefined;
         noParams = true;

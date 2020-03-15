@@ -11,6 +11,7 @@ const parseHandlerProxy = (expr, scope) => {
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
+  let noArguments = false;
 
   let parsedHandler;
   // eslint-disable-next-line
@@ -22,6 +23,7 @@ const parseHandlerProxy = (expr, scope) => {
       params: []
     };
     handlerExpr += '($event)';
+    noArguments = true;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -43,13 +45,28 @@ const parseHandlerProxy = (expr, scope) => {
     if (parsedHandler.identifiers.$event) {
       eventInArg = true;
     }
+
+    if (parsedHandler.identifiers.arguments) {
+      eventInArg = true;
+      handlerExpr = handlerExpr.replace('arguments', '$event.$wx.detail.arguments');
+    }
+  }
+
+  let declareCode = eventInArg ? 'const $event = arguments[arguments.length - 1];' : '';
+  let functionCode = handlerExpr;
+  if (noArguments) {
+    // for use define component event, use detail arguments instead;
+    declareCode +=
+      'const $args = $event && $event.$wx && $event.$wx.detail && $event.$wx.detail.arguments ? $event.$wx.detail.arguments : null;';
+    functionCode = `${expr}.apply(vm, $args || [ $event ]);`;
   }
 
   let proxy = `function proxy (${injectParams.join(', ')}) {
-    ${eventInArg ? 'let $event = arguments[arguments.length - 1];' : ''}
+    const vm = this;
+    ${declareCode}
     with (this) {
       return (function () {
-        ${handlerExpr};
+        ${functionCode};
       })();
     }
   }`;
