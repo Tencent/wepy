@@ -24,7 +24,7 @@ const parseHandlerProxy = (expr, scope) => {
       callee: { name: handlerExpr },
       params: []
     };
-    handlerExpr = `${expr}.apply(vm, $args || [$event]);`;
+    handlerExpr = `${expr}.apply(vm, $args || [$event])`;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -52,7 +52,7 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (parsedHandler.identifiers.arguments) {
-      eventInArg = true;
+      wxEventInArg = true;
       handlerExpr = handlerExpr.replace('arguments', '$wxEvent.arguments');
     }
   }
