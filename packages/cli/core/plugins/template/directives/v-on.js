@@ -12,18 +12,19 @@ const parseHandlerProxy = (expr, scope) => {
   let handlerExpr = expr;
   let eventInArg = false;
   let noArguments = false;
+  let wxEventInArg = false;
 
   let parsedHandler;
   // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
+    noArguments = true;
     eventInArg = true;
     parsedHandler = {
       callee: { name: handlerExpr },
       params: []
     };
-    handlerExpr += '($event)';
-    noArguments = true;
+    handlerExpr = `${expr}.apply(vm, $args || [$event]);`;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -46,19 +47,24 @@ const parseHandlerProxy = (expr, scope) => {
       eventInArg = true;
     }
 
+    if (parsedHandler.identifiers.$wxEvent) {
+      wxEventInArg = true;
+    }
+
     if (parsedHandler.identifiers.arguments) {
       eventInArg = true;
-      handlerExpr = handlerExpr.replace('arguments', '$event.$wx.detail.arguments');
+      handlerExpr = handlerExpr.replace('arguments', '$wxEvent.arguments');
     }
   }
 
-  let declareCode = eventInArg ? 'const $event = arguments[arguments.length - 1];' : '';
+  let declareCode = eventInArg || wxEventInArg ? 'const $wxEvent = arguments[arguments.length - 1];' : '';
   let functionCode = handlerExpr;
+  if (eventInArg) {
+    declareCode += 'const $event = $wxEvent.arguments ? $wxEvent.arguments[0] : $wxEvent;';
+  }
   if (noArguments) {
     // for use define component event, use detail arguments instead;
-    declareCode +=
-      'const $args = $event && $event.$wx && $event.$wx.detail && $event.$wx.detail.arguments ? $event.$wx.detail.arguments : null;';
-    functionCode = `${expr}.apply(vm, $args || [ $event ]);`;
+    declareCode += 'const $args = $wxEvent.arguments;';
   }
 
   let proxy = `function proxy (${injectParams.join(', ')}) {
