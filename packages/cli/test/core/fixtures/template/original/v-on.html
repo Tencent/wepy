@@ -14,3 +14,8 @@
 <div capture-catch:tap="handleCaptureCatchTap"></div>
 
 <div @click-right="rightNavbar"></div>
+
+<div @tap="myclick(1, arguments)"></div>
+<div @tap="myclick(1, $event)"></div>
+<div @tap="myclick(1, $wxEvent)"></div>
+<div @tap="myclick(1, $wxEvent, $event, arguments)"></div>
