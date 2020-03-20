@@ -43,18 +43,14 @@ export default class WepyComponent extends Base {
     if (fns) {
       super.$emit.apply(this, arguments);
     } else {
-      this.$trigger(event, { __arguments: args });
+      this.$wx.triggerEvent(event, { arguments: args });
     }
 
     return this;
   }
 
   $trigger(event, data, option) {
-    if (data && '__arguments' in data) {
-      this.$wx.triggerEvent(event, { arguments: data.__arguments }, option);
-    } else {
-      this.$wx.triggerEvent(event, { arguments: [data] }, option);
-    }
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
   }
 }
 
