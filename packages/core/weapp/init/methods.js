@@ -39,8 +39,6 @@ const proxyHandler = function(e) {
     return;
   }
 
-  const $event = new Event(e);
-
   let i = 0;
   let params = [];
   let modelParams = [];
@@ -76,8 +74,16 @@ const proxyHandler = function(e) {
       }
     }
   }
+
   if (isFunc(fn)) {
+    const $event = new Event(e);
     const paramsWithEvent = params.concat($event);
+    let args = e.detail && e.detail.arguments;
+
+    if (args) {
+      e.detail = args.length > 1 ? args : args[0];
+    }
+
     const hookRes = callUserHook(vm, 'before-event', {
       event: $event,
       params: paramsWithEvent
@@ -87,6 +93,11 @@ const proxyHandler = function(e) {
       // Event cancelled.
       return;
     }
+
+    if (args) {
+      e.detail = { arguments: args };
+    }
+
     return fn.apply(vm, paramsWithEvent);
   } else if (!model) {
     throw new Error('Unrecognized event');
