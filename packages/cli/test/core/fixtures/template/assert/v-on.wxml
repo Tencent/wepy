@@ -19,3 +19,4 @@
 <view data-wpy-evt="0-11" bind:tap="_proxy"></view>
 <view data-wpy-evt="0-12" bind:tap="_proxy"></view>
 <view data-wpy-evt="0-13" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-14" bind:tap="_proxy"></view>
