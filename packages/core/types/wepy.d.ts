@@ -35,7 +35,7 @@ export interface WepyComponent extends Base {
     expOrFn: (this: this) => T,
     callback: (this: this, n: T, o: T) => void,
   ): (() => void);
-  $triggerEvent(event: string, data: any, option: object): this;
+  $trigger(event: string, data: any, option: object): this;
 }
 export interface WepyPage extends WepyComponent {
 
