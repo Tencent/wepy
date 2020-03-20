@@ -11,15 +11,17 @@ const parseHandlerProxy = (expr, scope) => {
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
-  let noArguments = false;
-  let wxEventInArg = false;
+  let wxInArg = false;
+  let argumentsInArg = false;
 
   let parsedHandler;
   // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
-    noArguments = true;
+    wxInArg = true;
+    argumentsInArg = true;
     eventInArg = true;
+
     parsedHandler = {
       callee: { name: handlerExpr },
       params: []
@@ -44,27 +46,37 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (parsedHandler.identifiers.$event) {
+      wxInArg = true;
       eventInArg = true;
     }
 
-    if (parsedHandler.identifiers.$wxEvent) {
-      wxEventInArg = true;
+    if (parsedHandler.identifiers.$wx) {
+      wxInArg = true;
     }
 
     if (parsedHandler.identifiers.arguments) {
-      wxEventInArg = true;
-      handlerExpr = handlerExpr.replace('arguments', '$wxEvent.arguments');
+      wxInArg = true;
+      argumentsInArg = true;
+
+      handlerExpr = handlerExpr.replace('arguments', '$args');
     }
   }
 
-  let declareCode = eventInArg || wxEventInArg ? 'const $wxEvent = arguments[arguments.length - 1];' : '';
-  let functionCode = handlerExpr;
+  const functionCode = handlerExpr;
+  let declareCode = wxInArg ? 'const $wx = arguments[arguments.length - 1].$wx;' : '';
+
   if (eventInArg) {
-    declareCode += 'const $event = $wxEvent.arguments ? $wxEvent.arguments[0] : $wxEvent;';
+    declareCode +=
+      'const $event = ($wx.detail && $wx.detail.arguments) ? $wx.detail.arguments[0] : arguments[arguments.length - 1];';
   }
-  if (noArguments) {
+  if (argumentsInArg) {
     // for use define component event, use detail arguments instead;
-    declareCode += 'const $args = $wxEvent.arguments;';
+    declareCode += 'const $args = $wx.detail && $wx.detail.arguments;';
+  }
+
+  if (wxInArg) {
+    declareCode +=
+      'if ($wx.detail && $wx.detail.arguments) $wx.detail = $wx.detail.arguments.length > 1 ? $wx.detail.arguments : $wx.detail.arguments[0];';
   }
 
   let proxy = `function proxy (${injectParams.join(', ')}) {
