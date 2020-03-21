@@ -1614,6 +1614,25 @@ var WepyComponent = /*@__PURE__*/(function (Base$$1) {
     }
   };
 
+  WepyComponent.prototype.$emit = function $emit (event) {
+    var args = [], len = arguments.length - 1;
+    while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+    var fns = this._events[event];
+
+    if (fns) {
+      Base$$1.prototype.$emit.apply(this, arguments);
+    } else {
+      this.$wx.triggerEvent(event, { arguments: args });
+    }
+
+    return this;
+  };
+
+  WepyComponent.prototype.$trigger = function $trigger (event, data, option) {
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
+  };
+
   return WepyComponent;
 }(Base));
 
@@ -1744,6 +1763,7 @@ var WepyConstructor = /*@__PURE__*/(function (WepyComponent$$1) {
   function WepyConstructor(opt) {
     if ( opt === void 0 ) opt = {};
 
+    WepyComponent$$1.call(this);
     var vm = new WepyComponent$$1();
 
     // Only need data and watchers for a empty WepyComponent
@@ -1800,15 +1820,63 @@ var WepyApp = /*@__PURE__*/(function (Base$$1) {
   return WepyApp;
 }(Base));
 
-// eslint-disable-next-line
-var wx = my;
-var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
-  function WepyPage () {
-    WepyComponent$$1.apply(this, arguments);
+var WepyComponent$1 = /*@__PURE__*/(function (Base$$1) {
+  function WepyComponent () {
+    Base$$1.apply(this, arguments);
   }
 
-  if ( WepyComponent$$1 ) WepyPage.__proto__ = WepyComponent$$1;
-  WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
+  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
+  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyComponent.prototype.constructor = WepyComponent;
+
+  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
+    var this$1 = this;
+
+    var vm = this;
+    if (isArr(cb)) {
+      cb.forEach(function (handler) {
+        this$1.$watch(expOrFn, handler, options);
+      });
+    }
+    if (isPlainObject(cb)) {
+      var handler = cb;
+      options = handler;
+      handler = handler.handler;
+      if (typeof handler === 'string') { handler = this[handler]; }
+      return this.$watch(expOrFn, handler, options);
+    }
+
+    options = options || {};
+    options.user = true;
+    var watcher = new Watcher(vm, expOrFn, cb, options);
+    if (options.immediate) {
+      cb.call(vm, watcher.value);
+    }
+    return function unwatchFn() {
+      watcher.teardown();
+    };
+  };
+
+  WepyComponent.prototype.$forceUpdate = function $forceUpdate () {
+    if (this._watcher) {
+      this._watcher.update();
+    }
+  };
+
+  return WepyComponent;
+}(Base));
+
+WepyComponent$1.prototype.$nextTick = renderNextTick;
+
+// eslint-disable-next-line
+var wx = my;
+var WepyPage = /*@__PURE__*/(function (WepyComponent) {
+  function WepyPage () {
+    WepyComponent.apply(this, arguments);
+  }
+
+  if ( WepyComponent ) WepyPage.__proto__ = WepyComponent;
+  WepyPage.prototype = Object.create( WepyComponent && WepyComponent.prototype );
   WepyPage.prototype.constructor = WepyPage;
 
   WepyPage.prototype.$launch = function $launch (url, params) {
@@ -1858,7 +1926,7 @@ var WepyPage = /*@__PURE__*/(function (WepyComponent$$1) {
   };
 
   return WepyPage;
-}(WepyComponent));
+}(WepyComponent$1));
 
 function callUserHook(vm, hookName, arg) {
   var pageHook = vm.hooks ? vm.hooks[hookName] : null;
@@ -2691,6 +2759,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.13";
+wepy.version = "2.0.0-alpha.14";
 
 module.exports = wepy;
