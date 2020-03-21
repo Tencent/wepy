@@ -78,24 +78,17 @@ const proxyHandler = function(e) {
   if (isFunc(fn)) {
     const $event = new Event(e);
     const paramsWithEvent = params.concat($event);
-    let args = e.detail && e.detail.arguments;
-
-    if (args) {
-      e.detail = args.length > 1 ? args : args[0];
-    }
+    let args = (e.detail && e.detail.arguments) || [];
 
     const hookRes = callUserHook(vm, 'before-event', {
       event: $event,
-      params: paramsWithEvent
+      params: paramsWithEvent,
+      args: args
     });
 
     if (hookRes === false) {
       // Event cancelled.
       return;
-    }
-
-    if (args) {
-      e.detail = { arguments: args };
     }
 
     return fn.apply(vm, paramsWithEvent);

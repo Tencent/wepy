@@ -11,14 +11,14 @@ const parseHandlerProxy = (expr, scope) => {
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
-  let wxInArg = false;
+  let needDeclareWx = false;
   let argumentsInArg = false;
 
   let parsedHandler;
   // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
-    wxInArg = true;
+    needDeclareWx = true;
     argumentsInArg = true;
     eventInArg = true;
 
@@ -26,7 +26,7 @@ const parseHandlerProxy = (expr, scope) => {
       callee: { name: handlerExpr },
       params: []
     };
-    handlerExpr = `${expr}.apply(vm, $args || [$event])`;
+    handlerExpr = `${expr}.apply(_vm, $args || [$event])`;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -46,51 +46,51 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (parsedHandler.identifiers.$event) {
-      wxInArg = true;
+      needDeclareWx = true;
       eventInArg = true;
     }
 
     if (parsedHandler.identifiers.$wx) {
-      wxInArg = true;
+      needDeclareWx = true;
     }
 
     if (parsedHandler.identifiers.arguments) {
-      wxInArg = true;
+      needDeclareWx = true;
       argumentsInArg = true;
-
       handlerExpr = handlerExpr.replace('arguments', '$args');
     }
   }
 
   const functionCode = handlerExpr;
-  let declareCode = wxInArg ? 'const $wx = arguments[arguments.length - 1].$wx;' : '';
 
+  let declaredCodes = [];
+
+  declaredCodes.push('const _vm=this;');
+  if (needDeclareWx) {
+    declaredCodes.push('const $wx = arguments[arguments.length - 1].$wx;');
+  }
   if (eventInArg) {
-    declareCode +=
-      'const $event = ($wx.detail && $wx.detail.arguments) ? $wx.detail.arguments[0] : arguments[arguments.length - 1];';
+    declaredCodes.push(
+      '  const $event = ($wx.detail && $wx.detail.arguments) ? $wx.detail.arguments[0] : arguments[arguments.length -1];'
+    );
   }
   if (argumentsInArg) {
-    // for use define component event, use detail arguments instead;
-    declareCode += 'const $args = $wx.detail && $wx.detail.arguments;';
-  }
-
-  if (wxInArg) {
-    declareCode +=
-      'if ($wx.detail && $wx.detail.arguments) $wx.detail = $wx.detail.arguments.length > 1 ? $wx.detail.arguments : $wx.detail.arguments[0];';
+    declaredCodes.push('  const $args = $wx.detail && $wx.detail.arguments;');
   }
 
   let proxy = `function proxy (${injectParams.join(', ')}) {
-    const vm = this;
-    ${declareCode}
-    with (this) {
-      return (function () {
-        ${functionCode};
-      })();
-    }
-  }`;
+  ${declaredCodes.join('\n')}
+  with (this) {
+  return (function () {
+    ${functionCode};
+  })();}
+}`;
 
   proxy = vueWithTransform(proxy); // transform this
   proxy = proxy.replace('var _h=_vm.$createElement;var _c=_vm._self._c||_h;', ''); // removed unused vue code;
+  if (proxy.indexOf('_vm=this') !== proxy.lastIndexOf('_vm=this')) {
+    proxy = proxy.replace('var _vm=this;\n', ''); // _vm will decalred twice;
+  }
   return {
     proxy: proxy,
     params: injectParams,
