@@ -1,7 +1,7 @@
-function proxy (item) {
+function proxy () {
   var vm = this;
   var _vm = this;
   return (function () {
-    _vm.myClickInFor(item);
+    _vm.myclick(1);
   })();
 }

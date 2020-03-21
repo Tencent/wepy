@@ -1,6 +1,6 @@
 import Event from '../class/Event';
 import { callUserHook } from './hooks';
-import { isFunc, isUndef, warn } from './../util/index';
+import { isFunc, isUndef, camelize, warn } from './../util/index';
 
 const eventHandler = function(method, fn) {
   let methodKey = method.toLowerCase();
@@ -39,18 +39,17 @@ const proxyHandler = function(e) {
     return;
   }
 
-  const $event = new Event(e);
-
   let i = 0;
   let params = [];
   let modelParams = [];
 
   let noParams = false;
   let noModelParams = !model;
+  const camelizedType = camelize(type);
   while (i++ < 26 && (!noParams || !noModelParams)) {
     let alpha = String.fromCharCode(64 + i);
     if (!noParams) {
-      let key = 'wpy' + type + alpha;
+      let key = 'wpy' + camelizedType + alpha;
       if (!(key in dataset)) {
         // it can be undefined;
         noParams = true;
@@ -75,8 +74,16 @@ const proxyHandler = function(e) {
       }
     }
   }
+
   if (isFunc(fn)) {
+    const $event = new Event(e);
     const paramsWithEvent = params.concat($event);
+    let args = e.detail && e.detail.arguments;
+
+    if (args) {
+      e.detail = args.length > 1 ? args : args[0];
+    }
+
     const hookRes = callUserHook(vm, 'before-event', {
       event: $event,
       params: paramsWithEvent
@@ -86,7 +93,12 @@ const proxyHandler = function(e) {
       // Event cancelled.
       return;
     }
-    return fn.apply(vm, params.concat($event));
+
+    if (args) {
+      e.detail = { arguments: args };
+    }
+
+    return fn.apply(vm, paramsWithEvent);
   } else if (!model) {
     throw new Error('Unrecognized event');
   }

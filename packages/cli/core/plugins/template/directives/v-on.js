@@ -11,17 +11,22 @@ const parseHandlerProxy = (expr, scope) => {
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
+  let wxInArg = false;
+  let argumentsInArg = false;
 
   let parsedHandler;
   // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
+    wxInArg = true;
+    argumentsInArg = true;
     eventInArg = true;
+
     parsedHandler = {
       callee: { name: handlerExpr },
       params: []
     };
-    handlerExpr += '($event)';
+    handlerExpr = `${expr}.apply(vm, $args || [$event])`;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -41,15 +46,45 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (parsedHandler.identifiers.$event) {
+      wxInArg = true;
       eventInArg = true;
+    }
+
+    if (parsedHandler.identifiers.$wx) {
+      wxInArg = true;
+    }
+
+    if (parsedHandler.identifiers.arguments) {
+      wxInArg = true;
+      argumentsInArg = true;
+
+      handlerExpr = handlerExpr.replace('arguments', '$args');
     }
   }
 
+  const functionCode = handlerExpr;
+  let declareCode = wxInArg ? 'const $wx = arguments[arguments.length - 1].$wx;' : '';
+
+  if (eventInArg) {
+    declareCode +=
+      'const $event = ($wx.detail && $wx.detail.arguments) ? $wx.detail.arguments[0] : arguments[arguments.length - 1];';
+  }
+  if (argumentsInArg) {
+    // for use define component event, use detail arguments instead;
+    declareCode += 'const $args = $wx.detail && $wx.detail.arguments;';
+  }
+
+  if (wxInArg) {
+    declareCode +=
+      'if ($wx.detail && $wx.detail.arguments) $wx.detail = $wx.detail.arguments.length > 1 ? $wx.detail.arguments : $wx.detail.arguments[0];';
+  }
+
   let proxy = `function proxy (${injectParams.join(', ')}) {
-    ${eventInArg ? 'let $event = arguments[arguments.length - 1];' : ''}
+    const vm = this;
+    ${declareCode}
     with (this) {
       return (function () {
-        ${handlerExpr};
+        ${functionCode};
       })();
     }
   }`;

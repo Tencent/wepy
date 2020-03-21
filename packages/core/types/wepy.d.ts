@@ -26,7 +26,7 @@ export interface WepyApp extends Base {
 }
 
 export interface WepyComponent extends Base {
-    
+
   $watch(
     expOrFn: string,
     callback: (this: this, n: any, o: any) => void,
@@ -35,9 +35,10 @@ export interface WepyComponent extends Base {
     expOrFn: (this: this) => T,
     callback: (this: this, n: T, o: T) => void,
   ): (() => void);
+  $trigger(event: string, data: any, option: object): this;
 }
 export interface WepyPage extends WepyComponent {
-  
+
   $launch(url: string, params: object): void;
   $navigate(url: string, params: object): void;
   $redirect(url: string, params: object): void;

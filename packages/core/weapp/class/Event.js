@@ -1,6 +1,6 @@
 export default class Event {
   constructor(e) {
-    let { detail, target, currentTarget } = e;
+    const { detail, target, currentTarget } = e;
     this.$wx = e;
     this.type = e.type;
     this.timeStamp = e.timeStamp;

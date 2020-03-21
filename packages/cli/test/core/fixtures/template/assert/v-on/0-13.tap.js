@@ -8,6 +8,6 @@ function proxy () {
   }
   var _vm = this;
   return (function () {
-    _vm.myclickStop.apply(vm, $args || [$event]);
+    _vm.myclick(1, $wx, $event, $args);
   })();
 }

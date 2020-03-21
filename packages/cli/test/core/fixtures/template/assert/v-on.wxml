@@ -14,3 +14,10 @@
 <view data-wpy-evt="0-8" capture-catch:tap="_proxy"></view>
 
 <view data-wpy-evt="0-9" bind:click-right="_proxy"></view>
+
+<view data-wpy-evt="0-10" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-11" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-12" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-13" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-14" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-15" bind:tap="_proxy"></view>

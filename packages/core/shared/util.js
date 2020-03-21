@@ -72,3 +72,31 @@ export function toArray(list, start = 0) {
   }
   return rst;
 }
+
+/**
+ * Cached simply key function return
+ */
+export const cached = fn => {
+  let cache = {};
+  return str => cache[str] || (cache[str] = fn(str));
+};
+
+const camelizeRE = /-(\w)/g;
+const hyphenateRE = /([^-])([A-Z])/g;
+
+/**
+ * hyphenate words
+ * e.g. myKey => my-key
+ */
+export const hyphenate = cached(str =>
+  str
+    .replace(hyphenateRE, '$1-$2')
+    .replace(hyphenateRE, '$1-$2')
+    .toLowerCase()
+);
+
+/**
+ * camelize words
+ * e.g. my-key => myKey
+ */
+export const camelize = cached(str => str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : '')));

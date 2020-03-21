@@ -1,8 +1,7 @@
-import Base from './Base';
-import Watcher from '../observer/watcher';
+import Base from './../../weapp/class/Base';
+import Watcher from './../../weapp/observer/watcher';
 import { isArr, isPlainObject } from '../../shared/index';
-
-import { renderNextTick } from '../util/next-tick';
+import { renderNextTick } from './../../weapp/util/next-tick';
 
 export default class WepyComponent extends Base {
   $watch(expOrFn, cb, options) {
@@ -35,22 +34,6 @@ export default class WepyComponent extends Base {
     if (this._watcher) {
       this._watcher.update();
     }
-  }
-
-  $emit(event, ...args) {
-    const fns = this._events[event];
-
-    if (fns) {
-      super.$emit.apply(this, arguments);
-    } else {
-      this.$wx.triggerEvent(event, { arguments: args });
-    }
-
-    return this;
-  }
-
-  $trigger(event, data, option) {
-    this.$wx.triggerEvent(event, { arguments: [data] }, option);
   }
 }
 
