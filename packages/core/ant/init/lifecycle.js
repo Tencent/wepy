@@ -156,7 +156,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
       let acceptProps = vm.$wx.props;
 
       // let target = isComponent ? output.methods: output;
-      // target._initComponent(vm);
+      // target.__initComponent(vm);
       vm.$wx.props.onInit(vm);
       // let parent = this.triggerEvent('_init', vm);
 

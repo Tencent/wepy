@@ -19,7 +19,7 @@ export function patchMethods(output, methods) {
   output.methods = {};
   let target = output.methods;
 
-  target._initComponent = function(e) {
+  target.__initComponent = function(e) {
     let child = e.detail;
     let { ref, wpyEvt } = e.target.dataset;
     let vm = this.$wepy;
@@ -36,7 +36,7 @@ export function patchMethods(output, methods) {
     child.$root = vm.$root;
     return vm;
   };
-  target._proxy = dispatcher;
+  target.__dispatcher = dispatcher;
 
   // TODO: perf
   // Only orginal component method goes to target. no need to add all methods.
