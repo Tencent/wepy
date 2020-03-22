@@ -5,7 +5,10 @@
   "typings": "types/index.d.ts",
   "scripts": {
     "test:types": "tsc -p ./types/test/tsconfig.json",
-    "test": "mocha --require esm ./test/**/*"
+    "test": "_mocha --require esm --recursive"
+  },
+  "esm": {
+    "cjs": true
   },
   "author": "",
   "license": "MIT",
