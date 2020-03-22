@@ -117,7 +117,7 @@ const parseHandler = (name = '', value = '', scope) => {
     params: info.params,
     proxy: info.proxy,
     parsed: info.parsed,
-    expr: CONST.EVENT_PROXY
+    expr: CONST.EVENT_DISPATCHER
   };
 };
 /*

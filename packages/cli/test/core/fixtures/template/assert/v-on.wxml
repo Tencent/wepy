@@ -1,23 +1,23 @@
-<view data-wpy-evt="0-0" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-1" catch:tap="_proxy"></view>
-<view data-wpy-evt="0-2" capture-bind:tap="_proxy"></view>
-<view data-wpy-evt="0-3" capture-catch:tap="_proxy"></view>
-<view data-wpy-evt="0-4" capture-catch:tap="_proxy"></view>
+<view data-wpy-evt="0-0" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-1" catch:tap="__dispatcher"></view>
+<view data-wpy-evt="0-2" capture-bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-3" capture-catch:tap="__dispatcher"></view>
+<view data-wpy-evt="0-4" capture-catch:tap="__dispatcher"></view>
 
-<view data-wpy-evt="0-5" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-5" bind:tap="__dispatcher"></view>
 
 <view wx:for="{{ list }}" wx:for-index="index" wx:for-item="item" wx:key="index">
-  <button data-wpy-evt="0-6" bind:tap="_proxy" data-wpytap-a="{{ item }}"></button>
+  <button data-wpy-evt="0-6" bind:tap="__dispatcher" data-wpytap-a="{{ item }}"></button>
 </view>
 
-<view data-wpy-evt="0-7" capture-bind:tap="_proxy"></view>
-<view data-wpy-evt="0-8" capture-catch:tap="_proxy"></view>
+<view data-wpy-evt="0-7" capture-bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-8" capture-catch:tap="__dispatcher"></view>
 
-<view data-wpy-evt="0-9" bind:click-right="_proxy"></view>
+<view data-wpy-evt="0-9" bind:click-right="__dispatcher"></view>
 
-<view data-wpy-evt="0-10" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-11" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-12" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-13" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-14" bind:tap="_proxy"></view>
-<view data-wpy-evt="0-15" bind:tap="_proxy"></view>
+<view data-wpy-evt="0-10" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-11" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-12" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-13" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-14" bind:tap="__dispatcher"></view>
+<view data-wpy-evt="0-15" bind:tap="__dispatcher"></view>

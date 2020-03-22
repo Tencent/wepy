@@ -2,5 +2,5 @@
 <view id="ref-0-1"></view>
 <view id="hello"></view>
 <view id="{{ hello }}"></view>
-<custom-component-01 bind_init="_initComponent" data-ref="myCom01"></custom-component-01>
-<custom-component-02 bind_init="_initComponent" data-ref="{{ myCom02 }}"></custom-component-02>
+<custom-component-01 bind_init="__initComponent" data-ref="myCom01"></custom-component-01>
+<custom-component-02 bind_init="__initComponent" data-ref="{{ myCom02 }}"></custom-component-02>

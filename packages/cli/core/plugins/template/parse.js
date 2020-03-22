@@ -116,7 +116,7 @@ exports = module.exports = function() {
       // It's a user defined component
       logger.silly('tag', `Found user defined component "${item.name}"`);
       item.parsedAttr = item.parsedAttr || {};
-      item.parsedAttr['bind_init'] = '_initComponent';
+      item.parsedAttr['bind_init'] = '__initComponent';
     } else if (html2wxmlMap[item.name]) {
       // Tag is in the map list
       logger.silly('html2wxml', `Change "${item.name}" to "${html2wxmlMap[item.name]}"`);
