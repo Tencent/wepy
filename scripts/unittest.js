@@ -9,7 +9,7 @@ const packages = [
   'compiler-sass',
   //'compiler-stylus',
   //'compiler-typescript',
-  'core && npm run test:types',
+  'core',
   'plugin-define'
   //'plugin-eslint',
   //'plugin-uglifyjs',
