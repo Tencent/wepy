@@ -119,6 +119,22 @@ function toArray(list, start) {
   return rst;
 }
 
+/**
+ * Cached simply key function return
+ */
+var cached = function (fn) {
+  var cache = {};
+  return function (str) { return cache[str] || (cache[str] = fn(str)); };
+};
+
+var camelizeRE = /-(\w)/g;
+
+/**
+ * camelize words
+ * e.g. my-key => myKey
+ */
+var camelize = cached(function (str) { return str.replace(camelizeRE, function (_, c) { return (c ? c.toUpperCase() : ''); }); });
+
 /*
  * extend objects
  * e.g.
@@ -2094,34 +2110,24 @@ var Event = function Event(e) {
   this.changedTouches = e.changedTouches;
 };
 
-var proxyHandler = function(e) {
-  var vm = this.$wepy;
-  var type = e.type;
-  // touchstart do not have currentTarget
-  var dataset = (e.currentTarget || e.target).dataset;
-  var evtid = dataset.wpyEvt;
-  var modelId = dataset.modelId;
-  var rel = vm.$rel || {};
-  var handlers = rel.handlers ? rel.handlers[evtid] || {} : {};
-  var fn = handlers[type];
-  var model = rel.models[modelId];
-
-  if (!fn && !model) {
-    return;
-  }
-
-  var $event = new Event(e);
+/**
+ * Transform wxml data-xx params to an array
+ */
+function transformParams(dataset, type, hasModel) {
+  if ( hasModel === void 0 ) hasModel = false;
 
   var i = 0;
   var params = [];
   var modelParams = [];
 
   var noParams = false;
-  var noModelParams = !model;
+  var noModelParams = !hasModel;
+
+  var camelizedType = camelize(type);
   while (i++ < 26 && (!noParams || !noModelParams)) {
     var alpha = String.fromCharCode(64 + i);
     if (!noParams) {
-      var key = 'wpy' + type + alpha;
+      var key = 'wpy' + camelizedType + alpha;
       if (!(key in dataset)) {
         // it can be undefined;
         noParams = true;
@@ -2129,7 +2135,7 @@ var proxyHandler = function(e) {
         params.push(dataset[key]);
       }
     }
-    if (!noModelParams && model) {
+    if (!noModelParams && hasModel) {
       var modelKey = 'model' + alpha;
       if (!(modelKey in dataset)) {
         noModelParams = true;
@@ -2139,25 +2145,51 @@ var proxyHandler = function(e) {
     }
   }
 
-  if (model) {
-    if (type === model.type) {
-      if (isFunc(model.handler)) {
-        model.handler.call(vm, e.detail.value, modelParams);
-      }
-    }
+  return {
+    handler: params,
+    model: modelParams
+  };
+}
+
+var dispatcher = function(e) {
+  var vm = this.$wepy;
+  var type = e.type;
+  // touchstart do not have currentTarget
+  var dataset = (e.currentTarget || e.target).dataset || {};
+  var evtid = dataset.wpyEvt;
+  var modelId = dataset.modelId;
+  var rel = vm.$rel || {};
+  var handler = rel.handlers && rel.handlers[evtid] && rel.handlers[evtid][type];
+  var model = rel.models && rel.models[modelId];
+
+  if (!handler && !model) {
+    return;
   }
-  if (isFunc(fn)) {
-    var paramsWithEvent = params.concat($event);
+
+  var params = transformParams(dataset, type, !!model);
+
+  // Call model method
+  if (model && type === model.type && isFunc(model.handler)) {
+    model.handler.call(vm, e.detail.value, params.model);
+  }
+
+  // Call handler method
+  if (isFunc(handler)) {
+    var $event = new Event(e);
+    var paramsWithEvent = params.handler.concat($event);
+    var args = (e.detail && e.detail.arguments) || [];
+
     var hookRes = callUserHook(vm, 'before-event', {
       event: $event,
-      params: paramsWithEvent
+      params: paramsWithEvent,
+      args: args
     });
 
     if (hookRes === false) {
       // Event cancelled.
       return;
     }
-    return fn.apply(vm, params.concat($event));
+    return handler.apply(vm, paramsWithEvent);
   } else if (!model) {
     throw new Error('Unrecognized event');
   }
@@ -2181,7 +2213,7 @@ function patchMethods(output, methods, isComponent) {
   output.methods = {};
   var target = isComponent ? output.methods : output;
 
-  target._initComponent = function(e) {
+  target.__initComponent = function(e) {
     var child = e;
     var ref = e.$wx.props['data-ref'];
     var wpyEvt = e.$wx.props['data-wpy-evt'];
@@ -2207,7 +2239,7 @@ function patchMethods(output, methods, isComponent) {
     }
     return vm;
   };
-  target._proxy = proxyHandler;
+  target.__dispatcher = dispatcher;
 
   // TODO: perf
   // Only orginal component method goes to target. no need to add all methods.
@@ -2461,7 +2493,7 @@ function patchLifecycle(output, options, rel, isComponent) {
       var acceptProps = vm.$wx.props;
 
       // let target = isComponent ? output.methods: output;
-      // target._initComponent(vm);
+      // target.__initComponent(vm);
       vm.$wx.props.onInit(vm);
       // let parent = this.triggerEvent('_init', vm);
 
@@ -2759,6 +2791,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.14";
+wepy.version = "2.0.0-alpha.15";
 
 module.exports = wepy;
