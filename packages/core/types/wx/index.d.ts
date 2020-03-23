@@ -12,5 +12,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 /// <reference path="index.base.d.ts" />
 /// <reference path="lib.wx.api.d.ts" />
 /// <reference path="lib.wx.app.d.ts" />
-/// <reference path="lib.wx.page.d.ts" />
+/// <reference path="lib.wx.behavior.d.ts" />
 /// <reference path="lib.wx.cloud.d.ts" />
+/// <reference path="lib.wx.component.d.ts" />
+/// <reference path="lib.wx.page.d.ts" />

@@ -6,6 +6,9 @@
       "dom",
       "es2015"
     ],
+    "types": [
+      "miniprogram-api-typings"
+    ],
     "module": "commonjs",
     "strict": true,
     "noEmit": true,

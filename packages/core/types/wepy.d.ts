@@ -97,13 +97,13 @@ export interface WepyConstructor<V extends WepyInstace = WepyInstace, P extends 
 
   app(options: AppOptions<WepyApp>): void;
 
-  page<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<P, Data, Methods, Computed, PropNames>): Page.PageInstance;
-  page<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<P, Data, Methods, Computed, Props>): Page.PageInstance;
-  page(options?: ComponentOptions<P>): Page.PageInstance;
+  page<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<P, Data, Methods, Computed, PropNames>): wepy.Page.PageInstance;
+  page<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<P, Data, Methods, Computed, Props>): wepy.Page.PageInstance;
+  page(options?: ComponentOptions<P>): wepy.Page.PageInstance;
 
-  component<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<C, Data, Methods, Computed, PropNames>): Page.PageInstance;
-  component<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<C, Data, Methods, Computed, Props>): Page.PageInstance;
-  component(options?: ComponentOptions<C>): Page.PageInstance;
+  component<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<C, Data, Methods, Computed, PropNames>): wepy.Page.PageInstance;
+  component<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<C, Data, Methods, Computed, Props>): wepy.Page.PageInstance;
+  component(options?: ComponentOptions<C>): wepy.Page.PageInstance;
 
   nextTick<T>(callback: (this: T) => void, context?: T): void;
   nextTick(): Promise<void>
