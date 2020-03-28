@@ -6,6 +6,9 @@ set timeout 30
 
 spawn wepy init empty $dist
 
+expect "Target directory exists"
+send "y\n"
+
 expect "Project name"
 send "empty-project\n"
 
