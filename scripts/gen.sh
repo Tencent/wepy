@@ -55,7 +55,8 @@ exps="${root_path}/scripts/exps"
 for exp in ${exps}/*; do
     name=$(basename $exp .exp)
 	expect "$root_path"/scripts/exps/"$name".exp "${name}"
-
+    pwd
+    ls -la
 	cd "/tmp/templates/${name}"
 	npm install
 	node "$root_path"/packages/cli/bin/wepy.js build
