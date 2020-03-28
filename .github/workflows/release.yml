@@ -26,11 +26,6 @@ jobs:
     - run: npm install
     - run: npm run bootstrap 
     - run: npm run test
-    - name: Coverage Report
-      run: |
-        npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
-      env:
-        CI: true
     - name: Set Tag Variable
       id: vars
       run: echo ::set-output name=tag::${GITHUB_REF:10}
