@@ -1,11 +1,11 @@
-name: WePY CI Build
+name: WePY Release Package
 
 on:
   push:
     branches:
       - 2.0.x
     tags:
-      - @wepy/*@*
+      - @wepy/*
 jobs:
   build:
     runs-on: ubuntu-latest
