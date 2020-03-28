@@ -1,0 +1,42 @@
+name: WePY CI Build
+
+on:
+  push:
+    branches:
+      - 2.0.x
+    tags:
+      - @wepy/*@*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x]
+    steps:
+    - name: Setup Linux Environment
+      run: | 
+        sudo apt-get -qy update && sudo apt-get install -y expect
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run bootstrap 
+    - run: npm run test
+    - run: npm run bootstrap:prod
+    - run: bash ./scripts/gen.sh
+    - name: Coverage Report
+      run: |
+        npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+      env:
+        CI: true
+      - name: Set Tag Variable
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF:10}
+      - name: Check Tag
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
