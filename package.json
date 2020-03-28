@@ -10,7 +10,7 @@
     "build:core": "rollup -w -c scripts/config.js --environment TARGET:core",
     "bootstrap": "./node_modules/.bin/lerna bootstrap --loglevel silly && ./scripts/install_dev.sh",
     "bootstrap:prod": "./node_modules/.bin/lerna bootstrap --loglevel -- --production --no-optional && ./scripts/install_dev.sh",
-    "test": "npm run lint && npm run test:cov",
+    "test": "npm run lint -- --fix && npm run test:cov",
     "test:unit": "node ./scripts/unittest.js",
     "test:cov": "nyc npm run test:unit",
     "clean": "./scripts/clean.sh",
