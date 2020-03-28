@@ -8,29 +8,29 @@ on:
   push:
     branches:
       - 2.0.x
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x]
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: Setup Linux Environment
+      run: | 
+        sudo apt-get -qy update && sudo apt-get install -y expect
     - uses: actions/checkout@v2
-
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo Hello, world!
-
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run bootstrap 
+    - run: npm run test
+    - name: Coverage Report
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
-
+        npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
+      env:
+        CI: true
     - name: Set Tag Variable
       id: vars
       run: echo ::set-output name=tag::${GITHUB_REF:10}
@@ -38,6 +38,7 @@ jobs:
       env:
         RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
       run: |
+        echo $GITHUB_REF
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
 
