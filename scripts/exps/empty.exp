@@ -17,6 +17,8 @@ send "\n"
 
 expect "Author"
 send "\n"
+send "\n"
+send "\n"
 
 send_user  "\nEmpty template generated\n"
 
