@@ -1,6 +1,6 @@
 {
   "name": "@wepy/babel-plugin-import-regenerator",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A babel plugin to add a global generator import",
   "main": "index.js",
   "scripts": {
@@ -30,6 +30,6 @@
     "chai": "^4.1.2"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/babel-plugin-import-regenerator@0.0.4",
-  "_commitid": "b8d8019"
+  "_id": "@wepy/babel-plugin-import-regenerator@0.0.5",
+  "_commitid": "ebdaf08"
 }
