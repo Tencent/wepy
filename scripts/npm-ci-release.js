@@ -33,11 +33,10 @@ const cwd = path.join(process.cwd(), 'packages', dirname);
 console.log('CWD: ' + cwd);
 console.log('EXEC: ' + [client].concat(publishParams).join(' '));
 
-execa(client, publishParams, {
-  cwd: path.join(process.cwd(), 'packages', dirname)
-})
+execa(client, publishParams, { cwd })
   .then(res => {
     console.log(res);
+    return execa(client, ['dist-tag', 'add', version, 'next'], { cwd });
   })
   .catch(e => {
     console.log(e);
