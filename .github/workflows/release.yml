@@ -6,25 +6,24 @@ name: Release
 # events but only for the master branch
 on:
   push:
-    branches:
-      - 2.0.x
+    branches: [ 2.0.x ]
     tags:
       - "**"
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x]
     steps:
-    - name: Setup Linux Environment
-      run: | 
-        sudo apt-get -qy update && sudo apt-get install -y expect
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - uses: olegtarasov/get-tag@v2
+      id: tagName
+    - name: Get outputtag 
+      env:
+        TAG_NAME: ${{ steps.tagName.outputs.tag}}
+      run: echo "$TAG_NAME"
     - run: npm install
     - run: npm run bootstrap 
     - run: npm run test
@@ -39,12 +38,6 @@ jobs:
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
 
-    - uses: olegtarasov/get-tag@v2
-      id: tagName
-    - name: Get outputtag 
-      env:
-        TAG_NAME: ${{ steps.tagName.outputs.tag}}
-      run: echo "$TAG_NAME"
     - name: Build dist
       run: npm run build
     - name: NPM release
