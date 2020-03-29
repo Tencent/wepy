@@ -45,6 +45,8 @@ jobs:
       env:
         TAG_NAME: ${{ steps.tagName.outputs.tag}}
       run: echo "$TAG_NAME"
+    - name: Build dist
+      run: npm run build
     - name: NPM release
       run: node ./scripts/npm-ci-release.js "$TAG_NAME"
  
