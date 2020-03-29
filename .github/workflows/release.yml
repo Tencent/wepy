@@ -40,5 +40,7 @@ jobs:
     - name: Build dist
       run: npm run build
     - name: NPM release
-      run: node ./scripts/npm-ci-release.js "$TAG_NAME"
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+        node ./scripts/npm-ci-release.js "$TAG_NAME"
  
