@@ -8,6 +8,8 @@ on:
   push:
     branches:
       - 2.0.x
+    tags:
+      - "**"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -37,3 +39,12 @@ jobs:
         echo $RELEASE_VERSION
         echo ${{ steps.vars.outputs.tag }}
 
+    - uses: olegtarasov/get-tag@v2
+      id: tagName
+    - name: Get outputtag 
+      env:
+        TAG_NAME: ${{ steps.tagName.outputs.tag}}
+      run: echo "$TAG_NAME"
+    - name: NPM release
+      run: node ./scripts/npm-ci-release.js "$TAG_NAME"
+ 
