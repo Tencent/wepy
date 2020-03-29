@@ -2791,6 +2791,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.15";
+wepy.version = "2.0.0-alpha.16";
 
 module.exports = wepy;
