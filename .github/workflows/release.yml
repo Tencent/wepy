@@ -6,7 +6,6 @@ name: Release
 # events but only for the master branch
 on:
   push:
-    branches: [ 2.0.x ]
     tags:
       - "**"
 jobs:
