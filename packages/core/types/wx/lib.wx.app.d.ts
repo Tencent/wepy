@@ -15,7 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 declare namespace wepy {
   namespace App {
-    interface AppInstance<T extends IAnyObject = {}> {   
+    interface AppInstance<T extends WechatMiniprogram.IAnyObject = {}> {   
       onLaunch?(options?: WechatMiniprogram.App.LaunchShowOption): void;
     
       onShow?(options?: WechatMiniprogram.App.LaunchShowOption): void;
@@ -28,7 +28,7 @@ declare namespace wepy {
     }
   
     interface AppConstructor {
-      <T extends IAnyObject & AppInstance>(
+      <T extends WechatMiniprogram.IAnyObject & AppInstance>(
         options: AppInstance<T> & T
       ): void
     }

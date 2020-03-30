@@ -15,7 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 declare namespace wepy {
   namespace Page {
-    interface PageInstanceBaseProps<D extends IAnyObject = any> {
+    interface PageInstanceBaseProps<D extends WechatMiniprogram.IAnyObject = any> {
     /** 页面的初始数据
      * 
      * `data` 是页面第一次渲染使用的**初始数据**。
@@ -52,7 +52,7 @@ declare namespace wepy {
     route?: string
     }
   
-    interface PageInstance<D extends IAnyObject = any, T extends IAnyObject = any> extends PageInstanceBaseProps<D> {
+    interface PageInstance<D extends WechatMiniprogram.IAnyObject = any, T extends WechatMiniprogram.IAnyObject = any> extends PageInstanceBaseProps<D> {
       onLoad?(query?: { [queryKey: string]: string }): void;
       
       onShow?(): void;
@@ -75,13 +75,13 @@ declare namespace wepy {
     }
   
     interface PageConstructor {
-      <D extends IAnyObject, T extends IAnyObject & PageInstance>(
+      <D extends WechatMiniprogram.IAnyObject, T extends WechatMiniprogram.IAnyObject & PageInstance>(
         options: PageInstance<D, T> & T
       ): void
     }
   
     interface GetCurrentPages {
-      <D extends IAnyObject = {}, T extends IAnyObject = {}>(): (PageInstance<D, T> & T)[]
+      <D extends WechatMiniprogram.IAnyObject = {}, T extends WechatMiniprogram.IAnyObject = {}>(): (PageInstance<D, T> & T)[]
     }
   }
 }
