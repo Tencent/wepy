@@ -1,6 +1,6 @@
 {
   "name": "@wepy/use-promisify",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "wepy promisify",
   "main": "/dist/index.js",
   "scripts": {
@@ -12,6 +12,6 @@
   },
   "license": "MIT",
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/use-promisify@2.0.3",
-  "_commitid": "2a6f268"
+  "_id": "@wepy/use-promisify@2.0.4",
+  "_commitid": "9270cbd"
 }
