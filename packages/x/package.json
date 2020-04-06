@@ -1,6 +1,6 @@
 {
   "name": "@wepy/x",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Vuex in WePY",
   "main": "dist/index.js",
   "scripts": {
@@ -27,6 +27,6 @@
     "vuex": "^3.1.1"
   },
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/x@2.0.3",
-  "_commitid": "a6e184a"
+  "_id": "@wepy/x@2.0.4",
+  "_commitid": "5f3f472"
 }
