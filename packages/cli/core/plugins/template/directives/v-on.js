@@ -160,7 +160,13 @@ exports = module.exports = function() {
   this.register('template-parse-ast-attr-v-on', function parseAstOn({ item, name, expr, modifiers, scope, ctx }) {
     let handler = expr.trim();
 
-    let parsedEvent = parseHandler(name, handler, scope);
+    let parsedEvent;
+
+    try {
+      parsedEvent = parseHandler(name, handler, scope);
+    } catch (e) {
+      throw new Error(`Can not parse '${name}="${expr}"' in file: \n ${ctx.file}`);
+    }
 
     /**
      * we can recognition wxs dynamically

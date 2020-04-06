@@ -173,12 +173,12 @@ export default {
   install(wepy, removeFromPromisify) {
     let _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
-    let noPromiseMap = {};
+    let noPromiseMap = makeObj(noPromiseMethods);
     if (removeFromPromisify) {
       if (Array.isArray(removeFromPromisify)) {
-        noPromiseMap = makeObj(noPromiseMethods.concat(removeFromPromisify));
+        noPromiseMap = Object.assign(noPromiseMap, makeObj(removeFromPromisify));
       } else {
-        noPromiseMap = Object.assign({}, makeObj(noPromiseMethods), removeFromPromisify);
+        noPromiseMap = Object.assign(noPromiseMap, removeFromPromisify);
       }
     }
 
