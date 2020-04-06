@@ -16,7 +16,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '10.19'
     - uses: olegtarasov/get-tag@v2
       id: tagName
     - name: Get outputtag 
