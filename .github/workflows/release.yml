@@ -17,12 +17,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '10.19'
-    - uses: olegtarasov/get-tag@v2
-      id: tagName
-    - name: Get outputtag 
-      env:
-        TAG_NAME: ${{ steps.tagName.outputs.tag}}
-      run: echo "$TAG_NAME"
     - run: npm install
     - run: npm run bootstrap 
     - run: npm run test
@@ -40,6 +34,8 @@ jobs:
     - name: Build dist
       run: npm run build
     - name: NPM release
+      env:
+        TAG_NAME: ${{ steps.vars.outputs.tag}}
       run: |
         echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
         node ./scripts/npm-ci-release.js "$TAG_NAME"
