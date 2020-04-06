@@ -1,6 +1,6 @@
 {
   "name": "@wepy/use-intercept",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "wepy intercept",
   "main": "/dist/index.js",
   "scripts": {
@@ -11,5 +11,7 @@
     "email": "gcaufy@gmail.com"
   },
   "license": "MIT",
-  "readme": "ERROR: No README data found!"
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/use-intercept@2.0.2",
+  "_commitid": "81a9168"
 }
