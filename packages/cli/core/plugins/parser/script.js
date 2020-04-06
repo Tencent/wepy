@@ -114,7 +114,10 @@ exports = module.exports = function() {
           component: ctx.component
         };
 
-        this.fileDep.addDeps(ctx.file, obj.depModules.map(d => d.file));
+        this.fileDep.addDeps(
+          ctx.file,
+          obj.depModules.map(d => d.file)
+        );
 
         let componentValue = ctx.component;
         const t = this.assets.type(ctx.file);
