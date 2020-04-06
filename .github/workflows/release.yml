@@ -36,6 +36,7 @@ jobs:
     - name: NPM release
       env:
         TAG_NAME: ${{ steps.vars.outputs.tag}}
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       run: |
         echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
         node ./scripts/npm-ci-release.js "$TAG_NAME"

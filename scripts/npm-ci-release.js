@@ -22,7 +22,7 @@ if (!dirname || !ver) {
 
 const tag = ver.indexOf('alpha') ? 'alpha' : ver.indexOf('beta') ? 'beta' : '';
 
-let publishParams = ['publish'];
+let publishParams = ['publish', '--access', 'public'];
 
 if (tag) {
   publishParams = publishParams.concat(['--tag', tag]);
