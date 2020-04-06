@@ -20,7 +20,7 @@ if (!dirname || !ver) {
   process.exit();
 }
 
-const tag = ver.indexOf('alpha') ? 'alpha' : ver.indexOf('beta') ? 'beta' : '';
+const tag = ver.indexOf('alpha') > -1 ? 'alpha' : ver.indexOf('beta') > -1 ? 'beta' : '';
 
 let publishParams = ['publish', '--access', 'public'];
 
@@ -35,8 +35,10 @@ console.log('EXEC: ' + [client].concat(publishParams).join(' '));
 
 execa(client, publishParams, { cwd })
   .then(res => {
-    console.log(res);
-    return execa(client, ['dist-tag', 'add', version, 'next'], { cwd });
+    console.log(res.stdout);
+    const distTagParams = ['dist-tag', 'add', version, 'next'];
+    console.log('EXEC: ' + [client].concat(distTagParams).join(' '));
+    return execa(client, distTagParams, { cwd });
   })
   .catch(e => {
     console.log(e);
