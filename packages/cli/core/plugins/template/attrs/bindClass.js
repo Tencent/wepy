@@ -1,8 +1,25 @@
 const parseClass = require('../../../ast/parseClass');
 
 exports = module.exports = function() {
-  this.register('template-parse-ast-attr-:class', function parseBindClass({ item, expr }) {
-    let exprArray = parseClass(expr);
+  this.register('template-parse-ast-attr-:class', function parseBindClass({ item, expr, ctx }) {
+    let exprArray = [];
+    try {
+      exprArray = parseClass(expr);
+    } catch (e) {
+      this.hookUnique(
+        'error-handler',
+        'template',
+        {
+          code: expr,
+          ctx,
+          type: 'error',
+          message: 'Can not parse ":class" expression',
+          title: ':class'
+        },
+        { item }
+      );
+      throw new Error('EXIT');
+    }
     let bindClass = [];
     exprArray.forEach(item => {
       if (typeof item === 'string') {

@@ -165,7 +165,19 @@ exports = module.exports = function() {
     try {
       parsedEvent = parseHandler(name, handler, scope);
     } catch (e) {
-      throw new Error(`Can not parse '${name}="${expr}"' in file: \n ${ctx.file}`);
+      this.hookUnique(
+        'error-handler',
+        'template',
+        {
+          code: expr,
+          ctx,
+          type: 'error',
+          message: 'Can not parse "v-on" expression',
+          title: 'v-on'
+        },
+        { item }
+      );
+      throw new Error('EXIT');
     }
 
     /**
