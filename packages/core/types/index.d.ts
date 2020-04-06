@@ -1,7 +1,5 @@
 /// <reference path="./wx/index.d.ts" />
 
-
-
 import { wepy } from './wepy';
 
 export default wepy;

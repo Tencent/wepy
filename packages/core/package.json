@@ -18,5 +18,8 @@
   "devDependencies": {
     "esm": "^3.2.25",
     "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "miniprogram-api-typings": "^2.10.1"
   }
 }

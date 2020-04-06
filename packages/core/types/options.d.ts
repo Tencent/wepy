@@ -42,7 +42,7 @@ type DefaultComputed = { [key: string]: any };
 
 export interface AppOptions<
   A extends WepyApp,
-  Hooks=DefaultHooks<A>> extends App.AppInstance {
+  Hooks=DefaultHooks<A>> extends wepy.App.AppInstance {
     hooks?: Hooks;
 }
 
@@ -53,7 +53,7 @@ export interface ComponentOptions<
   Hooks=DefaultHooks<V>,
   Computed=DefaultComputed,
   PropsDef=PropsDefinition<DefaultProps>,
-  Props=DefaultProps> extends Page.PageInstance {
+  Props=DefaultProps> extends wepy.Page.PageInstance {
   data?: Data;
   props?: PropsDef;
   propsData?: object;
