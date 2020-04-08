@@ -18,12 +18,14 @@ var promisify = function(fn, caller, type) {
       switch (type) {
         case 'weapp-style':
           fn.call(caller, Object.assign({}, args[0],
-            {success: function success(res) {
+            {
+              success: function success(res) {
                 resolve(res);
               },
               fail: function fail(err) {
                 reject(err);
-              }}));
+              }
+            }));
           break;
         case 'weapp-fix':
           fn.apply(caller, args.concat(resolve).concat(reject));
@@ -172,16 +174,16 @@ var makeObj = function (arr) {
  * wepy.login().then().catch()
  */
 var index = {
-  version: "2.0.2",
+  version: "2.0.4",
   install: function install(wepy, removeFromPromisify) {
     var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
-    var noPromiseMap = {};
+    var noPromiseMap = makeObj(noPromiseMethods);
     if (removeFromPromisify) {
       if (Array.isArray(removeFromPromisify)) {
-        noPromiseMap = makeObj(noPromiseMethods.concat(removeFromPromisify));
+        noPromiseMap = Object.assign(noPromiseMap, makeObj(removeFromPromisify));
       } else {
-        noPromiseMap = Object.assign({}, makeObj(noPromiseMethods), removeFromPromisify);
+        noPromiseMap = Object.assign(noPromiseMap, removeFromPromisify);
       }
     }
 
