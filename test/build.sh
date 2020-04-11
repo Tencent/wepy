@@ -53,7 +53,7 @@ cd /tmp/templates/
 buildcases="${root_path}/test/build-cases"
 for bc in ${buildcases}/*; do
   name=$(basename $bc .sh)
-	"$root_path"/scripts/buildcases/"$name".sh
+	"$root_path"/test/build-cases/"$name".sh
 	cd "/tmp/templates/${name}"
 	node "$root_path"/packages/cli/bin/wepy.js build
 done
