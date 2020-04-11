@@ -1,0 +1,42 @@
+const path = require('path');
+const { spawnSync } = require('child_process');
+
+const packages = [
+  'babel-plugin-import-regenerator',
+  'cli',
+  //'compiler-babel',
+  'compiler-less',
+  'compiler-sass',
+  //'compiler-stylus',
+  //'compiler-typescript',
+  'core',
+  'plugin-define'
+  //'plugin-eslint',
+  //'plugin-uglifyjs',
+  //'redux',
+  //'use-promisify',
+  //'x',
+];
+
+function testAll(pkgs) {
+  if (pkgs.length === 0) {
+    pkgs = packages;
+  }
+  pkgs.forEach(pkg => {
+    testOne(pkg);
+  });
+}
+
+function testOne(name) {
+  process.env.FORCE_COLOR = 1;
+  spawnSync('npm', ['run', 'test'], {
+    cwd: path.join(process.cwd(), 'packages', name),
+    env: process.env,
+    stdio: 'inherit'
+  });
+}
+
+// eslint-disable-next-line no-unused-vars
+(function main([bin, file, ...args]) {
+  testAll(args);
+})(process.argv);

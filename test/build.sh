@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # test wepy new demo
 
 # Start in tasks/ even if run from root directory
@@ -51,21 +50,13 @@ wepy list
 mkdir -p /tmp/templates/
 cd /tmp/templates/
 
-exps="${root_path}/scripts/exps"
-for exp in ${exps}/*; do
-    name=$(basename $exp .exp)
-	expect "$root_path"/scripts/exps/"$name".exp "/tmp/templates/${name}"
-    pwd
-    ls -la
+buildcases="${root_path}/test/build-cases"
+for bc in ${buildcases}/*; do
+  name=$(basename $bc .sh)
+	"$root_path"/scripts/buildcases/"$name".sh
 	cd "/tmp/templates/${name}"
-	npm install
 	node "$root_path"/packages/cli/bin/wepy.js build
 done
-
-# Build multiple version for standard project.
-cd /tmp/templates/standard
-
-node "$root_path"/packages/cli/bin/wepy.js build
 
 # Test build demos
 cd /tmp/templates

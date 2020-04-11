@@ -23,7 +23,7 @@ jobs:
     - run: npm run bootstrap 
     - run: npm run test
     - run: npm run bootstrap:prod
-    - run: bash ./scripts/gen.sh
+    - run: npm run test:build
     - name: Coverage Report
       run: |
         npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
