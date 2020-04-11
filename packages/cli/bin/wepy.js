@@ -11,11 +11,13 @@ program
 
 program
   .command('init <template-name> [project-name]')
+  .allowUnknownOption()
   .description('generate a new project from a template')
   .action(require('./wepy-init'))
   .usage('<template-name> [project-name]')
   .option('-c --clone', 'use git clone')
   .option('--offline', 'use cached template')
+  .option('--no-interactive', 'no interactive to use the options to create template')
   .on('--help', () => {
     /* eslint-disable no-console */
     console.log();
