@@ -24,8 +24,7 @@ jobs:
     - run: npm run test
     - run: npm run bootstrap:prod
     - run: npm run test:build
-    - name: Coverage Report
-      run: |
-        npm install coveralls && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage
-      env:
-        CI: true
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
