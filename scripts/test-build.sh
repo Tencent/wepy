@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # test wepy new demo
 
 # Start in tasks/ even if run from root directory
@@ -48,11 +47,15 @@ wepy -v
 
 wepy list
 
+mkdir -p /tmp/templates/
+cd /tmp/templates/
+
 exps="${root_path}/scripts/exps"
 for exp in ${exps}/*; do
     name=$(basename $exp .exp)
 	expect "$root_path"/scripts/exps/"$name".exp "/tmp/templates/${name}"
-
+    pwd
+    ls -la
 	cd "/tmp/templates/${name}"
 	npm install
 	node "$root_path"/packages/cli/bin/wepy.js build

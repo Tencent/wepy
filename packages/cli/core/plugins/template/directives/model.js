@@ -281,7 +281,7 @@ exports = module.exports = function() {
       }
 
       if (!attrs[`bind${map.type}`]) {
-        attrs[`bind${map.type}`] = CONST.EVENT_PROXY;
+        attrs[`bind${map.type}`] = CONST.EVENT_DISPATCHER;
       }
 
       if (!rel.models) {

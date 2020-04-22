@@ -11,17 +11,22 @@ const parseHandlerProxy = (expr, scope) => {
   let injectParams = [];
   let handlerExpr = expr;
   let eventInArg = false;
+  let needDeclareWx = false;
+  let argumentsInArg = false;
 
   let parsedHandler;
   // eslint-disable-next-line
   if (/^[\w\.]+$/.test(expr)) {
     //   @tap="doSomething" or @tap="m.doSomething"
+    needDeclareWx = true;
+    argumentsInArg = true;
     eventInArg = true;
+
     parsedHandler = {
       callee: { name: handlerExpr },
       params: []
     };
-    handlerExpr += '($event)';
+    handlerExpr = `${expr}.apply(_vm, $args || [$event])`;
   } else {
     try {
       parsedHandler = paramsDetect(handlerExpr);
@@ -41,21 +46,51 @@ const parseHandlerProxy = (expr, scope) => {
     }
 
     if (parsedHandler.identifiers.$event) {
+      needDeclareWx = true;
       eventInArg = true;
+    }
+
+    if (parsedHandler.identifiers.$wx) {
+      needDeclareWx = true;
+    }
+
+    if (parsedHandler.identifiers.arguments) {
+      needDeclareWx = true;
+      argumentsInArg = true;
+      handlerExpr = handlerExpr.replace('arguments', '$args');
     }
   }
 
+  const functionCode = handlerExpr;
+
+  let declaredCodes = [];
+
+  declaredCodes.push('const _vm=this;');
+  if (needDeclareWx) {
+    declaredCodes.push('const $wx = arguments[arguments.length - 1].$wx;');
+  }
+  if (eventInArg) {
+    declaredCodes.push(
+      '  const $event = ($wx.detail && $wx.detail.arguments) ? $wx.detail.arguments[0] : arguments[arguments.length -1];'
+    );
+  }
+  if (argumentsInArg) {
+    declaredCodes.push('  const $args = $wx.detail && $wx.detail.arguments;');
+  }
+
   let proxy = `function proxy (${injectParams.join(', ')}) {
-    ${eventInArg ? 'let $event = arguments[arguments.length - 1];' : ''}
-    with (this) {
-      return (function () {
-        ${handlerExpr};
-      })();
-    }
-  }`;
+  ${declaredCodes.join('\n')}
+  with (this) {
+  return (function () {
+    ${functionCode};
+  })();}
+}`;
 
   proxy = vueWithTransform(proxy); // transform this
   proxy = proxy.replace('var _h=_vm.$createElement;var _c=_vm._self._c||_h;', ''); // removed unused vue code;
+  if (proxy.indexOf('_vm=this') !== proxy.lastIndexOf('_vm=this')) {
+    proxy = proxy.replace('var _vm=this;\n', ''); // _vm will decalred twice;
+  }
   return {
     proxy: proxy,
     params: injectParams,
@@ -75,14 +110,14 @@ const parseHandler = (name = '', value = '', scope) => {
   info = parseHandlerProxy(value, scope);
 
   if (name === 'click') name = 'tap';
-  type = 'bind' + name;
+  type = 'bind:' + name;
   return {
     event: name,
     type: type,
     params: info.params,
     proxy: info.proxy,
     parsed: info.parsed,
-    expr: CONST.EVENT_PROXY
+    expr: CONST.EVENT_DISPATCHER
   };
 };
 /*
@@ -93,7 +128,7 @@ exports = module.exports = function() {
 
   this.register('template-parse-ast-attr-v-on.capture', function({ item, name, expr, event, scope, ctx }) {
     // bind:tap="xxx" or catch:tap="xxx"
-    event.type = event.type.replace(/^bind/, 'bind:').replace(/^catch/, 'catch:');
+    event.type = event.type.replace(/^bind/, 'bind').replace(/^catch/, 'catch');
     event.type = 'capture-' + event.type;
     return { item, name, expr, event, scope, ctx };
   });
@@ -125,7 +160,25 @@ exports = module.exports = function() {
   this.register('template-parse-ast-attr-v-on', function parseAstOn({ item, name, expr, modifiers, scope, ctx }) {
     let handler = expr.trim();
 
-    let parsedEvent = parseHandler(name, handler, scope);
+    let parsedEvent;
+
+    try {
+      parsedEvent = parseHandler(name, handler, scope);
+    } catch (e) {
+      this.hookUnique(
+        'error-handler',
+        'template',
+        {
+          code: expr,
+          ctx,
+          type: 'error',
+          message: 'Can not parse "v-on" expression',
+          title: 'v-on'
+        },
+        { item }
+      );
+      throw new Error('EXIT');
+    }
 
     /**
      * we can recognition wxs dynamically

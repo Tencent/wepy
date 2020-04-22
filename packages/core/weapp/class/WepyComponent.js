@@ -36,6 +36,22 @@ export default class WepyComponent extends Base {
       this._watcher.update();
     }
   }
+
+  $emit(event, ...args) {
+    const fns = this._events[event];
+
+    if (fns) {
+      super.$emit.apply(this, arguments);
+    } else {
+      this.$wx.triggerEvent(event, { arguments: args });
+    }
+
+    return this;
+  }
+
+  $trigger(event, data, option) {
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
+  }
 }
 
 WepyComponent.prototype.$nextTick = renderNextTick;

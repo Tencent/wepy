@@ -58,7 +58,7 @@ exports = module.exports = function generate(name, src, dest, done) {
   }
 
   metalsmith
-    .use(askQuestions(opts.prompts))
+    .use((process.argv.indexOf('--no-interactive') > -1 ? buildInlineArgs : askQuestions)(opts.prompts))
     .use(filterFiles(opts.filters))
     .use(renderTemplateFiles(opts.skipInterpolation));
 
@@ -95,6 +95,50 @@ exports = module.exports = function generate(name, src, dest, done) {
 function askQuestions(prompts) {
   return (files, metalsmith, done) => {
     ask(prompts, metalsmith.metadata(), done);
+  };
+}
+
+/**
+ * Get default value of a prompt item
+ *
+ * @param {String} value
+ * @return {Function}
+ */
+
+function getDefault(item) {
+  if (item.type === 'string') {
+    return item.default || '';
+  } else if (item.type === 'confirm') {
+    return item.default || true;
+  } else if (item.type === 'list') {
+    return item.default || item.choices[0];
+  } else {
+    throw new Error('Unrecongnize type: ' + item.type + ' in ' + JSON.stringify(item));
+  }
+}
+
+/**
+ * Create a middleware using inline arguments.
+ *
+ * @param {Object} prompts
+ * @return {Function}
+ */
+
+function buildInlineArgs(prompts) {
+  const inlineArgs = {};
+  for (const k in prompts) {
+    const argIndex = process.argv.indexOf('--' + k);
+    if (argIndex > -1) {
+      inlineArgs[k] = process.argv[argIndex + 1];
+    } else {
+      inlineArgs[k] = getDefault(prompts[k]);
+    }
+    // eslint-disable-next-line no-console
+    console.log([chalk.green('?'), chalk.bold(prompts[k].message), chalk.cyan(inlineArgs[k])].join(' '));
+  }
+  return (files, metalsmith, done) => {
+    Object.assign(metalsmith.metadata(), inlineArgs);
+    done();
   };
 }
 

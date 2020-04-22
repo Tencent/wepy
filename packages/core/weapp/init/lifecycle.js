@@ -8,7 +8,6 @@ import { initRender } from './render';
 import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
-import { initEvents } from './events';
 import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
@@ -100,6 +99,8 @@ export function patchLifecycle(output, options, rel, isComponent) {
     vm._watchers = [];
     if (!isComponent) {
       vm.$root = vm;
+    }
+    if (app) {
       vm.$app = app;
     }
     if (this.is === 'custom-tab-bar/index') {
@@ -151,8 +152,6 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
       // created 不能调用 setData，如果有 dirty 在此更新
       vm.$forceUpdate();
-
-      initEvents(vm);
 
       Object.keys(outProps).forEach(k => (vm[k] = acceptProps[k]));
 

@@ -1,6 +1,6 @@
-# wepy-use-promisify
+# @wepy/use-promisify
 
-Promisfy all weapp apis.
+Promisfy all weapp APIs.
 
 ## Install 
 
@@ -19,7 +19,7 @@ import promisify  from '@wepy/use-promisify';
 
 wepy.use(promisify);
 
-wepy.getStorage('mykey').then(res => console.log(res));
+wepy.wx.getStorage('mykey').then(res => console.log(res));
 ```
 
 ### Ignore APIs
@@ -29,7 +29,7 @@ wepy.use(promisify, ['getStorage', 'getSystemInfo']);
 
 // passing object
 // wepy.use(promisify, { someNewAPI: false, getStorage: true });
-wepy.getStorage({
+wepy.wx.getStorage({
   key: 'mykey',
   succuess (res) { console.log(res) }
 })
@@ -90,4 +90,4 @@ wepy.wx.request(myurl);
 wepy.wx.openLocation(0, 0);
 ```
 
-Here we can see all the [Simplify List](https://github.com/Tencent/wepy/blob/2.0.x/packages/wepy-use-promisify/index.js#L86-L152) 
+Here we can see all the [Simplify List](https://github.com/Tencent/wepy/blob/2.0.x/packages/use-promisify/index.js#L86-L152) 

@@ -1,5 +1,15 @@
 // can we use __proto__?
-export const hasProto = '__proto__' in {};
+function getHasProto() {
+  let hasProto = false;
+  if ('__proto__' in {}) {
+    const fn = () => {};
+    const arr = [];
+    arr.__proto__ = { push: fn };
+    hasProto = fn === arr.push;
+  }
+  return hasProto;
+}
+export const hasProto = getHasProto();
 
 let _Set; // $flow-disable-line
 /* istanbul ignore if */ if (typeof Set !== 'undefined' && isNative(Set)) {

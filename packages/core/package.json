@@ -1,19 +1,25 @@
 {
   "name": "@wepy/core",
-  "version": "2.0.0-alpha.11",
+  "version": "2.0.0-alpha.16",
   "main": "./dist/wepy.js",
   "typings": "types/index.d.ts",
   "scripts": {
     "test:types": "tsc -p ./types/test/tsconfig.json",
-    "test": "mocha --require esm ./test/**/*"
+    "test": "_mocha --require esm --recursive"
+  },
+  "esm": {
+    "cjs": true
   },
   "author": "",
   "license": "MIT",
   "readme": "ERROR: No README data found!",
-  "_id": "@wepy/core@2.0.0-alpha.11",
-  "_commitid": "b290915",
+  "_id": "@wepy/core@2.0.0-alpha.16",
+  "_commitid": "a78dcb6",
   "devDependencies": {
     "esm": "^3.2.25",
     "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "miniprogram-api-typings": "^2.10.3-1"
   }
 }

@@ -4,6 +4,7 @@ import { set, del } from '../observer/index';
 export default class Base {
   constructor() {
     this._events = {};
+    this._watchers = [];
   }
 
   $set(target, key, val) {

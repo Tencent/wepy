@@ -1,8 +1,12 @@
-import { isFunc, isUndef } from './../util/index';
+import { isFunc, isUndef, warn } from './../util/index';
 
 export function callUserHook(vm, hookName, arg) {
-  const pageHook = vm.hooks[hookName];
-  const appHook = vm.$app.hooks[hookName];
+  const pageHook = vm.hooks ? vm.hooks[hookName] : null;
+  const appHook = vm.$app && vm.$app.hooks ? vm.$app.hooks[hookName] : null;
+
+  if (!vm.$app) {
+    warn('$app is not initialized in this Component', vm);
+  }
 
   let result = arg;
 

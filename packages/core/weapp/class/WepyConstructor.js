@@ -5,6 +5,7 @@ import { initComputed } from '../init/computed';
 
 export default class WepyConstructor extends WepyComponent {
   constructor(opt = {}) {
+    super();
     let vm = new WepyComponent();
 
     // Only need data and watchers for a empty WepyComponent

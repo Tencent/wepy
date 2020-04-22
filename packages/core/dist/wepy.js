@@ -1,7 +1,17 @@
 'use strict';
 
 // can we use __proto__?
-var hasProto = '__proto__' in {};
+function getHasProto() {
+  var hasProto = false;
+  if ('__proto__' in {}) {
+    var fn = function () {};
+    var arr = [];
+    arr.__proto__ = { push: fn };
+    hasProto = fn === arr.push;
+  }
+  return hasProto;
+}
+var hasProto = getHasProto();
 
 var _Set; // $flow-disable-line
 /* istanbul ignore if */ if (typeof Set !== 'undefined' && isNative(Set)) {
@@ -108,6 +118,22 @@ function toArray(list, start) {
   }
   return rst;
 }
+
+/**
+ * Cached simply key function return
+ */
+var cached = function (fn) {
+  var cache = {};
+  return function (str) { return cache[str] || (cache[str] = fn(str)); };
+};
+
+var camelizeRE = /-(\w)/g;
+
+/**
+ * camelize words
+ * e.g. my-key => myKey
+ */
+var camelize = cached(function (str) { return str.replace(camelizeRE, function (_, c) { return (c ? c.toUpperCase() : ''); }); });
 
 /*
  * extend objects
@@ -1089,6 +1115,7 @@ function dependArray(value) {
 
 var Base = function Base() {
   this._events = {};
+  this._watchers = [];
 };
 
 Base.prototype.$set = function $set (target, key, val) {
@@ -1253,13 +1280,16 @@ function flushSchedulerQueue(times) {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
-  queue.sort(function (a, b) { return a.id - b.id; });
+  times === 0 && queue.sort(function (a, b) { return a.id - b.id; });
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
   // there would be mutilple renderWatcher in the queue.
   var renderWatcher = [];
-  for (index = 0; index < queue.length; index++) {
+  if (times === 0) {
+    index = 0;
+  }
+  for (; index < queue.length; index++) {
     // if it's renderWatcher, run it in the end
     watcher = queue[index];
     if (watcher && watcher.isRenderWatcher) {
@@ -1613,6 +1643,25 @@ var WepyComponent = (function (Base$$1) {
     }
   };
 
+  WepyComponent.prototype.$emit = function $emit (event) {
+    var args = [], len = arguments.length - 1;
+    while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+    var fns = this._events[event];
+
+    if (fns) {
+      Base$$1.prototype.$emit.apply(this, arguments);
+    } else {
+      this.$wx.triggerEvent(event, { arguments: args });
+    }
+
+    return this;
+  };
+
+  WepyComponent.prototype.$trigger = function $trigger (event, data, option) {
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
+  };
+
   return WepyComponent;
 }(Base));
 
@@ -1743,6 +1792,7 @@ var WepyConstructor = (function (WepyComponent$$1) {
   function WepyConstructor(opt) {
     if ( opt === void 0 ) opt = {};
 
+    WepyComponent$$1.call(this);
     var vm = new WepyComponent$$1();
 
     // Only need data and watchers for a empty WepyComponent
@@ -1858,8 +1908,12 @@ var WepyPage = (function (WepyComponent$$1) {
 }(WepyComponent));
 
 function callUserHook(vm, hookName, arg) {
-  var pageHook = vm.hooks[hookName];
-  var appHook = vm.$app.hooks[hookName];
+  var pageHook = vm.hooks ? vm.hooks[hookName] : null;
+  var appHook = vm.$app && vm.$app.hooks ? vm.$app.hooks[hookName] : null;
+
+  if (!vm.$app) {
+    warn('$app is not initialized in this Component', vm);
+  }
 
   var result = arg;
 
@@ -2050,34 +2104,24 @@ var Event = function Event(e) {
   this.changedTouches = e.changedTouches;
 };
 
-var proxyHandler = function(e) {
-  var vm = this.$wepy;
-  var type = e.type;
-  // touchstart do not have currentTarget
-  var dataset = (e.currentTarget || e.target).dataset;
-  var evtid = dataset.wpyEvt;
-  var modelId = dataset.modelId;
-  var rel = vm.$rel || {};
-  var handlers = rel.handlers ? rel.handlers[evtid] || {} : {};
-  var fn = handlers[type];
-  var model = rel.models[modelId];
-
-  if (!fn && !model) {
-    return;
-  }
-
-  var $event = new Event(e);
+/**
+ * Transform wxml data-xx params to an array
+ */
+function transformParams(dataset, type, hasModel) {
+  if ( hasModel === void 0 ) hasModel = false;
 
   var i = 0;
   var params = [];
   var modelParams = [];
 
   var noParams = false;
-  var noModelParams = !model;
+  var noModelParams = !hasModel;
+
+  var camelizedType = camelize(type);
   while (i++ < 26 && (!noParams || !noModelParams)) {
     var alpha = String.fromCharCode(64 + i);
     if (!noParams) {
-      var key = 'wpy' + type + alpha;
+      var key = 'wpy' + camelizedType + alpha;
       if (!(key in dataset)) {
         // it can be undefined;
         noParams = true;
@@ -2085,7 +2129,7 @@ var proxyHandler = function(e) {
         params.push(dataset[key]);
       }
     }
-    if (!noModelParams && model) {
+    if (!noModelParams && hasModel) {
       var modelKey = 'model' + alpha;
       if (!(modelKey in dataset)) {
         noModelParams = true;
@@ -2095,25 +2139,51 @@ var proxyHandler = function(e) {
     }
   }
 
-  if (model) {
-    if (type === model.type) {
-      if (isFunc(model.handler)) {
-        model.handler.call(vm, e.detail.value, modelParams);
-      }
-    }
+  return {
+    handler: params,
+    model: modelParams
+  };
+}
+
+var dispatcher = function(e) {
+  var vm = this.$wepy;
+  var type = e.type;
+  // touchstart do not have currentTarget
+  var dataset = (e.currentTarget || e.target).dataset || {};
+  var evtid = dataset.wpyEvt;
+  var modelId = dataset.modelId;
+  var rel = vm.$rel || {};
+  var handler = rel.handlers && rel.handlers[evtid] && rel.handlers[evtid][type];
+  var model = rel.models && rel.models[modelId];
+
+  if (!handler && !model) {
+    return;
   }
-  if (isFunc(fn)) {
-    var paramsWithEvent = params.concat($event);
+
+  var params = transformParams(dataset, type, !!model);
+
+  // Call model method
+  if (model && type === model.type && isFunc(model.handler)) {
+    model.handler.call(vm, e.detail.value, params.model);
+  }
+
+  // Call handler method
+  if (isFunc(handler)) {
+    var $event = new Event(e);
+    var paramsWithEvent = params.handler.concat($event);
+    var args = (e.detail && e.detail.arguments) || [];
+
     var hookRes = callUserHook(vm, 'before-event', {
       event: $event,
-      params: paramsWithEvent
+      params: paramsWithEvent,
+      args: args
     });
 
     if (hookRes === false) {
       // Event cancelled.
       return;
     }
-    return fn.apply(vm, params.concat($event));
+    return handler.apply(vm, paramsWithEvent);
   } else if (!model) {
     throw new Error('Unrecognized event');
   }
@@ -2137,7 +2207,7 @@ function patchMethods(output, methods) {
   output.methods = {};
   var target = output.methods;
 
-  target._initComponent = function(e) {
+  target.__initComponent = function(e) {
     var child = e.detail;
     var ref$1 = e.target.dataset;
     var ref = ref$1.ref;
@@ -2156,7 +2226,7 @@ function patchMethods(output, methods) {
     child.$root = vm.$root;
     return vm;
   };
-  target._proxy = proxyHandler;
+  target.__dispatcher = dispatcher;
 
   // TODO: perf
   // Only orginal component method goes to target. no need to add all methods.
@@ -2165,27 +2235,6 @@ function patchMethods(output, methods) {
       target[method] = methods[method];
     });
   }
-}
-
-/*
- * initialize events
- */
-function initEvents(vm) {
-  var parent = vm.$parent;
-  var rel = parent.$rel;
-  vm._events = {};
-  var on = rel.info.on;
-  var evtId = vm.$evtId;
-  if (!evtId) { return; }
-
-  var evtNames = on[evtId];
-
-  evtNames.forEach(function (evtName) {
-    vm.$on(evtName, function() {
-      var fn = rel.handlers[evtId][evtName];
-      fn.apply(parent, arguments);
-    });
-  });
 }
 
 var Dirty = function Dirty(type) {
@@ -2355,6 +2404,8 @@ function patchLifecycle(output, options, rel, isComponent) {
     vm._watchers = [];
     if (!isComponent) {
       vm.$root = vm;
+    }
+    if (app) {
       vm.$app = app;
     }
     if (this.is === 'custom-tab-bar/index') {
@@ -2406,8 +2457,6 @@ function patchLifecycle(output, options, rel, isComponent) {
 
       // created 不能调用 setData，如果有 dirty 在此更新
       vm.$forceUpdate();
-
-      initEvents(vm);
 
       Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
 
@@ -2734,6 +2783,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.11";
+wepy.version = "2.0.0-alpha.16";
 
 module.exports = wepy;

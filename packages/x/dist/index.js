@@ -4,21 +4,25 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var vuex = require('vuex');
 
-var version = "2.0.2";
+var version = "2.0.3";
 
-function wepyInstall (wepy) {
+function wepyInstall(wepy) {
   vuex.install(wepy);
 
   wepy.mixin({
-    created: function () {
+    created: function() {
       var this$1 = this;
 
       var computed = this.$options.computed;
       var loop = function ( k ) {
         if (computed[k].vuex) {
-          this$1.$watch(k, function () {
-            this._computedWatchers[k].evaluate();
-          }, { deep: true });
+          this$1.$watch(
+            k,
+            function() {
+              this._computedWatchers[k].evaluate();
+            },
+            { deep: true }
+          );
         }
       };
 

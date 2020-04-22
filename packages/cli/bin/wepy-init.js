@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const ora = require('ora');
 const chalk = require('chalk');
 const tildify = require('tildify');
 const inquirer = require('inquirer');
@@ -10,20 +9,39 @@ const download = require('./cli/download');
 const localPath = require('./cli/local-path');
 const checkVersion = require('./cli/check-version');
 const generate = require('./cli/generate');
-const logger = require('./cli/logger');
+const logger = require('./../util/logger');
 
 exports = module.exports = (template, rawName, program) => {
   function gen(templatePath) {
-    generate(name, templatePath, to, err => {
-      if (err) logger.fatal(err);
-      // eslint-disable-next-line no-console
-      console.log();
-      logger.success('Generated "%s".', name);
-    });
+    logger.verbose('Start to generate project');
+    // eslint-disable-next-line no-console
+    console.log();
+    return new Promise((resolve, reject) => {
+      return generate(name, templatePath, to, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(true);
+        }
+      });
+    })
+      .catch(e => {
+        logger.error('Generate project failed');
+        logger.error(e);
+        return false;
+      })
+      .then(conti => {
+        if (conti) {
+          // eslint-disable-next-line no-console
+          console.log();
+          logger.info(`Generated "${name}".`);
+        }
+      });
   }
 
   function run() {
     if (localPath.isLocalPath(template)) {
+      logger.verbose('Use local path template');
       // use local/cache template
       // Example:
       // wepy init E:\workspace\wepy_templates\standard my-wepy-project
@@ -32,45 +50,85 @@ exports = module.exports = (template, rawName, program) => {
       if (fs.existsSync(templatePath)) {
         gen(templatePath);
       } else {
-        logger.fatal('Local template "%s" not found.', template);
+        logger.error(`Local template "${template}" not found.`);
       }
     } else {
-      checkVersion(() => {
+      logger.verbose(`Version check`);
+      checkVersion().then(() => {
         downloadAndGenerate(template);
       });
     }
   }
 
-  function downloadAndGenerate(template) {
-    const spinner = ora('downloading template');
-    spinner.start();
+  function downloadLog(msg, type = 'verbose') {
+    logger[type](msg);
+  }
 
+  function downloadOfficialTemplate(templateName, dist, opt, branch) {
+    downloadLog(`Download template "${templateName}" in branch "${branch}" from Github Raw`);
+    return download
+      .downloadFromGitRaw(templateName, dist, opt, branch)
+      .catch(e => {
+        if (branch === '2.0.x') {
+          downloadLog(`Download URL is: ${e.url}`);
+          downloadLog(`Download from Github raw failed, try Tencent COS download`, 'warn');
+          downloadLog(e, 'warn');
+          return download.downloadFromCos(templateName, tmp, opt);
+        } else {
+          throw e;
+        }
+      })
+      .catch(e => {
+        downloadLog(`Download URL is: ${e.url}`);
+        throw e;
+      });
+  }
+
+  function downloadAndGenerate(template) {
     if (fs.existsSync(tmp)) {
       rm(tmp);
     }
-
     if (!hasSlash) {
-      // use official template
-      download
-        .downloadOfficialZip(template, tmp, { extract: true })
+      let [templateName, branch] = template.split('#');
+      downloadLog(`Donwnloading template "${templateName}"`);
+      return downloadOfficialTemplate(templateName, tmp, { extract: true }, branch || '2.0.x')
         .then(() => {
-          spinner.stop();
-          gen(tmp);
+          downloadLog('Download success, start generate template');
+          return true;
         })
         .catch(e => {
           if (e.statusCode === 404) {
-            logger.fatal(`Unrecongnized template: "${template}". Try "wepy list" to show all available templates `);
-          } else if (e) {
-            logger.fatal('Failed to download repo ' + template + ': ' + e.message.trim());
+            logger.error(`Unrecongnized template: "${template}". Try "wepy list" to show all available templates `);
+          } else {
+            logger.error(`Download template failed`);
+            logger.error(e);
+          }
+          return false;
+        })
+        .then(conti => {
+          if (conti) {
+            return gen(tmp);
           }
         });
     } else {
       // use third party template
-      download.downloadRepo(template, tmp, { clone }, err => {
-        spinner.stop();
-        if (err) logger.fatal('Failed to download repo ' + template + ': ' + err.message.trim());
-        gen(tmp);
-      });
+      downloadLog('Donwnloading github repo "${template}"');
+      return download
+        .downloadRepo(template, tmp, { clone })
+        .then(() => {
+          downloadLog('Download repository success, start generate template');
+          return true;
+        })
+        .catch(e => {
+          logger.error('Failed to download repo ' + template);
+          logger.error(e);
+          return false;
+        })
+        .then(conti => {
+          if (conti) {
+            return gen(tmp);
+          }
+        });
     }
   }
 
@@ -80,6 +138,7 @@ exports = module.exports = (template, rawName, program) => {
   const to = path.resolve(rawName || '.');
   const clone = program.clone || false;
   const offline = program.offline || false;
+
   let tmp = path.join(home, '.wepy_templates', template.replace(/\//g, '-'));
 
   /**
@@ -87,7 +146,7 @@ exports = module.exports = (template, rawName, program) => {
    */
   if (offline) {
     // eslint-disable-next-line no-console
-    console.log(`> Use cached template at ${chalk.yellow(tildify(tmp))}`);
+    logger.notice(`Use cached template at ${chalk.yellow(tildify(tmp))}`);
     template = tmp;
   }
 

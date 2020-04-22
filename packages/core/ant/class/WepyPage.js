@@ -1,4 +1,4 @@
-import WepyComponent from './../../weapp/class/WepyComponent';
+import WepyComponent from './WepyComponent';
 import { isStr, isNum, isObj, isUndef, isFunc } from '../../shared/index';
 
 // eslint-disable-next-line

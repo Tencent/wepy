@@ -9,7 +9,7 @@ import { initRender } from '../../weapp/init/render';
 import { initData } from '../../weapp/init/data';
 import { initComputed } from '../../weapp/init/computed';
 import { initMethods } from './methods';
-import { initEvents } from '../../weapp/init/events';
+import { initEvents } from './events';
 import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../../weapp/class/Dirty';
 import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
@@ -136,7 +136,8 @@ export function patchLifecycle(output, options, rel, isComponent) {
       Object.keys(vm._computedWatchers || {})
     );
 
-    return callUserMethod(vm, vm.$options, 'created', args);
+    callUserMethod(vm, vm.$options, 'created', args);
+    return callUserMethod(vm, vm.$options, 'onLoad', args);
   };
 
   if (isComponent) {
@@ -155,7 +156,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
       let acceptProps = vm.$wx.props;
 
       // let target = isComponent ? output.methods: output;
-      // target._initComponent(vm);
+      // target.__initComponent(vm);
       vm.$wx.props.onInit(vm);
       // let parent = this.triggerEvent('_init', vm);
 

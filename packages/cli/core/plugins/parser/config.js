@@ -1,5 +1,6 @@
 const path = require('path');
 const loaderUtils = require('loader-utils');
+const slash = require('slash');
 
 let appUsingComponents = null;
 
@@ -36,6 +37,8 @@ exports = module.exports = function() {
       config.usingComponents = {};
     }
 
+    let userDefineComponents = config.usingComponents || {};
+    let appDefinedComponents = {};
     let componentKeys = Object.keys(config.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
@@ -44,17 +47,21 @@ exports = module.exports = function() {
       };
       return Promise.resolve(true);
     }
+
     // page Components will inherit app using components
     if (appUsingComponents && ctx.type === 'page') {
       appUsingComponents.forEach(comp => {
         // Existing in page components, then ignore
         // Resolve path for page components
-        if (!config.usingComponents[comp.name] && comp.prefix === 'path') {
-          const relativePath = path.relative(path.dirname(ctx.file), comp.resolved.path);
+        if (!userDefineComponents[comp.name]) {
+          let targetPath = comp.resolved.path;
+          if (comp.prefix === 'module') {
+            targetPath = comp.target;
+          }
+          const relativePath = path.relative(path.dirname(ctx.file), targetPath);
           const parsedPath = path.parse(relativePath);
           // Remove wpy ext
-          config.usingComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
-          componentKeys.push(comp.name);
+          appDefinedComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
         }
       });
     }
@@ -62,7 +69,7 @@ exports = module.exports = function() {
     let resolvedUsingComponents = {};
     let parseComponents = [];
     let plist = componentKeys.map(name => {
-      const url = config.usingComponents[name];
+      const url = userDefineComponents[name];
 
       let prefix = 'path';
       // e.g.
@@ -98,7 +105,8 @@ exports = module.exports = function() {
           } else {
             let relativePath = path.relative(path.dirname(ctx.file), target);
             let parsedPath = path.parse(relativePath);
-            resolvedUsingComponents[name] = path.join(parsedPath.dir, parsedPath.name);
+            // Windows may got windows path, covert to use posix path
+            resolvedUsingComponents[name] = './' + slash(path.join(parsedPath.dir, parsedPath.name));
             parseComponents.push({
               name,
               prefix,
@@ -119,7 +127,7 @@ exports = module.exports = function() {
         appUsingComponents = parseComponents;
         delete config.usingComponents;
       } else {
-        config.usingComponents = resolvedUsingComponents;
+        config.usingComponents = Object.assign({}, resolvedUsingComponents, appDefinedComponents);
       }
 
       ctx.sfc.config.parsed = {
@@ -130,6 +138,7 @@ exports = module.exports = function() {
     });
   });
 
+  // raw and plugin do nothing
   // eslint-disable-next-line
   this.register('wepy-parser-config-component-raw', function(name, prefix, source, target, ctx) {
     return Promise.resolve({

@@ -1,7 +1,17 @@
 'use strict';
 
 // can we use __proto__?
-var hasProto = '__proto__' in {};
+function getHasProto() {
+  var hasProto = false;
+  if ('__proto__' in {}) {
+    var fn = function () {};
+    var arr = [];
+    arr.__proto__ = { push: fn };
+    hasProto = fn === arr.push;
+  }
+  return hasProto;
+}
+var hasProto = getHasProto();
 
 var _Set; // $flow-disable-line
 /* istanbul ignore if */ if (typeof Set !== 'undefined' && isNative(Set)) {
@@ -108,6 +118,22 @@ function toArray(list, start) {
   }
   return rst;
 }
+
+/**
+ * Cached simply key function return
+ */
+var cached = function (fn) {
+  var cache = {};
+  return function (str) { return cache[str] || (cache[str] = fn(str)); };
+};
+
+var camelizeRE = /-(\w)/g;
+
+/**
+ * camelize words
+ * e.g. my-key => myKey
+ */
+var camelize = cached(function (str) { return str.replace(camelizeRE, function (_, c) { return (c ? c.toUpperCase() : ''); }); });
 
 /*
  * extend objects
@@ -1089,6 +1115,7 @@ function dependArray(value) {
 
 var Base = function Base() {
   this._events = {};
+  this._watchers = [];
 };
 
 Base.prototype.$set = function $set (target, key, val) {
@@ -1253,13 +1280,16 @@ function flushSchedulerQueue(times) {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
-  queue.sort(function (a, b) { return a.id - b.id; });
+  times === 0 && queue.sort(function (a, b) { return a.id - b.id; });
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
   // there would be mutilple renderWatcher in the queue.
   var renderWatcher = [];
-  for (index = 0; index < queue.length; index++) {
+  if (times === 0) {
+    index = 0;
+  }
+  for (; index < queue.length; index++) {
     // if it's renderWatcher, run it in the end
     watcher = queue[index];
     if (watcher && watcher.isRenderWatcher) {
@@ -1613,6 +1643,25 @@ var WepyComponent = (function (Base$$1) {
     }
   };
 
+  WepyComponent.prototype.$emit = function $emit (event) {
+    var args = [], len = arguments.length - 1;
+    while ( len-- > 0 ) args[ len ] = arguments[ len + 1 ];
+
+    var fns = this._events[event];
+
+    if (fns) {
+      Base$$1.prototype.$emit.apply(this, arguments);
+    } else {
+      this.$wx.triggerEvent(event, { arguments: args });
+    }
+
+    return this;
+  };
+
+  WepyComponent.prototype.$trigger = function $trigger (event, data, option) {
+    this.$wx.triggerEvent(event, { arguments: [data] }, option);
+  };
+
   return WepyComponent;
 }(Base));
 
@@ -1743,6 +1792,7 @@ var WepyConstructor = (function (WepyComponent$$1) {
   function WepyConstructor(opt) {
     if ( opt === void 0 ) opt = {};
 
+    WepyComponent$$1.call(this);
     var vm = new WepyComponent$$1();
 
     // Only need data and watchers for a empty WepyComponent
@@ -1799,13 +1849,63 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyPage = (function (WepyComponent$$1) {
-  function WepyPage () {
-    WepyComponent$$1.apply(this, arguments);
+var WepyComponent$1 = (function (Base$$1) {
+  function WepyComponent () {
+    Base$$1.apply(this, arguments);
   }
 
-  if ( WepyComponent$$1 ) WepyPage.__proto__ = WepyComponent$$1;
-  WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
+  if ( Base$$1 ) WepyComponent.__proto__ = Base$$1;
+  WepyComponent.prototype = Object.create( Base$$1 && Base$$1.prototype );
+  WepyComponent.prototype.constructor = WepyComponent;
+
+  WepyComponent.prototype.$watch = function $watch (expOrFn, cb, options) {
+    var this$1 = this;
+
+    var vm = this;
+    if (isArr(cb)) {
+      cb.forEach(function (handler) {
+        this$1.$watch(expOrFn, handler, options);
+      });
+    }
+    if (isPlainObject(cb)) {
+      var handler = cb;
+      options = handler;
+      handler = handler.handler;
+      if (typeof handler === 'string') { handler = this[handler]; }
+      return this.$watch(expOrFn, handler, options);
+    }
+
+    options = options || {};
+    options.user = true;
+    var watcher = new Watcher(vm, expOrFn, cb, options);
+    if (options.immediate) {
+      cb.call(vm, watcher.value);
+    }
+    return function unwatchFn() {
+      watcher.teardown();
+    };
+  };
+
+  WepyComponent.prototype.$forceUpdate = function $forceUpdate () {
+    if (this._watcher) {
+      this._watcher.update();
+    }
+  };
+
+  return WepyComponent;
+}(Base));
+
+WepyComponent$1.prototype.$nextTick = renderNextTick;
+
+// eslint-disable-next-line
+var wx = my;
+var WepyPage = (function (WepyComponent) {
+  function WepyPage () {
+    WepyComponent.apply(this, arguments);
+  }
+
+  if ( WepyComponent ) WepyPage.__proto__ = WepyComponent;
+  WepyPage.prototype = Object.create( WepyComponent && WepyComponent.prototype );
   WepyPage.prototype.constructor = WepyPage;
 
   WepyPage.prototype.$launch = function $launch (url, params) {
@@ -1855,11 +1955,15 @@ var WepyPage = (function (WepyComponent$$1) {
   };
 
   return WepyPage;
-}(WepyComponent));
+}(WepyComponent$1));
 
 function callUserHook(vm, hookName, arg) {
-  var pageHook = vm.hooks[hookName];
-  var appHook = vm.$app.hooks[hookName];
+  var pageHook = vm.hooks ? vm.hooks[hookName] : null;
+  var appHook = vm.$app && vm.$app.hooks ? vm.$app.hooks[hookName] : null;
+
+  if (!vm.$app) {
+    warn('$app is not initialized in this Component', vm);
+  }
 
   var result = arg;
 
@@ -1882,6 +1986,76 @@ function initHooks(vm, hooks) {
   if ( hooks === void 0 ) hooks = {};
 
   vm.hooks = hooks;
+}
+
+var observerFn = function() {
+  return function(newVal, oldVal, changedPaths) {
+    var vm = this.$wepy;
+
+    // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
+    if (changedPaths.length > 1) {
+      return;
+    }
+    var _data = newVal;
+    if (typeof _data === 'function') {
+      _data = _data.call(vm);
+    }
+    vm[changedPaths[0]] = _data;
+  };
+};
+/*
+ * patch props option
+ */
+function patchProps(output, props) {
+  var newProps = {};
+  if (isStr(props)) {
+    newProps = [props];
+  }
+  if (isArr(props)) {
+    props.forEach(function (prop) {
+      newProps[prop] = {
+        type: null,
+        observer: observerFn(output, props, prop)
+      };
+    });
+  } else if (isObj(props)) {
+    for (var k in props) {
+      var prop = props[k];
+
+      // notsupport obj
+      if (!isObj(prop)) {
+        newProps[k] = prop;
+      } else {
+        newProps[k] = prop.default ? prop.default : '';
+      }
+    }
+  }
+
+  newProps['onInit'] = '';
+  output.properties = newProps;
+}
+
+/*
+ * init props
+ */
+function initProps(vm, properties) {
+  vm._props = {};
+
+  if (!properties) {
+    return;
+  }
+
+  Object.keys(properties).forEach(function (key) {
+    vm._props[key] = properties[key].value;
+    proxy(vm, '_props', key);
+  });
+
+  observe({
+    vm: vm,
+    key: '',
+    value: vm._props,
+    root: true
+  });
 }
 
 function initRender(vm, keys, computedKeys) {
@@ -1949,6 +2123,91 @@ var Event = function Event(e) {
   this.changedTouches = e.changedTouches;
 };
 
+/**
+ * Transform wxml data-xx params to an array
+ */
+function transformParams(dataset, type, hasModel) {
+  if ( hasModel === void 0 ) hasModel = false;
+
+  var i = 0;
+  var params = [];
+  var modelParams = [];
+
+  var noParams = false;
+  var noModelParams = !hasModel;
+
+  var camelizedType = camelize(type);
+  while (i++ < 26 && (!noParams || !noModelParams)) {
+    var alpha = String.fromCharCode(64 + i);
+    if (!noParams) {
+      var key = 'wpy' + camelizedType + alpha;
+      if (!(key in dataset)) {
+        // it can be undefined;
+        noParams = true;
+      } else {
+        params.push(dataset[key]);
+      }
+    }
+    if (!noModelParams && hasModel) {
+      var modelKey = 'model' + alpha;
+      if (!(modelKey in dataset)) {
+        noModelParams = true;
+      } else {
+        modelParams.push(dataset[modelKey]);
+      }
+    }
+  }
+
+  return {
+    handler: params,
+    model: modelParams
+  };
+}
+
+var dispatcher = function(e) {
+  var vm = this.$wepy;
+  var type = e.type;
+  // touchstart do not have currentTarget
+  var dataset = (e.currentTarget || e.target).dataset || {};
+  var evtid = dataset.wpyEvt;
+  var modelId = dataset.modelId;
+  var rel = vm.$rel || {};
+  var handler = rel.handlers && rel.handlers[evtid] && rel.handlers[evtid][type];
+  var model = rel.models && rel.models[modelId];
+
+  if (!handler && !model) {
+    return;
+  }
+
+  var params = transformParams(dataset, type, !!model);
+
+  // Call model method
+  if (model && type === model.type && isFunc(model.handler)) {
+    model.handler.call(vm, e.detail.value, params.model);
+  }
+
+  // Call handler method
+  if (isFunc(handler)) {
+    var $event = new Event(e);
+    var paramsWithEvent = params.handler.concat($event);
+    var args = (e.detail && e.detail.arguments) || [];
+
+    var hookRes = callUserHook(vm, 'before-event', {
+      event: $event,
+      params: paramsWithEvent,
+      args: args
+    });
+
+    if (hookRes === false) {
+      // Event cancelled.
+      return;
+    }
+    return handler.apply(vm, paramsWithEvent);
+  } else if (!model) {
+    throw new Error('Unrecognized event');
+  }
+};
+
 /*
  * initialize page methods, also the app
  */
@@ -1956,6 +2215,50 @@ function initMethods(vm, methods) {
   if (methods) {
     Object.keys(methods).forEach(function (method) {
       vm[method] = methods[method];
+    });
+  }
+}
+
+/*
+ * patch method option
+ */
+function patchMethods(output, methods, isComponent) {
+  output.methods = {};
+  var target = isComponent ? output.methods : output;
+
+  target.__initComponent = function(e) {
+    var child = e;
+    var ref = e.$wx.props['data-ref'];
+    var wpyEvt = e.$wx.props['data-wpy-evt'];
+
+    var vm = this.$wepy;
+    vm.$children.push(child);
+    if (ref) {
+      if (vm.$refs[ref]) {
+        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm);
+      }
+      vm.$refs[ref] = child;
+    }
+    child.$evtId = wpyEvt;
+    child.$parent = vm;
+    child.$app = vm.$app;
+    child.$root = vm.$root;
+    // 支付宝组件嵌套时，子组件执行早已组件
+    if (e.$children && e.$children.length) {
+      e.$children.forEach(function (x) {
+        x.$app = vm.$app;
+        x.$root = vm.$root;
+      });
+    }
+    return vm;
+  };
+  target.__dispatcher = dispatcher;
+
+  // TODO: perf
+  // Only orginal component method goes to target. no need to add all methods.
+  if (methods) {
+    Object.keys(methods).forEach(function (method) {
+      target[method] = methods[method];
     });
   }
 }
@@ -2051,6 +2354,7 @@ Dirty.prototype.length = function length () {
   return this._length;
 };
 
+var comid = 0;
 var app;
 
 var callUserMethod = function(vm, userOpt, method, args) {
@@ -2122,6 +2426,158 @@ function patchAppLifecycle(appConfig, options, rel) {
         while ( len-- ) args[ len ] = arguments[ len ];
 
         return callUserMethod(app, app.$options, k, args);
+      };
+    }
+  });
+}
+
+function patchLifecycle(output, options, rel, isComponent) {
+  var initClass = isComponent ? WepyComponent : WepyPage;
+  var initLifecycle = function() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    var vm = new initClass();
+
+    vm.$dirty = new Dirty('path');
+    vm.$children = [];
+    vm.$refs = {};
+
+    this.$wepy = vm;
+    vm.$wx = this;
+    vm.$is = this.is;
+    vm.$options = options;
+    vm.$rel = rel;
+    vm._watchers = [];
+    if (!isComponent) {
+      vm.$root = vm;
+      vm.$app = app;
+    }
+    if (this.is === 'custom-tab-bar/index') {
+      vm.$app = app;
+      vm.$parent = app;
+    }
+
+    vm.$id = ++comid + (isComponent ? '.1' : '.0');
+
+    callUserMethod(vm, vm.$options, 'beforeCreate', args);
+
+    initHooks(vm, options.hooks);
+
+    initProps(vm, output.properties);
+
+    initData(vm, output.data, isComponent);
+
+    initMethods(vm, options.methods);
+
+    initComputed(vm, options.computed, true);
+
+    initWatch(vm, options.watch);
+
+    // create render watcher
+    initRender(
+      vm,
+      Object.keys(vm._data)
+        .concat(Object.keys(vm._props))
+        .concat(Object.keys(vm._computedWatchers || {})),
+      Object.keys(vm._computedWatchers || {})
+    );
+
+    callUserMethod(vm, vm.$options, 'created', args);
+    return callUserMethod(vm, vm.$options, 'onLoad', args);
+  };
+
+  if (isComponent) {
+    output.onInit = initLifecycle; // 组件生命周期函数，组件创建时触发
+  } else {
+    output.onLoad = initLifecycle; // 页面加载时触发
+  }
+
+  if (isComponent) {
+    output.didMount = function() {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // Component attached  组件生命周期函数，组件创建完毕时触发
+      var outProps = output.properties || {};
+
+      // this.propperties are includes datas
+      var vm = this.$wepy;
+      var acceptProps = vm.$wx.props;
+
+      // let target = isComponent ? output.methods: output;
+      // target.__initComponent(vm);
+      vm.$wx.props.onInit(vm);
+      // let parent = this.triggerEvent('_init', vm);
+
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate();
+
+      initEvents(vm);
+
+      Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
+
+      return callUserMethod(vm, vm.$options, 'didMount', args);
+    };
+  } else {
+    output.onShow = function() {
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+
+      // Page attached
+      var vm = this.$wepy;
+      var app = vm.$app;
+      // eslint-disable-next-line
+      var pages = getCurrentPages();
+      var currentPage = pages[pages.length - 1];
+      var path = currentPage.__route__;
+      var webViewId = currentPage.__wxWebviewId__;
+
+      // created 不能调用 setData，如果有 dirty 在此更新
+      vm.$forceUpdate();
+
+      if (app.$route.path !== path) {
+        app.$route.path = path;
+        app.$route.webViewId = webViewId;
+        vm.routed && vm.routed();
+      }
+
+      // TODO: page attached
+      return callUserMethod(vm, vm.$options, 'onShow', args);
+    };
+    // Page lifecycle will be called under methods
+    // e.g:
+    // Component({
+    //   methods: {
+    //     onLoad () {
+    //       console.log('page onload')
+    //     }
+    //   }
+    // })
+
+    var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
+
+    lifecycle$1.forEach(function (k) {
+      if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        output.methods[k] = function() {
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+
+          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+        };
+      }
+    });
+  }
+  var lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
+
+  lifecycle.forEach(function (k) {
+    // beforeCreate is not a real lifecycle
+    if (!output[k] && k !== 'beforeCreate' && (isFunc(options[k]) || isArr(options[k]))) {
+      output[k] = function() {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
       };
     }
   });
@@ -2257,445 +2713,6 @@ function app$1(option, rel) {
   return App(appConfig);
 }
 
-// eslint-disable-next-line
-var wx$1 = my;
-var WepyPage$1 = (function (WepyComponent$$1) {
-  function WepyPage () {
-    WepyComponent$$1.apply(this, arguments);
-  }
-
-  if ( WepyComponent$$1 ) WepyPage.__proto__ = WepyComponent$$1;
-  WepyPage.prototype = Object.create( WepyComponent$$1 && WepyComponent$$1.prototype );
-  WepyPage.prototype.constructor = WepyPage;
-
-  WepyPage.prototype.$launch = function $launch (url, params) {
-    this.$route('reLaunch', url, params);
-  };
-  WepyPage.prototype.$navigate = function $navigate (url, params) {
-    this.$route('navigate', url, params);
-  };
-
-  WepyPage.prototype.$redirect = function $redirect (url, params) {
-    this.$route('redirect', url, params);
-  };
-
-  WepyPage.prototype.$back = function $back (p) {
-    if ( p === void 0 ) p = {};
-
-    if (isNum(p)) { p = { delta: p }; }
-
-    if (!p.delta) { p.delta = 1; }
-
-    return wx$1.navigateBack(p);
-  };
-
-  WepyPage.prototype.$route = function $route (type, url, params) {
-    if ( params === void 0 ) params = {};
-
-    var wxparams;
-    if (isStr(url)) {
-      var paramsList = [];
-      if (isObj(params)) {
-        for (var k in params) {
-          if (!isUndef(params[k])) {
-            paramsList.push((k + "=" + (encodeURIComponent(params[k]))));
-          }
-        }
-      }
-      if (paramsList.length) { url = url + '?' + paramsList.join('&'); }
-
-      wxparams = { url: url };
-    } else {
-      wxparams = url;
-    }
-    var fn = wx$1[type] || wx$1[type + 'To'];
-    if (isFunc(fn)) {
-      return fn(wxparams);
-    }
-  };
-
-  return WepyPage;
-}(WepyComponent));
-
-var observerFn$1 = function() {
-  return function(newVal, oldVal, changedPaths) {
-    var vm = this.$wepy;
-
-    // changedPaths 长度大于 1，说明是由内部赋值改变的 prop
-    if (changedPaths.length > 1) {
-      return;
-    }
-    var _data = newVal;
-    if (typeof _data === 'function') {
-      _data = _data.call(vm);
-    }
-    vm[changedPaths[0]] = _data;
-  };
-};
-/*
- * patch props option
- */
-function patchProps$1(output, props) {
-  var newProps = {};
-  if (isStr(props)) {
-    newProps = [props];
-  }
-  if (isArr(props)) {
-    props.forEach(function (prop) {
-      newProps[prop] = {
-        type: null,
-        observer: observerFn$1(output, props, prop)
-      };
-    });
-  } else if (isObj(props)) {
-    for (var k in props) {
-      var prop = props[k];
-
-      // notsupport obj
-      if (!isObj(prop)) {
-        newProps[k] = prop;
-      } else {
-        newProps[k] = prop.default ? prop.default : '';
-      }
-    }
-  }
-
-  newProps['onInit'] = '';
-  output.properties = newProps;
-}
-
-/*
- * init props
- */
-function initProps$1(vm, properties) {
-  vm._props = {};
-
-  if (!properties) {
-    return;
-  }
-
-  Object.keys(properties).forEach(function (key) {
-    vm._props[key] = properties[key].value;
-    proxy(vm, '_props', key);
-  });
-
-  observe({
-    vm: vm,
-    key: '',
-    value: vm._props,
-    root: true
-  });
-}
-
-var proxyHandler$1 = function(e) {
-  var vm = this.$wepy;
-  var type = e.type;
-  // touchstart do not have currentTarget
-  var dataset = (e.currentTarget || e.target).dataset;
-  var evtid = dataset.wpyEvt;
-  var modelId = dataset.modelId;
-  var rel = vm.$rel || {};
-  var handlers = rel.handlers ? rel.handlers[evtid] || {} : {};
-  var fn = handlers[type];
-  var model = rel.models[modelId];
-
-  if (!fn && !model) {
-    return;
-  }
-
-  var $event = new Event(e);
-
-  var i = 0;
-  var params = [];
-  var modelParams = [];
-
-  var noParams = false;
-  var noModelParams = !model;
-  while (i++ < 26 && (!noParams || !noModelParams)) {
-    var alpha = String.fromCharCode(64 + i);
-    if (!noParams) {
-      var key = 'wpy' + type + alpha;
-      if (!(key in dataset)) {
-        // it can be undefined;
-        noParams = true;
-      } else {
-        params.push(dataset[key]);
-      }
-    }
-    if (!noModelParams && model) {
-      var modelKey = 'model' + alpha;
-      if (!(modelKey in dataset)) {
-        noModelParams = true;
-      } else {
-        modelParams.push(dataset[modelKey]);
-      }
-    }
-  }
-
-  if (model) {
-    if (type === model.type) {
-      if (isFunc(model.handler)) {
-        model.handler.call(vm, e.detail.value, modelParams);
-      }
-    }
-  }
-  if (isFunc(fn)) {
-    var paramsWithEvent = params.concat($event);
-    var hookRes = callUserHook(vm, 'before-event', {
-      event: $event,
-      params: paramsWithEvent
-    });
-
-    if (hookRes === false) {
-      // Event cancelled.
-      return;
-    }
-    return fn.apply(vm, params.concat($event));
-  } else if (!model) {
-    throw new Error('Unrecognized event');
-  }
-};
-
-/*
- * initialize page methods, also the app
- */
-function initMethods$1(vm, methods) {
-  if (methods) {
-    Object.keys(methods).forEach(function (method) {
-      vm[method] = methods[method];
-    });
-  }
-}
-
-/*
- * patch method option
- */
-function patchMethods$1(output, methods, isComponent) {
-  output.methods = {};
-  var target = isComponent ? output.methods : output;
-
-  target._initComponent = function(e) {
-    var child = e;
-    var ref = e.$wx.props['data-ref'];
-    var wpyEvt = e.$wx.props['data-wpy-evt'];
-
-    var vm = this.$wepy;
-    vm.$children.push(child);
-    if (ref) {
-      if (vm.$refs[ref]) {
-        warn('duplicate ref "' + ref + '" will be covered by the last instance.\n', vm);
-      }
-      vm.$refs[ref] = child;
-    }
-    child.$evtId = wpyEvt;
-    child.$parent = vm;
-    child.$app = vm.$app;
-    child.$root = vm.$root;
-    // 支付宝组件嵌套时，子组件执行早已组件
-    if (e.$children && e.$children.length) {
-      e.$children.forEach(function (x) {
-        x.$app = vm.$app;
-        x.$root = vm.$root;
-      });
-    }
-    return vm;
-  };
-  target._proxy = proxyHandler$1;
-
-  // TODO: perf
-  // Only orginal component method goes to target. no need to add all methods.
-  if (methods) {
-    Object.keys(methods).forEach(function (method) {
-      target[method] = methods[method];
-    });
-  }
-}
-
-var comid$1 = 0;
-var app$2;
-
-var callUserMethod$1 = function(vm, userOpt, method, args) {
-  var result;
-  var methods = userOpt[method];
-  if (isFunc(methods)) {
-    result = userOpt[method].apply(vm, args);
-  } else if (isArr(methods)) {
-    for (var i in methods) {
-      if (isFunc(methods[i])) {
-        result = methods[i].apply(vm, args);
-      }
-    }
-  }
-  return result;
-};
-
-var getLifecycycle$1 = function (defaultLifecycle, rel, type) {
-  var lifecycle = defaultLifecycle.concat([]);
-  if (rel && rel.lifecycle && rel.lifecycle[type]) {
-    var userDefinedLifecycle = [];
-    if (isFunc(rel.lifecycle[type])) {
-      userDefinedLifecycle = rel.lifecycle[type].call(null, lifecycle);
-    }
-    userDefinedLifecycle.forEach(function (u) {
-      if (lifecycle.indexOf(u) > -1) {
-        warn(("'" + u + "' is already implemented in current version, please remove it from your lifecycel config"));
-      } else {
-        lifecycle.push(u);
-      }
-    });
-  }
-  return lifecycle;
-};
-
-function patchLifecycle$1(output, options, rel, isComponent) {
-  var initClass = isComponent ? WepyComponent : WepyPage$1;
-  var initLifecycle = function() {
-    var args = [], len = arguments.length;
-    while ( len-- ) args[ len ] = arguments[ len ];
-
-    var vm = new initClass();
-
-    vm.$dirty = new Dirty('path');
-    vm.$children = [];
-    vm.$refs = {};
-
-    this.$wepy = vm;
-    vm.$wx = this;
-    vm.$is = this.is;
-    vm.$options = options;
-    vm.$rel = rel;
-    vm._watchers = [];
-    if (!isComponent) {
-      vm.$root = vm;
-      vm.$app = app$2;
-    }
-    if (this.is === 'custom-tab-bar/index') {
-      vm.$app = app$2;
-      vm.$parent = app$2;
-    }
-
-    vm.$id = ++comid$1 + (isComponent ? '.1' : '.0');
-
-    callUserMethod$1(vm, vm.$options, 'beforeCreate', args);
-
-    initHooks(vm, options.hooks);
-
-    initProps$1(vm, output.properties);
-
-    initData(vm, output.data, isComponent);
-
-    initMethods$1(vm, options.methods);
-
-    initComputed(vm, options.computed, true);
-
-    initWatch(vm, options.watch);
-
-    // create render watcher
-    initRender(
-      vm,
-      Object.keys(vm._data)
-        .concat(Object.keys(vm._props))
-        .concat(Object.keys(vm._computedWatchers || {})),
-      Object.keys(vm._computedWatchers || {})
-    );
-
-    return callUserMethod$1(vm, vm.$options, 'created', args);
-  };
-
-  if (isComponent) {
-    output.onInit = initLifecycle; // 组件生命周期函数，组件创建时触发
-  } else {
-    output.onLoad = initLifecycle; // 页面加载时触发
-  }
-
-  if (isComponent) {
-    output.didMount = function() {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
- // Component attached  组件生命周期函数，组件创建完毕时触发
-      var outProps = output.properties || {};
-      
-      // this.propperties are includes datas
-      var vm = this.$wepy;
-      var acceptProps = vm.$wx.props;
-
-      // let target = isComponent ? output.methods: output;
-      // target._initComponent(vm);
-      vm.$wx.props.onInit(vm);
-      // let parent = this.triggerEvent('_init', vm);
-
-      // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate();
-
-      initEvents(vm);
-
-      Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
-
-      return callUserMethod$1(vm, vm.$options, 'didMount', args);
-    };
-  } else {
-    output.onShow = function() {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // Page attached
-      var vm = this.$wepy;
-      var app = vm.$app;
-      var pages = getCurrentPages();
-      var currentPage = pages[pages.length - 1];
-      var path = currentPage.__route__;
-      var webViewId = currentPage.__wxWebviewId__;
-
-      // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate();
-
-      if (app.$route.path !== path) {
-        app.$route.path = path;
-        app.$route.webViewId = webViewId;
-        vm.routed && vm.routed();
-      }
-
-      // TODO: page attached
-      return callUserMethod$1(vm, vm.$options, 'onShow', args);
-    };
-    // Page lifecycle will be called under methods
-    // e.g:
-    // Component({
-    //   methods: {
-    //     onLoad () {
-    //       console.log('page onload')
-    //     }
-    //   }
-    // })
-
-    var lifecycle$1 = getLifecycycle$1(WEAPP_PAGE_LIFECYCLE, rel, 'page');
-
-    lifecycle$1.forEach(function (k) {
-      if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        output.methods[k] = function() {
-          var args = [], len = arguments.length;
-          while ( len-- ) args[ len ] = arguments[ len ];
-
-          return callUserMethod$1(this.$wepy, this.$wepy.$options, k, args);
-        };
-      }
-    });
-  }
-  var lifecycle = getLifecycycle$1(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
-
-  lifecycle.forEach(function (k) {
-    // beforeCreate is not a real lifecycle
-    if (!output[k] && k !== 'beforeCreate' && (isFunc(options[k]) || isArr(options[k]))) {
-      output[k] = function() {
-        var args = [], len = arguments.length;
-        while ( len-- ) args[ len ] = arguments[ len ];
-
-        return callUserMethod$1(this.$wepy, this.$wepy.$options, k, args);
-      };
-    }
-  });
-}
-
 function component(opt, rel) {
   if ( opt === void 0 ) opt = {};
 
@@ -2715,18 +2732,18 @@ function component(opt, rel) {
       console.warn("props will be ignore, if properties is set");
     }
   } else if (opt.props) {
-    patchProps$1(compConfig, opt.props);
+    patchProps(compConfig, opt.props);
   }
 
   compConfig.props = compConfig.properties;
 
-  patchMethods$1(compConfig, opt.methods, true);
+  patchMethods(compConfig, opt.methods, true);
 
   patchData(compConfig, opt.data, true);
 
   patchRelations(compConfig, opt.relations);
 
-  patchLifecycle$1(compConfig, opt, rel, true);
+  patchLifecycle(compConfig, opt, rel, true);
 
   return Component(compConfig);
 }
@@ -2750,14 +2767,14 @@ function page(opt, rel) {
       console.warn("props will be ignore, if properties is set");
     }
   } else if (opt.props) {
-    patchProps$1(pageConfig, opt.props);
+    patchProps(pageConfig, opt.props);
   }
 
-  patchMethods$1(pageConfig, opt.methods);
+  patchMethods(pageConfig, opt.methods);
 
   patchData(pageConfig, opt.data);
 
-  patchLifecycle$1(pageConfig, opt, rel);
+  patchLifecycle(pageConfig, opt, rel);
 
   return Page(pageConfig);
 }
@@ -2787,6 +2804,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.11";
+wepy.version = "2.0.0-alpha.16";
 
 module.exports = wepy;

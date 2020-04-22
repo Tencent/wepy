@@ -128,7 +128,7 @@ const simplifyArgs = {
 
   // tabBar
   setTabBarBadge: 'index,text',
-  removeTabBarBadge: 'idnex',
+  removeTabBarBadge: 'index',
   showTabBarRedDot: 'index',
   hideTabBarRedDot: 'index',
   showTabBar: 'animation',
@@ -144,7 +144,14 @@ const simplifyArgs = {
   reLaunch: 'url',
 
   // pageScroll
-  pageScrollTo: 'scrollTop,duration'
+  pageScrollTo: 'scrollTop,duration',
+
+  // Open API
+  getSetting: 'withSubscriptions',
+  getUserInfo: 'withCredentials,lang',
+  authorize: 'scope',
+  requestSubscribeMessage: 'tmplIds',
+  showRedPackage: 'url'
 };
 
 const makeObj = arr => {
@@ -166,12 +173,12 @@ export default {
   install(wepy, removeFromPromisify) {
     let _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
-    let noPromiseMap = {};
+    let noPromiseMap = makeObj(noPromiseMethods);
     if (removeFromPromisify) {
       if (Array.isArray(removeFromPromisify)) {
-        noPromiseMap = makeObj(noPromiseMethods.concat(removeFromPromisify));
+        noPromiseMap = Object.assign(noPromiseMap, makeObj(removeFromPromisify));
       } else {
-        noPromiseMap = Object.assign({}, makeObj(noPromiseMethods), removeFromPromisify);
+        noPromiseMap = Object.assign(noPromiseMap, removeFromPromisify);
       }
     }
 

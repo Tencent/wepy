@@ -1,0 +1,30 @@
+name: WePY CI Build
+
+on:
+  push:
+    branches:
+      - 2.0.x
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x]
+    steps:
+    - name: Install expect
+      run: | 
+        sudo apt -qy update && sudo apt install -y expect
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run bootstrap 
+    - run: npm run test
+    - run: npm run bootstrap:prod
+    - run: npm run test:build
+    - name: Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
