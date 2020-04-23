@@ -166,14 +166,8 @@ class Compile extends Hook {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
         const target = path.join(this.context, p);
         if (fs.existsSync(target)) {
-          if (fs.lstatSync(target).isDirectory()) {
-            const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
-            return fs.copy(target, dest);
-          } else {
-            this.logger.warn('output-static', `Path is not a directory: ${target}`);
-          }
-        } else {
-          this.logger.warn('output-static', `Static path not found: ${target}`);
+          const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
+          return fs.copy(target, dest);
         }
         return Promise.resolve(true);
       };
