@@ -23,6 +23,7 @@ const promisify = function(fn, caller, type = 'weapp-style') {
           });
           break;
         case 'weapp-fix':
+          args = !args.length ? [{}] : args;
           fn.apply(caller, args.concat(resolve).concat(reject));
           break;
         case 'error-first':
