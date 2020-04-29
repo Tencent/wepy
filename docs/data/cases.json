@@ -270,6 +270,13 @@
             "qrcode": "",
             "company": ""
         }, {
+            "name": "愚公学堂",
+            "email": "webbdang@163.com",
+            "link": "",
+            "opensource": "",
+            "qrcode": "",
+            "company": ""
+        },  {
             "name": "求知微阅读",
             "email": "",
             "opensource": "https://github.com/KingJeason/wepy-books",
