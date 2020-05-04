@@ -1,0 +1,26 @@
+{
+  "name": "@wepy/compiler-sass",
+  "version": "2.0.3",
+  "description": "wepy compile sass",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/helpers/generate.js && mocha ./test/*.test.js"
+  },
+  "keywords": [
+    "sass"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "loader-utils": "^1.1.0",
+    "node-sass": "^4.0.0"
+  },
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/compiler-sass@2.0.3",
+  "_commitid": "cf96591"
+}

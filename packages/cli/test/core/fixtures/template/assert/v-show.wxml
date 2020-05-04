@@ -1,0 +1,2 @@
+<view hidden="{{ !(show) }}"></view>
+<view hidden="{{ !(case01 && case02) }}"></view>

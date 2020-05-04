@@ -1,0 +1,27 @@
+{
+  "name": "@wepy/compiler-stylus",
+  "version": "2.0.0",
+  "description": "wepy compile stylus",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/helpers/stylus.js && mocha ./test/*.test.js"
+  },
+  "keywords": [
+    "stylus"
+  ],
+  "dependencies": {
+    "loader-utils": "^1.1.0"
+  },
+  "peerDependencies": {
+    "stylus": "^0.54.0"
+  },
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0",
+    "fs-extra": "^6.0.1"
+  },
+  "readme": "ERROR: No README data found!"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@wepy/plugin-define",
+  "version": "2.0.4",
+  "description": "wepy define plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha ./test/*.test.js",
+    "test:integration": "mocha ./test/*.integration.js"
+  },
+  "keywords": [
+    "wepy",
+    "DefinePlugin"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/plugin-define@2.0.4",
+  "_commitid": "fb07fd4",
+  "devDependencies": {
+    "@wepy/cli": "^2.0.0-alpha.23"
+  }
+}

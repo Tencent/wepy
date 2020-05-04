@@ -3,8 +3,8 @@ sftp-config.json
 diff
 log
 npm-debug.log
-lib/
 demo/
+.nyc_output/
 .vscode
 coverage
 lerna-debug.log

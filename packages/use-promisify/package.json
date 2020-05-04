@@ -1,0 +1,17 @@
+{
+  "name": "@wepy/use-promisify",
+  "version": "2.0.6",
+  "description": "wepy promisify",
+  "main": "/dist/index.js",
+  "scripts": {
+    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
+  },
+  "author": {
+    "name": "Gcaufy",
+    "email": "gcaufy@gmail.com"
+  },
+  "license": "MIT",
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/use-promisify@2.0.6",
+  "_commitid": "c6d3052"
+}

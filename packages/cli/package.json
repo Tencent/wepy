@@ -1,0 +1,84 @@
+{
+  "name": "@wepy/cli",
+  "version": "2.0.0-alpha.28",
+  "main": "index.js",
+  "bin": {
+    "wepy": "bin/wepy.js"
+  },
+  "scripts": {
+    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wepyjs/wepy.git"
+  },
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wepyjs/wepy/issues"
+  },
+  "homepage": "https://github.com/wepyjs/wepy#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-1": "^6.16.0",
+    "chai": "^4.1.2"
+  },
+  "dependencies": {
+    "@babel/code-frame": "^7.0.0",
+    "acorn": "^5.7.4",
+    "acorn-dynamic-import": "^3.0.0",
+    "async": "^2.6.0",
+    "chalk": "^2.3.0",
+    "chokidar": "^3.0.1",
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "compare-versions": "^3.0.0",
+    "consolidate": "^0.15.0",
+    "css": "^2.2.4",
+    "download": "^6.2.5",
+    "download-git-repo": "^1.0.2",
+    "enhanced-resolve": "^4.1.0",
+    "fs-extra": "^8.1.0",
+    "handlebars": "^4.3.0",
+    "hash-sum": "^1.0.2",
+    "htmlhint": "^0.11.0",
+    "htmlparser2": "^3.9.2",
+    "ignore": "^3.2.0",
+    "inquirer": "^5.0.1",
+    "js-base64": "^2.1.9",
+    "loader-utils": "^1.1.0",
+    "metalsmith": "^2.3.0",
+    "mkdirp": "^0.5.1",
+    "multimatch": "^2.1.0",
+    "ncp": "^2.0.0",
+    "npmlog": "^4.1.2",
+    "ora": "^1.4.0",
+    "postcss": "^5.2.16",
+    "postcss-selector-parser": "^2.2.3",
+    "read-metadata": "^1.0.0",
+    "request": "^2.67.0",
+    "slash": "^3.0.0",
+    "throttle-debounce": "^2.1.0",
+    "tildify": "^1.2.0",
+    "time-ago": "^0.2.1",
+    "update-notifier": "^1.0.2",
+    "user-home": "^2.0.0",
+    "validate-npm-package-name": "^3.0.0",
+    "vue-template-compiler": "^2.5.16",
+    "vue-template-es2015-compiler": "^1.6.0",
+    "webpack-sources": "^1.1.0",
+    "tty-table": "^2.8.0"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/cli@2.0.0-alpha.28",
+  "_commitid": "e714739"
+}

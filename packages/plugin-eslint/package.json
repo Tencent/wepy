@@ -1,0 +1,26 @@
+{
+  "name": "@wepy/plugin-eslint",
+  "version": "0.1.5",
+  "description": "wepy eslint",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy",
+    "eslint"
+  ],
+  "author": {
+    "name": "dlhandsome"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": ">=1.6.0 <6.0.0"
+  },
+  "dependencies": {
+    "object-hash": "^1.3.1"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/plugin-eslint@0.1.5",
+  "_commitid": "251e67f"
+}

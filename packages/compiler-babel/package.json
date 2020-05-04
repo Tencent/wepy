@@ -1,0 +1,28 @@
+{
+  "name": "@wepy/compiler-babel",
+  "version": "2.0.5",
+  "description": "wepy compile babel",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha ./test/*.test.js"
+  },
+  "keywords": [
+    "babel"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.1.0"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/compiler-babel@2.0.5",
+  "_commitid": "e4c7adb",
+  "devDependencies": {
+    "acorn": "^5.4.1",
+    "acorn-dynamic-import": "^3.0.0",
+    "acorn-walk": "^7.1.1",
+    "babel-preset-env": "^1.7.0"
+  }
+}

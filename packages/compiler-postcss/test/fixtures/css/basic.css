@@ -1,0 +1,33 @@
+a {
+  color: red
+}
+b {
+  color: white;
+  background-color: red;
+}
+
+a {
+  /* direct nesting (& MUST be the first part of selector)*/
+}
+
+a span {
+  color: white;
+}
+
+a {
+  /* @nest rule (for complex nesting)*/
+}
+
+span a {
+  color: blue;
+}
+
+a {
+  /* media query automatic nesting*/
+}
+
+@media (min-width: 30em) {
+  a {
+    color: yellow
+  }
+}

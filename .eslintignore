@@ -1,9 +1,11 @@
 /lib
-scripts
+coverage/
 packages/*/node_modules
 packages/*/lib
 packages/*/dist
 packages/*/test/fixtures
 packages/*/coverage
 packages/wepy-cli/templates
+packages/cli/test/core/fixtures
 gulpfile.js
+

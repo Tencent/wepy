@@ -1,0 +1,36 @@
+.button {
+  &-ok {
+    foo: 1;
+  }
+  &-cancel {
+    foo: 1;
+  }
+
+  &-custom {
+    foo: 1;
+  }
+}
+
+.grand {
+  .parent {
+    & > & {
+      foo: 1;
+    }
+
+    & + & {
+      foo: 1;
+    }
+
+    & & {
+      foo: 1;
+    }
+
+    && {
+      foo: 1;
+    }
+
+    &, &ish {
+      foo: 1;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+.some-module,
+#it-works {
+  color: #f00;
+  transform: scale(2);
+}
+.some-module .sub-module {
+  color: #008000;
+}
+#it-works {
+  margin: 0;
+  transform: rotate(15deg);
+}

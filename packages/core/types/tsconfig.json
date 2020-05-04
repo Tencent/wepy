@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "lib": [
+            "es2015", "dom"
+        ],
+        "types": [
+            "miniprogram-api-typings"
+        ]
+    },
+    "include": [
+        "./*.ts"
+    ]
+}

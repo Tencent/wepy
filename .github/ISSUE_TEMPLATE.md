@@ -20,12 +20,12 @@
 
 * 已经在issue中搜索过，并且没有找到相似的issue或者解决方案。
 
-* *I searched issue already but I did't find any relevant issues or solutions.*
+* *I searched issue already but I didn't find any relevant issues or solutions.*
 
 
 * 完善下面模板中的信息
 
-* *Please filled out the following template*
+* *Please fill out the following template*
 
 
 
@@ -72,4 +72,6 @@ DELETE THE INFORMATION ABOVE(INCLUDE THE SEPARATION LINE) BEFORE YOU OPEN AN ISS
 
   ```
   // TODO(you): code or logs here to reproduce the problem
-  ```
+  // 可以使用小程序代码片段功能，方便其它人帮助你定位代码问题
+  // 详情可参考这里：https://developers.weixin.qq.com/miniprogram/dev/devtools/minicode.html
+  ```

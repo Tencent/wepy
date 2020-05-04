@@ -1,0 +1,29 @@
+{
+  "name": "@wepy/compiler-less",
+  "version": "2.0.7",
+  "description": "wepy compile less",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./test/helpers/lessc.js && mocha ./test/*.test.js"
+  },
+  "keywords": [
+    "less"
+  ],
+  "dependencies": {
+    "loader-utils": "^1.1.0"
+  },
+  "peerDependencies": {
+    "less": "^2.7.1 || ^3.5.0"
+  },
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "enhanced-resolve": "^4.0.0",
+    "fs-extra": "^6.0.1"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/compiler-less@2.0.7",
+  "_commitid": "174b2e1"
+}

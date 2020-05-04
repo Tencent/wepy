@@ -1,0 +1,23 @@
+{
+  "name": "@wepy/plugin-uglifyjs",
+  "version": "0.0.3",
+  "description": "wepy uglifyjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy",
+    "uglifyjs"
+  ],
+  "author": {
+    "name": "Gcaufy"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "uglify-js": "^3.4.9"
+  },
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/plugin-uglifyjs@0.0.3",
+  "_commitid": "4a8435b"
+}
