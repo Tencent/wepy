@@ -10,32 +10,48 @@ exports = module.exports = function() {
       let t = this.assets.type(file);
       let d = this.assets.data(file);
 
-      if (!t.wxs && t.npm && t.dep && !t.component) {
-        // do nothing, they are vendors
-      } else if (!t.wxs && t.component && !t.dep) {
-        // If it's a component and it's not a dependences
-        // do nothing
+      if (t.npm) {
+        if (t.type === 'weapp') {
+          if (!t.wxs && t.component) {
+            // it's a npm weapp component, like vant-weapp.
+            // output-components will generate the code for vant-weapp himself
+            return;
+          } else {
+            // it's in weapp component, maybe they require a lib in the component
+            // this will goes to build asserts.
+          }
+        } else if (!t.wxs && t.dep && !t.component) {
+          // it's a vendor, will go to vendor build
+          return;
+        }
       } else {
-        if (!t.wxs && !t.url) {
-          this.hook('script-dep-fix', d);
+        // it's a component and it's not a dependences
+        if (!t.wxs && t.component && !t.dep) {
+          return;
         }
-
-        let filepath = file;
-        let fileobj = path.parse(file);
-
-        // For typescript, it should output .js
-        if (d.outputFileName && d.outputFileName !== fileobj.base) {
-          filepath = path.join(fileobj.dir, d.outputFileName);
-        }
-
-        let targetFile = t.npm ? this.getModuleTarget(filepath) : this.getTarget(filepath);
-        result.push({
-          src: file,
-          targetFile: targetFile,
-          outputCode: d.source.source(),
-          encoding: d.encoding
-        });
       }
+      ///////////////////
+      // asserts build
+      //////////////////
+      if (!t.wxs && !t.url) {
+        this.hook('script-dep-fix', d);
+      }
+
+      let filePath = file;
+      let fileObj = path.parse(file);
+
+      // For typescript, it should output .js
+      if (d.outputFileName && d.outputFileName !== fileObj.base) {
+        filePath = path.join(fileObj.dir, d.outputFileName);
+      }
+
+      let targetFile = t.npm ? this.getModuleTarget(filePath) : this.getTarget(filePath);
+      result.push({
+        src: file,
+        targetFile: targetFile,
+        outputCode: d.source.source(),
+        encoding: d.encoding
+      });
     });
 
     return result;
