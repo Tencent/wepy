@@ -1,5 +1,5 @@
+import usePromisifyInstall from '../install';
 const expect = require('chai').expect;
-const usePromisify = require('../dist/index');
 
 function ensureAllTaskDone(taskList, done) {
   let tasks = {};
@@ -61,6 +61,14 @@ describe('wepy-use-promisify', function() {
       setTimeout(() => {
         option.success && option.success(option);
       });
+    },
+    checkSession: function(option) {
+      if (typeof option === 'function') {
+        throw new Error('option should not be a function');
+      }
+      setTimeout(() => {
+        option.success({ errMsg: 'checkSession:ok' });
+      });
     }
   };
 
@@ -69,10 +77,10 @@ describe('wepy-use-promisify', function() {
   });
 
   it('install', function(done) {
-    let task = ensureAllTaskDone(['test-request-catch', 'test-storage'], done);
+    let task = ensureAllTaskDone(['test-request-catch', 'test-storage', 'test-checkSession'], done);
 
     let wepy = {};
-    usePromisify.install(wepy);
+    usePromisifyInstall(wepy);
 
     expect(wepy.wx.request).is.a('function');
 
@@ -92,12 +100,17 @@ describe('wepy-use-promisify', function() {
     });
 
     expect(wepy.wx.getStorageSync('mydata')).to.deep.equal(__storage.mydata);
+
+    wepy.wx.checkSession().then(res => {
+      expect(res).to.deep.equal({ errMsg: 'checkSession:ok' });
+      task.done('test-checkSession');
+    });
   });
 
   it('install appends array list', function(done) {
     let wepy = {};
 
-    usePromisify.install(wepy, { someNewAPI: false, getStorage: true });
+    usePromisifyInstall(wepy, { someNewAPI: false, getStorage: true });
 
     wepy.wx.someNewAPI({ num: 1 }).then(res => {
       expect(res).to.equal(1);
@@ -107,7 +120,7 @@ describe('wepy-use-promisify', function() {
 
   it('install get rid apis', function(done) {
     let wepy = {};
-    usePromisify.install(wepy, ['getStorage']);
+    usePromisifyInstall(wepy, ['getStorage']);
     wepy.wx.getStorage({
       key: 'mydata',
       success: function(res) {
@@ -119,7 +132,7 @@ describe('wepy-use-promisify', function() {
 
   it('params fix testing', function(done) {
     let wepy = {};
-    usePromisify.install(wepy);
+    usePromisifyInstall(wepy);
 
     wepy.wx.setStorage('mydata', { b: 1 }).then(() => {
       wepy.wx.getStorage('mydata').then(res => {
@@ -144,7 +157,7 @@ describe('wepy-use-promisify', function() {
     };
 
     let wepy = {};
-    usePromisify.install(wepy);
+    usePromisifyInstall(wepy);
 
     let promisifyFn = wepy.promisify(isGreaterThan10, null, 'error-first');
 
@@ -176,7 +189,7 @@ describe('wepy-use-promisify', function() {
     };
 
     let wepy = {};
-    usePromisify.install(wepy);
+    usePromisifyInstall(wepy);
 
     let promisifyFn = wepy.promisify(isGreaterThan10);
 
@@ -218,7 +231,7 @@ describe('wepy-use-promisify', function() {
         done
       );
 
-    usePromisify.install(wepy);
+    usePromisifyInstall(wepy);
 
     for (let item of originParamsArr) {
       let filterParams = Object.values(item);

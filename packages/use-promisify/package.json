@@ -4,7 +4,7 @@
   "description": "wepy promisify",
   "main": "/dist/index.js",
   "scripts": {
-    "test": "NODE_ENV=testing find ./test | grep test.js | xargs mocha"
+    "test": "mocha --require esm ./test/**/*"
   },
   "author": {
     "name": "Gcaufy",
