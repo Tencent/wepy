@@ -61,6 +61,14 @@ describe('wepy-use-promisify', function() {
       setTimeout(() => {
         option.success && option.success(option);
       });
+    },
+    checkSession: function(option) {
+      if (typeof option === 'function') {
+        throw new Error('option should not be a function');
+      }
+      setTimeout(() => {
+        option.success({ errMsg: 'checkSession:ok' });
+      });
     }
   };
 
@@ -69,7 +77,7 @@ describe('wepy-use-promisify', function() {
   });
 
   it('install', function(done) {
-    let task = ensureAllTaskDone(['test-request-catch', 'test-storage'], done);
+    let task = ensureAllTaskDone(['test-request-catch', 'test-storage', 'test-checkSession'], done);
 
     let wepy = {};
     usePromisifyInstall(wepy);
@@ -92,6 +100,11 @@ describe('wepy-use-promisify', function() {
     });
 
     expect(wepy.wx.getStorageSync('mydata')).to.deep.equal(__storage.mydata);
+
+    wepy.wx.checkSession().then(res => {
+      expect(res).to.deep.equal({ errMsg: 'checkSession:ok' });
+      task.done('test-checkSession');
+    });
   });
 
   it('install appends array list', function(done) {
