@@ -14,6 +14,7 @@ const packages = [
   //'plugin-eslint',
   //'plugin-uglifyjs',
   //'redux',
+  'use-intercept',
   'use-promisify'
   //'x',
 ];
