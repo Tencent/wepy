@@ -22,7 +22,7 @@ function ensureAllTaskDone(taskList, done) {
   };
 }
 
-describe('wepy-use-promisify', function() {
+describe('wepy@use-promisify', function() {
   let __storage = {
     mydata: { a: 1 }
   };
