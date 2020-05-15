@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-stylus",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "wepy compile stylus",
   "main": "index.js",
   "scripts": {
@@ -23,5 +23,7 @@
     "enhanced-resolve": "^4.0.0",
     "fs-extra": "^6.0.1"
   },
-  "readme": "ERROR: No README data found!"
+  "readme": "ERROR: No README data found!",
+  "_id": "@wepy/compiler-stylus@2.0.1",
+  "_commitid": "4913bce"
 }
