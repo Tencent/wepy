@@ -10,11 +10,11 @@ const packages = [
   //'compiler-stylus',
   //'compiler-typescript',
   'core',
-  'plugin-define'
+  'plugin-define',
   //'plugin-eslint',
   //'plugin-uglifyjs',
   //'redux',
-  //'use-promisify',
+  'use-promisify'
   //'x',
 ];
 
