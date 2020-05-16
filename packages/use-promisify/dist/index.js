@@ -18,16 +18,15 @@ var promisify = function(fn, caller, type) {
       switch (type) {
         case 'weapp-style':
           fn.call(caller, Object.assign({}, args[0],
-            {
-              success: function success(res) {
+            {success: function success(res) {
                 resolve(res);
               },
               fail: function fail(err) {
                 reject(err);
-              }
-            }));
+              }}));
           break;
         case 'weapp-fix':
+          args = !args.length ? [{}] : args;
           fn.apply(caller, args.concat(resolve).concat(reject));
           break;
         case 'error-first':
@@ -133,7 +132,7 @@ var simplifyArgs = {
 
   // tabBar
   setTabBarBadge: 'index,text',
-  removeTabBarBadge: 'index',
+  removeTabBarBadge: 'idnex',
   showTabBarRedDot: 'index',
   hideTabBarRedDot: 'index',
   showTabBar: 'animation',
@@ -149,14 +148,7 @@ var simplifyArgs = {
   reLaunch: 'url',
 
   // pageScroll
-  pageScrollTo: 'scrollTop,duration',
-
-  // Open API
-  getSetting: 'withSubscriptions',
-  getUserInfo: 'withCredentials,lang',
-  authorize: 'scope',
-  requestSubscribeMessage: 'tmplIds',
-  showRedPackage: 'url'
+  pageScrollTo: 'scrollTop,duration'
 };
 
 var makeObj = function (arr) {
@@ -173,54 +165,56 @@ var makeObj = function (arr) {
  * wepy.use(wepy-use-promisify({nopromise1: true, promise: false}));
  * wepy.login().then().catch()
  */
-var index = {
-  version: "2.0.4",
-  install: function install(wepy, removeFromPromisify) {
-    var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
+function install(wepy, removeFromPromisify) {
+  var _wx = (wepy.wx = wepy.wx || Object.assign({}, wx));
 
-    var noPromiseMap = makeObj(noPromiseMethods);
-    if (removeFromPromisify) {
-      if (Array.isArray(removeFromPromisify)) {
-        noPromiseMap = Object.assign(noPromiseMap, makeObj(removeFromPromisify));
-      } else {
-        noPromiseMap = Object.assign(noPromiseMap, removeFromPromisify);
-      }
+  var noPromiseMap = {};
+  if (removeFromPromisify) {
+    if (Array.isArray(removeFromPromisify)) {
+      noPromiseMap = makeObj(noPromiseMethods.concat(removeFromPromisify));
+    } else {
+      noPromiseMap = Object.assign({}, makeObj(noPromiseMethods), removeFromPromisify);
     }
-
-    Object.keys(_wx).forEach(function (key) {
-      if (!noPromiseMap[key] && key.substr(0, 2) !== 'on' && key.substr(-4) !== 'Sync') {
-        _wx[key] = promisify(
-          function() {
-            var args = [], len = arguments.length;
-            while ( len-- ) args[ len ] = arguments[ len ];
-
-            var fixArgs = args[0];
-            var failFn = args.pop();
-            var successFn = args.pop();
-            if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
-              fixArgs = {};
-              var ps = simplifyArgs[key];
-              if (args.length) {
-                ps.split(',').forEach(function (p, i) {
-                  if (i in args) {
-                    fixArgs[p] = args[i];
-                  }
-                });
-              }
-            }
-            fixArgs.success = successFn;
-            fixArgs.fail = failFn;
-
-            return wx[key].call(wx, fixArgs);
-          },
-          _wx,
-          'weapp-fix'
-        );
-      }
-    });
-
-    wepy.promisify = promisify;
   }
+
+  Object.keys(_wx).forEach(function (key) {
+    if (!noPromiseMap[key] && key.substr(0, 2) !== 'on' && key.substr(-4) !== 'Sync') {
+      _wx[key] = promisify(
+        function() {
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+
+          var fixArgs = args[0];
+          var failFn = args.pop();
+          var successFn = args.pop();
+          if (simplifyArgs[key] && Object.prototype.toString.call(fixArgs) !== '[object Object]') {
+            fixArgs = {};
+            var ps = simplifyArgs[key];
+            if (args.length) {
+              ps.split(',').forEach(function (p, i) {
+                if (i in args) {
+                  fixArgs[p] = args[i];
+                }
+              });
+            }
+          }
+          fixArgs.success = successFn;
+          fixArgs.fail = failFn;
+
+          return wx[key].call(wx, fixArgs);
+        },
+        _wx,
+        'weapp-fix'
+      );
+    }
+  });
+
+  wepy.promisify = promisify;
+}
+
+var index = {
+  install: install,
+  version: "2.0.6"
 };
 
 module.exports = index;

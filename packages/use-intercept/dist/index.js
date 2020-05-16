@@ -104,7 +104,7 @@ function isPromise(obj) {
  * })
  */
 var index = {
-  version: "2.0.1",
+  version: "2.0.3",
   install: function install(wepy) {
     wepy.wx = wepy.wx || Object.assign({}, wx);
     wepy.intercept = intercept;

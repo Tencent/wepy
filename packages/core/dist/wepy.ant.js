@@ -19,7 +19,7 @@ var _Set; // $flow-disable-line
   _Set = Set;
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
-  _Set = (function () {
+  _Set = /*@__PURE__*/(function () {
     function Set() {
       this.set = Object.create(null);
     }
@@ -599,8 +599,6 @@ var ObserverPath = function ObserverPath(key, ob, parentOp) {
 };
 
 ObserverPath.prototype.traverseOp = function traverseOp (key, pathKeys, pathMap, handler) {
-    var this$1 = this;
-
   // 得到 newKey 和 pathMap 组合的路径集合
   var ref = getPathMap(key, pathKeys, pathMap);
     var combinePathMap = ref.combinePathMap;
@@ -611,7 +609,7 @@ ObserverPath.prototype.traverseOp = function traverseOp (key, pathKeys, pathMap,
 
   // 遍历 combinePathMap
   for (var i = 0; i < combinePathKeys.length; i++) {
-    var pathObj = handler(combinePathMap[combinePathKeys[i]], this$1);
+    var pathObj = handler(combinePathMap[combinePathKeys[i]], this);
     if (pathObj) {
       hasChange = true;
       handlePathKeys.push(pathObj.path);
@@ -718,7 +716,6 @@ methodsToPatch.forEach(function(method) {
   // cache original method
   var original = arrayProto[method];
   def(arrayMethods, method, function mutator() {
-    var this$1 = this;
     var args = [], len$1 = arguments.length;
     while ( len$1-- ) args[ len$1 ] = arguments[ len$1 ];
 
@@ -736,7 +733,7 @@ methodsToPatch.forEach(function(method) {
         case 'sort':
         case 'reverse':
           for (var i = 0; i < this.length; i++) {
-            delInvalidPaths(i, this$1[i], this$1);
+            delInvalidPaths(i, this[i], this);
           }
       }
     }
@@ -817,11 +814,9 @@ var Observer = function Observer(ref) {
  * value type is Object.
  */
 Observer.prototype.walk = function walk (key, obj) {
-    var this$1 = this;
-
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
-    defineReactive({ vm: this$1.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+    defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
     //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
   }
 };
@@ -830,10 +825,8 @@ Observer.prototype.walk = function walk (key, obj) {
  * Observe a list of Array items.
  */
 Observer.prototype.observeArray = function observeArray (key, items) {
-    var this$1 = this;
-
   for (var i = 0, l = items.length; i < l; i++) {
-    observe({ vm: this$1.vm, key: i, value: items[i], parent: items });
+    observe({ vm: this.vm, key: i, value: items[i], parent: items });
   }
 };
 
@@ -1483,13 +1476,11 @@ Watcher.prototype.addDep = function addDep (dep) {
  * Clean up for dependency collection.
  */
 Watcher.prototype.cleanupDeps = function cleanupDeps () {
-    var this$1 = this;
-
   var i = this.deps.length;
   while (i--) {
-    var dep = this$1.deps[i];
-    if (!this$1.newDepIds.has(dep.id)) {
-      dep.removeSub(this$1);
+    var dep = this.deps[i];
+    if (!this.newDepIds.has(dep.id)) {
+      dep.removeSub(this);
     }
   }
   var tmp = this.depIds;
@@ -1569,12 +1560,10 @@ Watcher.prototype.evaluate = function evaluate () {
  * Depend on all deps collected by this watcher.
  */
 Watcher.prototype.depend = function depend () {
-    var this$1 = this;
-
   if (Dep.target) {
     var i = this.deps.length;
     while (i--) {
-      this$1.deps[i].depend();
+      this.deps[i].depend();
     }
   }
 };
@@ -1583,8 +1572,6 @@ Watcher.prototype.depend = function depend () {
  * Remove self from all dependencies' subscriber list.
  */
 Watcher.prototype.teardown = function teardown () {
-    var this$1 = this;
-
   if (this.active) {
     // remove self from vm's watcher list
     // this is a somewhat expensive operation so we skip it
@@ -1594,13 +1581,13 @@ Watcher.prototype.teardown = function teardown () {
     }
     var i = this.deps.length;
     while (i--) {
-      this$1.deps[i].removeSub(this$1);
+      this.deps[i].removeSub(this);
     }
     this.active = false;
   }
 };
 
-var WepyComponent = (function (Base$$1) {
+var WepyComponent = /*@__PURE__*/(function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
@@ -1788,7 +1775,7 @@ function initComputed(vm, computed) {
   });
 }
 
-var WepyConstructor = (function (WepyComponent$$1) {
+var WepyConstructor = /*@__PURE__*/(function (WepyComponent$$1) {
   function WepyConstructor(opt) {
     if ( opt === void 0 ) opt = {};
 
@@ -1837,7 +1824,7 @@ function mixin(options) {
   $global.mixin = ($global.mixin || []).concat(options);
 }
 
-var WepyApp = (function (Base$$1) {
+var WepyApp = /*@__PURE__*/(function (Base$$1) {
   function WepyApp() {
     Base$$1.call(this);
   }
@@ -1849,7 +1836,7 @@ var WepyApp = (function (Base$$1) {
   return WepyApp;
 }(Base));
 
-var WepyComponent$1 = (function (Base$$1) {
+var WepyComponent$1 = /*@__PURE__*/(function (Base$$1) {
   function WepyComponent () {
     Base$$1.apply(this, arguments);
   }
@@ -1899,7 +1886,7 @@ WepyComponent$1.prototype.$nextTick = renderNextTick;
 
 // eslint-disable-next-line
 var wx = my;
-var WepyPage = (function (WepyComponent) {
+var WepyPage = /*@__PURE__*/(function (WepyComponent) {
   function WepyPage () {
     WepyComponent.apply(this, arguments);
   }

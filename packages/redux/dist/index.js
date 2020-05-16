@@ -69,8 +69,6 @@ var mapActions = function(actions) {
 function wepyInstall(wepy) {
   wepy.mixin({
     beforeCreate: function beforeCreate() {
-      var this$1 = this;
-
       var options = this.$options;
       if (options.store) {
         this.$store = typeof options.store === 'function' ? options.store() : options.store;
@@ -92,7 +90,7 @@ function wepyInstall(wepy) {
             if (!resValueMap) {
               resValueMap = Object.assign({}, computed[keys[i]].resValueMap);
             }
-            computed[keys[i]][this$1.$id] = resValueMap;
+            computed[keys[i]][this.$id] = resValueMap;
           }
         }
         wepy.observe({
@@ -146,7 +144,7 @@ function checkReduxComputed(options) {
 
 var index = {
   install: wepyInstall,
-  version: "2.0.2"
+  version: "2.0.3"
 };
 
 exports.default = index;
