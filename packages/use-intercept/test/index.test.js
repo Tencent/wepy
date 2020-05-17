@@ -1,6 +1,5 @@
-const expect = require('chai').expect;
-const useIntercept = require('../dist/index');
-// const usePromisify = require('../dist/index');
+const useInterceptInstall = require('../install');
+const { expect } = require('chai');
 
 function ensureAllTaskDone(taskList, done) {
   let tasks = {};
@@ -74,7 +73,7 @@ describe('@wepy/use-intercept', function() {
     let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-success', 'test-request-complete'], done);
 
     let wepy = {};
-    useIntercept.install(wepy);
+    useInterceptInstall(wepy);
 
     const timeNow = +new Date();
     const getStorage = wepy.intercept(wepy.wx.getStorage, {
@@ -120,7 +119,7 @@ describe('@wepy/use-intercept', function() {
     let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-success', 'test-request-complete'], done);
 
     let wepy = {};
-    useIntercept.install(wepy);
+    useInterceptInstall(wepy);
 
     const timeNow = +new Date();
     const getStorage = wepy.intercept(wepy.wx.getStorage, {
@@ -166,11 +165,63 @@ describe('@wepy/use-intercept', function() {
     });
   });
 
+  it('test callback config promise reject', function(done) {
+    let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-fail'], done);
+
+    let wepy = {};
+    useInterceptInstall(wepy);
+
+    const timeNow = +new Date();
+    const getStorage = wepy.intercept(wepy.wx.getStorage, {
+      config(p) {
+        p.t = timeNow;
+        expect(p.key).to.equal('sid');
+        return new Promise((_, reject) => {
+          setTimeout(() => {
+            task.done('test-getStorage-config');
+            reject(new Error('test'));
+          });
+        });
+      },
+      fail(e) {
+        return new Error(e.message + ' from interceptor');
+      },
+      success(res) {
+        res += ' world';
+        return res;
+      },
+      complete(res) {
+        res += ' complete';
+        return res;
+      }
+    });
+
+    expect(getStorage).is.a('function');
+
+    wx.setStorageSync({
+      key: 'sid',
+      data: 'hello'
+    });
+    getStorage({
+      key: 'sid',
+      success() {
+        throw new Error('never go here');
+      },
+      fail(e) {
+        expect(e.message).to.equal('test from interceptor');
+        task.done('test-getStorage-fail');
+      },
+      complete() {
+        throw new Error('never call complete when interceptor config reject');
+      }
+    });
+  });
+
   it('test callback failed', function(done) {
     let task = ensureAllTaskDone(['test-request-config', 'test-request-fail', 'test-request-complete'], done);
 
     let wepy = {};
-    useIntercept.install(wepy);
+    useInterceptInstall(wepy);
 
     const timeNow = +new Date();
     const request = wepy.intercept(wepy.wx.request, {
@@ -207,152 +258,6 @@ describe('@wepy/use-intercept', function() {
       }
     });
   });
-
-  /*
-  it('install appends array list', function(done) {
-    let wepy = {};
-
-    usePromisify.install(wepy, { someNewAPI: false, getStorage: true });
-
-    wepy.wx.someNewAPI({ num: 1 }).then(res => {
-      expect(res).to.equal(1);
-      done();
-    });
-  });
-
-  it('install get rid apis', function(done) {
-    let wepy = {};
-    usePromisify.install(wepy, ['getStorage']);
-    wepy.wx.getStorage({
-      key: 'mydata',
-      success: function(res) {
-        expect(res).is.deep.equal(__storage.mydata);
-        done();
-      }
-    });
-  });
-
-  it('params fix testing', function(done) {
-    let wepy = {};
-    usePromisify.install(wepy);
-
-    wepy.wx.setStorage('mydata', { b: 1 }).then(() => {
-      wepy.wx.getStorage('mydata').then(res => {
-        expect(res).to.deep.equal({ b: 1 });
-        expect(__storage.mydata).to.deep.equal(res);
-        done();
-      });
-    });
-  });
-
-  it('test err-first promisify', function(done) {
-    let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
-
-    let isGreaterThan10 = function(num, callback) {
-      setTimeout(function() {
-        if (num > 10) {
-          callback(null, true);
-        } else {
-          callback(new Error('wrong'), false);
-        }
-      }, 300);
-    };
-
-    let wepy = {};
-    usePromisify.install(wepy);
-
-    let promisifyFn = wepy.promisify(isGreaterThan10, null, 'error-first');
-
-    promisifyFn(11).then(res => {
-      expect(res).to.equal(true);
-      task.done('test-greater');
-    });
-
-    promisifyFn(9)
-      .then(() => {
-        throw new Error('should not run here');
-      })
-      .catch(e => {
-        expect(e).is.an('error');
-        expect(e.message).to.equal('wrong');
-        task.done('test-less');
-      });
-  });
-
-  it('test weapp-style promisify', function(done) {
-    let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
-
-    let isGreaterThan10 = function(option) {
-      if (option.num > 10) {
-        option.success(true);
-      } else {
-        option.fail(new Error('wrong'));
-      }
-    };
-
-    let wepy = {};
-    usePromisify.install(wepy);
-
-    let promisifyFn = wepy.promisify(isGreaterThan10);
-
-    promisifyFn({ num: 11 }).then(res => {
-      expect(res).to.equal(true);
-      task.done('test-greater');
-    });
-
-    promisifyFn({ num: 9 })
-      .then(() => {
-        throw new Error('should not run here');
-      })
-      .catch(e => {
-        expect(e).is.an('error');
-        expect(e.message).to.equal('wrong');
-        task.done('test-less');
-      });
-  });
-
-  it('test simplify', function(done) {
-    let wepy = {},
-      originParamsArr = [
-        {
-          itemList: 0,
-          itemColor: 0
-        },
-        {
-          itemList: ['A', 'B', 'C'],
-          itemColor: '#000'
-        },
-        {
-          itemList: 'test?id=1'
-        }
-      ],
-      task = ensureAllTaskDone(
-        (function() {
-          return originParamsArr.map((item, index) => index);
-        })(),
-        done
-      );
-
-    usePromisify.install(wepy);
-
-    for (let item of originParamsArr) {
-      let filterParams = Object.values(item);
-      wepy.wx
-        .showActionSheet(...filterParams)
-        .then(res => {
-          delete res.success;
-          delete res.fail;
-          expect(res).to.deep.equal(item);
-          task.done(originParamsArr.indexOf(item));
-        })
-        .catch(e => {
-          // eslint-disable-next-line no-console
-          console.log(e);
-        });
-    }
-  });
-
-  */
 
   after(function() {
     delete global.wx;
