@@ -154,7 +154,7 @@ GitHub 掘金版、
 
  WePY 交流群已满 500 人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
- ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/32309877-8bded674-bfc9-11e7-9daa-9ba4012690fb.png)
+ ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
              
 ### 参与贡献
 
