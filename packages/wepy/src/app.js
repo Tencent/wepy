@@ -182,10 +182,19 @@ export default class {
                                         bak[k] = obj[k];
                                         obj[k] = (res) => {
                                             if (self.$interceptors[key] && self.$interceptors[key][k]) {
+                                                if (key === 'request') {
+                                                    Object.assign(res, { config: obj })
+                                                }
                                                 res = self.$interceptors[key][k].call(self, res);
                                             }
                                             if (k === 'success')
-                                                resolve(res);
+                                                Promise.resolve(res)
+                                                    .then(function(res) {
+                                                        resolve(res)
+                                                    })
+                                                    .catch(function(reason) {
+                                                        reject(reason)
+                                                    })
                                             else if (k === 'fail')
                                                 reject(res);
                                         };
