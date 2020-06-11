@@ -50,14 +50,14 @@ export interface ComponentOptions<
   V extends WepyInstace,
   Data=DefaultData<V>,
   Methods=DefaultMethods<V>,
-  // Hooks=DefaultHooks<V>,
+  Hooks=DefaultHooks<V>,
   Computed=DefaultComputed,
   PropsDef=PropsDefinition<DefaultProps>,
   Props=DefaultProps> extends wepy.Page.PageInstance {
   data?: Data;
   props?: PropsDef;
   propsData?: object;
-  // hooks?: Hooks;
+  hooks?: Hooks;
   computed?: Accessors<Computed>;
   methods?: Methods;
   watch?: Record<string, WatchOptionsWithHandler<any> | WatchHandler<any> | string>;
