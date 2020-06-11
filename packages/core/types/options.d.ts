@@ -19,18 +19,18 @@ type DataDef<Data, Props, V> = Data | ((this: Readonly<Props> & V) => Data)
 /**
  * This type should be used when an array of strings is used for a component's `props` value.
  */
-export type ThisTypedComponentOptionsWithArrayProps<V extends WepyInstace, Data, Methods, Computed, PropNames extends string> =
+export type ThisTypedComponentOptionsWithArrayProps<V extends WepyInstace, Data, Methods, Hooks, Computed, PropNames extends string> =
   object &
-  ComponentOptions<V, DataDef<Data, Record<PropNames, any>, V>, Methods, Computed, PropNames[], Record<PropNames, any>> &
-  ThisType<CombineWepyInstance<V, Data, Methods, Computed, Readonly<Record<PropNames, any>>>>;
+  ComponentOptions<V, DataDef<Data, Record<PropNames, any>, V>, Methods, Hooks, Computed, PropNames[], Record<PropNames, any>> &
+  ThisType<CombineWepyInstance<V, Data, Methods, Hooks, Computed, Readonly<Record<PropNames, any>>>>;
 
 /**
  * This type should be used when an object mapped to `PropOptions` is used for a component's `props` value.
  */
-export type ThisTypedComponentOptionsWithRecordProps<V extends WepyInstace, Data, Methods, Computed, Props> =
+export type ThisTypedComponentOptionsWithRecordProps<V extends WepyInstace, Data, Methods, Hooks, Computed, Props> =
   object &
-  ComponentOptions<V, DataDef<Data, Props, V>, Methods, Computed, RecordPropsDefinition<Props>, Props> &
-  ThisType<CombineWepyInstance<V, Data, Methods, Computed, Readonly<Props>>>;
+  ComponentOptions<V, DataDef<Data, Props, V>, Methods, Hooks, Computed, RecordPropsDefinition<Props>, Props> &
+  ThisType<CombineWepyInstance<V, Data, Methods, Hooks, Computed, Readonly<Props>>>;
 
 type DefaultData<V> =  object | ((this: V) => object);
 type DefaultProps = Record<string, any>;
@@ -50,14 +50,14 @@ export interface ComponentOptions<
   V extends WepyInstace,
   Data=DefaultData<V>,
   Methods=DefaultMethods<V>,
-  // Hooks=DefaultHooks<V>,
+  Hooks=DefaultHooks<V>,
   Computed=DefaultComputed,
   PropsDef=PropsDefinition<DefaultProps>,
   Props=DefaultProps> extends wepy.Page.PageInstance {
   data?: Data;
   props?: PropsDef;
   propsData?: object;
-  // hooks?: Hooks;
+  hooks?: Hooks;
   computed?: Accessors<Computed>;
   methods?: Methods;
   watch?: Record<string, WatchOptionsWithHandler<any> | WatchHandler<any> | string>;
