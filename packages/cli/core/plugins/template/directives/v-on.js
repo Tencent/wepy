@@ -145,6 +145,29 @@ exports = module.exports = function() {
   });
 
   this.register('template-parse-ast-attr-v-on.wxs', function({ item, name, expr, event, scope, ctx }) {
+    for (let key in item.attribs) {
+      if (item.attribs[key] === expr) {
+        let modifier = key.slice(-4);
+        if (modifier !== '.wxs') {
+          let calleeChunks = expr.split('.');
+          this.hookUnique(
+            'error-handler',
+            'template',
+            {
+              ctx: ctx,
+              message: `seems '${calleeChunks[0]}' is a wxs module, please manully add a  .wxs modifier for the event.`,
+              type: 'warn',
+              title: 'v-on'
+            },
+            {
+              item: item,
+              attr: name,
+              expr: expr
+            }
+          );
+        }
+      }
+    }
     event.expr = `{{ ${event.parsed.callee.name} }}`;
     event.proxy = false;
     event.params = event.parsed.params.map(p => {
@@ -209,22 +232,6 @@ exports = module.exports = function() {
         wxsBlock.find(item => item.attrs.module === calleeChunks[0])
       ) {
         modifiers.wxs = true;
-
-        this.hookUnique(
-          'error-handler',
-          'template',
-          {
-            ctx: ctx,
-            message: `seems '${calleeChunks[0]}' is a wxs module, please manully add a  .wxs modifier for the event.`,
-            type: 'warn',
-            title: 'v-on'
-          },
-          {
-            item: item,
-            attr: name,
-            expr: expr
-          }
-        );
       }
     }
 
