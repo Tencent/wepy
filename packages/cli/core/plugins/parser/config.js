@@ -125,9 +125,8 @@ exports = module.exports = function() {
     return Promise.all(plist).then(() => {
       if (ctx.type === 'app') {
         appUsingComponents = parseComponents;
-        delete config.usingComponents;
       } else {
-        config.usingComponents = Object.assign({}, resolvedUsingComponents, appDefinedComponents);
+        config.usingComponents = Object.assign({}, resolvedUsingComponents);
       }
 
       ctx.sfc.config.parsed = {
