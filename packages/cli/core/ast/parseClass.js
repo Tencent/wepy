@@ -2,6 +2,7 @@ const walk = require('acorn/dist/walk');
 const toAST = require('./toAST');
 
 exports = module.exports = function parseClass(source) {
+  source = '(' + source + ')';
   const ast = toAST(source);
   let result = [];
   walk.ancestor(ast, {
