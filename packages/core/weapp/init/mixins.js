@@ -64,7 +64,7 @@ function initStrats() {
     key,
     data
   ) {
-    option[key] = simpleMerge(option[key], data);
+    option[key] = simpleMerge(data, option[key]);
   };
 
   WEAPP_LIFECYCLE.forEach(lifecycle => {
