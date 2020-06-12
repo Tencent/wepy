@@ -16,7 +16,10 @@ export const WEAPP_PAGE_LIFECYCLE = [
 
 export const WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached'];
 
+export const WEAPP_COMPONENT_PAGE_LIFECYCLE = ['show', 'hide', 'resize'];
+
 export const WEAPP_LIFECYCLE = []
   .concat(WEAPP_APP_LIFECYCLE)
   .concat(WEAPP_PAGE_LIFECYCLE)
-  .concat(WEAPP_COMPONENT_LIFECYCLE);
+  .concat(WEAPP_COMPONENT_LIFECYCLE)
+  .concat(WEAPP_COMPONENT_PAGE_LIFECYCLE);
