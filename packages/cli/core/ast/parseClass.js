@@ -33,5 +33,5 @@ exports = module.exports = function parseClass(source) {
     }
   });
 
-  return result.length === 1 ? result[0] : result;
+  return result;
 };
