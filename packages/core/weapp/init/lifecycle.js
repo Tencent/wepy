@@ -10,7 +10,12 @@ import { initComputed } from './computed';
 import { initMethods } from './methods';
 import { isArr, isFunc } from '../../shared/index';
 import Dirty from '../class/Dirty';
-import { WEAPP_APP_LIFECYCLE, WEAPP_PAGE_LIFECYCLE, WEAPP_COMPONENT_LIFECYCLE } from '../../shared/index';
+import {
+  WEAPP_APP_LIFECYCLE,
+  WEAPP_PAGE_LIFECYCLE,
+  WEAPP_COMPONENT_LIFECYCLE,
+  WEAPP_COMPONENT_PAGE_LIFECYCLE
+} from '../../shared/index';
 import { warn } from '../util/index';
 
 let comid = 0;
@@ -157,6 +162,18 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
       return callUserMethod(vm, vm.$options, 'attached', args);
     };
+
+    // 增加组件页面声明周期
+    output.pageLifetimes = {};
+    const lifecycle = getLifecycycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
+
+    lifecycle.forEach(function(k) {
+      if (!output.pageLifetimes[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+        output.pageLifetimes[k] = function(...args) {
+          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+        };
+      }
+    });
   } else {
     output.attached = function(...args) {
       // Page attached
