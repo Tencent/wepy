@@ -20,6 +20,11 @@ const npmTraverseFileMap = {};
 
 exports = module.exports = function() {
   this.register('wepy-parser-dep', function(node, ctx, dep) {
+    const file = dep.module;
+    if (/.(?:png|jpg|jpeg|gif|svg)$/.test(file)) {
+      return Promise.resolve(this.hookUnique('template-parse-ast-attr-src', { expr: file, ctx }).attrs.src);
+    }
+
     return this.resolvers.normal.resolve({ issuer: ctx.file }, path.dirname(ctx.file), dep.module, {}).then(rst => {
       let npm = rst.meta.descriptionFileRoot !== this.context;
 
