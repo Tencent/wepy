@@ -22,5 +22,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/plugin-eslint@0.1.5",
-  "_commitid": "251e67f"
+  "_commitid": "251e67f",
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

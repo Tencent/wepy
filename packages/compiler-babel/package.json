@@ -24,5 +24,6 @@
     "acorn-dynamic-import": "^3.0.0",
     "acorn-walk": "^7.1.1",
     "babel-preset-env": "^1.7.0"
-  }
+  },
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

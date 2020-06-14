@@ -31,5 +31,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/babel-plugin-import-regenerator@0.0.5",
-  "_commitid": "ebdaf08"
+  "_commitid": "ebdaf08",
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

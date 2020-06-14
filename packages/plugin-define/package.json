@@ -21,5 +21,6 @@
   "_commitid": "fb07fd4",
   "devDependencies": {
     "@wepy/cli": "^2.1.0-alpha.1"
-  }
+  },
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

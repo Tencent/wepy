@@ -18,5 +18,6 @@
     "typescript": "^3.3.3"
   },
   "_id": "@wepy/compiler-typescript@2.0.2",
-  "_commitid": "eae8bf5"
+  "_commitid": "eae8bf5",
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

@@ -25,5 +25,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/compiler-stylus@2.0.1",
-  "_commitid": "4913bce"
+  "_commitid": "4913bce",
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }

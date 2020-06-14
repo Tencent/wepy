@@ -22,5 +22,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/compiler-sass@2.0.3",
-  "_commitid": "cf96591"
+  "_commitid": "cf96591",
+  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
 }
