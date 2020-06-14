@@ -52,6 +52,7 @@
     "jsonlint": "^1.6.2",
     "learn": "^0.1.5",
     "lerna": "^3.22.1",
+    "lerna-changelog": "^1.0.1",
     "less": "^3.9.0",
     "mkpath": "^1.0.0",
     "mocha": "^6.1.4",
