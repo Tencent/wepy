@@ -1,4 +1,4 @@
 <view class="default {{ [ express - 1 === 0 ? 'test' : '',has ? 'has' : '' ] }}"></view>
 <view class=" {{ [ test ? 'test' : '',has ? 'has' : '',something ] }}"></view>
 <view class="default {{ [ item.selected ? 'selected' : '',has ? 'has' : '' ] }}"></view>
-<view class="default {{ [ value >= 0 ? 'increase': 'decrease' ] }}"</view>
+<view class="default {{ [ (value >= 0 ? 'increase': 'decrease'); ] }}"</view>
