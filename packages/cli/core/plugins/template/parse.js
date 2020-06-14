@@ -38,11 +38,13 @@ const parseModifiers = (name = '') => {
 const decodingMap = {
   '&lt;': '<',
   '&gt;': '>',
-  '&amp;': '&',
+  '&amp;': '&'
 };
 
 function decodeAttr(value) {
-  return value.replace(/&(?:lt|gt|amp);/g, function (match) { return decodingMap[match]; })
+  return value.replace(/&(?:lt|gt|amp);/g, function(match) {
+    return decodingMap[match];
+  });
 }
 
 exports = module.exports = function() {

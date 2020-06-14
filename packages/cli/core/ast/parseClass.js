@@ -29,7 +29,7 @@ exports = module.exports = function parseClass(source) {
         }
       });
     },
-    ConditionalExpression(node) {
+    ConditionalExpression() {
       result.push(source);
     }
   });
