@@ -4,7 +4,6 @@ const toAST = require('./toAST');
 exports = module.exports = function parseClass(source) {
   source = '(' + source + ');';
   const ast = toAST(source);
-
   let result = [];
   walk.ancestor(ast, {
     ObjectExpression(node) {
@@ -29,7 +28,11 @@ exports = module.exports = function parseClass(source) {
           result.push(p.name);
         }
       });
+    },
+    ConditionalExpression(node) {
+      result.push(source);
     }
   });
+
   return result;
 };
