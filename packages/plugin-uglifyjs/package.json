@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-uglifyjs",
-  "version": "0.0.3",
+  "version": "2.1.0-alpha.1",
   "description": "wepy uglifyjs",
   "main": "index.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@wepy/babel-plugin-import-regenerator",
-  "version": "0.0.5",
+  "version": "2.1.0-alpha.1",
   "description": "A babel plugin to add a global generator import",
   "main": "index.js",
   "scripts": {
