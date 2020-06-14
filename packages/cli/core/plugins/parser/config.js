@@ -61,7 +61,7 @@ exports = module.exports = function() {
           const relativePath = path.relative(path.dirname(ctx.file), targetPath);
           const parsedPath = path.parse(relativePath);
           // Remove wpy ext
-          appDefinedComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name).replace(/\\/g, '/');
+          appDefinedComponents[comp.name] = slash(path.join(parsedPath.dir, parsedPath.name));
         }
       });
     }

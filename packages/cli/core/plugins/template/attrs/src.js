@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const ReplaceSource = require('webpack-sources').ReplaceSource;
 const RawSource = require('webpack-sources').RawSource;
+const slash = require('slash');
 
 exports = module.exports = function() {
   this.register('url-to-module', function urlToModule(url) {
@@ -35,7 +36,7 @@ exports = module.exports = function() {
 
       if (path.sep === '\\') {
         // It's Win, change path to posix path
-        parsed.url = parsed.url.replace(/\\/g, '/');
+        parsed.url = slash(parsed.url);
       }
 
       const code = fs.readFileSync(parsed.file, encoding);
