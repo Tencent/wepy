@@ -1,9 +1,8 @@
 {
-  "lerna": "2.0.0",
   "packages": [
     "packages/*"
   ],
-  "version": "independent",
+  "version": "2.1.0-alpha.0",
   "command": {
     "publish": {
       "commitHooks": false
