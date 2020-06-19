@@ -100,7 +100,7 @@ export function patchMixins(output, option, mixins) {
       initStrats();
     }
     for (let k in mixins) {
-      strat = getStrategy(k);
+      getStrategy(k);
       let strat = strats[k] || defaultStrat;
       strat(output, option, k, mixins[k]);
     }
