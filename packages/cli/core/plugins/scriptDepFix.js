@@ -58,7 +58,7 @@ exports = module.exports = function() {
           } else if (!depMod.npm && depMod.component) {
             let relativePath = path.relative(path.dirname(parsed.file), modFilePath);
             let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
-            relativePath = slash(relativePath);
+            relativePath = slash(relativePath.replace(reg, '.js'));
             replaceMent = `require('./${relativePath}')`;
           } else {
             if (typeof depMod.vendorId === 'number') {
