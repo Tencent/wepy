@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-sass",
-  "version": "2.1.0-alpha.3",
+  "version": "2.1.0-alpha.4",
   "description": "wepy compile sass",
   "main": "index.js",
   "scripts": {
