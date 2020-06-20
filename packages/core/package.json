@@ -1,6 +1,6 @@
 {
   "name": "@wepy/core",
-  "version": "2.1.0-alpha.2",
+  "version": "2.1.0-alpha.3",
   "main": "./dist/wepy.js",
   "typings": "types/index.d.ts",
   "scripts": {
@@ -22,5 +22,5 @@
   "dependencies": {
     "miniprogram-api-typings": "^2.10.3-1"
   },
-  "gitHead": "992e3d242e4a3aa112980d01f97c2ac59852d7e5"
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }
