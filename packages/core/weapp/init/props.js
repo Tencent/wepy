@@ -65,7 +65,7 @@ export function patchProps(output, props) {
       // props.optionalTypes
       if (!isUndef(prop.optionalTypes)) {
         if (isArr(prop.optionalTypes)) {
-          newProp.optionalTypes = prop.optionalTypes
+          newProp.optionalTypes = prop.optionalTypes;
         }
       }
       // TODO
