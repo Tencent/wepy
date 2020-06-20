@@ -4,9 +4,11 @@
   ],
   "npmClient": "cnpm",
   "version": "2.1.0-alpha.2",
+  "message": "chore(release): publish",
   "command": {
     "publish": {
-      "commitHooks": false
+      "commitHooks": false,
+      "message": "chore(release): publish %s"
     }
   }
 }
