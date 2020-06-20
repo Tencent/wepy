@@ -1,4 +1,5 @@
 const path = require('path');
+const slash = require('slash');
 
 exports = module.exports = function() {
   /*
@@ -57,7 +58,7 @@ exports = module.exports = function() {
           } else if (!depMod.npm && depMod.component) {
             let relativePath = path.relative(path.dirname(parsed.file), modFilePath);
             let reg = new RegExp('\\' + this.options.wpyExt + '$', 'i');
-            relativePath = relativePath.replace(reg, '.js').replace(/\\/g, '/');
+            relativePath = slash(relativePath.replace(reg, '.js'));
             replaceMent = `require('./${relativePath}')`;
           } else {
             if (typeof depMod.vendorId === 'number') {
@@ -72,7 +73,7 @@ exports = module.exports = function() {
               } else {
                 relativePath = path.relative(path.dirname(parsed.file), npmfile);
               }
-              relativePath = relativePath.replace(/\\/g, '/');
+              relativePath = slash(relativePath);
               replaceMent = `require('./${relativePath}')(${depMod.vendorId})`;
             } else {
               replaceMent = `require('./${dep.module}')`;
