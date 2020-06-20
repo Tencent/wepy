@@ -18,6 +18,7 @@
     "view": "./node_modules/.bin/verpub view -l",
     "release": "./node_modules/.bin/verpub publish",
     "release:dry": "./node_modules/.bin/verpub publish --dry-run",
+    "changelog": "lerna-changelog",
     "commit": "git cz"
   },
   "repository": {
