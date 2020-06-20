@@ -2,6 +2,7 @@
   "packages": [
     "packages/*"
   ],
+  "npmClient": "cnpm",
   "version": "2.1.0-alpha.1",
   "command": {
     "publish": {
