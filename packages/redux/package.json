@@ -1,6 +1,6 @@
 {
   "name": "@wepy/redux",
-  "version": "2.1.0-alpha.1",
+  "version": "2.1.0-alpha.3",
   "description": "Redux in WePY",
   "main": "dist/index.js",
   "scripts": {
@@ -26,5 +26,5 @@
   "readme": "README.md",
   "_id": "@wepy/redux@2.0.3",
   "_commitid": "a423f8d",
-  "gitHead": "3a26c75210329f4efed363ed28dfa473d97898c7"
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }
