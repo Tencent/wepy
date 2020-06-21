@@ -36,7 +36,7 @@ function release(version, tag) {
 
   const cmds = ['lerna', 'version', version, '--yes', '--conventional-commits', '--create-release', 'github'];
   if (tag) {
-    cmds.push('--dist-tag', tag);
+    // cmds.push('--dist-tag', tag);
   }
   console.log('EXEC: ' + cmds.join(' '));
 

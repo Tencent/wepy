@@ -21,9 +21,18 @@ jobs:
       with:
         node-version: 12
         registry-url: https://registry.npmjs.org/
+    - run: git reset --hard
+    - run: |
+        git config --global user.email "gcaufy@gmail.com"
+        git config --global user.name "WePY CI"
     - run: npm install
     - run: npm run bootstrap
-    - run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
+    - run: git status
+    - run: git reset --hard
+    - name: Version
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
     - run: npx lerna publish
     - run: git status
     - run: git log
