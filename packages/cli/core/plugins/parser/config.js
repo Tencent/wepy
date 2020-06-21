@@ -38,7 +38,6 @@ exports = module.exports = function() {
     }
 
     let userDefineComponents = config.usingComponents || {};
-    let appDefinedComponents = {};
     let componentKeys = Object.keys(config.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
@@ -60,8 +59,6 @@ exports = module.exports = function() {
           }
           const relativePath = path.relative(path.dirname(ctx.file), targetPath);
           const parsedPath = path.parse(relativePath);
-          // Remove wpy ext
-          appDefinedComponents[comp.name] = path.join(parsedPath.dir, parsedPath.name);
         }
       });
     }
