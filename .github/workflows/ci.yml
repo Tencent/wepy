@@ -1,9 +1,7 @@
 name: WePY CI Build
 
-on:
-  push:
-    branches:
-      - 2.0.x
+on: [push, pull_request]
+
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -28,3 +26,29 @@ jobs:
       uses: coverallsapp/github-action@master
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    if: github.event_name == 'push' && startsWith(github.event.head_commit.message, 'release:')
+    name: Release
+    runs-on: ubuntu-18.04
+    needs: [build]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 12
+        registry-url: https://registry.npmjs.org/
+    - run: git reset --hard
+    - run: |
+        git config --global user.email "gcaufy@gmail.com"
+        git config --global user.name "WePY CI"
+    - run: npm install
+    - run: npm run bootstrap
+    - run: git status
+    - run: git checkout .
+    - name: NPM release
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: node ./scripts/ci-release.js "${{ github.event.head_commit.message }}"
+    - run: git status
+    - run: git log
