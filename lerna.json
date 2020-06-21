@@ -2,7 +2,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "2.1.0-alpha.4",
+  "version": "2.1.0-alpha.5",
   "message": "chore(release): publish",
   "command": {
     "publish": {

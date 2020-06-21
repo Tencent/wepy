@@ -1,6 +1,6 @@
 {
   "name": "@wepy/x",
-  "version": "2.1.0-alpha.4",
+  "version": "2.1.0-alpha.5",
   "description": "Vuex in WePY",
   "main": "dist/index.js",
   "scripts": {
