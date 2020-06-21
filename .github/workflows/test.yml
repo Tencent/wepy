@@ -31,10 +31,10 @@ jobs:
     - run: git checkout .
     - name: NPM release
       env:
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+        cat ~/.npmrc
         node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
     - run: git status
     - run: git log
