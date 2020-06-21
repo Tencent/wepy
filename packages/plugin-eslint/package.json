@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-eslint",
-  "version": "2.1.0-alpha.5",
+  "version": "2.1.0-alpha.6",
   "description": "wepy eslint",
   "main": "index.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@wepy/redux",
-  "version": "2.1.0-alpha.5",
+  "version": "2.1.0-alpha.6",
   "description": "Redux in WePY",
   "main": "dist/index.js",
   "scripts": {
