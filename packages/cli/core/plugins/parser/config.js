@@ -57,8 +57,6 @@ exports = module.exports = function() {
           if (comp.prefix === 'module') {
             targetPath = comp.target;
           }
-          const relativePath = path.relative(path.dirname(ctx.file), targetPath);
-          const parsedPath = path.parse(relativePath);
         }
       });
     }

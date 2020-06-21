@@ -22,14 +22,5 @@
     "no-empty": 0,
     "yoda": 0,
     "no-new-func": 0
-  },
-  "globals": {
-    App,
-    Page,
-    wx,
-    __VERSION__,
-    Component
-  },
-  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
-  plugins: ['prettier']
+  }
 }
