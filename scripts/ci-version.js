@@ -34,7 +34,7 @@ function parseMsg(msg) {
 function release(version, tag) {
   console.log(`Ready to release a ${version} version${tag ? ' on ' + tag : ''}.`);
 
-  const cmds = ['lerna', 'version', '--conventional-commits', version];
+  const cmds = ['lerna', 'version', version, '--yes', '--conventional-commits', '--create-release', 'github'];
   if (tag) {
     cmds.push('--dist-tag', tag);
   }
