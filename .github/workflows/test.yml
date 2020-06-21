@@ -33,8 +33,6 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cat ~/.npmrc
-        node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
+      run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
     - run: git status
     - run: git log
