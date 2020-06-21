@@ -29,9 +29,12 @@ jobs:
     - run: npm run bootstrap
     - run: git status
     - run: git checkout .
-    - name: Version
+    - name: NPM release
       env:
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+        node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
     - run: git status
     - run: git log

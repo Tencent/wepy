@@ -53,7 +53,7 @@ function release(version, tag) {
   execa('npx', cmds)
     .then(res => console.log(res.stdout))
     .then(() => {
-      const cmds = ['lerna', 'exec', '--', 'npm', 'publish'];
+      const cmds = ['lerna', 'exec', '--', 'npm', 'publish', '--access', 'public'];
       if (tag) {
         cmds.push('--tag', tag);
       }
