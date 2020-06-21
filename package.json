@@ -18,6 +18,7 @@
     "view": "./node_modules/.bin/verpub view -l",
     "release": "./node_modules/.bin/verpub publish",
     "release:dry": "./node_modules/.bin/verpub publish --dry-run",
+    "changelog": "lerna-changelog",
     "commit": "git cz"
   },
   "repository": {
@@ -51,7 +52,8 @@
     "istanbul": "^0.4.5",
     "jsonlint": "^1.6.2",
     "learn": "^0.1.5",
-    "lerna": "^3.15.0",
+    "lerna": "^3.22.1",
+    "lerna-changelog": "^1.0.1",
     "less": "^3.9.0",
     "mkpath": "^1.0.0",
     "mocha": "^6.1.4",
@@ -90,7 +92,6 @@
       }
     }
   },
-  "dependencies": {},
   "engines": {
     "node": ">=8.9.4"
   },
@@ -99,6 +100,15 @@
       "pre-commit": "npm run lint",
       "pre-push": "npm run test",
       "commit-msg": "npx validate-commit-msg"
+    }
+  },
+  "changelog": {
+    "labels": {
+      "feat": ":rocket: New Feature",
+      "bug": ":bug: Bug Fix",
+      "doc": ":memo: Documentation",
+      "internal": ":house: Internal",
+      "breaking": ":boom: Breaking Change"
     }
   },
   "config": {

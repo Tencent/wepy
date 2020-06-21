@@ -86,7 +86,7 @@ export interface Vue {
   $nextTick(): Promise<void>;
 }
 
-export type CombineWepyInstance<Instance extends WepyInstace, Data, Methods, Computed, Props> =  Data & Methods & Computed & Props & Instance;
+export type CombineWepyInstance<Instance extends WepyInstace, Data, Methods, Hooks, Computed, Props> =  Data & Methods & Hooks & Computed & Props & Instance;
 
 export interface WepyConfiguration {
   silent: boolean;
@@ -97,12 +97,12 @@ export interface WepyConstructor<V extends WepyInstace = WepyInstace, P extends 
 
   app(options: AppOptions<WepyApp>): void;
 
-  page<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<P, Data, Methods, Computed, PropNames>): wepy.Page.PageInstance;
-  page<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<P, Data, Methods, Computed, Props>): wepy.Page.PageInstance;
+  page<Data, Methods, Hooks, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<P, Data, Methods, Hooks, Computed, PropNames>): wepy.Page.PageInstance;
+  page<Data, Methods, Hooks, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<P, Data, Methods, Hooks, Computed, Props>): wepy.Page.PageInstance;
   page(options?: ComponentOptions<P>): wepy.Page.PageInstance;
 
-  component<Data, Methods, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<C, Data, Methods, Computed, PropNames>): wepy.Page.PageInstance;
-  component<Data, Methods, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<C, Data, Methods, Computed, Props>): wepy.Page.PageInstance;
+  component<Data, Methods, Hooks, Computed, PropNames extends string = never>(options?: ThisTypedComponentOptionsWithArrayProps<C, Data, Methods, Hooks, Computed, PropNames>): wepy.Page.PageInstance;
+  component<Data, Methods, Hooks, Computed, Props>(options?: ThisTypedComponentOptionsWithRecordProps<C, Data, Methods, Hooks, Computed, Props>): wepy.Page.PageInstance;
   component(options?: ComponentOptions<C>): wepy.Page.PageInstance;
 
   nextTick<T>(callback: (this: T) => void, context?: T): void;

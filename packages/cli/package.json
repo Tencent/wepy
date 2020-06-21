@@ -1,6 +1,6 @@
 {
   "name": "@wepy/cli",
-  "version": "2.0.0-alpha.28",
+  "version": "2.1.0-alpha.4",
   "main": "index.js",
   "bin": {
     "wepy": "bin/wepy.js"
@@ -64,13 +64,13 @@
     "throttle-debounce": "^2.1.0",
     "tildify": "^1.2.0",
     "time-ago": "^0.2.1",
+    "tty-table": "^2.8.0",
     "update-notifier": "^1.0.2",
     "user-home": "^2.0.0",
     "validate-npm-package-name": "^3.0.0",
     "vue-template-compiler": "^2.5.16",
     "vue-template-es2015-compiler": "^1.6.0",
-    "webpack-sources": "^1.1.0",
-    "tty-table": "^2.8.0"
+    "webpack-sources": "^1.1.0"
   },
   "engines": {
     "node": ">=6"
@@ -80,5 +80,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/cli@2.0.0-alpha.28",
-  "_commitid": "e714739"
+  "_commitid": "e714739",
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }
