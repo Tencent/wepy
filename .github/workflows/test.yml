@@ -33,6 +33,5 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
-    - run: npx lerna publish --force-publish
     - run: git status
     - run: git log

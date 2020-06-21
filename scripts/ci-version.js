@@ -51,12 +51,16 @@ function release(version, tag) {
   console.log('EXEC: ' + cmds.join(' '));
 
   execa('npx', cmds)
-    .then(res => {
-      console.log(res.stdout);
+    .then(res => console.log(res.stdout))
+    .then(() => {
+      const cmds = ['lerna', 'exec', '--', 'npm', 'publish'];
+      if (tag) {
+        cmds.push('--tag', tag);
+      }
+      return execa('npx', cmds);
     })
-    .catch(e => {
-      console.log(e);
-    });
+    .then(res => console.log(res.stdout))
+    .catch(e => console.log(e));
 }
 
 const { version, tag } = parseMsg(process.argv[2]);
