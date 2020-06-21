@@ -28,7 +28,7 @@ jobs:
     - run: npm install
     - run: npm run bootstrap
     - run: git status
-    - run: git reset --hard
+    - run: git checkout .
     - name: Version
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
