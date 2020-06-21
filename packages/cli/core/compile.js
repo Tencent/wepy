@@ -214,9 +214,9 @@ class Compile extends Hook {
             // Wepy don't support independent subPackages now
             if (sub.independent) {
               this.logger.warn(
-                'Independent subpackages is found in app config. Currently it is not supported in WePY.'
+                'Independent subpackages is found in app config. Currently, it is not supported in WePY.'
               );
-              process.exit(1);
+              throw new Error('EXIT');
             }
 
             sub.pages.forEach(v => {
