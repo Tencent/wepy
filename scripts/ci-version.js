@@ -1,6 +1,6 @@
 /* eslint no-console: 0 */
 
-// const execa = require('execa');
+const execa = require('execa');
 
 const ALLOW_VERSION = ['major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', 'prerelease'];
 const ALLOW_TAG = ['alpha', 'beta', 'next'];
@@ -21,7 +21,7 @@ function parseMsg(msg) {
     throw new Error(`Invalid version: ${version}`);
   }
 
-  if (ALLOW_TAG.indexOf(tag) === -1) {
+  if (tag && ALLOW_TAG.indexOf(tag) === -1) {
     throw new Error(`Invalid tag: ${tag}`);
   }
 
@@ -34,24 +34,19 @@ function parseMsg(msg) {
 function release(version, tag) {
   console.log(`Ready to release a ${version} version${tag ? ' on ' + tag : ''}.`);
 
-  const cmds = ['lerna', 'publish', version];
+  const cmds = ['lerna', 'version', '--conventional-commits', version];
   if (tag) {
     cmds.push('--dist-tag', tag);
   }
   console.log('EXEC: ' + cmds.join(' '));
 
-  /*
-  execa('npx', cmds, { cwd })
+  execa('npx', cmds)
     .then(res => {
       console.log(res.stdout);
-      const distTagParams = ['dist-tag', 'add', version, 'next'];
-      console.log('EXEC: ' + [client].concat(distTagParams).join(' '));
-      return execa(client, distTagParams, { cwd });
     })
     .catch(e => {
       console.log(e);
     });
-  */
 }
 
 const { version, tag } = parseMsg(process.argv[2]);

@@ -31,5 +31,7 @@ jobs:
         registry-url: https://registry.npmjs.org/
     - run: npm install
     - run: npm run bootstrap
-    - run: node ./scripts/ci-release.js "${{ github.event.head_commit.message }}"
-
+    - run: node ./scripts/ci-version.js "${{ github.event.head_commit.message }}"
+    - run: npx lerna publish
+    - run: git status
+    - run: git log
