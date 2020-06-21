@@ -1,6 +1,6 @@
 {
   "name": "@wepy/use-intercept",
-  "version": "2.1.0-alpha.8",
+  "version": "2.1.0-alpha.9",
   "description": "wepy intercept",
   "main": "/dist/index.js",
   "scripts": {

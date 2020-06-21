@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-postcss",
-  "version": "2.1.0-alpha.8",
+  "version": "2.1.0-alpha.9",
   "description": "wepy compile postcss",
   "keywords": [
     "postcss"
