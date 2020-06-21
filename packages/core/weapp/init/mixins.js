@@ -13,8 +13,8 @@ const strategyObj = config.optionMergeStrategies;
 
 // 对 data、props、methods、computed、hooks 来说，在内部会进行简单合并，并在发生冲突时以组件数据优先。
 for (const property of ['data', 'props', 'methods', 'computed', 'hooks']) {
-  strategyObj[property] = function mergeStrategy(output, option, key, data) {
-    option[key] = simpleMerge(option[key], data);
+  strategyObj[property] = function mergeStrategy(output, option, key, value) {
+    option[key] = simpleMerge(value, option[key]);
   }
 }
 
@@ -35,9 +35,9 @@ for (const lifecycle of WEAPP_LIFECYCLE) {
 
 // 其他情况下的合并逻辑
 // 如果既不是 data、props、methods、computed、hooks，也不是生命周期，则简单地赋值
-function defaultStrategy(output, option, key, data) {
+function defaultStrategy(output, option, key, value) {
   if (!output[key]) {
-    output[key] = data;
+    output[key] = value;
   }
 }
 
