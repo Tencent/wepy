@@ -1,9 +1,7 @@
 name: WePY CI Build
 
-on:
-  push:
-    branches:
-      - 2.0.x
+on: [push, pull_request]
+
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -11,6 +9,10 @@ jobs:
       matrix:
         node-version: [8.x, 10.x]
     steps:
+    - name : GITHUB CONTEXT
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
     - name: Install expect
       run: | 
         sudo apt -qy update && sudo apt install -y expect
