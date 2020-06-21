@@ -15,7 +15,7 @@ function parseMsg(msg) {
   }
   const words = msg.replace('release: ', '').split(' ');
   const version = words[0];
-  const tag = words[2];
+  const tag = words[3];
 
   if (ALLOW_VERSION.indexOf(version) === -1) {
     throw new Error(`Invalid version: ${version}`);
