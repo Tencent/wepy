@@ -3,106 +3,65 @@ import { WEAPP_LIFECYCLE } from '../../shared/index';
 import { config } from '../config';
 import $global from '../global';
 
-// [Default Strategy]
-// Update if it's not exist in output. Can be replaced by option[key].
-// e.g.
-// export default {
-//   myCustomMethod () {
-//     // doSomething
-//   }
-// }
-//
-// [Merge Strategy]
-// Replaced by the latest mixins property.
-// e.g.
-// export default {
-//   data: {
-//     a: 1
-//   }
-// }
-//
-// [Lifecycle Strategy]
-// Extend lifecycle. update lifecycle to an array.
-// e.g.
-// export default {
-//   onShow: {
-//     console.log('onShow');
-//   }
-// }
-let globalMixinPatched = false;
-
-let strats = null;
-
-function getStrategy(key) {
-  if (!strats) {
-    initStrats();
-  }
-  if (strats[key]) {
-    return strats[key];
-  } else {
-    return defaultStrat;
-  }
+// 用于简单合并的工具函数
+function simpleMerge(parentVal = {}, childVal = {}) {
+  return {...parentVal, ...childVal};
 }
-function defaultStrat(output, option, key, data) {
-  if (!output[key]) {
-    output[key] = data;
+
+// 定义选项合并逻辑
+const strategyObj = config.optionMergeStrategies;
+
+// 对 data、props、methods、computed、hooks 来说，在内部会进行简单合并，并在发生冲突时以组件数据优先。
+for (const property of ['data', 'props', 'methods', 'computed', 'hooks']) {
+  strategyObj[property] = function mergeStrategy(output, option, key, value) {
+    option[key] = simpleMerge(value, option[key]);
   }
 }
 
-function simpleMerge(parentVal, childVal) {
-  return !parentVal || !childVal ? parentVal || childVal : Object.assign({}, parentVal, childVal);
-}
-
-function initStrats() {
-  if (strats) return strats;
-
-  strats = config.optionMergeStrategies;
-
-  strats.data = strats.props = strats.methods = strats.computed = strats.watch = strats.hooks = function mergeStrategy(
-    output,
-    option,
-    key,
-    data
-  ) {
-    option[key] = simpleMerge(option[key], data);
-  };
-
-  WEAPP_LIFECYCLE.forEach(lifecycle => {
-    if (!strats[lifecycle]) {
-      strats[lifecycle] = function lifeCycleStrategy(output, option, key, data) {
-        if (!option[key]) {
-          option[key] = isArr(data) ? data : [data];
-        } else {
-          option[key] = [data].concat(option[key]);
-        }
-      };
+// 对钩子函数来说，将合并为一个数组，其中混入对象的钩子将在组件自身钩子之前
+for (const lifecycle of WEAPP_LIFECYCLE) {
+  strategyObj[lifecycle] = function lifeCycleStrategy(output, option, key, data) {
+    if (!isArr(data)) {
+      data = [data];
     }
-  });
+
+    if (!option[key]) {
+      option[key] = data;
+    } else {
+      option[key] = data.concat(option[key]);
+    }
+  };
 }
 
+// 其他情况下的合并逻辑
+// 如果既不是 data、props、methods、computed、hooks，也不是生命周期，则简单地赋值
+function defaultStrategy(output, option, key, value) {
+  if (!output[key]) {
+    output[key] = value;
+  }
+}
+
+/**
+ * 用于合并根对象 App、页面对象 Page 和组件对象 Component 的 data、props、methods、watch、hook 和生命周期。
+ *
+ * @param {Object}  output    最终交由微信 App() / Page() / Component() 调用的函数参数
+ * @param {Object}  option    由 wepy.app() / wepy.page() / wepy.component() 调用（传入）的函数参数
+ * @param {Array}   mixins    option 中的 mixin 属性引用
+ */
 export function patchMixins(output, option, mixins) {
-  if (!mixins && !$global.mixin) {
+  if (!mixins) {
     return;
   }
 
-  if (!globalMixinPatched) {
-    let globalMixin = $global.mixin || [];
-
-    mixins = globalMixin.concat(mixins);
-    globalMixinPatched = true;
+  if ($global.mixins) {
+    mixins = $global.mixins.concat(mixins);
   }
 
-  if (isArr(mixins)) {
-    mixins.forEach(mixin => patchMixins(output, option, mixin));
-    globalMixinPatched = false;
-  } else {
-    if (!strats) {
-      initStrats();
-    }
-    for (let k in mixins) {
-      strat = getStrategy(k);
-      let strat = strats[k] || defaultStrat;
-      strat(output, option, k, mixins[k]);
+  for (const mixin of mixins) {
+    for (const [key, value] of Object.entries(mixin)) {
+      const strategy = strategyObj[key] || defaultStrategy;
+
+      strategy(output, option, key, value);
     }
   }
 }
