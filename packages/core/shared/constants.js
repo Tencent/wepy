@@ -1,4 +1,12 @@
-export const WEAPP_APP_LIFECYCLE = ['onLaunch', 'onShow', 'onHide', 'onError', 'onPageNotFound'];
+export const WEAPP_APP_LIFECYCLE = [
+  'onLaunch',
+  'onShow',
+  'onHide',
+  'onError',
+  'onPageNotFound',
+  'onUnhandledRejection',
+  'onThemeChange'
+];
 
 export const WEAPP_PAGE_LIFECYCLE = [
   'onLoad',
@@ -9,12 +17,13 @@ export const WEAPP_PAGE_LIFECYCLE = [
   'onPullDownRefresh',
   'onReachBottom',
   'onShareAppMessage',
+  'onAddToFavorites',
   'onPageScroll',
-  'onTabItemTap',
-  'onResize'
+  'onResize',
+  'onTabItemTap'
 ];
 
-export const WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached'];
+export const WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached', 'error'];
 
 export const WEAPP_COMPONENT_PAGE_LIFECYCLE = ['show', 'hide', 'resize'];
 
