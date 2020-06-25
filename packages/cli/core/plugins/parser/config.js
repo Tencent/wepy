@@ -38,7 +38,6 @@ exports = module.exports = function() {
     }
 
     let userDefineComponents = config.usingComponents || {};
-    let appDefinedComponents = {};
     let componentKeys = Object.keys(config.usingComponents);
 
     if (!appUsingComponents && componentKeys.length === 0) {
@@ -58,10 +57,6 @@ exports = module.exports = function() {
           if (comp.prefix === 'module') {
             targetPath = comp.target;
           }
-          const relativePath = path.relative(path.dirname(ctx.file), targetPath);
-          const parsedPath = path.parse(relativePath);
-          // Remove wpy ext
-          appDefinedComponents[comp.name] = slash(path.join(parsedPath.dir, parsedPath.name));
         }
       });
     }
@@ -125,9 +120,8 @@ exports = module.exports = function() {
     return Promise.all(plist).then(() => {
       if (ctx.type === 'app') {
         appUsingComponents = parseComponents;
-        delete config.usingComponents;
       } else {
-        config.usingComponents = Object.assign({}, resolvedUsingComponents, appDefinedComponents);
+        config.usingComponents = Object.assign({}, resolvedUsingComponents);
       }
 
       ctx.sfc.config.parsed = {

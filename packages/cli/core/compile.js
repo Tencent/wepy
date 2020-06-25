@@ -225,7 +225,7 @@ class Compile extends Hook {
           });
         }
 
-        let tasks = pages.map(v => {
+        let pageTasks = pages.map(v => {
           let file;
 
           file = v + this.options.wpyExt;
@@ -243,6 +243,33 @@ class Compile extends Hook {
           });
         });
 
+        let components = [];
+        if (appConfig.usingComponents) {
+          for (let key in appConfig.usingComponents) {
+            let v = appConfig.usingComponents[key];
+            components.push(path.resolve(app.file, '../', v));
+          }
+        }
+
+        let componentsTask = components.map(v => {
+          let file;
+
+          file = v + this.options.wpyExt;
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' });
+          }
+          file = v + '.js';
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-component', { path: file, type: 'wepy', npm: false });
+          }
+          this.hookUnique('error-handler', {
+            type: 'error',
+            ctx: app,
+            message: `Can not resolve page: ${v}`
+          });
+        });
+
+        let tasks = [...pageTasks, ...componentsTask];
         if (appConfig.tabBar && appConfig.tabBar.custom) {
           let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
           if (fs.existsSync(file)) {
