@@ -64,7 +64,7 @@ function initStrats() {
     key,
     data
   ) {
-    option[key] = simpleMerge(option[key], data);
+    option[key] = simpleMerge(data, option[key]);
   };
 
   WEAPP_LIFECYCLE.forEach(lifecycle => {
@@ -100,7 +100,6 @@ export function patchMixins(output, option, mixins) {
       initStrats();
     }
     for (let k in mixins) {
-      strat = getStrategy(k);
       let strat = strats[k] || defaultStrat;
       strat(output, option, k, mixins[k]);
     }
