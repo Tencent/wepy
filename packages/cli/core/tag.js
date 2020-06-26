@@ -55,7 +55,9 @@ const WXML_TAGS = [
   // slot
   'slot',
   // ability
-  'open-data,web-view,ad'
+  'open-data,web-view,ad',
+  // reference
+  'template,import,include'
 ]
   .join(',')
   .split(',');
