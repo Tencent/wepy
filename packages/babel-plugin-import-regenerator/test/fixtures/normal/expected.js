@@ -24,9 +24,7 @@ _core2.default.page({
       });
     },
     testAsync: function () {
-      var _ref = _asyncToGenerator(
-      /*#__PURE__*/
-      _regeneratorRuntime3.default.mark(function _callee() {
+      var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime3.default.mark(function _callee() {
         var result;
         return _regeneratorRuntime3.default.wrap(function _callee$(_context) {
           while (1) {
