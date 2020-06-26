@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        node-version: [8.x, 10.x]
+        node-version: [10.x]
     steps:
     - name: Install expect
       run: | 
