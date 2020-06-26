@@ -1,0 +1,5 @@
+<import src="item.wxml" />
+<template is="item" data="{{text: 'forbar'}}" />
+<include src="header.wxml" />
+<view> body </view>
+<include src="footer.wxml" />
