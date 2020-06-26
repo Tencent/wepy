@@ -13,6 +13,9 @@ import sass from 'node-sass';
 export default function (content, config, file) {
     let result = {};
     return new Promise ((resolve, reject) => {
+        if (typeof config.data === 'string') {
+          content = config.data + content;
+        }
         config.data = content;
         config.file = file;
         sass.render(config, (err, res) => {
