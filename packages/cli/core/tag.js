@@ -74,6 +74,21 @@ const HTML2WXML_MAP = {
   'wx-template': 'template'
 };
 
+const SELF_CLOSE_TAGS = [
+  'progress',
+  'checkbox',
+  'input',
+  'radio',
+  'slider',
+  'switch',
+  'textarea',
+  'live-player',
+  'live-pusher',
+  'navigation-bar',
+  'include',
+  'import'
+];
+
 /**
  * combine two tags array/object
  * @param  {Array} original original tag list
@@ -116,6 +131,7 @@ const combineTagMap = function(original, additional = {}) {
 exports = module.exports = {
   HTML_TAGS,
   WXML_TAGS,
+  SELF_CLOSE_TAGS,
   HTML2WXML_MAP,
   combineTag,
   combineTagMap
