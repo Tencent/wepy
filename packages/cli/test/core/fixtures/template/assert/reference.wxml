@@ -1,5 +1,5 @@
 <import src="item.wxml" />
-<template is="item" data="{{text: 'forbar'}}" />
+<template is="item" data="{{text: 'foobar'}}" />
 <include src="header.wxml" />
 <view> body </view>
 <include src="footer.wxml" />
