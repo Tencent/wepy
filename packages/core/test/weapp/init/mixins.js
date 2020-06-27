@@ -14,7 +14,7 @@ describe('weapp mixins strategy', function() {
     expect(option.data).to.deep.equal({ a: 1, b: 3 });
   });
 
-  it('Lifecycle Strategy', () => {
+  it('Merge Lifecycle Strategy', () => {
     const optOnLaunch = () => {};
     const mixinOnLaunch = () => {};
     const mixins = { onLaunch: mixinOnLaunch };
