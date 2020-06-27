@@ -133,8 +133,8 @@ const combineTagMap = function(original, additional = {}) {
 exports = module.exports = {
   HTML_TAGS,
   WXML_TAGS,
-  SELF_CLOSE_TAGS,
   HTML2WXML_MAP,
+  SELF_CLOSE_TAGS,
   combineTag,
   combineTagMap
 };
