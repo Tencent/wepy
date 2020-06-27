@@ -21,4 +21,4 @@ module.exports = {
 
 ## 参数说明
 
-[node-sass](https://github.com/sass/node-sass)
+[sass](https://github.com/sass/dart-sass)

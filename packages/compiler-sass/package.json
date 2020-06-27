@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "loader-utils": "^1.1.0",
-    "node-sass": "^4.0.0"
+    "sass": "^1.26.9"
   },
   "devDependencies": {
     "enhanced-resolve": "^4.0.0"

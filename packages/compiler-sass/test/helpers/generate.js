@@ -1,5 +1,5 @@
 const path = require('path');
-const sass = require('node-sass');
+const sass = require('sass');
 const fs = require('fs-extra');
 const specs = require('./specs');
 
