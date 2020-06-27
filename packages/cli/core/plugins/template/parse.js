@@ -198,6 +198,7 @@ exports = module.exports = function() {
           let bindClass = item.bindClass && item.bindClass.length ? ` {{ [ ${item.bindClass.join(',')} ] }}` : '';
           str += ` class="${staticClass + bindClass}"`;
         }
+        console.log('this.tags.selfCloseTags', this.tags.selfCloseTags);
         if (this.tags.selfCloseTags.includes(item.name) || (item.name === 'template' && !item.children.length)) {
           str += ' />';
         } else {

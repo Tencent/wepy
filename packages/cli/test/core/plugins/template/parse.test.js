@@ -35,6 +35,7 @@ const spec = {
     { file: 'bindClass' },
     { file: 'joinStyle' },
     { file: 'attrWithoutValue' },
+    { file: 'reference' },
     {
       file: 'ref',
       component: {
