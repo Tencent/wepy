@@ -45,7 +45,7 @@ const getLifecycycle = (defaultLifecycle, rel, type) => {
     }
     userDefinedLifecycle.forEach(u => {
       if (lifecycle.indexOf(u) > -1) {
-        warn(`'${u}' is already implemented in current version, please remove it from your lifecycel config`);
+        warn(`'${u}' is already implemented in current version, please remove it from your lifecycle config`);
       } else {
         lifecycle.push(u);
       }
