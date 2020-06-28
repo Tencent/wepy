@@ -78,7 +78,7 @@ export function patchAppLifecycle(appConfig, options, rel = {}) {
   let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(k => {
-    // it's not defined aready && user defined it && it's an array or function
+    // it's not defined already && user defined it && it's an array or function
     if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function(...args) {
         return callUserMethod(app, app.$options, k, args);
