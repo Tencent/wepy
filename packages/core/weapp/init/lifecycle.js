@@ -8,7 +8,7 @@ import { initRender } from './render';
 import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
-import { isArr, isFunc } from '../../shared/index';
+import { isArr, isFunc, isStr } from '../../shared/index';
 import Dirty from '../class/Dirty';
 import {
   WEAPP_APP_LIFECYCLE,
@@ -36,20 +36,24 @@ const callUserMethod = function(vm, userOpt, method, args) {
   return result;
 };
 
-const getLifecycycle = (defaultLifecycle, rel, type) => {
+export const getLifeCycle = (defaultLifecycle, rel, type) => {
   let lifecycle = defaultLifecycle.concat([]);
   if (rel && rel.lifecycle && rel.lifecycle[type]) {
     let userDefinedLifecycle = [];
-    if (isFunc(rel.lifecycle[type])) {
-      userDefinedLifecycle = rel.lifecycle[type].call(null, lifecycle);
+    const modifiedLifeCycles = rel.lifecycle[type];
+
+    if (isStr(modifiedLifeCycles) || isArr(modifiedLifeCycles)) {
+      userDefinedLifecycle = userDefinedLifecycle.concat(modifiedLifeCycles);
+      userDefinedLifecycle.forEach(u => {
+        if (lifecycle.indexOf(u) > -1) {
+          warn(`'${u}' is already implemented in current version, please remove it from your lifecycle config`);
+        } else {
+          lifecycle.push(u);
+        }
+      });
+    } else if (isFunc(modifiedLifeCycles)) {
+      lifecycle = modifiedLifeCycles.call(null, lifecycle);
     }
-    userDefinedLifecycle.forEach(u => {
-      if (lifecycle.indexOf(u) > -1) {
-        warn(`'${u}' is already implemented in current version, please remove it from your lifecycel config`);
-      } else {
-        lifecycle.push(u);
-      }
-    });
   }
   return lifecycle;
 };
@@ -75,10 +79,10 @@ export function patchAppLifecycle(appConfig, options, rel = {}) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
+  let lifecycle = getLifeCycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(k => {
-    // it's not defined aready && user defined it && it's an array or function
+    // it's not defined already && user defined it && it's an array or function
     if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function(...args) {
         return callUserMethod(app, app.$options, k, args);
@@ -165,7 +169,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
     // 增加组件页面声明周期
     output.pageLifetimes = {};
-    const lifecycle = getLifecycycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
+    const lifecycle = getLifeCycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
 
     lifecycle.forEach(function(k) {
       if (!output.pageLifetimes[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -245,7 +249,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
     //   }
     // })
 
-    let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
+    let lifecycle = getLifeCycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle.forEach(k => {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -255,7 +259,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
       }
     });
   }
-  let lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
+  let lifecycle = getLifeCycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(k => {
     // beforeCreate is not a real lifecycle
