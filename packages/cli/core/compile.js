@@ -50,6 +50,7 @@ class Compile extends Hook {
     this.tags = {
       htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
       wxmlTags: tag.combineTag(tag.WXML_TAGS, userDefinedTags.wxmlTags),
+      selfCloseTags: tag.SELF_CLOSE_TAGS,
       html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
     };
 

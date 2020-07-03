@@ -212,11 +212,15 @@ exports = module.exports = function() {
           let bindClass = item.bindClass && item.bindClass.length ? ` {{ [ ${item.bindClass.join(',')} ] }}` : '';
           str += ` class="${staticClass + bindClass}"`;
         }
-        str += '>';
-        if (item.children && item.children.length) {
-          str += this.hookUnique('template-parse-ast-to-str', item.children);
+        if (this.tags.selfCloseTags.includes(item.name) || (item.name === 'template' && !item.children.length)) {
+          str += ' />';
+        } else {
+          str += '>';
+          if (item.children && item.children.length) {
+            str += this.hookUnique('template-parse-ast-to-str', item.children);
+          }
+          str += `</${item.name}>`;
         }
-        str += `</${item.name}>`;
       }
     });
     return str;
