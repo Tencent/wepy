@@ -55,7 +55,6 @@ describe('weapp observer observerPath', function() {
     initData(vm, { a: { b: { c: { d: 123 } } }, x: {}, y: {} });
 
     // eslint-disable-next-line
-    console.log('complex path: Object');
     const data = vm._data;
     data.x = data.a.b.c;
     data.y = data.x;
