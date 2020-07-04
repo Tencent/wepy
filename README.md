@@ -1,4 +1,4 @@
-## WePY 2 (alpha)
+## WePY 2 (beta)
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
 [![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=1.7.x)](https://travis-ci.org/Tencent/wepy)
@@ -14,19 +14,17 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 
 同时 WePY 也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果 WePY 有不足地方，或者你有更好的想法，欢迎提交 ISSUE 或者 PR。
 
-
 ### 特性：
 
-* 类 Vue 开发风格
-* 支持自定义组件开发
-* 支持引入 NPM 包
-* 支持 [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
-* 支持 ES2015+ 特性，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-* 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
-* 支持多种插件处理，文件压缩，图片压缩，内容替换等
-* 支持 Sourcemap，ESLint 等
-* 小程序细节优化，如请求列队，事件优化等
-
+- 类 Vue 开发风格
+- 支持自定义组件开发
+- 支持引入 NPM 包
+- 支持 [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
+- 支持 ES2015+ 特性，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
+- 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
+- 支持多种插件处理，文件压缩，图片压缩，内容替换等
+- 支持 Sourcemap，ESLint 等
+- 小程序细节优化，如请求列队，事件优化等
 
 ### Demo
 
@@ -66,8 +64,6 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
   });
 </script>
 ```
-
-
 
 ### 安装使用
 
@@ -153,10 +149,10 @@ GitHub 掘金版、
 
 ### 交流群
 
- WePY 交流群已满 500 人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
+WePY 交流群已满 500 人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
 
- ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
-             
+![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
+
 ### 参与贡献
 
 如果你有好的意见或建议，欢迎给我们提 Issues 或 Pull Requests，为提升微信小程序开发体验贡献力量。<br>详见：[CONTRIBUTING.md](./CONTRIBUTING.md)
@@ -172,4 +168,3 @@ GitHub 掘金版、
 [Contributing](./CONTRIBUTING.md)
 
 [License MIT](./LICENSE)
-
