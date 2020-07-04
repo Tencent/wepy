@@ -1,6 +1,6 @@
 {
   "name": "@wepy/cli",
-  "version": "2.1.0-alpha.10",
+  "version": "2.1.0",
   "main": "index.js",
   "bin": {
     "wepy": "bin/wepy.js"
