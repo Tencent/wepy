@@ -44,6 +44,7 @@ export function patchProps(output, props) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
         newProp.optionalTypes = prop.type;
+        newProp.type = prop.type[0];
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
         // eslint-disable-next-line
