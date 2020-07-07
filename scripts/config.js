@@ -80,7 +80,7 @@ function getConfig(name) {
     output: {
       file: opt.dest,
       format: opt.format,
-      banner: opt.bannder,
+      banner: opt.banner,
       name: opt.moduleName || 'WePY'
     }
   };
