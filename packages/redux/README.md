@@ -1,3 +1,5 @@
+English | [简体中文](./README_CN.md)
+
 # Redux in WePY 2.0 
 
 ## Install

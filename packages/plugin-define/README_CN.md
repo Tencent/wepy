@@ -1,3 +1,5 @@
+[English](./README.md) | 简体中文
+
 # wepy define plugin
 
 ## 安装

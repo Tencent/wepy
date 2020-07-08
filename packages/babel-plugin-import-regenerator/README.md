@@ -1,3 +1,5 @@
+English | [简体中文](./README_CN.md)
+
 # @wepy/babel-plugin-import-regenerator
 
 Allow wepy to use `Async Functions`.

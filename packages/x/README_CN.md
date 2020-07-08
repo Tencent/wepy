@@ -1,3 +1,5 @@
+[English](./README.md) | 简体中文
+
 # WePY 2.0中的Vuex 
 
 ## 安装

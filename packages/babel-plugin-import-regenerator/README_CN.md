@@ -1,3 +1,5 @@
+[English](./README.md) | [简体中文]
+
 # @wepy/babel-plugin-import-regenerator
 
 允许wepy使用 `Async Functions`.

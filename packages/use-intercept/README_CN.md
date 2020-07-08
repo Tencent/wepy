@@ -1,3 +1,5 @@
+[English](./README.md) | 简体中文
+
 # @wepy/use-intercept
 
  weapp APIs intercept factory.
