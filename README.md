@@ -14,6 +14,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 
 同时 WePY 也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果 WePY 有不足地方，或者你有更好的想法，欢迎提交 ISSUE 或者 PR。
 
+
 ### 特性：
 
 - 类 Vue 开发风格
@@ -30,10 +31,10 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 
 ```html
 <style lang="less">
-    @color: #4D926F;
-    .num {
-        color: @color;
-    }
+  @color: #4D926F;
+  .num {
+      color: @color;
+  }
 </style>
 <template>
   <div class="container">
@@ -41,7 +42,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
       {{num}}
     </div>
     <div>{{text}}</div>
-    <input v-model="text"></input>
+    <input v-model="text"/>
   </div>
 </template>
 <config>

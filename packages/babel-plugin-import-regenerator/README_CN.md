@@ -1,10 +1,10 @@
-English | [简体中文](./README_CN.md)
+[English](./README.md) | [简体中文]
 
 # @wepy/babel-plugin-import-regenerator
 
-Allow wepy to use `Async Functions`.
+允许wepy使用 `Async Functions`.
 
-## Installation
+## 安装
 
 ```
 # Install regenerator-runtime dependence
@@ -14,9 +14,9 @@ $ npm install regenerator-runtime --save
 $ npm install @wepy/babel-plugin-import-regenerator --save-dev
 ```
 
-## Usage
+## 用法
 
-Put something like this in your wepy.config.js:
+在 wepy.config.js 中放入以下内容:
 
 
 ```js
