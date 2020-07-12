@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var vuex = require('vuex');
 
-var version = "2.0.4";
+var version = "2.1.0";
 
 function wepyInstall(wepy) {
   vuex.install(wepy);

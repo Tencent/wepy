@@ -5,7 +5,8 @@
   "typings": "types/index.d.ts",
   "scripts": {
     "test:types": "tsc -p ./types/test/tsconfig.json",
-    "test": "_mocha --require esm --recursive"
+    "test": "mocha --require esm --recursive",
+    "cov": "nyc npm run test"
   },
   "esm": {
     "cjs": true
@@ -18,6 +19,9 @@
   "devDependencies": {
     "esm": "^3.2.25",
     "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "power-assert": "^1.6.1",
+    "supertest": "^4.0.2",
     "typescript": "^3.3.3"
   },
   "dependencies": {

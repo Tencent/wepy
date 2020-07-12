@@ -2,20 +2,20 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const packages = [
-  'babel-plugin-import-regenerator',
-  'cli',
+  //'babel-plugin-import-regenerator',
+  //'cli',
   //'compiler-babel',
-  'compiler-less',
-  'compiler-sass',
+ // 'compiler-less',
+  //'compiler-sass',
   //'compiler-stylus',
   //'compiler-typescript',
   'core',
-  'plugin-define',
+  //'plugin-define',
   //'plugin-eslint',
   //'plugin-uglifyjs',
   //'redux',
-  'use-intercept',
-  'use-promisify'
+  //'use-intercept',
+ // 'use-promisify'
   //'x',
 ];
 

@@ -144,7 +144,7 @@ function checkReduxComputed(options) {
 
 var index = {
   install: wepyInstall,
-  version: "2.0.3"
+  version: "2.1.0"
 };
 
 exports.default = index;

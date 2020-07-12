@@ -1,5 +1,5 @@
-export * from './../../shared/index';
 
+export * from './../../shared/index';
 export * from './debug';
 export * from './error';
 export * from './next-tick';

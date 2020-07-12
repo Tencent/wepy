@@ -44,12 +44,12 @@ export function parseModel(str) {
   let exprEnd = 0;
 
   let isQuoteStart = function(chr) {
-    return chr === 0x22 || chr === 0x27;
+    return chr === 0x22 || chr === 0x27; //chr = ' or ""
   };
 
   let parseString = function(chr) {
     while (index < len && str.charCodeAt(++index) !== chr) {}
-  };
+  };  //charCodeAt返回指定索引处字符的 Unicode 数值，检验"和'
 
   let parseBracket = function(chr) {
     let inBracket = 1;
@@ -60,8 +60,8 @@ export function parseModel(str) {
         parseString(chr);
         continue;
       }
-      if (chr === 0x5b) inBracket++;
-      if (chr === 0x5d) inBracket--;
+      if (chr === 0x5b) inBracket++;  //[
+      if (chr === 0x5d) inBracket--; //]
 
       if (inBracket === 0) {
         exprEnd = index;
@@ -80,7 +80,7 @@ export function parseModel(str) {
   }
 
   return {
-    expr: str.slice(0, exprStart),
+    expr: str.slice(0, exprStart),  //slice(start,end) 方法从已有的数组中返回选定的元素。
     key: str.slice(exprStart + 1, exprEnd)
   };
 }

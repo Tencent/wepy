@@ -233,7 +233,15 @@ function clone(sth, deep) {
   }
 }
 
-var WEAPP_APP_LIFECYCLE = ['onLaunch', 'onShow', 'onHide', 'onError', 'onPageNotFound'];
+var WEAPP_APP_LIFECYCLE = [
+  'onLaunch',
+  'onShow',
+  'onHide',
+  'onError',
+  'onPageNotFound',
+  'onUnhandledRejection',
+  'onThemeChange'
+];
 
 var WEAPP_PAGE_LIFECYCLE = [
   'onLoad',
@@ -244,17 +252,21 @@ var WEAPP_PAGE_LIFECYCLE = [
   'onPullDownRefresh',
   'onReachBottom',
   'onShareAppMessage',
+  'onAddToFavorites',
   'onPageScroll',
-  'onTabItemTap',
-  'onResize'
+  'onResize',
+  'onTabItemTap'
 ];
 
-var WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached'];
+var WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached', 'error'];
+
+var WEAPP_COMPONENT_PAGE_LIFECYCLE = ['show', 'hide', 'resize'];
 
 var WEAPP_LIFECYCLE = []
   .concat(WEAPP_APP_LIFECYCLE)
   .concat(WEAPP_PAGE_LIFECYCLE)
-  .concat(WEAPP_COMPONENT_LIFECYCLE);
+  .concat(WEAPP_COMPONENT_LIFECYCLE)
+  .concat(WEAPP_COMPONENT_PAGE_LIFECYCLE);
 
 var config = {};
 
@@ -1966,9 +1978,8 @@ function patchProps(output, props) {
       if (isUndef(prop.type)) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
-        newProp.type = null;
-        // eslint-disable-next-line
-        console.warn(("In mini-app, mutiple type is not allowed. The type of \"" + k + "\" will changed to \"null\""));
+        newProp.optionalTypes = prop.type;
+        newProp.type = prop.type[0];
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
         // eslint-disable-next-line
@@ -1985,6 +1996,12 @@ function patchProps(output, props) {
           newProp.value = prop.default.call(output);
         } else {
           newProp.value = prop.default;
+        }
+      }
+      // props.optionalTypes
+      if (!isUndef(prop.optionalTypes)) {
+        if (isArr(prop.optionalTypes)) {
+          newProp.optionalTypes = prop.optionalTypes;
         }
       }
       // TODO
@@ -2316,16 +2333,20 @@ var getLifeCycle = function (defaultLifecycle, rel, type) {
   var lifecycle = defaultLifecycle.concat([]);
   if (rel && rel.lifecycle && rel.lifecycle[type]) {
     var userDefinedLifecycle = [];
-    if (isFunc(rel.lifecycle[type])) {
-      userDefinedLifecycle = rel.lifecycle[type].call(null, lifecycle);
+    var modifiedLifeCycles = rel.lifecycle[type];
+
+    if (isStr(modifiedLifeCycles) || isArr(modifiedLifeCycles)) {
+      userDefinedLifecycle = userDefinedLifecycle.concat(modifiedLifeCycles);
+      userDefinedLifecycle.forEach(function (u) {
+        if (lifecycle.indexOf(u) > -1) {
+          warn(("'" + u + "' is already implemented in current version, please remove it from your lifecycle config"));
+        } else {
+          lifecycle.push(u);
+        }
+      });
+    } else if (isFunc(modifiedLifeCycles)) {
+      lifecycle = modifiedLifeCycles.call(null, lifecycle);
     }
-    userDefinedLifecycle.forEach(function (u) {
-      if (lifecycle.indexOf(u) > -1) {
-        warn(("'" + u + "' is already implemented in current version, please remove it from your lifecycel config"));
-      } else {
-        lifecycle.push(u);
-      }
-    });
   }
   return lifecycle;
 };
@@ -2343,7 +2364,7 @@ function patchAppLifecycle(appConfig, options, rel) {
     var vm = new WepyApp();
     app = vm;
     vm.$options = options;
-    vm.$route = {};
+    vm.$route = null; // default route is null
     vm.$rel = rel;
 
     vm.$wx = this;
@@ -2359,7 +2380,7 @@ function patchAppLifecycle(appConfig, options, rel) {
   var lifecycle = getLifeCycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(function (k) {
-    // it's not defined aready && user defined it && it's an array or function
+    // it's not defined already && user defined it && it's an array or function
     if (!appConfig[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
       appConfig[k] = function() {
         var args = [], len = arguments.length;
@@ -2430,112 +2451,12 @@ function patchLifecycle(output, options, rel, isComponent) {
 
   output.created = initLifecycle;
   if (isComponent) {
-    output.attached = function() {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // Component attached
-      var outProps = output.properties || {};
-      // this.propperties are includes datas
-      var acceptProps = this.properties;
-      var vm = this.$wepy;
-
-      this.triggerEvent('_init', vm);
-
-      // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate();
-
-      Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
-
-      return callUserMethod(vm, vm.$options, 'attached', args);
-    };
+    patchComponentLifecycle(output, options, rel);
   } else {
-    output.attached = function() {
-      var args = [], len = arguments.length;
-      while ( len-- ) args[ len ] = arguments[ len ];
-
-      // Page attached
-      var vm = this.$wepy;
-      var app = vm.$app;
-      // eslint-disable-next-line
-      var pages = getCurrentPages();
-      var currentPage = pages[pages.length - 1];
-      var path = currentPage.__route__;
-      var webViewId = currentPage.__wxWebviewId__;
-
-      var refs = rel.refs || [];
-      var query = wx.createSelectorQuery();
-
-      refs.forEach(function (item) {
-        // {
-        //   id: { name: 'hello', bind: true },
-        //   ref: { name: 'value', bind: false }
-        // }
-        var idAttr = item.id;
-        var refAttr = item.ref;
-        var actualAttrIdName = idAttr.name;
-        var actualAttrRefName = refAttr.name;
-        var selector = "#" + actualAttrIdName;
-
-        if (idAttr.bind) {
-          // if id is a bind attr
-          actualAttrIdName = vm[idAttr.name];
-          selector = "#" + actualAttrIdName;
-          vm.$watch(idAttr.name, function(newAttrName) {
-            actualAttrIdName = newAttrName;
-            selector = "#" + actualAttrIdName;
-            vm.$refs[actualAttrRefName] = query.select(selector);
-          });
-        }
-
-        if (refAttr.bind) {
-          // if ref is a bind attr
-          actualAttrRefName = vm[refAttr.name];
-
-          vm.$watch(refAttr.name, function(newAttrName, oldAttrName) {
-            actualAttrRefName = newAttrName;
-            vm.$refs[oldAttrName] = null;
-            vm.$refs[newAttrName] = query.select(selector);
-          });
-        }
-        vm.$refs[actualAttrRefName] = query.select(selector);
-      });
-
-      // created 不能调用 setData，如果有 dirty 在此更新
-      vm.$forceUpdate();
-
-      if (app.$route.path !== path) {
-        app.$route.path = path;
-        app.$route.webViewId = webViewId;
-        vm.routed && vm.routed();
-      }
-
-      // TODO: page attached
-      return callUserMethod(vm, vm.$options, 'attached', args);
-    };
-    // Page lifecycle will be called under methods
-    // e.g:
-    // Component({
-    //   methods: {
-    //     onLoad () {
-    //       console.log('page onload')
-    //     }
-    //   }
-    // })
-
-    var lifecycle$1 = getLifeCycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
-
-    lifecycle$1.forEach(function (k) {
-      if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
-        output.methods[k] = function() {
-          var args = [], len = arguments.length;
-          while ( len-- ) args[ len ] = arguments[ len ];
-
-          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
-        };
-      }
-    });
+    patchPageLifecycle(output, options, rel);
   }
+
+  // Common patch
   var lifecycle = getLifeCycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(function (k) {
@@ -2549,6 +2470,169 @@ function patchLifecycle(output, options, rel, isComponent) {
       };
     }
   });
+}
+
+/**
+ * Patch component life cycle
+ * @param {*} output patch output
+ * @param {*} options patch options
+ * @param {*} rel patch rel
+ */
+function patchComponentLifecycle(output, options, rel) {
+  output.attached = function() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    // Component attached
+    var outProps = output.properties || {};
+    // this.propperties are includes datas
+    var acceptProps = this.properties;
+    var vm = this.$wepy;
+
+    this.triggerEvent('_init', vm);
+
+    // created 不能调用 setData，如果有 dirty 在此更新
+    vm.$forceUpdate();
+
+    Object.keys(outProps).forEach(function (k) { return (vm[k] = acceptProps[k]); });
+
+    return callUserMethod(vm, vm.$options, 'attached', args);
+  };
+
+  // 增加组件页面声明周期
+  output.pageLifetimes = {};
+  var lifecycle = getLifeCycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
+
+  lifecycle.forEach(function(k) {
+    if (!output.pageLifetimes[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+      output.pageLifetimes[k] = function() {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+      };
+    }
+  });
+}
+
+/**
+ * Patch Page Life cycle
+ * @param {*} output patch output
+ * @param {*} options patch options
+ * @param {*} rel rel
+ */
+function patchPageLifecycle(output, options, rel) {
+  output.attached = function() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    // Page attached
+    var vm = this.$wepy;
+    var app = vm.$app;
+
+    var refs = rel.refs || [];
+    var query = wx.createSelectorQuery();
+
+    refs.forEach(function (item) {
+      // {
+      //   id: { name: 'hello', bind: true },
+      //   ref: { name: 'value', bind: false }
+      // }
+      var idAttr = item.id;
+      var refAttr = item.ref;
+      var actualAttrIdName = idAttr.name;
+      var actualAttrRefName = refAttr.name;
+      var selector = "#" + actualAttrIdName;
+
+      if (idAttr.bind) {
+        // if id is a bind attr
+        actualAttrIdName = vm[idAttr.name];
+        selector = "#" + actualAttrIdName;
+        vm.$watch(idAttr.name, function(newAttrName) {
+          actualAttrIdName = newAttrName;
+          selector = "#" + actualAttrIdName;
+          vm.$refs[actualAttrRefName] = query.select(selector);
+        });
+      }
+
+      if (refAttr.bind) {
+        // if ref is a bind attr
+        actualAttrRefName = vm[refAttr.name];
+
+        vm.$watch(refAttr.name, function(newAttrName, oldAttrName) {
+          actualAttrRefName = newAttrName;
+          vm.$refs[oldAttrName] = null;
+          vm.$refs[newAttrName] = query.select(selector);
+        });
+      }
+      vm.$refs[actualAttrRefName] = query.select(selector);
+    });
+
+    // created 不能调用 setData，如果有 dirty 在此更新
+    vm.$forceUpdate();
+
+    // TODO: page attached
+    return callUserMethod(vm, vm.$options, 'attached', args);
+  };
+  // Page lifecycle will be called under methods
+  // e.g:
+  // Component({
+  //   methods: {
+  //     onLoad () {
+  //       console.log('page onload')
+  //     }
+  //   }
+  // })
+
+  // Patch routed method
+  patchRouted(output);
+
+  var lifecycle = getLifeCycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
+
+  lifecycle.forEach(function (k) {
+    if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
+      // onShow is patched in routed method
+      if (k !== 'onShow') {
+        output.methods[k] = function() {
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+
+          return callUserMethod(this.$wepy, this.$wepy.$options, k, args);
+        };
+      }
+    }
+  });
+}
+/**
+ * Add routed method for user.
+ * @param {*} output patch output
+ */
+function patchRouted(output) {
+  output.methods.onShow = function() {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
+
+    // Page attached
+    var vm = this.$wepy;
+    var app = vm.$app;
+    // eslint-disable-next-line
+    var pages = getCurrentPages();
+    var currentPage = pages[pages.length - 1];
+    var path = currentPage.__route__ || currentPage.route;
+    var webViewId = currentPage.__wxWebviewId__;
+
+    if (!app.$route || app.$route.path !== path) {
+      var oldRoute = app.$route;
+      var newRoute = {
+        path: path,
+        webViewId: webViewId,
+        page: currentPage,
+        query: currentPage.options
+      };
+      app.$route = newRoute;
+      callUserMethod(vm, vm.$options, 'routed', [oldRoute, newRoute]);
+    }
+  };
 }
 
 var config$1 = {
@@ -2770,6 +2854,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.16";
+wepy.version = "2.1.0";
 
 module.exports = wepy;

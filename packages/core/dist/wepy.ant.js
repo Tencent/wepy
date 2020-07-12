@@ -233,7 +233,15 @@ function clone(sth, deep) {
   }
 }
 
-var WEAPP_APP_LIFECYCLE = ['onLaunch', 'onShow', 'onHide', 'onError', 'onPageNotFound'];
+var WEAPP_APP_LIFECYCLE = [
+  'onLaunch',
+  'onShow',
+  'onHide',
+  'onError',
+  'onPageNotFound',
+  'onUnhandledRejection',
+  'onThemeChange'
+];
 
 var WEAPP_PAGE_LIFECYCLE = [
   'onLoad',
@@ -244,17 +252,21 @@ var WEAPP_PAGE_LIFECYCLE = [
   'onPullDownRefresh',
   'onReachBottom',
   'onShareAppMessage',
+  'onAddToFavorites',
   'onPageScroll',
-  'onTabItemTap',
-  'onResize'
+  'onResize',
+  'onTabItemTap'
 ];
 
-var WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached'];
+var WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached', 'error'];
+
+var WEAPP_COMPONENT_PAGE_LIFECYCLE = ['show', 'hide', 'resize'];
 
 var WEAPP_LIFECYCLE = []
   .concat(WEAPP_APP_LIFECYCLE)
   .concat(WEAPP_PAGE_LIFECYCLE)
-  .concat(WEAPP_COMPONENT_LIFECYCLE);
+  .concat(WEAPP_COMPONENT_LIFECYCLE)
+  .concat(WEAPP_COMPONENT_PAGE_LIFECYCLE);
 
 var config = {};
 
@@ -2791,6 +2803,6 @@ var wepy = initGlobalAPI(WepyConstructor);
 
 wepy.config = config$1;
 wepy.global = $global;
-wepy.version = "2.0.0-alpha.16";
+wepy.version = "2.1.0";
 
 module.exports = wepy;
