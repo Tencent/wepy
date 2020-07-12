@@ -33,7 +33,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 <style lang="less">
   @color: #4D926F;
   .num {
-      color: @color;
+  color: @color;
   }
 </style>
 <template>
