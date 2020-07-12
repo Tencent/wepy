@@ -10,7 +10,7 @@ npm install @wepy/compiler-postcss --save
 ## 配置 `wepy.config.js` ,以使用 `cssnext` 为例
 
 ```
-const cssnext = require('cssnext);
+const cssnext = require('cssnext');
 
 module.exports = {
     "compilers": {
