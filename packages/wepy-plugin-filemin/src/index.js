@@ -1,46 +1,78 @@
-/**
- * Tencent is pleased to support the open source community by making WePY available.
- * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
- * 
- * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://opensource.org/licenses/MIT
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
- */
+const _prettyData = require('pretty-data')
 
-
-import path from 'path';
-import {pd} from 'pretty-data';
-
-
-export default class {
-
-    constructor(c = {}) {
-        const def = {
-            filter: new RegExp('\.(wxml|xml|json)$'),
-            config: {
-            }
-        };
-
-        this.setting = Object.assign({}, def, c);
+function FileMinPlugin(options = {}) {
+  return function () {
+    let config = {
+      enable: true,
+      wxml: true, 
+      json: true,
+      wxss: false
     }
-    apply (op) {
-
-        let setting = this.setting;
-
-        if (!setting.filter.test(op.file)) {
-            op.next();
-        } else {
-            op.output && op.output({
-                action: '压缩',
-                file: op.file
-            });
-
-            if (/\.(wxml|xml)$/.test(op.file)) {
-                op.code = pd.xmlmin(op.code);
-            } else if (/\.json$/.test(op.file)) {
-                op.code = pd.jsonmin(op.code);
+    config = Object.assign(config, options)
+    this.register('build-components', comps => {
+        if (!config.enable) {
+            return comps
+          }  
+          let t = null    
+          let c = null        
+          for (let i = 0, len = comps.length; i < len; i++) {
+            t = comps[i].sfc.template
+            c = comps[i].sfc.config
+            if (config.wxml && /^(wxml|xml)$/.test(t.lang)) {
+              t.outputCode = _prettyData.pd.xmlmin(t.outputCode)
             }
-            op.next();
+            if (config.json && /^json$/.test(c.lang)) {
+                c.outputCode = _prettyData.pd.jsonmin(c.outputCode)
+              }
+              if (config.wxss && /^wxss$/.test(c.lang)) {
+                c.outputCode = _prettyData.pd.cssmin(c.outputCode)
+              }
+            }
+            return comps
+          })
+          this.register('build-apps', apps => {
+            if (!config.enable) {
+                return apps
+              }  
+              let t = null    
+              let c = null        
+              for (let i = 0, len = apps.length; i < len; i++) {
+                t = apps[i].sfc.template
+                c = apps[i].sfc.config
+                if (config.wxml && /^(wxml|xml)$/.test(t.lang)) {
+                  t.outputCode = _prettyData.pd.xmlmin(t.outputCode)
+                }
+                if (config.json && /^json$/.test(c.lang)) {
+                    c.outputCode = _prettyData.pd.jsonmin(c.outputCode)
+                  }
+                  if (config.wxss && /^wxss$/.test(c.lang)) {
+                    c.outputCode = _prettyData.pd.cssmin(c.outputCode)
+                  }
+                }
+                return apps
+              })
+              this.register('build-vendors', vendors => {
+                if (!config.enable) {
+                    return vendors
+                  }  
+                  let t = null    
+                  let c = null        
+                  for (let i = 0, len = vendors.length; i < len; i++) {
+                    t = vendors[i].sfc.template
+                    c = vendors[i].sfc.config
+                    if (config.wxml && /^(wxml|xml)$/.test(t.lang)) {
+                      t.outputCode = _prettyData.pd.xmlmin(t.outputCode)
+                    }
+                    if (config.json && /^json$/.test(c.lang)) {
+                        c.outputCode = _prettyData.pd.jsonmin(c.outputCode)
+                      }
+                      if (config.wxss && /^wxss$/.test(c.lang)) {
+                        c.outputCode = _prettyData.pd.cssmin(c.outputCode)
+                      }
+                    }
+                    return vendors
+                  })
         }
-    }
-}
+      }
+      
+      module.exports = FileMinPlugin 

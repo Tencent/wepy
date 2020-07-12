@@ -1,15 +1,24 @@
 {
-  "name": "wepy-plugin-filemin",
-  "version": "1.3.12",
+  "name": "@wepy/plugin-filemin",
+  "version": "1.3.13",
   "description": "wepy filemin plugin",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wepy/packages/@wepy/plugin-file-min"
+  },
   "keywords": [
-    "filemin"
+    "filemin",
+    "wepy",
+    "wepy2.0",
+    "compress",
+    "wxml",
+    "json"
   ],
-  "author": "Gcaufy",
+  "author": "hdzattain",
   "license": "MIT",
   "dependencies": {
     "pretty-data": "^0.40.0"
