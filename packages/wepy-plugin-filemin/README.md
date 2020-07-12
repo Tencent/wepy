@@ -1,13 +1,13 @@
-# sm-wepy-plugin-file-min 插件
+# @wepy/plugin-file-min 插件
 
 ## 安装
 
 ```bash
-npm install wepy-plugin-file-min --save-dev--save-dev
+npm install @wepy/plugin-file-min --save-dev
 ```
 ## 配置`wepy.config.js`
 ```javascript
-const FileMinPlugin = require('sm-wepy-plugin-file-min')
+const FileMinPlugin = require('@wepy/plugin-file-min')
 // 在末尾添加：
 module.exports.plugins.push(FileMinPlugin())
 // 关闭压缩功能:
