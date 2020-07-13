@@ -1,17 +1,16 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.md)
 
-# WePY 2.0中的Vuex 
+# Vuex in WePY 2.0 
 
-## 安装
+## Install
 
 ```
 npm install @wepy/x vuex --save
 ```
 
-## 用法
+## Usage
 
-1. 安装Vuex 
-
+1. Install Vuex 
 ```
 // app.wpy
 import wepy from '@wepy/core';
@@ -20,8 +19,7 @@ import vuex from '@wepy/x';
 wepy.use(vuex);
 ```
 
-2. 初始化store
-
+2. Initialize a store
 ```
 // ~/store.js
 import Vuex from '@wepy/x';
@@ -46,8 +44,7 @@ export default new Vuex.Store({
 })
 ```
 
-3. 映射到组件
-
+3. Map to Component
 ```
 // ~/counter.wpy
 <template>
@@ -69,10 +66,8 @@ wepy.component({
 })
 ```
 
-## 文件
-
+## Document 
 [https://vuex.vuejs.org/](https://vuex.vuejs.org/)
 
-## 其他
-
-目前不支持 [Vuex 模块](https://vuex.vuejs.org/guide/modules.html) 。  在此处检查 [问题](https://github.com/Tencent/wepy/issues/2191) 。
+## Other
+[Vuex Module](https://vuex.vuejs.org/guide/modules.html) is not supportted currently. Check the [Issue](https://github.com/Tencent/wepy/issues/2191) here.

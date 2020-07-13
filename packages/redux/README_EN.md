@@ -1,17 +1,16 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.md)
 
-# WePY 2.0中的Redux
+# Redux in WePY 2.0 
 
-## 安装
+## Install
 
 ```
 npm install @wepy/redux redux --save
 ```
 
-## 用法
+## Usage
 
-1. 安装Redux
-
+1. Install Redux
 ```
 // app.wpy
 import wepy from '@wepy/core';
@@ -20,8 +19,7 @@ import wepyRedux from '@wepy/redux';
 wepy.use(wepyRedux);
 ```
 
-2. 初始化 Store
-
+2. Initialize a store
 ```
 // ~/store.js
 import { createStore, combineReducers } from 'redux';
@@ -40,8 +38,7 @@ export default createStore(combineReducers({
 }));
 ```
 
-3. 映射到组件
-
+3. Map to Component
 ```
 // ~/counter.wpy
 <template>
@@ -70,34 +67,30 @@ wepy.component({
 
 * mapState(states) 
 
-  状态：字符串/数组/K-V对象.。需要映射的 state 属性。如:
-
-  ```
-  mapState('counter')
-  mapState(['counter', 'somethingelse'])
-  mapState({ alias: 'counter' })
-  mapState({ 
-    num: function (state) {
-      return state.counter.num;
-    } 
-  })
-  ```
-
+    states: String/Array/K-V Object. 需要映射的 state 属性。如:
+    ```
+    mapState('counter')
+    mapState(['counter', 'somethingelse'])
+    mapState({ alias: 'counter' })
+    mapState({ 
+      num: function (state) {
+        return state.counter.num;
+      } 
+    })
+    ```
 * mapActions(actions)
 
-  actions: K-V Object. 需要映射的 action 。如：
-
-  ```
-  mapActions({ add: 'ADD' });
-  mapActions({ 
-    add: function () {
-      return {
-        type: 'ADD'
-      };
-    } 
-  });
-  ```
+    actions: K-V Object. 需要映射的 action 。如：
+    ```
+    mapActions({ add: 'ADD' });
+    mapActions({ 
+      add: function () {
+        return {
+          type: 'ADD'
+        };
+      } 
+    });
+    ```
 
 ## Document 
-
 [https://redux.jg.org](https://redux.js.org)

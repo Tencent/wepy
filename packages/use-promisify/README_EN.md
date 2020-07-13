@@ -1,19 +1,19 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.md)
 
 # @wepy/use-promisify
 
 Promisfy all weapp APIs.
 
-## 安装
+## Install 
 
 ```
 npm install @wepy/use-promisify --save
 ```
 
-## 用法
+## Usage
 
 
-### 基本用法
+### Basic Usage
 
 ```
 import wepy from '@wepy/core';
@@ -24,7 +24,7 @@ wepy.use(promisify);
 wepy.wx.getStorage('mykey').then(res => console.log(res));
 ```
 
-### 忽略 APIs
+### Ignore APIs
 
 ```
 wepy.use(promisify, ['getStorage', 'getSystemInfo']);
@@ -37,7 +37,7 @@ wepy.wx.getStorage({
 })
 ```
 
-### 函数调用
+### Function call
 
 Support to use `wepy.promisify` to promisify a callback function.
 
@@ -54,7 +54,7 @@ wepy.promisify(fn, caller, type);
 
 #### weapp-style
 
-支持 weapp-style的所有功能:
+Supports all function which is weapp-style:
 
 ```
 func({
@@ -64,9 +64,9 @@ func({
 wepy.promisify(func)({key: 'mykey'}).then(console.log).catch(console.error);
 ```
 
-#### 错误优先
+#### error-first
 
-支持所有 `error-first` 功能，例如:
+Supports all `error-first` functions, like:
 
 ```
 func(arg1, args2, function (err, data) {});
@@ -75,9 +75,9 @@ wepy.promisify(func, null, 'error-first')(arg1, arg2).then(console.log).catch(co
 ```
 
 
-### 简化参数
+### Simplify Parameters
 
-`weapp-style` 函数始终需要一个Object参数，并且此插件将简化参数。例如：
+`weapp-style` function always need a Object params, and this plugin will simplify the parameters. e.g.
 
 ```
 wepy.use(promisify);
@@ -92,4 +92,4 @@ wepy.wx.request(myurl);
 wepy.wx.openLocation(0, 0);
 ```
 
-在这里我们可以看到所有的简化列表 [Simplify List](https://github.com/Tencent/wepy/blob/2.0.x/packages/use-promisify/index.js#L86-L152) 
+Here we can see all the [Simplify List](https://github.com/Tencent/wepy/blob/2.0.x/packages/use-promisify/index.js#L86-L152) 
