@@ -11,7 +11,7 @@ describe('parseModel test', () => {
         })
     });
 
-    
+
     it('只有点时', () => {
         var str = ' test.key ';
         expect(parseModel(str)).to.deep.equal({
