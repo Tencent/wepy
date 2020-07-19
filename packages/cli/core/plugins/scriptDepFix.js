@@ -21,6 +21,11 @@ exports = module.exports = function() {
     parsed.parser.deps.forEach((dep, i) => {
       if (!parsed.fixedDeps[i]) {
         let depMod = parsed.depModules[i];
+        if (typeof depMod === 'string') {
+          parsed.source.replace(dep.expr.start, dep.expr.end - 1, depMod);
+          parsed.fixedDeps[i] = true;
+          return;
+        }
         if (typeof depMod === 'number') {
           depMod = this.vendors.data(depMod);
         }

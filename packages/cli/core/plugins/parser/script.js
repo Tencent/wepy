@@ -20,6 +20,10 @@ const npmTraverseFileMap = {};
 
 exports = module.exports = function() {
   this.register('wepy-parser-dep', function(node, ctx, dep) {
+    const file = dep.module;
+    if (file.endsWith('.json')) {
+      return Promise.resolve(fs.readFileSync(path.resolve(path.dirname(ctx.file), file), 'utf8'));
+    }
     return this.resolvers.normal.resolve({ issuer: ctx.file }, path.dirname(ctx.file), dep.module, {}).then(rst => {
       let npm = rst.meta.descriptionFileRoot !== this.context;
 
