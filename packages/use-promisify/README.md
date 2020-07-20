@@ -64,7 +64,7 @@ func({
 wepy.promisify(func)({key: 'mykey'}).then(console.log).catch(console.error);
 ```
 
-#### 错误优先
+#### error-first
 
 支持所有 `error-first` 功能，例如:
 

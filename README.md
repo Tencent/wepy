@@ -33,7 +33,7 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 
 ```html
 <style lang="less">
-  @color: #4D926F;
+@color: #4D926F;
   .num {
   color: @color;
   }
@@ -43,8 +43,8 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
     <div class="num" @tap="num++">
       {{num}}
     </div>
-    <customComponent></customComponent>
-    <vendorComponent></vendorComponent>
+    <custom-Component></custom-Component>
+    <vendor-Component></vendor-Component>
     <div>{{text}}</div>
     <input v-model="text"/>
   </div>

@@ -33,7 +33,7 @@ At the same time, WePY is also a growing framework, drawing heavily on the desig
 
 ```html
 <style lang="less">
-  @color: #4D926F;
+@color: #4D926F;
   .num {
   color: @color;
   }
@@ -43,8 +43,8 @@ At the same time, WePY is also a growing framework, drawing heavily on the desig
     <div class="num" @tap="num++">
       {{num}}
     </div>
-    <customComponent></customComponent>
-    <vendorComponent></vendorComponent>
+    <custom-Component></custom-Component>
+    <vendor-Component></vendor-Component>
     <div>{{text}}</div>
     <input v-model="text"/>
   </div>
@@ -70,15 +70,15 @@ At the same time, WePY is also a growing framework, drawing heavily on the desig
 </script>
 ```
 
-### Install and use
+### Usage
 
-#### Install (update) the WEPY command-line tool.
+#### Install (upgrade) the WEPY command-line tool.
 
-```console
+```bash
 npm install @wepy/cli@next -g
 ```
 
-#### Generate development instances
+#### Get start with an example
 
 ```console
 wepy init standard myproject
@@ -91,13 +91,13 @@ cd myproject
 npm install
 ```
 
-#### Develop real-time compilation
+#### Watch mode
 
 ```console
 wepy build --watch
 ```
 
-#### Developer tools import project
+#### Import project
 
 Create a new project using`WeChat developer tool`.If the local developer selects the project root directory, the project configuration will be automatically imported.
 
@@ -152,13 +152,13 @@ GitHub 掘金版、
 
 ...
 
-### communication group
+### Wechat group
 
 WePY group has reached 500 members，Please add gcaufy_helper friends or scan the code to add friends, verify the reply 'wepy' according to the reference to enter the group.
 
 ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
 
-### Participate in the contribution
+### Contribution
 
 If you have any comments or Suggestions, please feel free to contribute to improving the WeChat app-development experience by asking for Issues or Pull Requests.<br>see details：[CONTRIBUTING.md](./CONTRIBUTING.md)
 
