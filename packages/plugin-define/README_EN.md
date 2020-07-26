@@ -1,17 +1,16 @@
-[English](./README.md) | 简体中文
+English | [简体中文](./README.md)
 
 # wepy define plugin
 
-## 安装
+## Install
 
 ```bash
 npm install @wepy/plugin-define --save-dev
 ```
 
-## 配置方式
+## Configration
 
 **wepy.config.js**
-
 ```javascript
 const DefinePlugin = require('@wepy/plugin-define');
 
@@ -27,8 +26,7 @@ module.exports = {
 };
 ```
 
-## 参考网站
-
+## Reference
 [webpack.DefinePlugin](https://webpack.js.org/plugins/define-plugin/)
 
 

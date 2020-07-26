@@ -1,4 +1,4 @@
-[English](./README_EN.md) | 简体中文
+English | [简体中文](./README.md)
 
 ## WePY 2 (beta)
 
@@ -8,26 +8,26 @@
 [![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=1.7.x)](https://coveralls.io/github/Tencent/wepy?branch=1.7.x)
 [![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/Tencent/wepy)
 
-### 介绍
+### Introduce
 
-WePY 资源汇总：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
+WePY resource summary：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
 
-WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通过预编译的手段让开发者可以选择自己喜欢的开发风格去开发小程序。框架的细节优化，Promise，Async Functions 的引入都是为了能让开发小程序项目变得更加简单，高效。
+WePY (pronounced: /'wepi/) is a framework that enables componentization of small programs by pre-compiling them so that developers can choose their own development style.Details optimization of the framework, the introduction of Promise and Async Functions are all aimed at making it easier and more efficient to develop applets.
 
-同时 WePY 也是一款成长中的框架，大量吸收借鉴了一些优化前端工具以及框架的设计理念和思想。如果 WePY 有不足地方，或者你有更好的想法，欢迎提交 ISSUE 或者 PR。
+At the same time, WePY is also a growing framework, drawing heavily on the design concepts and ideas of some front-end optimization tools and frameworks.If WePY has a problem, or if you have a better idea, feel free to submit an ISSUE or PR.
 
 
-### 特性：
+### Features:
 
-- 类 Vue 开发风格
-- 支持自定义组件开发
-- 支持引入 NPM 包
-- 支持 [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
-- 支持 ES2015+ 特性，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-- 支持多种编译器，Less/Sass/Stylus/PostCSS、Babel/Typescript、Pug
-- 支持多种插件处理，文件压缩，图片压缩，内容替换等
-- 支持 Sourcemap，ESLint 等
-- 小程序细节优化，如请求列队，事件优化等
+- Class Vue development style
+- Support for custom component development
+- Support for introducing NPM packages
+- support [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
+- Support for ES2015+ features，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
+- Supports multiple compilers, Less/Sass/Stylus/PostCSS, Babel/Typescript, Pug
+- Supports a variety of plug-in processing, file compression, image compression, content replacement, etc
+- Supports Sourcemap, ESLint, etc
+- Small program details optimization, such as request queuing, event optimization, etc
 
 ### Demo
 
@@ -70,38 +70,38 @@ WePY (发音: /'wepi/)是一款让小程序支持组件化开发的框架，通�
 </script>
 ```
 
-### 安装使用
+### Usage
 
-#### 安装（更新） wepy 命令行工具。
+#### Install (upgrade) the WEPY command-line tool.
 
-```console
+```bash
 npm install @wepy/cli@next -g
 ```
 
-#### 生成开发示例
+#### Get start with an example
 
 ```console
 wepy init standard myproject
 ```
 
-#### 安装依赖
+#### Install dependencies
 
 ```console
 cd myproject
 npm install
 ```
 
-#### 开发实时编译
+#### Watch mode
 
 ```console
 wepy build --watch
 ```
 
-#### 开发者工具导入项目
+#### Import project
 
-使用`微信开发者工具`新建项目，本地开发选择项目根目录，会自动导入项目配置。
+Create a new project using`WeChat developer tool`.If the local developer selects the project root directory, the project configuration will be automatically imported.
 
-### 哪些小程序是用 WePY 开发的
+### Which applets are developed with WePY
 
 腾讯疫苗查询小程序、
 腾讯翻译君小程序、
@@ -152,17 +152,17 @@ GitHub 掘金版、
 
 ...
 
-### 交流群
+### Wechat group
 
-WePY 交流群已满 500 人，请加 gcaufy_helper 好友或者扫码加好友，验证回复 `wepy` 按照指引进群。
+WePY group has reached 500 members，Please add gcaufy_helper friends or scan the code to add friends, verify the reply 'wepy' according to the reference to enter the group.
 
 ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
 
-### 参与贡献
+### Contribution
 
-如果你有好的意见或建议，欢迎给我们提 Issues 或 Pull Requests，为提升微信小程序开发体验贡献力量。<br>详见：[CONTRIBUTING.md](./CONTRIBUTING.md)
+If you have any comments or Suggestions, please feel free to contribute to improving the WeChat app-development experience by asking for Issues or Pull Requests.<br>see details：[CONTRIBUTING.md](./CONTRIBUTING.md)
 
-[腾讯开源激励计划](https://opensource.tencent.com/contribution) 鼓励开发者的参与和贡献，期待你的加入。
+[Tencent Open Source Incentive Plan](https://opensource.tencent.com/contribution) EncouraTencent Open Source Incentive Plange developers to participate and contribute. Look forward to your participation.
 
 ### Links
 
