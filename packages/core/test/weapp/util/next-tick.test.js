@@ -2,9 +2,8 @@ import { withMacroTask, nextTick, renderFlushCallbacks, renderNextTick} from '..
 const expect = require('chai').expect;
 
 describe('next-tick test', function () {
-    it('warn test', function () {
-        expect(withMacroTask(label)).to.deep.equal(undefined);
-    });
-    
-
+  it('macro task with normal function', function () {
+    const fn = () => 1;
+    expect(withMacroTask(fn)).is.an('function');
+  });
 });
