@@ -43,8 +43,8 @@ At the same time, WePY is also a growing framework, drawing heavily on the desig
     <div class="num" @tap="num++">
       {{num}}
     </div>
-    <custom-Component></custom-Component>
-    <vendor-Component></vendor-Component>
+    <custom-component></custom-component>
+    <vendor-component></vendor-component>
     <div>{{text}}</div>
     <input v-model="text"/>
   </div>
