@@ -9,7 +9,7 @@ const mockapi = new MockWxAPI();
 const allPages = [];
 const pageIndex = -1;
 
-describe('weapp life cycles', () => {
+describe('core weapp life cycles', () => {
   before(() => {
     mockapi.mock();
 

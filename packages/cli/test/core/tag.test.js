@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const tag = require('../../core/tag');
 
-describe('tag', function() {
+describe('cli core tag', function() {
   it('should combineTagMap', function() {
     const additional = {
       'test-tag-1': 'to-test-tag-1',

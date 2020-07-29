@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const FileDep = require('../../core/fileDep');
 
-describe('FileDep', function() {
+describe('cli core FileDep', function() {
   it('should addDeps, getDeps and getSources', function() {
     const fileDep = new FileDep();
 

@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 const po = require('../../core/parseOptions');
 
-describe('parseOptions', function() {
-  it('getValue', function() {
+describe('cli core parseOptions', function() {
+  it('should getValue', function() {
     expect(po.getValue({}, 'a.b.c')).to.equal(undefined);
 
     expect(po.getValue({ a: 1 }, 'a')).to.equal(1);
@@ -10,7 +10,7 @@ describe('parseOptions', function() {
     expect(po.getValue({ a: { b: { c: 2 } } }, 'a.b')).to.deep.equal({ c: 2 });
   });
 
-  it('setValue', function() {
+  it('should setValue', function() {
     expect(po.setValue({}, 'a.b.c', 1)).to.deep.equal({ a: { b: { c: 1 } } });
 
     expect(po.setValue({ a: {}, a2: 2 }, 'a.b.c', 1)).to.deep.equal({ a: { b: { c: 1 } }, a2: 2 });
@@ -23,7 +23,7 @@ describe('parseOptions', function() {
     });
   });
 
-  it('parse', function() {
+  it('should parse', function() {
     expect(po.parse().wpyExt).to.equal('.wpy');
 
     expect(po.parse({ wpyExt: '.vue' }).wpyExt).to.equal('.vue');

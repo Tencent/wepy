@@ -12,7 +12,7 @@ function createCompile(pluginOpt) {
 }
 
 describe('plugin-define', function() {
-  it('walker-unary-expression-undefined', function() {
+  it('should test walker-unary-expression-undefined', function() {
     const names = {
       name: 'window'
     };
@@ -78,7 +78,7 @@ describe('plugin-define', function() {
     expect(args[0].replacements.length).to.equal(0);
   });
 
-  it('walker-member-expression-undefined', function() {
+  it('should test walker-member-expression-undefined', function() {
     const memberExpr = {
       type: 'MemberExpression',
       start: 8,
@@ -127,7 +127,7 @@ describe('plugin-define', function() {
     expect(args[0].replacements[0].value).to.equal('"dev"');
   });
 
-  it('walker-identifier-undefined', function() {
+  it('should test walker-identifier-undefined', function() {
     const memberExpr = {
       type: 'Identifier',
       start: 8,
@@ -152,7 +152,7 @@ describe('plugin-define', function() {
     expect(args[0].replacements[0].value).to.equal('"something"');
   });
 
-  it('test different values', function() {
+  it('should test different values', function() {
     let compile, args;
 
     compile = createCompile({

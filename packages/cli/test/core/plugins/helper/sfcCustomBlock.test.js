@@ -13,10 +13,10 @@ function createCompile() {
   return hook;
 }
 
-describe('sfcCustomBlock', function() {
+describe('cli core helper sfcCustomBlock', function() {
   const compiler = createCompile();
 
-  it('test default lang', function() {
+  it('should test default lang', function() {
     const sfc = sfcCompiler.parseComponent(
       `
       <config></config>
@@ -33,7 +33,7 @@ describe('sfcCustomBlock', function() {
     expect(parsedSfc.wxs).to.be.an.instanceof(Array);
   });
 
-  it('test custom lang', function() {
+  it('should test custom lang', function() {
     const sfc = sfcCompiler.parseComponent(
       `
       <config lang="customLang1"></config>

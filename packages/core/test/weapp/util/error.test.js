@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 import { handleError } from '../../../weapp/util/error';
 
-describe('handleError test', () => {
-    it('error test', () => {
+describe('core weapp util error', () => {
+    it('when undefined', () => {
         const app = {
             data: 24
         };

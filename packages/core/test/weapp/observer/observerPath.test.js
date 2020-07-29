@@ -8,8 +8,8 @@ const _getPathMap = (obj, key) =>
     ? getPathMap(key, obj.__ob__.op.pathKeys, obj.__ob__.op.pathMap).combinePathMap
     : obj.__ob__.op.pathMap;
 
-describe('weapp observer observerPath', function() {
-  it('only path', function() {
+describe('core weapp observer observerPath', function() {
+  it('when only path', function() {
     const vm = {};
 
     initData(vm, { num: 1, str: 'string', arr: [1, 2], obj: { a: 1 }, deepObj: { node: { a: 1 } } });
@@ -28,7 +28,7 @@ describe('weapp observer observerPath', function() {
     });
   });
 
-  it('only deep path', function() {
+  it('when only deep path', function() {
     const vm = {};
 
     initData(vm, { arr: [1, 2], obj: { a: 1 }, deepObj: { node: { a: 1 } } });
@@ -49,7 +49,7 @@ describe('weapp observer observerPath', function() {
     });
   });
 
-  it('complex path: Object', function() {
+  it('when complex path: Object', function() {
     const vm = {};
 
     initData(vm, { a: { b: { c: { d: 123 } } }, x: {}, y: {} });
@@ -90,7 +90,7 @@ describe('weapp observer observerPath', function() {
     });
   });
 
-  it('complex path: Array', function() {
+  it('when complex path: Array', function() {
     const vm = {};
 
     initData(vm, { arr1: [], arr2: [], arr3: [] });

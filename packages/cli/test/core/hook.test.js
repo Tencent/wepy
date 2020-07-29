@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const Hook = require('../../core/hook');
 
-describe('Hook', function() {
+describe('cli core hook', function() {
   it('should register', function() {
     const hook = new Hook();
     const handler = function() {};
@@ -30,7 +30,7 @@ describe('Hook', function() {
     expect(hook._hooks['process-test']).to.be.an('undefined');
   });
 
-  it('should has hook', function() {
+  it('should hasHook', function() {
     const hook = new Hook();
     const handler = function() {};
     hook.register('process-test', handler);
