@@ -20,7 +20,8 @@ export const WEAPP_PAGE_LIFECYCLE = [
   'onAddToFavorites',
   'onPageScroll',
   'onResize',
-  'onTabItemTap'
+  'onTabItemTap',
+  'onShareTimeline'
 ];
 
 export const WEAPP_COMPONENT_LIFECYCLE = ['beforeCreate', 'created', 'attached', 'ready', 'moved', 'detached', 'error'];
