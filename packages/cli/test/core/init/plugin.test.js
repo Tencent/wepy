@@ -56,9 +56,9 @@ const compare = (name, done) => {
   }
 };
 
-describe('cli init plugin', function() {
+describe('init plugin', function() {
   Object.keys(specs).forEach(key => {
-    it(`should test ${key} plugin`, done => {
+    it(`test ${key} plugin`, done => {
       compare(key, done);
     });
   });

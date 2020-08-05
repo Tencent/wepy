@@ -2,7 +2,7 @@
 const expect = require('chai').expect;
 import { parseModel } from '../../../weapp/util/model';
 
-describe('core weapp util model', () => {
+describe('Model', () => {
     it('when no square brackets and dots ', () => {
         var str = '  test  ';
         expect(parseModel(str)).to.deep.equal({

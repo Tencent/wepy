@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 import { remove, isReserved, def, parsePath } from '../../../weapp/util/index';
 import { obj } from 'through2';
 
-describe('core weapp util index(removearr)', () => {
+describe('Util(removearr)', () => {
     it('should be removed [2]', () => {
         const arr1 = [2, 3, 7, 5, 6, 7, 8, 1];
         const removearr = remove(arr1, 2);
@@ -22,7 +22,7 @@ describe('core weapp util index(removearr)', () => {
     })
 });
 
-describe('core weapp util index(isReserved)', () => {
+describe('Util(isReserved)', () => {
     it('when a string starts with _', () => {
         expect(isReserved('_static')).to.be.true;
     });
@@ -34,7 +34,7 @@ describe('core weapp util index(isReserved)', () => {
     })
 });
 
-describe('core weapp util index(def)', () => {
+describe('Util(def)', () => {
     it('should add property', () => {
         const obj = {};
         def(obj, 'color', 'white', true);
@@ -55,7 +55,7 @@ describe('core weapp util index(def)', () => {
 });
 
 
-describe('core weapp util index(parsePath)', () => {
+describe('Util(parsePath)', () => {
     it('should return an property value', () => {
         const path = 'wepy.test';
         let a = parsePath(path);

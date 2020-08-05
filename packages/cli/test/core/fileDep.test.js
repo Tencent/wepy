@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 const FileDep = require('../../core/fileDep');
 
-describe('cli core FileDep', function() {
-  it('should addDeps, getDeps and getSources', function() {
+describe('FileDep', function() {
+  it('should add dependencies, get dependencies and get sources', function() {
     const fileDep = new FileDep();
 
     fileDep.addDeps('a.wpy', ['b.js', 'c.js']);
@@ -15,7 +15,7 @@ describe('cli core FileDep', function() {
     expect(fileDep.getSources('c.js')).to.eql(['a.wpy', 'b.wpy']);
   });
 
-  it('should cleanDeps', function() {
+  it('should clean dependencies', function() {
     const fileDep = new FileDep();
 
     fileDep.addDeps('a.wpy', ['b.js', 'c.js']);
@@ -34,7 +34,7 @@ describe('cli core FileDep', function() {
     expect(fileDep.getSources('d.js')).to.eql(['b.wpy']);
   });
 
-  it('should not add duplicated deps', function() {
+  it('should not add duplicated dependencies', function() {
     const fileDep = new FileDep();
 
     fileDep.addDeps('a.wpy', ['a.js', 'b.js']);
@@ -50,7 +50,7 @@ describe('cli core FileDep', function() {
     expect(fileDep.getSources('d.js')).to.eql(['a.wpy']);
   });
 
-  it('should get isInvolved correctly', function() {
+  it('should judge whether involved', function() {
     const fileDep = new FileDep();
 
     fileDep.addDeps('a.wpy', ['b.js', 'c.js']);

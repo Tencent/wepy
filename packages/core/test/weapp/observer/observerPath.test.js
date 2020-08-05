@@ -8,7 +8,7 @@ const _getPathMap = (obj, key) =>
     ? getPathMap(key, obj.__ob__.op.pathKeys, obj.__ob__.op.pathMap).combinePathMap
     : obj.__ob__.op.pathMap;
 
-describe('core weapp observer observerPath', function() {
+describe('ObserverPath', function() {
   it('when only path', function() {
     const vm = {};
 

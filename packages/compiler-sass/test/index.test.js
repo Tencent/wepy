@@ -88,7 +88,7 @@ describe('compiler-less', function() {
   let ids = specs.getIds();
 
   ids.forEach(id => {
-    it('should test' + id, function(done) {
+    it('should compare' + id, function(done) {
       compare(id, done);
     });
   });

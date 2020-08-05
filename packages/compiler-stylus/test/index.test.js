@@ -125,12 +125,12 @@ describe('compiler-stylus', function() {
   let shouldFailIds = ids.filter(id => /^fail-/.test(id));
 
   shouldPassIds.forEach(id => {
-    it('should pass' + id, function(done) {
+    it('should compare success' + id, function(done) {
       compare(id, done);
     });
   });
   shouldFailIds.forEach(id => {
-    it('should fail ' + id, function(done) {
+    it('should compare fail ' + id, function(done) {
       compileFail(id, done);
     });
   });

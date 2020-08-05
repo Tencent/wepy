@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { dispatcher } from '../../../weapp/dispatcher/index';
 import { addEventListener, createOriginalPage, simulateOriginalWePYEvent } from '../helper/index';
 
-describe('core weapp dispatcher', function() {
-  it('should create page', done => {
+describe('Dispatcher', function() {
+  it('should dispatcher correctly', done => {
     const page = createOriginalPage();
 
     const params = [1, 2];

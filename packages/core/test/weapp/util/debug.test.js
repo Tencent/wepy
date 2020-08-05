@@ -1,15 +1,15 @@
 import { warn, tip } from '../../../weapp/util/debug';
 const expect = require('chai').expect;
 
-describe('core weapp util debug', function () {
-    it('should warning', function () {
+describe('Debug', function () {
+    it('should display warning', function () {
         const app = {
             data: 24
         };
         expect(warn('SyntaxError', app)).to.deep.equal(undefined);
     });
     
-    it('should tipping', function () {
+    it('should display tipping', function () {
         const app = {
             data: 24
         };

@@ -102,7 +102,7 @@ function testFixture(file) {
 }
 
 describe('compiler-babel', function() {
-  it('should find entry', function() {
+  it('should return wallker.entry', function() {
     return testFixture('app.js')
       .then(walker => {
         return !!walker.entry;

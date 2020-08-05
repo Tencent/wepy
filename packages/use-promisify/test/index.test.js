@@ -76,7 +76,7 @@ describe('use-promisify', function() {
     global.wx = wx;
   });
 
-  it('should install', function(done) {
+  it('should check installation successful', function(done) {
     let task = ensureAllTaskDone(['test-request-catch', 'test-storage', 'test-checkSession'], done);
 
     let wepy = {};
@@ -107,7 +107,7 @@ describe('use-promisify', function() {
     });
   });
 
-  it('should install appends array list', function(done) {
+  it('should append array list', function(done) {
     let wepy = {};
 
     usePromisifyInstall(wepy, { someNewAPI: false, getStorage: true });
@@ -118,7 +118,7 @@ describe('use-promisify', function() {
     });
   });
 
-  it('should install get rid apis', function(done) {
+  it('should get rid apis', function(done) {
     let wepy = {};
     usePromisifyInstall(wepy, ['getStorage']);
     wepy.wx.getStorage({
@@ -143,7 +143,7 @@ describe('use-promisify', function() {
     });
   });
 
-  it('should test err-first promisify', function(done) {
+  it('error-first promisify', function(done) {
     let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
 
     let isGreaterThan10 = function(num, callback) {
@@ -177,7 +177,7 @@ describe('use-promisify', function() {
       });
   });
 
-  it('should test weapp-style promisify', function(done) {
+  it('weapp-style promisify', function(done) {
     let task = ensureAllTaskDone(['test-greater', 'test-less'], done);
 
     let isGreaterThan10 = function(option) {
@@ -209,7 +209,7 @@ describe('use-promisify', function() {
       });
   });
 
-  it('should test simplify', function(done) {
+  it('simplify', function(done) {
     let wepy = {},
       originParamsArr = [
         {

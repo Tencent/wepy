@@ -140,16 +140,16 @@ function assertCodegen(originalRaw, assertRaw, options = {}, ctx, done) {
     });
 }
 
-describe('cli core template parse', function() {
+describe('core template parse', function() {
   spec.attr.forEach(ctx => {
-    it('should test attr: ' + ctx.file, function(done) {
+    it('attribute: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
       assertCodegen(originalRaw, assertRaw, ctx, ctx, done);
     });
   });
 
   spec.event.forEach(ctx => {
-    it('should test event: ' + ctx.file, function(done) {
+    it('event: ' + ctx.file, function(done) {
       const { originalRaw, assertRaw } = getRaw(ctx.file);
       assertCodegen(originalRaw, assertRaw, ctx, ctx, done);
     });
