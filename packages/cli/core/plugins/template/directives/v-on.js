@@ -110,7 +110,11 @@ const parseHandler = (name = '', value = '', scope) => {
   info = parseHandlerProxy(value, scope);
 
   if (name === 'click') name = 'tap';
-  type = 'bind:' + name;
+  if (name.startsWith("touch")) {
+    type = 'bind' + name;
+  } else {
+    type = 'bind:' + name;
+  }
   return {
     event: name,
     type: type,
