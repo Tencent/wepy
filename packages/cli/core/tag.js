@@ -84,8 +84,6 @@ const SELF_CLOSE_TAGS = [
   'slider',
   'switch',
   'textarea',
-  'live-player',
-  'live-pusher',
   'navigation-bar',
   'include',
   'import'
