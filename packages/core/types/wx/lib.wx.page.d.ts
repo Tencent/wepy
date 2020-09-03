@@ -69,9 +69,9 @@ declare namespace wepy {
       
       onShareAppMessage?(options?: WechatMiniprogram.Page.IShareAppMessageOption): WechatMiniprogram.Page.ICustomShareContent
 
-      onShareTimeline?(options?: WechatMiniprogram.Page.IAddToFavoritesContent): WechatMiniprogram.Page.IAddToFavoritesContent
+      onShareTimeline?(): WechatMiniprogram.Page.IAddToFavoritesContent
 
-      onAddToFavorites?(options?: WechatMiniprogram.Page.IAddToFavoritesContent): WechatMiniprogram.Page.IAddToFavoritesContent
+      onAddToFavorites?(): WechatMiniprogram.Page.IAddToFavoritesContent
       
       onPageScroll?(options?: WechatMiniprogram.Page.IPageScrollOption): void
   
