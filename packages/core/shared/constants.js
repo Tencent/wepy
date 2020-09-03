@@ -9,6 +9,8 @@ export const WEAPP_PAGE_LIFECYCLE = [
   'onPullDownRefresh',
   'onReachBottom',
   'onShareAppMessage',
+  'onShareTimeline',
+  'onAddToFavorites',
   'onPageScroll',
   'onTabItemTap',
   'onResize'
