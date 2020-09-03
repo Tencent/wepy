@@ -50,6 +50,7 @@ class Compile extends Hook {
     this.tags = {
       htmlTags: tag.combineTag(tag.HTML_TAGS, userDefinedTags.htmlTags),
       wxmlTags: tag.combineTag(tag.WXML_TAGS, userDefinedTags.wxmlTags),
+      selfCloseTags: tag.SELF_CLOSE_TAGS,
       html2wxmlMap: tag.combineTagMap(tag.HTML2WXML_MAP, userDefinedTags.html2wxmlMap)
     };
 
@@ -211,13 +212,21 @@ class Compile extends Hook {
 
         if (appConfig.subPackages || appConfig.subpackages) {
           (appConfig.subpackages || appConfig.subPackages).forEach(sub => {
+            // Wepy don't support independent subPackages now
+            if (sub.independent) {
+              this.logger.warn(
+                'Independent subpackages is found in app config. Currently, it is not supported in WePY.'
+              );
+              throw new Error('EXIT');
+            }
+
             sub.pages.forEach(v => {
               pages.push(path.resolve(app.file, '../' + sub.root || '', v));
             });
           });
         }
 
-        let tasks = pages.map(v => {
+        let pageTasks = pages.map(v => {
           let file;
 
           file = v + this.options.wpyExt;
@@ -235,6 +244,33 @@ class Compile extends Hook {
           });
         });
 
+        let components = [];
+        if (appConfig.usingComponents) {
+          for (let key in appConfig.usingComponents) {
+            let v = appConfig.usingComponents[key];
+            components.push(path.resolve(app.file, '../', v));
+          }
+        }
+
+        let componentsTask = components.map(v => {
+          let file;
+
+          file = v + this.options.wpyExt;
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-wpy', { path: file, type: 'wepy' });
+          }
+          file = v + '.js';
+          if (fs.existsSync(file)) {
+            return this.hookUnique('wepy-parser-component', { path: file, type: 'wepy', npm: false });
+          }
+          this.hookUnique('error-handler', {
+            type: 'error',
+            ctx: app,
+            message: `Can not resolve page: ${v}`
+          });
+        });
+
+        let tasks = [...pageTasks, ...componentsTask];
         if (appConfig.tabBar && appConfig.tabBar.custom) {
           let file = path.resolve(app.file, '..', 'custom-tab-bar/index' + this.options.wpyExt);
           if (fs.existsSync(file)) {

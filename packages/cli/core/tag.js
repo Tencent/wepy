@@ -55,7 +55,9 @@ const WXML_TAGS = [
   // slot
   'slot',
   // ability
-  'open-data,web-view,ad'
+  'open-data,web-view,ad',
+  // reference
+  'template,import,include'
 ]
   .join(',')
   .split(',');
@@ -73,6 +75,19 @@ const HTML2WXML_MAP = {
   // support template [template](https://developers.weixin.qq.com/miniprogram/dev/framework/view/wxml/template.html)
   'wx-template': 'template'
 };
+
+const SELF_CLOSE_TAGS = [
+  'progress',
+  'checkbox',
+  'input',
+  'radio',
+  'slider',
+  'switch',
+  'textarea',
+  'navigation-bar',
+  'include',
+  'import'
+];
 
 /**
  * combine two tags array/object
@@ -117,6 +132,7 @@ exports = module.exports = {
   HTML_TAGS,
   WXML_TAGS,
   HTML2WXML_MAP,
+  SELF_CLOSE_TAGS,
   combineTag,
   combineTagMap
 };

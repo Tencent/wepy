@@ -1,6 +1,6 @@
 {
   "name": "@wepy/plugin-eslint",
-  "version": "0.1.5",
+  "version": "2.1.0",
   "description": "wepy eslint",
   "main": "index.js",
   "scripts": {
@@ -22,5 +22,6 @@
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/plugin-eslint@0.1.5",
-  "_commitid": "251e67f"
+  "_commitid": "251e67f",
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }

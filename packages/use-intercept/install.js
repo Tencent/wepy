@@ -102,9 +102,8 @@ function isPromise(obj) {
  * })
  */
 
-function install(wepy) {
+export default function install(wepy) {
   wepy.wx = wepy.wx || Object.assign({}, wx);
   wepy.intercept = intercept;
 }
 
-exports = module.exports = install;

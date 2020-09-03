@@ -1,4 +1,4 @@
-import Page from './libs/page';
+import Page from './libs/Page';
 import WepyPage from '../../../weapp/class/WepyPage';
 import WepyApp from '../../../weapp/class/WepyApp';
 

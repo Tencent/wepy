@@ -30,11 +30,15 @@ function testAll(pkgs) {
 
 function testOne(name) {
   process.env.FORCE_COLOR = 1;
-  spawnSync('npm', ['run', 'test'], {
+  const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const result = spawnSync(command, ['run', 'test'], {
     cwd: path.join(process.cwd(), 'packages', name),
     env: process.env,
     stdio: 'inherit'
   });
+  if (result.status !== 0) {
+    throw new Error('Test cases failed in: ' + name);
+  }
 }
 
 // eslint-disable-next-line no-unused-vars

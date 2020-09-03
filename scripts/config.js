@@ -3,7 +3,7 @@ const replace = require('rollup-plugin-replace');
 const path = require('path');
 
 const banner = `
- * Tencent is pleased to support the open source community by making WePY available.
+ /* Tencent is pleased to support the open source community by making WePY available.
  * Copyright (C) 2017 THL A29 Limited, a Tencent company. All rights reserved.
  *
  * Licensed under the MIT License (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
@@ -80,7 +80,7 @@ function getConfig(name) {
     output: {
       file: opt.dest,
       format: opt.format,
-      banner: opt.bannder,
+      banner: opt.banner,
       name: opt.moduleName || 'WePY'
     }
   };

@@ -1,4 +1,4 @@
-Tencent is pleased to support the open source community by making WePY available.  
+Tencent is pleased to support the open source community by making WePY available.
 Copyright (C) 2017 THL A29 Limited, a Tencent company.  All rights reserved.
 If you have downloaded a copy of the WePY binary from Tencent, please note that the WePY binary is licensed under the MIT License.
 If you have downloaded a copy of the WePY source code from Tencent, please note that WePY source code is licensed under the MIT License, except for the third-party components listed below which are subject to different license terms.  Your integration of WePY into your own projects may require compliance with the MIT License, as well as the other licenses applicable to the third-party components included within WePY.
@@ -6,7 +6,7 @@ A copy of the MIT License is included in this file.
 
 Other dependencies and licenses:
 
-Open Source Software Licensed Under the BSD 3-Clause License: 
+Open Source Software Licensed Under the BSD 3-Clause License:
 ----------------------------------------------------------------------------------------
 1. istanbul  0.4.5
 Copyright 2012 Yahoo! Inc.
@@ -24,7 +24,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 
-Open Source Software Licensed Under the MIT License: 
+Open Source Software Licensed Under the MIT License:
 ----------------------------------------------------------------------------------------
 1. bable  6.5.2
 Copyright (c) 2014-2016 Sebastian McKenzie <sebmck@gmail.com>
@@ -48,8 +48,8 @@ Copyright (c) 2014 Forbes Lindesay
 7. postcss  5.2.16
 Copyright 2013 Andrey Sitnik <andrey@sitnik.ru>
 
-8. node-sass  4.0.0
-Copyright (c) 2013-2016 Andrew Nesbitt
+8. sass  4.0.0
+Copyright (c) Natalie Weizenbaum <nweiz@google.com>
 
 9. stylus  0.54.5
 Copyright (c) Automattic <developer.wordpress.com>

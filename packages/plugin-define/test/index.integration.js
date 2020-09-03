@@ -4,7 +4,7 @@ const expect = require('chai').expect;
 
 describe('plugin-define integration', function() {
   it('full build', function(done) {
-    this.timeout(5000);
+    this.timeout(10000);
 
     let wepyPath = path.resolve(process.cwd(), '../cli/bin/wepy.js');
 

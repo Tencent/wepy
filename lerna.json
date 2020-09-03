@@ -1,12 +1,14 @@
 {
-  "lerna": "2.0.0",
   "packages": [
     "packages/*"
   ],
-  "version": "independent",
+  "version": "2.1.0",
+  "message": "chore(release): publish",
   "command": {
     "publish": {
-      "commitHooks": false
+      "commitHooks": false,
+      "conventionalCommits": true,
+      "message": "chore(release): publish %s"
     }
   }
 }

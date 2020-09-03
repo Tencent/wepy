@@ -1,3 +1,4 @@
 <view wx:if="{{ case01 }}"></view>
 <view wx:elif="{{ case02 }}"></view>
 <view wx:else></view>
+<view wx:if="{{ a < 1 }}"></view>

@@ -1,4 +1,4 @@
-const install = require('./install');
+import install from './install';
 
 export default {
   install,

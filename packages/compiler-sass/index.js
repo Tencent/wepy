@@ -9,7 +9,7 @@
 
 const os = require('os');
 const path = require('path');
-const sass = require('node-sass');
+const sass = require('sass');
 const resolveImporter = require('./resolveImporter');
 
 function createSassPlugin(compilation, type, options) {
