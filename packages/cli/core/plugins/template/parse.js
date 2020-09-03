@@ -35,6 +35,18 @@ const parseModifiers = (name = '') => {
   return ret;
 };
 
+const decodingMap = {
+  '&lt;': '<',
+  '&gt;': '>',
+  '&amp;': '&'
+};
+
+function decodeAttr(value) {
+  return value.replace(/&(?:lt|gt|amp);/g, function(match) {
+    return decodingMap[match];
+  });
+}
+
 exports = module.exports = function() {
   this.register('template-parse-ast-attr', function parseAstAttr(item, scope, rel, ctx) {
     let attrs = item.attribs;
@@ -46,6 +58,8 @@ exports = module.exports = function() {
     // Pre walk attributes
     for (let name in attrs) {
       let expr = attrs[name];
+
+      expr = decodeAttr(expr);
 
       ({ item, name, expr } = this.hookUniqueReturnArg('template-parse-ast-pre-attr-' + name, { item, name, expr }));
 
@@ -198,11 +212,15 @@ exports = module.exports = function() {
           let bindClass = item.bindClass && item.bindClass.length ? ` {{ [ ${item.bindClass.join(',')} ] }}` : '';
           str += ` class="${staticClass + bindClass}"`;
         }
-        str += '>';
-        if (item.children && item.children.length) {
-          str += this.hookUnique('template-parse-ast-to-str', item.children);
+        if (this.tags.selfCloseTags.includes(item.name) || (item.name === 'template' && !item.children.length)) {
+          str += ' />';
+        } else {
+          str += '>';
+          if (item.children && item.children.length) {
+            str += this.hookUnique('template-parse-ast-to-str', item.children);
+          }
+          str += `</${item.name}>`;
         }
-        str += `</${item.name}>`;
       }
     });
     return str;

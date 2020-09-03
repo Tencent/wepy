@@ -4,8 +4,6 @@ const fs = require('fs-extra');
 const less = require('less');
 const specs = require('./specs');
 
-const lesscPath = require.resolve('.bin/lessc');
-
 const projectPath = path.resolve(__dirname, '..', '..');
 const fixturesPath = path.resolve(projectPath, 'test', 'fixtures');
 const lessPath = path.resolve(fixturesPath, 'less');
@@ -35,7 +33,7 @@ ids.forEach(id => {
     // https://github.com/less/less.js/blob/59e919b3fc968a403405e39cf15237936b1a6b46/bin/lessc#L479-L484
     relativeUrls = '--rewrite-urls=all';
   }
-  let cmd = `${lesscPath} ${relativeUrls} ${options} ${tmpless} ${css}`;
+  let cmd = `npx lessc ${relativeUrls} ${options} ${tmpless} ${css}`;
 
   // eslint-disable-next-line
   console.log(`Generate spec: ${id}`);

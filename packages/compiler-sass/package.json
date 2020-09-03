@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-sass",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "description": "wepy compile sass",
   "main": "index.js",
   "scripts": {
@@ -15,12 +15,13 @@
   "license": "MIT",
   "dependencies": {
     "loader-utils": "^1.1.0",
-    "node-sass": "^4.0.0"
+    "sass": "^1.26.9"
   },
   "devDependencies": {
     "enhanced-resolve": "^4.0.0"
   },
   "readme": "ERROR: No README data found!",
   "_id": "@wepy/compiler-sass@2.0.3",
-  "_commitid": "cf96591"
+  "_commitid": "cf96591",
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }

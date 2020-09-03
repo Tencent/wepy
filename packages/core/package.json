@@ -1,6 +1,6 @@
 {
   "name": "@wepy/core",
-  "version": "2.0.0-alpha.16",
+  "version": "2.1.0",
   "main": "./dist/wepy.js",
   "typings": "types/index.d.ts",
   "scripts": {
@@ -17,9 +17,11 @@
   "_commitid": "a78dcb6",
   "devDependencies": {
     "esm": "^3.2.25",
+    "mocha": "^8.0.1",
     "typescript": "^3.3.3"
   },
   "dependencies": {
     "miniprogram-api-typings": "^2.10.3-1"
-  }
+  },
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }

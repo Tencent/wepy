@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-babel",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "description": "wepy compile babel",
   "main": "index.js",
   "scripts": {
@@ -24,5 +24,6 @@
     "acorn-dynamic-import": "^3.0.0",
     "acorn-walk": "^7.1.1",
     "babel-preset-env": "^1.7.0"
-  }
+  },
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }

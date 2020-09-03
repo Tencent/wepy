@@ -7,37 +7,37 @@ name: Release
 on:
   push:
     tags:
-      - "**"
+      - '**'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: '10.19'
-    - run: npm install
-    - run: npm run bootstrap 
-    - run: npm run test
-    - name: Set Tag Variable
-      id: vars
-      run: echo ::set-output name=tag::${GITHUB_REF:10}
-    - name: Check Tag
-      env:
-        RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-      run: |
-        echo $GITHUB_REF
-        echo $RELEASE_VERSION
-        echo ${{ steps.vars.outputs.tag }}
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.19'
+      - run: npm install
+      - run: npm run bootstrap
+      - run: npm run test
+      - name: Set Tag Variable
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF:10}
+      - name: Check Tag
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $GITHUB_REF
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
 
-    - name: Build dist
-      run: npm run build
-    - name: NPM release
-      env:
-        TAG_NAME: ${{ steps.vars.outputs.tag}}
-        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      run: |
-        echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
-        node ./scripts/npm-ci-release.js "$TAG_NAME"
- 
+      - name: Build dist
+        run: npm run build
+      - name: NPM release
+        env:
+          TAG_NAME: ${{ steps.vars.outputs.tag}}
+          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_AUTH_TOKEN}" > ~/.npmrc
+          node ./scripts/npm-ci-release.js "$TAG_NAME"
+          node ./scripts/npm-tags.js "$TAG_NAME" next

@@ -2312,7 +2312,7 @@ var callUserMethod = function(vm, userOpt, method, args) {
   return result;
 };
 
-var getLifecycycle = function (defaultLifecycle, rel, type) {
+var getLifeCycle = function (defaultLifecycle, rel, type) {
   var lifecycle = defaultLifecycle.concat([]);
   if (rel && rel.lifecycle && rel.lifecycle[type]) {
     var userDefinedLifecycle = [];
@@ -2356,7 +2356,7 @@ function patchAppLifecycle(appConfig, options, rel) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  var lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
+  var lifecycle = getLifeCycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(function (k) {
     // it's not defined aready && user defined it && it's an array or function
@@ -2523,7 +2523,7 @@ function patchLifecycle(output, options, rel, isComponent) {
     //   }
     // })
 
-    var lifecycle$1 = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
+    var lifecycle$1 = getLifeCycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle$1.forEach(function (k) {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -2536,7 +2536,7 @@ function patchLifecycle(output, options, rel, isComponent) {
       }
     });
   }
-  var lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
+  var lifecycle = getLifeCycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(function (k) {
     // beforeCreate is not a real lifecycle

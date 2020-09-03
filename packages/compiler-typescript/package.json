@@ -1,6 +1,6 @@
 {
   "name": "@wepy/compiler-typescript",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "wepy compile typescript",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,6 @@
     "typescript": "^3.3.3"
   },
   "_id": "@wepy/compiler-typescript@2.0.2",
-  "_commitid": "eae8bf5"
+  "_commitid": "eae8bf5",
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }

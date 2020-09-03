@@ -198,7 +198,7 @@ exports = module.exports = function() {
      *  </template>
      */
     const eventCallee = parsedEvent.parsed.callee;
-    if (eventCallee && eventCallee.name) {
+    if (!modifiers.wxs && eventCallee && eventCallee.name) {
       const calleeChunks = eventCallee.name.split('.');
       const wxsBlock = ctx.sfc.wxs;
 
@@ -209,7 +209,6 @@ exports = module.exports = function() {
         wxsBlock.find(item => item.attrs.module === calleeChunks[0])
       ) {
         modifiers.wxs = true;
-
         this.hookUnique(
           'error-handler',
           'template',

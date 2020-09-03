@@ -1,4 +1,4 @@
-const useInterceptInstall = require('../install');
+import useInterceptInstall from '../install';
 const { expect } = require('chai');
 
 function ensureAllTaskDone(taskList, done) {

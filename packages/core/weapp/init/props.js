@@ -43,9 +43,8 @@ export function patchProps(output, props) {
       if (isUndef(prop.type)) {
         newProp.type = null;
       } else if (isArr(prop.type)) {
-        newProp.type = null;
-        // eslint-disable-next-line
-        console.warn(`In mini-app, mutiple type is not allowed. The type of "${k}" will changed to "null"`);
+        newProp.optionalTypes = prop.type;
+        newProp.type = prop.type[0];
       } else if (AllowedTypes.indexOf(prop.type) === -1) {
         newProp.type = null;
         // eslint-disable-next-line
@@ -62,6 +61,12 @@ export function patchProps(output, props) {
           newProp.value = prop.default.call(output);
         } else {
           newProp.value = prop.default;
+        }
+      }
+      // props.optionalTypes
+      if (!isUndef(prop.optionalTypes)) {
+        if (isArr(prop.optionalTypes)) {
+          newProp.optionalTypes = prop.optionalTypes;
         }
       }
       // TODO
