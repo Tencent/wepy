@@ -19,6 +19,25 @@ function wepyInstall(wepy) {
           );
         }
       }
+    },
+    // When page unload, page instance will lose.
+    // But the store data dependences they are still present
+    onUnload: function () {
+      // List all keys in computed watchers
+      for (let key in this._computedWatchers) {
+        const item = this._computedWatchers[key];
+        // Clean deps
+        item.deps = item.deps.filter(dep => {
+          // If sub.vm === current page, then remove it
+          dep.subs = dep.subs.filter(sub => sub.vm !== this);
+          if (dep.subs.length === 0) {
+            // Remove dep ids
+            item.depIds.delete(dep.id);
+            return false;
+          }
+          return true;
+        })
+      }
     }
   });
 }
