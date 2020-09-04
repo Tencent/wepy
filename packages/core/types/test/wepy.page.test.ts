@@ -47,6 +47,20 @@ wepy.page({
       path: '/a/b/c'
     }
   },
+  onShareTimeline (): Page.IAddToFavoritesContent {
+    return <Page.IAddToFavoritesContent>{
+      title: 'share title',
+      imageUrl: 'http://www.baidu.com',
+      query: '/a/b/c'
+    }
+  },
+  onAddToFavorites (): Page.IAddToFavoritesContent {
+    return <Page.IAddToFavoritesContent>{
+      title: 'share title',
+      imageUrl: 'http://www.baidu.com',
+      query: '/a/b/c'
+    }
+  },
 
   methods: {
     bindtap () {
