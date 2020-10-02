@@ -1,0 +1,30 @@
+{
+  "name": "@wepy/router",
+  "version": "0.0.1",
+  "description": "router in WePY",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tencent/wepy.git"
+  },
+  "keywords": [
+    "router",
+    "WePY"
+  ],
+  "author": {
+    "name": "nishino",
+    "email": "nishinotsukasavirgo@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tencent/wepy/issues"
+  },
+  "homepage": "https://github.com/Tencent/wepy#readme",
+  "readme": "README.md",
+  "_id": "@wepy/router@0.0.1",
+  "_commitid": "a423f8d",
+  "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
+}
