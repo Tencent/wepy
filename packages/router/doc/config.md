@@ -10,9 +10,15 @@ tabPages = ['CourseList']
 routeMap = {
   SplashScreen: '/pages/SplashScreen',
   CourseList: '/pages/tabBar/courseList/CourseList',
-  ClassList: { name: 'CourseList', query: { courseType: 'class' } },
-  BookList: { path: '/pages/BookList', query: { info: { name: 'roma' } }, meta: 2},
-  CityList: { handler: ({ query }) => ({ path: '/pages/CityList', query }) },
+  ClassList: { 
+    name: 'CourseList', query: { courseType: 'class' } 
+  },
+  BookList: { 
+    path: '/pages/BookList', query: { info: { name: 'roma' } }, meta: 2
+  },
+  CityList: {
+    handler: ({ query }) => ({ path: '/pages/CityList', query }) 
+  },
   Courses: 'CourseList'
 }
 ```
