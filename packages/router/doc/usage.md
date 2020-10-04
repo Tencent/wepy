@@ -18,7 +18,10 @@ const routeMap = {
   SplashScreen: '/pages/SplashScreen',
   CourseList: '/pages/tabBar/courseList/CourseList',
   CourseDetail: '/pages/CourseDetail','
-  CourseOnlineDetail: { name: 'CourseDetail', query: { courseType: 'online' } },
+  CourseOnlineDetail: {
+    name: 'CourseDetail', 
+    query: { courseType: 'online' }
+  },
 }
 const config = { homePage, tabPages, routeMap }
 
