@@ -21,3 +21,5 @@ export {
   PluginFunction,
   PluginObject
 } from "./plugin";
+
+export { WepyCustomEvent } from './events';
