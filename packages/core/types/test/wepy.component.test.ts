@@ -1,15 +1,13 @@
 import wepy from '../index';
 
-
 wepy.component({
-
   relations: {
     './child': {
-      type: ''
+      type: 'child'
     }
   },
   hooks: {
-    'hi' : function (v: number) {
+    hi: function (v: number) {
       console.log(this);
     },
     'before-setData': function (dirty: object): object {
@@ -17,7 +15,7 @@ wepy.component({
       return dirty;
     }
   },
-  
+
   created() {
     this.initData();
   },
@@ -26,23 +24,20 @@ wepy.component({
     d: 'string'
   },
 
-  onLoad (option) {
+  onLoad(option) {
     console.log(option);
   },
 
-  onShow() {
+  onShow() {},
 
-  }, 
-  
   methods: {
-    bindtap () {
-    },
+    bindtap() {},
 
-    initData () {
+    initData() {
       wx.request({
         method: 'POST',
         url: 'http://www.baidu.com'
-      })
+      });
     }
   }
 });
