@@ -1,6 +1,6 @@
 {
   "name": "wepy-compiler-typescript",
-  "version": "1.5.9",
+  "version": "1.5.10",
   "description": "wepy compile typescript",
   "main": "lib/index.js",
   "scripts": {
@@ -12,6 +12,6 @@
   "author": "Gcaufy",
   "license": "MIT",
   "dependencies": {
-    "typescript": "^2.1.4"
+    "typescript": "^4.3.2"
   }
 }
