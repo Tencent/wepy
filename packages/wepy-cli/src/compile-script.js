@@ -147,7 +147,7 @@ export default {
                 ext = '.js';
             } else if (util.isFile(source + '.ts')) {
                 ext = '.ts';
-            } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
+            } else if (util.isDir(source) && (util.isFile(source + path.sep + 'index.js') || util.isFile(source + path.sep + 'index.ts'))) {
                 ext = path.sep + 'index.js';
             }else if (util.isFile(source)) {
                 ext = '';
