@@ -147,7 +147,7 @@ export default {
                     source += '.js';
                 } else if (util.isFile(source + '.ts')) {
                     source += '.js';
-                } else if (util.isDir(source) && util.isFile(source + path.sep + 'index.js')) {
+                } else if (util.isDir(source) && (util.isFile(source + path.sep + 'index.js') || util.isFile(source + path.sep + 'index.ts'))) {
                     source += path.sep + 'index.js';
                 } else {
                     throw `Missing files: ${resolved} in ${wpy.script.src}`;
