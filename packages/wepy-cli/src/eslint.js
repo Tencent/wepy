@@ -31,6 +31,9 @@ export default function (filepath) {
         if (rst) {
             util.writeLog({stack: rst}, 'error');
             console.log(rst);
+            if(config.eslintSuspend) {
+                throw new Error('eslintSuspend');
+            }
         }
     }
 };

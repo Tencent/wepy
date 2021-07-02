@@ -4,6 +4,7 @@ const isProd = process.env.NODE_ENV === 'production'
 module.exports = {
   wpyExt: '.wpy',
   eslint: true,
+  eslintSuspend: false,
   cliLogs: true,
   build: {
     web: {
