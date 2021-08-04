@@ -91,7 +91,7 @@ exports = module.exports = function() {
       return this.hookUnique(hookPrefix + hookName, name, prefix, source, target, ctx).then(
         ({ name, prefix, resolved, target, npm }) => {
           if (hookName === 'raw') {
-            if (request.indexOf("weui-miniprogram") == 0) {
+            if (request.indexOf("weui-miniprogram") === 0) {
               resolvedUsingComponents[name] = request;
             }else{
               resolvedUsingComponents[name] = url;
