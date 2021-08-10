@@ -1,6 +1,6 @@
 {
   "name": "@sht/wepy-plugin-imagemin",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "wepy imagemin plugin",
   "main": "lib/index.js",
   "scripts": {
@@ -16,5 +16,8 @@
     "imagemin-mozjpeg": "^6.0.0",
     "imagemin-pngquant": "^5.0.0",
     "imagemin-svgo": "^6.0.0"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

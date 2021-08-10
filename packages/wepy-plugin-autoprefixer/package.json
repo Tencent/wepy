@@ -1,6 +1,6 @@
 {
   "name": "@sht/wepy-plugin-autoprefixer",
-  "version": "1.5.12",
+  "version": "1.5.13",
   "description": "wepy autoprefixer plugin",
   "main": "lib/index.js",
   "keywords": [
@@ -12,5 +12,8 @@
   "dependencies": {
     "autoprefixer": "^7.1.2",
     "postcss": "^6.0.9"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

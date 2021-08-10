@@ -1,6 +1,6 @@
 {
   "name": "@sht/wepy-cli",
-  "version": "1.7.8",
+  "version": "1.7.9",
   "description": "",
   "main": "bin/wepy.js",
   "bin": {
@@ -62,5 +62,8 @@
   },
   "engines": {
     "node": ">=5.0.0"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

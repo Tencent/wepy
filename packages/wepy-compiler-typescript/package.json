@@ -1,6 +1,6 @@
 {
   "name": "@sht/wepy-compiler-typescript",
-  "version": "1.5.12",
+  "version": "1.5.13",
   "description": "wepy compile typescript",
   "main": "lib/index.js",
   "scripts": {
@@ -13,5 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "typescript": "^4.3.2"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }
