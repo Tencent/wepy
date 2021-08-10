@@ -1,6 +1,6 @@
 {
-  "name": "wepy-ant",
-  "version": "1.5.10",
+  "name": "@sht/wepy-ant",
+  "version": "1.5.11",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {

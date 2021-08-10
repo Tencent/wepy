@@ -1,7 +1,7 @@
 {
-  "name": "wepy-eslint",
-  "version": "1.5.4",
-  "description": "wepy eslint",
+  "name": "@sht/sht-wepy-eslint",
+  "version": "1.5.5",
+  "description": "sht wepy eslint",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

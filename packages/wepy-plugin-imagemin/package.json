@@ -1,6 +1,6 @@
 {
-  "name": "wepy-plugin-imagemin",
-  "version": "1.5.3",
+  "name": "@sht/wepy-plugin-imagemin",
+  "version": "1.5.4",
   "description": "wepy imagemin plugin",
   "main": "lib/index.js",
   "scripts": {

@@ -1,6 +1,6 @@
 {
-  "name": "wepy-async-function",
-  "version": "1.4.7",
+  "name": "@sht/wepy-async-function",
+  "version": "1.4.8",
   "description": "wepy async function support",
   "main": "index.js",
   "scripts": {
