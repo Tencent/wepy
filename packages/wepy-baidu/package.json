@@ -1,6 +1,6 @@
 {
   "name": "@sht/baidu",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {
@@ -30,5 +30,8 @@
     "babel-preset-stage-1": "^6.16.0",
     "eslint": "^5.9.0",
     "immutable": "^3.8.2"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }
