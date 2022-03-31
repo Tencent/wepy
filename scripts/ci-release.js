@@ -63,6 +63,11 @@ function release(version, tag) {
     .catch(e => console.log(e));
 }
 
-const { version, tag } = parseMsg(process.argv[2]);
+const commitMsg = process.env.COMMIT_MESSAGE;
 
-release(version, tag);
+if (commitMsg) {
+  const { version, tag } = parseMsg(commitMsg);
+
+  release(version, tag);
+}
+
