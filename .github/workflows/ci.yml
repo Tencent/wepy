@@ -49,6 +49,7 @@ jobs:
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: node ./scripts/ci-release.js "${{ github.event.head_commit.message }}"
+        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+      run: node ./scripts/ci-release.js
     - run: git status
     - run: git log
