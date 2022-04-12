@@ -30,7 +30,7 @@
     "@babel/code-frame": "^7.0.0",
     "acorn": "^5.7.4",
     "acorn-dynamic-import": "^3.0.0",
-    "async": "^2.6.0",
+    "async": "^3.2.2",
     "chalk": "^2.3.0",
     "chokidar": "^3.0.1",
     "colors": "^1.1.2",
