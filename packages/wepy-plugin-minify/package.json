@@ -1,0 +1,29 @@
+{
+  "name": "wepy-plugin-minify",
+  "version": "1.0.0",
+  "description": "minify code plugin for Wepy",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "wepy",
+    "wepy2",
+    "minify"
+  ],
+  "author": {
+    "name": "mikasayw",
+    "email": "mikasayw@163.com",
+    "url": "https://github.com/mikasayw/wepy-plugin-minify.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pretty-data": "^0.40.0",
+    "terser": "^5.12.1"
+  },
+  "homepage": "https://github.com/mikasayw/wepy-plugin-minify.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mikasayw/wepy-plugin-minify.git"
+  }
+}
