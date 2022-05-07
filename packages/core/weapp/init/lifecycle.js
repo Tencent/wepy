@@ -9,7 +9,6 @@ import { initData } from './data';
 import { initComputed } from './computed';
 import { initMethods } from './methods';
 import { isArr, isFunc } from '../../shared/index';
-import Dirty from '../class/Dirty';
 import {
   WEAPP_APP_LIFECYCLE,
   WEAPP_PAGE_LIFECYCLE,
@@ -36,7 +35,7 @@ const callUserMethod = function(vm, userOpt, method, args) {
   return result;
 };
 
-const getLifecycycle = (defaultLifecycle, rel, type) => {
+const getLifecycle = (defaultLifecycle, rel, type) => {
   let lifecycle = defaultLifecycle.concat([]);
   if (rel && rel.lifecycle && rel.lifecycle[type]) {
     let userDefinedLifecycle = [];
@@ -75,7 +74,7 @@ export function patchAppLifecycle(appConfig, options, rel = {}) {
     return callUserMethod(vm, vm.$options, 'onLaunch', args);
   };
 
-  let lifecycle = getLifecycycle(WEAPP_APP_LIFECYCLE, rel, 'app');
+  let lifecycle = getLifecycle(WEAPP_APP_LIFECYCLE, rel, 'app');
 
   lifecycle.forEach(k => {
     // it's not defined aready && user defined it && it's an array or function
@@ -91,10 +90,6 @@ export function patchLifecycle(output, options, rel, isComponent) {
   const initClass = isComponent ? WepyComponent : WepyPage;
   const initLifecycle = function(...args) {
     let vm = new initClass();
-
-    vm.$dirty = new Dirty('path');
-    vm.$children = [];
-    vm.$refs = {};
 
     this.$wepy = vm;
     vm.$wx = this;
@@ -165,7 +160,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
 
     // 增加组件页面声明周期
     output.pageLifetimes = {};
-    const lifecycle = getLifecycycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
+    const lifecycle = getLifecycle(WEAPP_COMPONENT_PAGE_LIFECYCLE, rel, 'component');
 
     lifecycle.forEach(function(k) {
       if (!output.pageLifetimes[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -245,7 +240,7 @@ export function patchLifecycle(output, options, rel, isComponent) {
     //   }
     // })
 
-    let lifecycle = getLifecycycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
+    let lifecycle = getLifecycle(WEAPP_PAGE_LIFECYCLE, rel, 'page');
 
     lifecycle.forEach(k => {
       if (!output[k] && options[k] && (isFunc(options[k]) || isArr(options[k]))) {
@@ -255,7 +250,12 @@ export function patchLifecycle(output, options, rel, isComponent) {
       }
     });
   }
-  let lifecycle = getLifecycycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
+  output.detached = function(...args) {
+    let vm = this.$wepy;
+    vm.$destroy();
+    return callUserMethod(vm, vm.$options, 'detached', args);
+  }
+  let lifecycle = getLifecycle(WEAPP_COMPONENT_LIFECYCLE, rel, 'component');
 
   lifecycle.forEach(k => {
     // beforeCreate is not a real lifecycle

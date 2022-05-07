@@ -3,8 +3,16 @@ import Watcher from '../observer/watcher';
 import { isArr, isPlainObject } from '../../shared/index';
 
 import { renderNextTick } from '../util/next-tick';
+import Dirty from './Dirty';
 
 export default class WepyComponent extends Base {
+
+  constructor() {
+    super();
+    this.$children = [];
+    this.$dirty = new Dirty('path');
+    this.$refs = {};
+  }
   $watch(expOrFn, cb, options) {
     let vm = this;
     if (isArr(cb)) {
@@ -51,6 +59,27 @@ export default class WepyComponent extends Base {
 
   $trigger(event, data, option) {
     this.$wx.triggerEvent(event, { arguments: [data] }, option);
+  }
+
+  $destroy() {
+    this.$children.forEach(child => {
+      if (!child._detached) {
+        child.$destroy();
+      }
+    });
+    this._watcher.cleanupDeps();
+    this._watcher.teardown();
+    this._watchers.forEach(item => {
+      item.cleanupDeps();
+      item.teardown();
+    });
+    this._watchers = [];
+    this._events = {};
+    this._detached = true;
+    delete this._data.__ob__;
+    delete this._data;
+    delete this._watcher;
+    delete this.$root;
   }
 }
 

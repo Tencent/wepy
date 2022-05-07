@@ -5,6 +5,7 @@ export default class Base {
   constructor() {
     this._events = {};
     this._watchers = [];
+    this.$children = [];
   }
 
   $set(target, key, val) {
