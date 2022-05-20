@@ -167,7 +167,7 @@ class Compile extends Hook {
         let relative = path.relative(path.join(this.context, this.options.src), path.join(this.context, p));
         const target = path.join(this.context, p);
         if (fs.existsSync(target)) {
-          const dest = path.join(this.context, this.options.target, relative[0] === '.' ? p : relative);
+          const dest = path.join(this.context, this.options.output, relative[0] === '.' ? p : relative);
           return fs.copy(target, dest);
         }
         return Promise.resolve(true);
