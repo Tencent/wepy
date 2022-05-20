@@ -10,6 +10,8 @@
 - dlhandsome [awsomeduan@gmail.com](mailto:awsomeduan@gmail.com)
 - dolymood [dolymood@gmail.com](mailto:dolymood@gmail.com)
 - baisheng [baisheng@gmail.com](mailto:baisheng@gmail.com)
+- deepfunc [xiekai0601@gmail.com](mailto:xiekai0601@gmail.com)
+- nishino-tsukasa [nishinotsukasavirgo@gmail.com](mailto:nishinotsukasavirgo@gmail.com)
 
 其中特别致谢 dlhandsome 提交的38个 commits, 对 WePY 做出了1,350增加和362处删减(截止02/28/18日)。
 
