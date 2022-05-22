@@ -27,11 +27,11 @@ export default class Dep {
     }
   }
 
-  notify() {
+  notify(obj) {
     // stabilize the subscriber list first
     const subs = this.subs.slice();
     for (let i = 0, l = subs.length; i < l; i++) {
-      subs[i].update();
+      subs[i].update(obj);
     }
   }
 }

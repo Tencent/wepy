@@ -35,7 +35,7 @@ export default class Dirty {
   /**
    * Set dirty from a ObserverPath
    */
-  set(op, key, value) {
+  set(op, key, value, vm) {
     let pathMap;
     let pathKeys;
     // eslint-disable-next-line eqeqeq
@@ -53,7 +53,7 @@ export default class Dirty {
      * 因此不需要所有 path 都 setData 。
      */
     const { root, path } = pathMap[pathKeys[0]];
-    this.push(root, path, root === path ? value : op.ob.vm[root], value);
+    this.push(root, path, root === path ? value : vm[root], value);
   }
 
   reset() {
