@@ -1,6 +1,6 @@
 {
-  "name": "wepy-compiler-stylus",
-  "version": "1.3.12",
+  "name": "@sht/wepy-compiler-stylus",
+  "version": "1.3.14",
   "description": "wepy compile stylus",
   "main": "lib/index.js",
   "scripts": {
@@ -13,5 +13,8 @@
     "stylus": "^0.54.5"
   },
   "author": "Gcaufy",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
+  }
 }

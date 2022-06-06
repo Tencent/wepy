@@ -1,6 +1,6 @@
 {
-  "name": "wepy-async-function",
-  "version": "1.4.7",
+  "name": "@sht/wepy-async-function",
+  "version": "1.4.9",
   "description": "wepy async function support",
   "main": "index.js",
   "scripts": {
@@ -16,5 +16,8 @@
   "dependencies": {
     "promise-polyfill": "^6.0.2",
     "regenerator-runtime": "^0.10.3"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

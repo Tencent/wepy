@@ -1,6 +1,6 @@
 {
-  "name": "wepy-compiler-babel",
-  "version": "1.5.3",
+  "name": "@sht/wepy-compiler-babel",
+  "version": "1.5.5",
   "description": "wepy compile babel",
   "main": "lib/index.js",
   "scripts": {
@@ -13,5 +13,8 @@
   "license": "MIT",
   "dependencies": {
     "babel-core": "^6.20.0"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

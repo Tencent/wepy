@@ -1,6 +1,6 @@
 {
-  "name": "wepy-plugin-replace",
-  "version": "1.5.10",
+  "name": "@sht/wepy-plugin-replace",
+  "version": "1.5.12",
   "description": "wepy replace plugin",
   "main": "lib/index.js",
   "scripts": {
@@ -10,5 +10,8 @@
     "replace"
   ],
   "author": "Gcaufy",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
+  }
 }

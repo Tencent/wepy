@@ -1,6 +1,6 @@
 {
-  "name": "wepy-redux",
-  "version": "1.5.9",
+  "name": "@sht/wepy-redux",
+  "version": "1.5.11",
   "description": "WePY bindings for Redux",
   "main": "lib/index.js",
   "scripts": {
@@ -16,5 +16,8 @@
   "license": "MIT",
   "dependencies": {
     "redux": "^2.0.0 || ^3.0.0"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

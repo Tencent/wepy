@@ -1,6 +1,6 @@
 {
-  "name": "wepy-web",
-  "version": "1.6.0",
+  "name": "@sht/wepy-web",
+  "version": "1.6.2",
   "description": "",
   "main": "lib/wepy.js",
   "scripts": {},
@@ -18,5 +18,8 @@
     "axios": "^0.16.1",
     "vue": "^1.0.28",
     "vue-router": "^0.7.13"
+  },
+  "publishConfig": {
+    "registry": "http://npm.nicetuan.net"
   }
 }

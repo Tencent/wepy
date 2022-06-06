@@ -16,6 +16,7 @@ export default class {
     constructor(c = {}) {
         const def = {
             filter: new RegExp('\.(js)$'),
+            exclude: [],
             config: {
                 compress: {warnings: false}
             }
@@ -24,10 +25,23 @@ export default class {
         this.setting = Object.assign({}, def, c);
     }
     apply (op) {
+        const { filter, exclude, config } = this.setting;
 
-        let setting = this.setting;
+        const isExclude = exclude.some((ex) => {
+            if (typeof ex === 'string') {
+                return op.file.indexOf(ex);
+            }
+            if (Object.prototype.toString.call(a) === '[object RegExp]') {
+                return ex.test(op.file);
+            }
+        });
 
-        if (!setting.filter.test(op.file)) {
+        if (isExclude) {
+            op.next();
+            return;
+        }
+        
+        if (!filter.test(op.file)) {
             op.next();
         } else {
             //util.output('压缩', op.file);
@@ -35,8 +49,8 @@ export default class {
                 action: '压缩',
                 file: op.file
             });
-            this.setting.config.fromString = true;
-            let rst = uglify.minify(op.code, this.setting.config);
+            config.fromString = true;
+            let rst = uglify.minify(op.code, config);
             let k;
             for (k in rst)
                 op[k] = rst[k];

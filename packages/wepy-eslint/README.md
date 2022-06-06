@@ -10,6 +10,7 @@ npm install wepy-eslint --save-dev
 
 ```
 module.exports = {
-	eslint: true
+	eslint: true,
+	eslintSuspend: false, // 如果eslint报错始终中止编译
 };
 ```

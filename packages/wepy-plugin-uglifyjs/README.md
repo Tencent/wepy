@@ -12,6 +12,10 @@ npm install wepy-plugin-uglifyjs --save-dev
 module.exports.plugins = {
     'uglifyjs': {
         filter: /\.js$/,
+        exclude: [
+            'project',
+            /test/,
+        ],// 每一项可以为字符串或者正则表达式
         config: {
         }
     },
