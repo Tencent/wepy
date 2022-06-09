@@ -21,3 +21,5 @@
 <view data-wpy-evt="0-13" bind:tap="__dispatcher"></view>
 <view data-wpy-evt="0-14" bind:tap="__dispatcher"></view>
 <view data-wpy-evt="0-15" bind:tap="__dispatcher"></view>
+
+<view data-wepy-evt="0-16" bind:touchstart="__dispatcher"></view>
