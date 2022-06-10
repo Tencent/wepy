@@ -152,7 +152,7 @@ describe('plugin-define', function() {
     expect(args[0].replacements[0].value).to.equal('"something"');
   });
 
-  it('test different values', function() {
+  it('compile different values', function() {
     let compile, args;
 
     compile = createCompile({

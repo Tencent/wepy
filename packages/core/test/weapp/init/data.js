@@ -2,7 +2,7 @@ import { patchData, initData } from '../../../weapp/init/data';
 
 const expect = require('chai').expect;
 
-describe('weapp init data', function() {
+describe('core weapp init data', function() {
   it('patch data', () => {
     const output = {};
 
@@ -15,7 +15,7 @@ describe('weapp init data', function() {
     expect(output.data.a).to.equal(1);
   });
 
-  it('init data', () => {
+  it('should init data', () => {
     const vm = {};
 
     initData(vm, { num: 1, str: 'string', arr: [1, 2], obj: { a: 1 }, deepobj: { node: { a: 1 } } });
@@ -29,7 +29,7 @@ describe('weapp init data', function() {
     expect(vm.deepobj.node.__ob__).to.be.an('object');
   });
 
-  it('init data from function', () => {
+  it('should init data from function', () => {
     const vm = {};
 
     initData(vm, function() {

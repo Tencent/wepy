@@ -84,11 +84,11 @@ function compare(id, done) {
     });
 }
 
-describe('wepy-compiler-less', function() {
+describe('compiler-less', function() {
   let ids = specs.getIds();
 
   ids.forEach(id => {
-    it('testing ' + id, function(done) {
+    it('should compare' + id, function(done) {
       compare(id, done);
     });
   });

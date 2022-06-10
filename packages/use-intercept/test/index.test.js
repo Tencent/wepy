@@ -22,7 +22,7 @@ function ensureAllTaskDone(taskList, done) {
   };
 }
 
-describe('@wepy/use-intercept', function() {
+describe('use-intercept', function() {
   let __storage = {
     mydata: { a: 1 }
   };
@@ -69,7 +69,7 @@ describe('@wepy/use-intercept', function() {
     global.wx = wx;
   });
 
-  it('test callback success', function(done) {
+  it('callback success', function(done) {
     let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-success', 'test-request-complete'], done);
 
     let wepy = {};
@@ -115,7 +115,7 @@ describe('@wepy/use-intercept', function() {
     });
   });
 
-  it('test callback config promise', function(done) {
+  it('callback config promise', function(done) {
     let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-success', 'test-request-complete'], done);
 
     let wepy = {};
@@ -165,7 +165,7 @@ describe('@wepy/use-intercept', function() {
     });
   });
 
-  it('test callback config promise reject', function(done) {
+  it('callback config promise reject', function(done) {
     let task = ensureAllTaskDone(['test-getStorage-config', 'test-getStorage-fail'], done);
 
     let wepy = {};
@@ -217,7 +217,7 @@ describe('@wepy/use-intercept', function() {
     });
   });
 
-  it('test callback failed', function(done) {
+  it('callback fail', function(done) {
     let task = ensureAllTaskDone(['test-request-config', 'test-request-fail', 'test-request-complete'], done);
 
     let wepy = {};

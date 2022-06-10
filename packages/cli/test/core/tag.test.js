@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 const tag = require('../../core/tag');
 
-describe('tag', function() {
-  it('should combineTagMap', function() {
+describe('Tag', function() {
+  it('should combine tag map', function() {
     const additional = {
       'test-tag-1': 'to-test-tag-1',
       'test-tag-2': 'to-test-tag-2'
@@ -13,7 +13,7 @@ describe('tag', function() {
     expect(ret).to.include(additional);
   });
 
-  it('should combineTag', function() {
+  it('should combine tag', function() {
     let additional = 'add-test-tag-1';
     let ret = tag.combineTag(tag.HTML_TAGS, additional);
     expect(ret).to.include.members(tag.HTML_TAGS);

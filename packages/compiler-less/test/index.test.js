@@ -120,7 +120,7 @@ function compileFail(id, done) {
     });
 }
 
-describe('wepy-compiler-less', function() {
+describe('compiler-less', function() {
   let ids = specs.getIds();
 
   let shouldPassIds = ids.filter(id => !/^fail-/.test(id));
@@ -128,12 +128,12 @@ describe('wepy-compiler-less', function() {
   let shouldFailIds = ids.filter(id => /^fail-/.test(id));
 
   shouldPassIds.forEach(id => {
-    it('Pass test cases: ' + id, function(done) {
+    it('should compare success' + id, function(done) {
       compare(id, done);
     });
   });
   shouldFailIds.forEach(id => {
-    it('Fail test cases: ' + id, function(done) {
+    it('should compare fail' + id, function(done) {
       compileFail(id, done);
     });
   });
