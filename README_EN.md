@@ -6,7 +6,6 @@ English | [简体中文](./README.md)
 [![travis-ci](https://travis-ci.org/Tencent/wepy.svg?branch=1.7.x)](https://travis-ci.org/Tencent/wepy)
 ![Github CI](https://github.com/Tencent/wepy/workflows/WePY%20CI%20Build/badge.svg?branch=2.0.x)
 [![Coverage Status](https://coveralls.io/repos/github/Tencent/wepy/badge.svg?branch=1.7.x)](https://coveralls.io/github/Tencent/wepy?branch=1.7.x)
-[![Dependency Status](https://david-dm.org/Tencent/wepy.svg)](https://david-dm.org/Tencent/wepy)
 
 ### Introduce
 
