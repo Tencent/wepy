@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "enhanced-resolve": "^4.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^10.2.0",
     "postcss-cssnext": "^3.1.0"
   },
   "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
