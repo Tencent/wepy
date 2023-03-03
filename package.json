@@ -40,7 +40,7 @@
     "chai": "^4.1.2",
     "chalk": "^1.1.3",
     "chokidar": "^3.4.0",
-    "commitizen": "^3.1.1",
+    "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^2.1.0",
     "enquirer": "^2.3.0",
     "eslint": "^7.5.0",
