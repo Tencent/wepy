@@ -1,32 +1,36 @@
 [English](./README_EN.md) | 简体中文
+Simplified Chinese
+
 
 # WePY 2.0中的Vuex 
 
 ## 安装
+## Install
 
 ```
 npm install @wepy/x vuex --save
 ```
 
 ## 用法
+## Usage
 
-1. 安装Vuex 
+1. Install Vuex
 
 ```
 // app.wpy
 import wepy from '@wepy/core';
 import vuex from '@wepy/x';
 
-wepy.use(vuex);
+wepy. use(vuex);
 ```
 
-2. 初始化store
+2. Initialize the store
 
 ```
 // ~/store.js
 import Vuex from '@wepy/x';
 
-export default new Vuex.Store({
+export default new Vuex. Store({
   state: {
     num: 0
   },
@@ -46,12 +50,12 @@ export default new Vuex.Store({
 })
 ```
 
-3. 映射到组件
+3. Mapping to components
 
 ```
 // ~/counter.wpy
 <template>
-  <div> {{num}} </div>
+  <div>{{num}}</div>
   <button @tap="increment"> Increment </button>
   <button @tap="incrementAsync"> Increment Async </button>
 </template>
@@ -69,10 +73,10 @@ wepy.component({
 })
 ```
 
-## 文件
+## document
 
 [https://vuex.vuejs.org/](https://vuex.vuejs.org/)
 
-## 其他
+## other
 
-目前不支持 [Vuex 模块](https://vuex.vuejs.org/guide/modules.html) 。  在此处检查 [问题](https://github.com/Tencent/wepy/issues/2191) 。
+[Vuex modules](https://vuex.vuejs.org/guide/modules.html) are currently not supported. Check the [issue](https://github.com/Tencent/wepy/issues/2191) here.

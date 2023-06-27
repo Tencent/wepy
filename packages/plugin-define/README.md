@@ -3,6 +3,7 @@
 # wepy define plugin
 
 ## 安装
+## Install
 
 ```bash
 npm install @wepy/plugin-define --save-dev
@@ -28,6 +29,7 @@ module.exports = {
 ```
 
 ## 参考网站
+## Reference site
 
 [webpack.DefinePlugin](https://webpack.js.org/plugins/define-plugin/)
 

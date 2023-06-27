@@ -1,12 +1,16 @@
 # wepy babel 编译器
+# wepy babel compiler
 
 ## 安装
+## Install
 
 ```
 npm install @wepy/compiler-babel --save-dev
 ```
 
 ## 配置`wepy.config.js`
+## Configure `wepy.config.js`
+
 
 ```
 module.exports = {
@@ -26,6 +30,8 @@ module.exports = {
 };
 ```
 
+## Parameter Description
 ## 参数说明
 
+## Parameter Description
 [Babel](https://github.com/babel/babel)

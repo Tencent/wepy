@@ -5,15 +5,18 @@
 Promisfy all weapp APIs.
 
 ## 安装
-
+## Install
 ```
 npm install @wepy/use-promisify --save
 ```
 
 ## 用法
+## Usage
+
 
 
 ### 基本用法
+### Basic Usage
 
 ```
 import wepy from '@wepy/core';

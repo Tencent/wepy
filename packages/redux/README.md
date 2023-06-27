@@ -3,12 +3,15 @@
 # WePY 2.0中的Redux
 
 ## 安装
+## Install
 
 ```
 npm install @wepy/redux redux --save
 ```
 
 ## 用法
+## Usage
+
 
 1. 安装Redux
 
