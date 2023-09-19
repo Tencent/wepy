@@ -10,24 +10,23 @@ English | [简体中文](./README.md)
 
 ### Introduce
 
-WePY resource summary：[awesome-wepy](https://github.com/aben1188/awesome-wepy)
+WePY resource summary: [awesome-wepy](https://github.com/aben1188/awesome-wepy)
 
-WePY (pronounced: /'wepi/) is a framework that enables componentization of small programs by pre-compiling them so that developers can choose their own development style.Details optimization of the framework, the introduction of Promise and Async Functions are all aimed at making it easier and more efficient to develop applets.
+WePY (pronounced: /'wepi/) is a framework that enables componentization of small programs by pre-compiling them so that developers can choose their own development style. Detailed optimizations for the framework and the introduction of Promise and Async Functions all aim at making it easier and more efficient to develop applets.
 
-At the same time, WePY is also a growing framework, drawing heavily on the design concepts and ideas of some front-end optimization tools and frameworks.If WePY has a problem, or if you have a better idea, feel free to submit an ISSUE or PR.
-
+At the same time, WePY is also a growing framework, drawing heavily on the design concepts and ideas of some front-end optimization tools and frameworks. If WePY has a problem, or if you have a better idea, feel free to submit an ISSUE or PR.
 
 ### Features:
 
-- Class Vue development style
-- Support for custom component development
-- Support for introducing NPM packages
-- support [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
-- Support for ES2015+ features，如 [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
-- Supports multiple compilers, Less/Sass/Stylus/PostCSS, Babel/Typescript, Pug
+- Vue-like development style
+- Supports custom component development
+- Supports introducing NPM packages
+- supports [Promise](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Promise)
+- Supports ES2015+ features, such as [Async Functions](https://github.com/wepyjs/wepy/wiki/wepy%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8async-await)
+- Supports multiple compilers: Less/Sass/Stylus/PostCSS, Babel/Typescript, Pug
 - Supports a variety of plug-in processing, file compression, image compression, content replacement, etc
 - Supports Sourcemap, ESLint, etc
-- Small program details optimization, such as request queuing, event optimization, etc
+- Small program detailed optimization, such as request queuing, event optimization, etc
 
 ### Demo
 
@@ -152,15 +151,17 @@ GitHub 掘金版、
 
 ...
 
-### Wechat group
+### WeChat group
 
-WePY group has reached 500 members，Please add gcaufy_helper friends or scan the code to add friends, verify the reply 'wepy' according to the reference to enter the group.
+WePY group has reached 500 members. Please add gcaufy_helper or scan the QR code to add the friend and reply 'wepy' according to the reference to enter the group.
 
 ![wepy_qr_code](https://user-images.githubusercontent.com/2182004/82732473-feb50c80-9d3f-11ea-9a5f-0efc6ce40f74.png)
 
 ### Contribution
 
-If you have any comments or Suggestions, please feel free to contribute to improving the WeChat app-development experience by asking for Issues or Pull Requests.<br>see details：[CONTRIBUTING.md](./CONTRIBUTING.md)
+If you have any comments or suggestions, please feel free to contribute to improving the WeChat app-development experience by asking for Issues or Pull Requests.
+
+See details: [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 [Tencent Open Source Incentive Plan](https://opensource.tencent.com/contribution) EncouraTencent Open Source Incentive Plange developers to participate and contribute. Look forward to your participation.
 
