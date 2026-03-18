@@ -1,5 +1,13 @@
 English | [简体中文](./README.md)
 
+> **📦 This project has been archived**
+>
+> As the WeChat Mini Program ecosystem continues to evolve, this project is no longer actively maintained. WePY has long since fulfilled its historical mission. The existing code is no longer a recommended reference; we suggest adopting more modern solutions for new projects.
+>
+> Over the years of open source, due to limited personal bandwidth, the project was not maintained as well as it should have been. I sincerely apologize to all contributors and users for that.
+>
+> Thank you for your understanding, and keep moving forward 🤝
+
 ## WePY 2 (beta)
 
 [![npm version](https://badge.fury.io/js/wepy.svg)](https://badge.fury.io/js/wepy)
