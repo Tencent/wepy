@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 const Hook = require('../../core/hook');
 
 describe('Hook', function() {
-  it('should register', function() {
+  it('should register a hook', function() {
     const hook = new Hook();
     const handler = function() {};
     hook.register('process-test', handler);
@@ -12,7 +12,7 @@ describe('Hook', function() {
     expect(hook._hooks['process-test']).to.includes(handler);
   });
 
-  it('should unregister', function() {
+  it('should unregister a hook', function() {
     const hook = new Hook();
     const handler1 = function() {};
     const handler2 = function() {};
@@ -30,7 +30,7 @@ describe('Hook', function() {
     expect(hook._hooks['process-test']).to.be.an('undefined');
   });
 
-  it('should has hook', function() {
+  it('should judge whether have a hook', function() {
     const hook = new Hook();
     const handler = function() {};
     hook.register('process-test', handler);
@@ -39,7 +39,7 @@ describe('Hook', function() {
     expect(hook.hasHook('process-another')).to.be.false;
   });
 
-  it('should hook', function() {
+  it('should verify hook function is correct', function() {
     const hook = new Hook();
     hook.register('process-test', function() {
       return 1;
@@ -58,7 +58,7 @@ describe('Hook', function() {
     expect(hook.hook('process-test', 6, 66)).to.eql([1, 6, 72]);
   });
 
-  it('should hookSeq', function() {
+  it('should verify hookSeq function is correct', function() {
     const hook = new Hook();
 
     expect(hook.hookSeq('unknown')).to.be.undefined;
@@ -76,7 +76,7 @@ describe('Hook', function() {
     expect(hook.hookSeq('process-test', 6)).to.equal(14);
   });
 
-  it('should hookUnique', function() {
+  it('should verify hookUnique function is correct ', function() {
     const hook = new Hook();
 
     expect(hook.hookUnique('unknown')).to.be.undefined;
@@ -92,7 +92,7 @@ describe('Hook', function() {
     expect(hook.hookUnique('process-test', 6)).to.equal(12);
   });
 
-  it('should hookUniqueReturnArg', function() {
+  it('should verify hookUniqueReturnArg function is correct ', function() {
     const hook = new Hook();
 
     expect(hook.hookUniqueReturnArg('unknown')).to.be.undefined;
@@ -109,7 +109,7 @@ describe('Hook', function() {
     expect(hook.hookUniqueReturnArg('process-test', 6)).to.equal(12);
   });
 
-  it('should hookReturnOrigin', function() {
+  it('should verify hookReturnOrigin function is correct ', function() {
     const hook = new Hook();
     let oneFnCalled = false;
     let twoFnCalled = false;
@@ -208,7 +208,7 @@ describe('Hook', function() {
       });
   });
 
-  it('hookAsyncSeq should call catch', function(done) {
+  it('hookAsyncSeq should call catch correctly', function(done) {
     const hook = new Hook();
 
     hook.register('process-test', function() {

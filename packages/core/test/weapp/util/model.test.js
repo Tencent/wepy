@@ -2,8 +2,8 @@
 const expect = require('chai').expect;
 import { parseModel } from '../../../weapp/util/model';
 
-describe('parseModel test', () => {
-    it('there are no square brackets and dots :', () => {
+describe('Model', () => {
+    it('when no square brackets and dots ', () => {
         var str = '  test  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test',
@@ -12,7 +12,7 @@ describe('parseModel test', () => {
     });
 
 
-    it('there are only dots :', () => {
+    it('when only dots ', () => {
         var str = ' test.key ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test',
@@ -20,7 +20,7 @@ describe('parseModel test', () => {
         })
     });
 
-    it(' there are only brackets :', () => {
+    it('when only brackets ', () => {
         var str = '  test[key]  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test',
@@ -28,7 +28,7 @@ describe('parseModel test', () => {
         })
     });
 
-    it('there are multiple square brackets nesting :', () => {
+    it('when multiple square brackets nesting ', () => {
         var str = ' test[test1[key]]  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test',
@@ -36,7 +36,7 @@ describe('parseModel test', () => {
         })
     });
 
-    it('there are double quotation marks ：', () => {
+    it('when double quotation marks ', () => {
         var str = ' test["a"][key]  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test[\"a\"]',
@@ -44,7 +44,7 @@ describe('parseModel test', () => {
         })
     });
 
-    it('there are points and brackets nesting :', () => {
+    it('when points and brackets nesting ', () => {
         var str = ' xxx.test[a[a].test1[key]]  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'xxx.test',
@@ -52,7 +52,7 @@ describe('parseModel test', () => {
         })
     });
 
-    it('there are multiple dots and brackets :', () => {
+    it('when multiple dots and brackets ', () => {
         var str = ' test.xxx.a["asa"][test1[key]]  ';
         expect(parseModel(str)).to.deep.equal({
             expr: 'test.xxx.a[\"asa\"]',
@@ -60,6 +60,20 @@ describe('parseModel test', () => {
         })
     });
 
+    it('when start with quote and contain a pair of quotation', () => {
+        var str = ' \'test.xxx\'.[a]  ';
+        expect(parseModel(str)).to.deep.equal({
+            expr: '',
+            key: ''
+        })
+    });
 
+    it('when start with quote and contain only a quotation', () => {
+        var str = ' \'test.xxx[a]  ';
+        expect(parseModel(str)).to.deep.equal({
+            expr: '\'test.xxx',
+            key: 'a'
+        })
+    });
 });
 

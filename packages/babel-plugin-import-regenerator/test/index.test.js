@@ -12,7 +12,7 @@ describe('babel-plugin-import-regenerator', () => {
     const actualFile = join(fixturesDir, caseName, 'actual.js');
     const expectedFile = join(fixturesDir, caseName, 'expected.js');
 
-    it(`should work with ${caseName.split('-').join(' ')}`, () => {
+    it(`when work with ${caseName.split('-').join(' ')}`, () => {
       const actual = transform(readFileSync(actualFile), {
         presets: ['env'],
         plugins: [plugin]
