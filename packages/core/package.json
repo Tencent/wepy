@@ -17,7 +17,7 @@
   "_commitid": "a78dcb6",
   "devDependencies": {
     "esm": "^3.2.25",
-    "mocha": "^8.0.1",
+    "mocha": "^8.4.0",
     "typescript": "^3.3.3"
   },
   "dependencies": {
