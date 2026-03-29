@@ -2,7 +2,7 @@ import Base from './Base';
 import Watcher from '../observer/watcher';
 import { isArr, isPlainObject } from '../../shared/index';
 
-import { renderNextTick } from '../util/next-tick';
+import { renderNextTick, nextTick } from '../util/next-tick';
 
 export default class WepyComponent extends Base {
   $watch(expOrFn, cb, options) {
@@ -24,7 +24,9 @@ export default class WepyComponent extends Base {
     options.user = true;
     let watcher = new Watcher(vm, expOrFn, cb, options);
     if (options.immediate) {
-      cb.call(vm, watcher.value);
+      nextTick(function() {
+        cb.call(vm, watcher.value);
+      });
     }
     return function unwatchFn() {
       watcher.teardown();

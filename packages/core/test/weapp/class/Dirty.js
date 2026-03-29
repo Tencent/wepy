@@ -1,14 +1,22 @@
 import { initData } from '../../../weapp/init/data';
 import Dirty from '../../../weapp/class/Dirty';
+import { initRender } from '../../../weapp/init/render';
 
 const expect = require('chai').expect;
 
 describe('weapp class Dirty', function() {
   it('test dirty path', () => {
-    const vm = {};
+    const vm = {
+      _watchers: []
+    };
     vm.$dirty = new Dirty('path');
 
     initData(vm, { list: [], num: 1, arr: [1, 2], complex: { a: 1, arr: [100, { x: [0, 1, { b: 1 }] }] } });
+    initRender(
+      vm,
+      Object.keys(vm._data),
+      Object.keys({})
+    );
 
     vm.num = 2;
     expect(vm.$dirty.length()).to.be.equal(1);
@@ -49,10 +57,17 @@ describe('weapp class Dirty', function() {
   });
 
   it('test dirty key', () => {
-    const vm = {};
+    const vm = {
+      _watchers: []
+    };
     vm.$dirty = new Dirty('key');
 
     initData(vm, { num: 1, arr: [1, 2], complex: { a: 1, arr: [100, { x: [0, 1, { b: 1 }] }] } });
+    initRender(
+      vm,
+      Object.keys(vm._data),
+      Object.keys({})
+    );
 
     vm.num = 2;
     expect(vm.$dirty.length()).to.be.equal(1);

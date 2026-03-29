@@ -124,7 +124,11 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
-  update() {
+  update(obj = {}) {
+    if (this.isRenderWatcher && obj.dirtyData) {
+      this.vm.$dirty.set(obj.dirtyData.op, obj.dirtyData.key, obj.dirtyData.value, this.vm)
+    }
+
     /* istanbul ignore else */
     if (this.computed) {
       this.dirty = true;

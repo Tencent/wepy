@@ -22,11 +22,10 @@ export const observerState = {
  * collect dependencies and dispatches updates.
  */
 export class Observer {
-  constructor({ vm, key, value, parent }) {
+  constructor({ key, value, parent }) {
     this.value = value;
     this.dep = new Dep();
     this.vmCount = 0;
-    this.vm = vm;
     this.op = new ObserverPath(key, this, parent && parent.__ob__ && parent.__ob__.op);
 
     def(value, '__ob__', this);
@@ -47,7 +46,7 @@ export class Observer {
   walk(key, obj) {
     const keys = Object.keys(obj);
     for (let i = 0; i < keys.length; i++) {
-      defineReactive({ vm: this.vm, obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
+      defineReactive({ obj: obj, key: keys[i], value: obj[keys[i]], parent: obj });
       //defineReactive(this.vm, obj, keys[i], obj[keys[i]]);
     }
   }
@@ -57,55 +56,8 @@ export class Observer {
    */
   observeArray(key, items) {
     for (let i = 0, l = items.length; i < l; i++) {
-      observe({ vm: this.vm, key: i, value: items[i], parent: items });
+      observe({ key: i, value: items[i], parent: items });
     }
-  }
-
-  /**
-   * Check if path exsit in vm
-   */
-  hasPath(path) {
-    let value = this.vm;
-    let key = '';
-    let i = 0;
-    while (i < path.length) {
-      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
-        key += path[i];
-      } else if (key.length !== 0) {
-        value = value[key];
-        key = '';
-        if (!isObject(value)) {
-          return false;
-        }
-      }
-      i++;
-    }
-    return true;
-  }
-
-  /**
-   * Is this path value equal
-   */
-  isPathEq(path, value) {
-    let objValue = this.vm;
-    let key = '';
-    let i = 0;
-    while (i < path.length) {
-      if (path[i] !== '.' && path[i] !== '[' && path[i] !== ']') {
-        key += path[i];
-      } else if (key.length !== 0) {
-        objValue = objValue[key];
-        key = '';
-        if (!isObject(objValue)) {
-          return false;
-        }
-      }
-      i++;
-    }
-    if (key.length !== 0) {
-      objValue = objValue[key];
-    }
-    return value === objValue;
   }
 }
 
@@ -138,7 +90,7 @@ function copyAugment(target, src, keys) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
-export function observe({ vm, key, value, parent, root }) {
+export function observe({ key, value, parent, root }) {
   if (!isObject(value)) {
     return;
   }
@@ -153,7 +105,7 @@ export function observe({ vm, key, value, parent, root }) {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
-    ob = new Observer({ vm: vm, key: key, value: value, parent: parent });
+    ob = new Observer({ key: key, value: value, parent: parent });
   }
   if (root && ob) {
     ob.vmCount++;
@@ -164,7 +116,7 @@ export function observe({ vm, key, value, parent, root }) {
 /**
  * Define a reactive property on an Object.
  */
-export function defineReactive({ vm, obj, key, value, parent, customSetter, shallow }) {
+export function defineReactive({ obj, key, value, parent, customSetter, shallow }) {
   const dep = new Dep();
 
   const property = Object.getOwnPropertyDescriptor(obj, key);
@@ -179,7 +131,7 @@ export function defineReactive({ vm, obj, key, value, parent, customSetter, shal
   }
   const setter = property && property.set;
 
-  let childOb = !shallow && observe({ vm: vm, key: key, value: value, parent: obj });
+  let childOb = !shallow && observe({ key: key, value: value, parent: obj });
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
@@ -221,15 +173,8 @@ export function defineReactive({ vm, obj, key, value, parent, customSetter, shal
         value = newVal;
       }
 
-      // Have to set dirty after value assigned, otherwise the dirty key is incrrect.
-      if (vm) {
-        // push parent key to dirty, wait to setData
-        if (vm.$dirty) {
-          vm.$dirty.set(obj.__ob__.op, key, newVal);
-        }
-      }
-      childOb = !shallow && observe({ vm: vm, key: key, value: newVal, parent: parent });
-      dep.notify();
+      childOb = !shallow && observe({ key: key, value: newVal, parent: parent });
+      dep.notify({ dirtyData: { op: obj.__ob__.op, key: key, value: newVal } });
     }
   });
 }
@@ -270,14 +215,11 @@ export function set(vm, target, key, val) {
     // delete invalid paths
     cleanPaths(key, target[key].__ob__.op, ob.op);
   }
-  defineReactive({ vm: vm, obj: ob.value, key: key, value: val, parent: ob.value });
-  if (vm) {
-    // push parent key to dirty, wait to setData
-    if (vm.$dirty && hasOwn(target, '__ob__')) {
-      vm.$dirty.set(target.__ob__.op, key, val);
-    }
-  }
-  ob.dep.notify();
+
+  defineReactive({ obj: ob.value, key: key, value: val, parent: ob.value });
+
+  ob.dep.notify({ dirtyData: { op: ob.op, key: key, value: val } });
+
   return val;
 }
 
