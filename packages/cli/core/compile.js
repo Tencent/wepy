@@ -27,6 +27,13 @@ const initCompiler = require('./init/compiler');
 const initParser = require('./init/parser');
 const initPlugin = require('./init/plugin');
 
+// 过滤出合法的页面路径
+// fix issue: https://github.com/Tencent/wepy/issues/2710
+function filterPagePath(pagePath) {
+  // 这里暂时只考虑过滤 __plugin__/ 开头的页面路径
+  return pagePath.indexOf('__plugin__/') !== 0;
+}
+
 class Compile extends Hook {
   constructor(opt) {
     super();
@@ -206,7 +213,7 @@ class Compile extends Hook {
             message: `Missing "pages" in App config`
           });
         }
-        let pages = appConfig.pages.map(v => {
+        let pages = appConfig.pages.filter(filterPagePath).map(v => {
           return path.resolve(app.file, '..', v);
         });
 
@@ -220,7 +227,7 @@ class Compile extends Hook {
               throw new Error('EXIT');
             }
 
-            sub.pages.forEach(v => {
+            sub.pages.filter(filterPagePath).forEach(v => {
               pages.push(path.resolve(app.file, '../' + sub.root || '', v));
             });
           });
