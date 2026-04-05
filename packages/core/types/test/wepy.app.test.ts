@@ -7,11 +7,12 @@ wepy.app({
       return data;
     }
   },
+
   onLaunch(option) {
-    if (option)
-      console.log(option.query);
+    if (option) console.log(option.query);
   },
+
   onError(e) {
     console.log(e);
   }
-})
+});

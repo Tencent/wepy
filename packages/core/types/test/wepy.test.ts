@@ -1,11 +1,10 @@
 import wepy from '../index';
-import { WepyInstace } from '../wepy';
 import { PluginObject, PluginFunction } from '../plugin';
 
 let eventBus = new wepy();
 
-eventBus.$on('test', function(a: any, b: any, c: any) {
-  console.log(a, b, c)
+eventBus.$on('test', function (a: any, b: any, c: any) {
+  console.log(a, b, c);
 });
 
 eventBus.$emit('test', 1, 2, 3);
@@ -18,22 +17,21 @@ const installer: PluginFunction<Array<string>> = function (wepy, option) {
 
 const plugin: PluginObject<Array<string>> = {
   install: installer,
-  useDefinedMethod (): string {
+  useDefinedMethod(): string {
     return '' + Math.random();
   }
-}
+};
 
 wepy.mixin({
   data: {
     a: 1
   },
   methods: {
-    commonFunc () {
+    commonFunc() {
       console.log(this);
     }
   }
 });
-
 
 wepy.nextTick().then(res => {
   console.log(res);
@@ -41,7 +39,11 @@ wepy.nextTick().then(res => {
 
 wepy.nextTick(function (): void {
   console.log(this);
-})
-wepy.nextTick(function (): void {
-  console.log(this.ctx === 'efc');
-}, { ctx: 'abc'})
+});
+
+wepy.nextTick(
+  function (): void {
+    console.log(this.ctx === 'efc');
+  },
+  { ctx: 'abc' }
+);

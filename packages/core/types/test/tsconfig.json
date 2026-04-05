@@ -20,7 +20,6 @@
   "files": [
     "../index.d.ts",
     "../options.d.ts",
-    "../plugin.d.ts",
     "../wepy.d.ts",
     "wepy.test.ts",
     "wepy.app.test.ts",

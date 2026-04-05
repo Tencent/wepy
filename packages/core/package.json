@@ -18,10 +18,10 @@
   "devDependencies": {
     "esm": "^3.2.25",
     "mocha": "^8.0.1",
-    "typescript": "^3.3.3"
+    "typescript": "^4.1.3"
   },
   "dependencies": {
-    "miniprogram-api-typings": "^2.10.3-1"
+    "miniprogram-api-typings": "^3.2.2"
   },
   "gitHead": "5a25776457360bbbbc54a4d059f6bc7c032d5df3"
 }
